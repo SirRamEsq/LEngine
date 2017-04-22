@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sprite width and height is used to calculate where the origin is-->
+<sprite origin="center" width="32" height="32" transparentColor="ff00ff" textureName="lol.png">
+	<animation name="Ani" speed="1.5">
+		<image x="0" y="0" w="32" h="32"/>
+		<image x="32" y="0" w="32" h="32"/>
+	</animation>
+
+	<animation name="Ani2" speed="3">
+		<image x="0" y="32" w="32" h="32"/>
+		<image x="32" y="32" w="32" h="32"/>
+	</animation>
+</sprite>
