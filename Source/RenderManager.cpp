@@ -168,6 +168,89 @@ VAOWrapper::~VAOWrapper(){
     glDeleteVertexArrays(1, &vboColor  );
     glDeleteVertexArrays(1, &vboTexture);
 }
+//////////////
+//VAOWrapperTile//
+//////////////
+VAOWrapperTile::VAOWrapperTile(const unsigned int& maxSize)
+    : vboMaxSize(maxSize),
+    vboVertexSize         (maxSize * sizeof(Vec2)  * 4),//4 verticies per object
+    vboTextureSize        (maxSize * sizeof(Vec2)  * 4),
+    vboColorSize          (maxSize * sizeof(Vec4)  * 4),
+    vboAnimationSize      (maxSize * sizeof(Vec2)  * 4),
+
+    vboVertexArray            ( new Vec2           [maxSize * 4] ),
+	vboTextureArray           ( new Vec2           [maxSize * 4] ),
+	vboColorArray             ( new Vec4           [maxSize * 4] ),
+	vboAnimationArray         ( new Vec2           [maxSize * 4] ){
+
+    //Vertex VBO
+	glGenBuffers (1, &vboVertex);
+	glBindBuffer (GL_ARRAY_BUFFER, vboVertex);
+                            //     Size of Buffer                           Pointer to data
+	glBufferData (GL_ARRAY_BUFFER, vboVertexSize,    vboVertexArray.get(), GL_STATIC_DRAW);
+
+	//Texture VBO
+	glGenBuffers (1, &vboTexture);
+	glBindBuffer (GL_ARRAY_BUFFER, vboTexture);
+	glBufferData (GL_ARRAY_BUFFER, vboTextureSize,   vboTextureArray.get(), GL_STATIC_DRAW);
+
+	//Color VBO
+	glGenBuffers (1, &vboColor);
+	glBindBuffer (GL_ARRAY_BUFFER, vboColor);
+	glBufferData (GL_ARRAY_BUFFER, vboColorSize,     vboColorArray.get(), GL_STATIC_DRAW);
+
+	//Animation VBO
+	glGenBuffers (1, &vboAnimation);
+	glBindBuffer (GL_ARRAY_BUFFER, vboAnimation);
+	glBufferData (GL_ARRAY_BUFFER, vboAnimationSize,     vboAnimationArray.get(), GL_STATIC_DRAW);
+
+    //Generate VAO
+	glGenVertexArrays (1, &vao);
+	glBindVertexArray (vao);
+
+	//Bind Vertex to 0
+	glBindBuffer (GL_ARRAY_BUFFER, vboVertex);
+	glVertexAttribPointer (0, vertexAttributeSize, vertexAttributeType, GL_FALSE, 0, NULL);
+
+	//Bind Texture to 1
+	glBindBuffer (GL_ARRAY_BUFFER, vboTexture);
+	glVertexAttribPointer (1, textureAttributeSize, textureAttributeType, GL_FALSE, 0, NULL);
+
+	//Bind Color to 2
+	glBindBuffer (GL_ARRAY_BUFFER, vboColor);
+	glVertexAttribPointer (2, colorAttributeSize, colorAttributeType, GL_FALSE, 0, NULL);
+
+	//Bind Animation to 3
+	glBindBuffer (GL_ARRAY_BUFFER, vboColor);
+	glVertexAttribPointer (3, colorAttributeSize, animationAttributeType, GL_FALSE, 0, NULL);
+
+	glEnableVertexAttribArray (0);
+	glEnableVertexAttribArray (1);
+	glEnableVertexAttribArray (2);
+	glEnableVertexAttribArray (3);
+}
+
+void VAOWrapperTile::UpdateGPU(){
+    //upload vertexTexture array along with any changed data
+    glBindBuffer (GL_ARRAY_BUFFER, vboVertex);
+    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboVertexSize, vboVertexArray.get());
+
+    glBindBuffer (GL_ARRAY_BUFFER, vboTexture);
+    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboTextureSize, vboTextureArray.get());
+
+    glBindBuffer (GL_ARRAY_BUFFER, vboColor);
+    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboColorSize, vboColorArray.get());
+
+    glBindBuffer (GL_ARRAY_BUFFER, vboAnimation);
+    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboAnimationSize, vboAnimationArray.get());
+}
+
+VAOWrapperTile::~VAOWrapperTile(){
+    glDeleteVertexArrays(1, &vboVertex );
+    glDeleteVertexArrays(1, &vboColor  );
+    glDeleteVertexArrays(1, &vboTexture);
+    glDeleteVertexArrays(1, &vboAnimation);
+}
 
 ////////////////////
 //VAOWrapperSprite//
@@ -388,6 +471,8 @@ void RenderTiledTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
     Vec2 bottomRightVertex  (16.0f, 16.0f);
     Vec2 bottomLeftVertex   ( 0.0f, 16.0f);
 
+    Vec2 animation(1,0);
+
     float topTex, rightTex, leftTex, bottomTex;
     GID gid;
 
@@ -422,6 +507,11 @@ void RenderTiledTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
     vao.GetColorArray()[vertexIndex + 1] = color;
     vao.GetColorArray()[vertexIndex + 2] = color;
     vao.GetColorArray()[vertexIndex + 3] = color;
+
+    vao.GetAnimationArray()[vertexIndex]     = animation;
+    vao.GetAnimationArray()[vertexIndex + 1] = animation;
+    vao.GetAnimationArray()[vertexIndex + 2] = animation;
+    vao.GetAnimationArray()[vertexIndex + 3] = animation;
 }
 
 void RenderTiledTileLayer::BuildVAO(){
@@ -891,10 +981,12 @@ bool LOrderOBJs(RenderableObject* r1, RenderableObject* r2){
     return true;
 }
 
+
 GLuint RenderManager::GlobalCameraUBO=0;
+GLuint RenderManager::GlobalProgramUBO=0;
 
 RenderManager::RenderManager()
-    : CameraDataBindingIndex(1){
+    : CameraDataBindingIndex(1), ProgramDataBindingIndex(2), timeElapsed(0){
     listChange=false;
     nextTextID=0;
 
@@ -970,7 +1062,7 @@ RenderManager::RenderManager()
     //The memory location ID is then sent to each individual camera so that the cameras can bind
     //the needed data into the uniform buffer
     //This buffer stores a mat4 (proj matrix) and a vec2 (camera translation)
-                        //2 floats (padded to 4)for vec2, 16 for matrix
+                        //2 floats (padded to vec4)for vec2, 16 for matrix
     GLuint bufferSize=(sizeof(float)*4) + (sizeof(float)*16);
     glGenBuffers(1, &GlobalCameraUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
@@ -979,12 +1071,33 @@ RenderManager::RenderManager()
     glBindBufferBase(GL_UNIFORM_BUFFER, CameraDataBindingIndex, GlobalCameraUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+
+    if(GlobalProgramUBO!=0){return;}
+    //Create memory location on GPU to store uniform data for ALL SHADER PROGRAMS
+    //The memory location ID is then sent to each individual camera so that the cameras can bind
+    //the needed data into the uniform buffer
+        //This buffer stores the elapsed time
+    bufferSize=(sizeof(float)*4) + (sizeof(float)*16);
+    glGenBuffers(1, &GlobalProgramUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+    //Bind generated CPU buffer to the index
+    glBindBufferBase(GL_UNIFORM_BUFFER, ProgramDataBindingIndex, GlobalProgramUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
     //Link uniform buffer location with each program
     //Sprite batch program
     GLuint programHandle            = shaderProgramSpriteBatch.GetHandle();
     GLuint programUniformBlockHandle= shaderProgramSpriteBatch.GetUniformBlockHandle("CameraData");
     //Bind program GPU buffer to the index
     glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
+    try{
+        GLuint programUniformBlockHandleProgramData= shaderProgramSpriteBatch.GetUniformBlockHandle("ProgramData");
+        glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+    }
+    catch(LEngineShaderProgramException e){
+        //if the program doesn't use the program data block, the compiled code won't have one
+    }
 
 
     //Tile layer shader shader setup
@@ -992,6 +1105,13 @@ RenderManager::RenderManager()
     programUniformBlockHandle= shaderProgramTileLayer.GetUniformBlockHandle("CameraData");
     //Bind program GPU buffer to the index
     glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
+    try{
+        GLuint programUniformBlockHandleProgramData= shaderProgramSpriteBatch.GetUniformBlockHandle("ProgramData");
+        glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+    }
+    catch(LEngineShaderProgramException e){
+        //if the program doesn't use the program data block, the compiled code won't have one
+    }
 
 
     //Image layer shader shader setup
@@ -999,13 +1119,26 @@ RenderManager::RenderManager()
     programUniformBlockHandle= shaderProgramImage.GetUniformBlockHandle("CameraData");
     //Bind program GPU buffer to the index
     glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
-
+    try{
+        GLuint programUniformBlockHandleProgramData= shaderProgramSpriteBatch.GetUniformBlockHandle("ProgramData");
+        glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+    }
+    catch(LEngineShaderProgramException e){
+        //if the program doesn't use the program data block the compiled code won't have one
+    }
 
     //Light shader shader setup
     programHandle            = shaderProgramLight.GetHandle();
     programUniformBlockHandle= shaderProgramLight.GetUniformBlockHandle("CameraData");
     //Bind program GPU buffer to the index
     glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
+    try{
+        GLuint programUniformBlockHandleProgramData= shaderProgramSpriteBatch.GetUniformBlockHandle("ProgramData");
+        glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+    }
+    catch(LEngineShaderProgramException e){
+        //if the program doesn't use the program data block, the compiled code won't have one
+    }
 
 }
 
@@ -1017,6 +1150,15 @@ void RenderManager::OrderOBJs(){
 }
 
 void RenderManager::Render(){
+    glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
+    float timeValues [4];
+    timeValues[0]=timeElapsed;
+    timeValues[1]=0;
+    timeValues[2]=0;
+    timeValues[3]=0;
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float)*4), timeValues);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
     if(listChange){
          OrderOBJs(); //Sort by Depth
     }
@@ -1046,6 +1188,8 @@ void RenderManager::Render(){
     for(auto i=objectsScreen.begin(); i!=objectsScreen.end(); i++){
         if((*i)->render){(*i)->Render();}
     }
+
+    timeElapsed++;
 }
 
 void RenderManager::AssignCameraUBO(L_GL_Program* program){
