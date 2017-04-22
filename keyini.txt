@@ -1,0 +1,9 @@
+up    = w;
+down  = s;
+right = d;
+left  = a;
+use   = f;
+swing = e;
+throw = t;
+pause = p;
+whip  = c;

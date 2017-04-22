@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="LEngineUbuntu" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="Source/;Source/Components/;" />
+		<Option show_notes="0">
+			<notes>
+				<![CDATA[Style:
+	No hungarian notation (that includes 'mVar' type member variables)
+		instead, use 'this->var' to specify member variables;
+
+TODO:
+	Remove heightTrucation from CRECT, just makes things confusing
+		-Instead, when needing to subtract 1 from width/height
+			Just leave a comment explaining the situation
+
+	-Tile animations
+]]>
+			</notes>
+		</Option>
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/LEngineUbuntuDEBUG_BUILD" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option parameters="-map MAP1.tmx" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DGLEW_STATIC" />
+					<Add directory="/home/ryan/Documents/CPP/CPP_LIBS/freetype-2.5.5/include" />
+					<Add directory="/home/ryan/Documents/CPP/Libraries/LuaBridge-master/Source/LuaBridge" />
+					<Add directory="/home/ryan/Documents/CPP/Libraries/rapidxml-1.13" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add option="-lSOIL" />
+					<Add option="-llua5.2" />
+					<Add option="-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer" />
+					<Add option="-lphysfs" />
+					<Add option="-lGL -lGLU  -lglut -lGLEW" />
+					<Add option="-lfreetype" />
+					<Add directory="/home/ryan/Documents/CPP/CPP_LIBS/freetype-2.5.5" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/LEngineUbuntuRELEASE_BUILD" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-pg" />
+					<Add directory="/home/ryanl/Documents/CPP/CPP_LIBS/freetype-2.5.5/include" />
+					<Add directory="/home/ryanl/Documents/CPP/CPP_LIBS/LuaBridge/Source/LuaBridge" />
+					<Add directory="/home/ryanl/Documents/CPP/CPP_LIBS/rapidxml-1.13" />
+					<Add directory="/home/ryan/Documents/CPP/Libraries/LuaBridge-master/Source/LuaBridge" />
+					<Add directory="/home/ryan/Documents/CPP/Libraries/rapidxml-1.13" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add option="-lSOIL" />
+					<Add option="-llua5.2" />
+					<Add option="-lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer" />
+					<Add option="-lphysfs" />
+					<Add option="-lGL -lGLU  -lglut -lGLEW" />
+					<Add option="-lfreetype" />
+					<Add directory="/home/ryanl/Documents/CPP/CPP_LIBS/freetype-2.5.5" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Source/AudioSubsystem.cpp" />
+		<Unit filename="Source/AudioSubsystem.h" />
+		<Unit filename="Source/BaseComponent.cpp" />
+		<Unit filename="Source/BaseComponent.h" />
+		<Unit filename="Source/CommandLineArgs.cpp" />
+		<Unit filename="Source/CommandLineArgs.h" />
+		<Unit filename="Source/Components/CompCamera.cpp" />
+		<Unit filename="Source/Components/CompCamera.h" />
+		<Unit filename="Source/Components/CompCollision.cpp" />
+		<Unit filename="Source/Components/CompCollision.h" />
+		<Unit filename="Source/Components/CompEntityCollision.cpp" />
+		<Unit filename="Source/Components/CompEntityCollision.h" />
+		<Unit filename="Source/Components/CompInput.cpp" />
+		<Unit filename="Source/Components/CompInput.h" />
+		<Unit filename="Source/Components/CompLight.cpp" />
+		<Unit filename="Source/Components/CompLight.h" />
+		<Unit filename="Source/Components/CompParticle.cpp" />
+		<Unit filename="Source/Components/CompParticle.h" />
+		<Unit filename="Source/Components/CompParticleShaderDefinition.cpp" />
+		<Unit filename="Source/Components/CompPosition.cpp" />
+		<Unit filename="Source/Components/CompPosition.h" />
+		<Unit filename="Source/Components/CompScript.cpp" />
+		<Unit filename="Source/Components/CompScript.h" />
+		<Unit filename="Source/Components/CompSprite.cpp" />
+		<Unit filename="Source/Components/CompSprite.h" />
+		<Unit filename="Source/Defines.cpp" />
+		<Unit filename="Source/Defines.h" />
+		<Unit filename="Source/EntityManager.cpp" />
+		<Unit filename="Source/EntityManager.h" />
+		<Unit filename="Source/ErrorLog.cpp" />
+		<Unit filename="Source/Errorlog.h" />
+		<Unit filename="Source/Event.cpp">
+			<Option virtualFolder="Source/" />
+		</Unit>
+		<Unit filename="Source/Event.h" />
+		<Unit filename="Source/Exceptions.cpp" />
+		<Unit filename="Source/Exceptions.h" />
+		<Unit filename="Source/GameStates/GamePause.cpp" />
+		<Unit filename="Source/GameStates/GamePause.h" />
+		<Unit filename="Source/GameStates/GameStart.cpp" />
+		<Unit filename="Source/GameStates/GameStart.h" />
+		<Unit filename="Source/GenericContainer.h" />
+		<Unit filename="Source/IniHandler.cpp" />
+		<Unit filename="Source/IniHandler.h" />
+		<Unit filename="Source/Input.cpp" />
+		<Unit filename="Source/Input.h" />
+		<Unit filename="Source/Kernel.cpp" />
+		<Unit filename="Source/Kernel.h" />
+		<Unit filename="Source/LuaInterface.cpp" />
+		<Unit filename="Source/LuaInterface.h" />
+		<Unit filename="Source/Luna.hpp" />
+		<Unit filename="Source/Random.cpp" />
+		<Unit filename="Source/Random.h" />
+		<Unit filename="Source/RenderManager.cpp" />
+		<Unit filename="Source/RenderManager.h" />
+		<Unit filename="Source/Resources/LBackground.cpp" />
+		<Unit filename="Source/Resources/LBackground.h">
+			<Option virtualFolder="Source/Components/" />
+		</Unit>
+		<Unit filename="Source/Resources/LEvent.cpp">
+			<Option virtualFolder="Source/" />
+		</Unit>
+		<Unit filename="Source/Resources/LEvent.h" />
+		<Unit filename="Source/Resources/LHeightmap.cpp" />
+		<Unit filename="Source/Resources/LHeightmap.h" />
+		<Unit filename="Source/Resources/LMap.cpp" />
+		<Unit filename="Source/Resources/LMap.h" />
+		<Unit filename="Source/Resources/LObj.cpp" />
+		<Unit filename="Source/Resources/LObj.h" />
+		<Unit filename="Source/Resources/LScript.cpp" />
+		<Unit filename="Source/Resources/LScript.h" />
+		<Unit filename="Source/Resources/LSound.cpp" />
+		<Unit filename="Source/Resources/LSound.h" />
+		<Unit filename="Source/Resources/LSprite.cpp" />
+		<Unit filename="Source/Resources/LSprite.h" />
+		<Unit filename="Source/Resources/LTDF.cpp" />
+		<Unit filename="Source/Resources/LTDF.h" />
+		<Unit filename="Source/Resources/LTexture.cpp" />
+		<Unit filename="Source/Resources/LTexture.h" />
+		<Unit filename="Source/Resources/LglShader.cpp" />
+		<Unit filename="Source/Resources/LglShader.h" />
+		<Unit filename="Source/Resources/ResourceLoading.cpp" />
+		<Unit filename="Source/Resources/ResourceLoading.h" />
+		<Unit filename="Source/SDLInit.cpp" />
+		<Unit filename="Source/SDLInit.h" />
+		<Unit filename="Source/SmartPtr.h" />
+		<Unit filename="Source/StateManager.cpp" />
+		<Unit filename="Source/StateManager.h" />
+		<Unit filename="Source/glslHelper.cpp" />
+		<Unit filename="Source/glslHelper.h" />
+		<Unit filename="Source/main.cpp" />
+		<Unit filename="Source/physfs.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
