@@ -1,0 +1,12 @@
+Link the following libraries
+
+-lSOIL
+-llua5.2
+-lSDL -lSDLmain -lSDL_ttf -lSDL_mixer
+-lphysfs
+-lGL -lGLU  -lglut -lGLEW
+-lfreetype
+
+also needs
+rapidXML headers
+and LuaBridge headers

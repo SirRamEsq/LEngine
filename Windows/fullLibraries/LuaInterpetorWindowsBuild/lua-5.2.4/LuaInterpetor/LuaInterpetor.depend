@@ -1,0 +1,474 @@
+# depslib dependency file v1.0
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lapi.c
+	<stdarg.h>
+	<string.h>
+	"lua.h"
+	"lapi.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+	"lundump.h"
+	"lvm.h"
+
+1424527490 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lua.h
+	<stdarg.h>
+	<stddef.h>
+	"luaconf.h"
+
+1385054776 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\luaconf.h
+	<limits.h>
+	<stddef.h>
+	<stdio.h>
+	<math.h>
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lapi.h
+	"llimits.h"
+	"lstate.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\llimits.h
+	<limits.h>
+	<stddef.h>
+	"lua.h"
+	<assert.h>
+	<math.h>
+	<float.h>
+	<math.h>
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lstate.h
+	"lua.h"
+	"lobject.h"
+	"ltm.h"
+	"lzio.h"
+
+1399468498 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lobject.h
+	<stdarg.h>
+	"llimits.h"
+	"lua.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ltm.h
+	"lobject.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lzio.h
+	"lua.h"
+	"lmem.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lmem.h
+	<stddef.h>
+	"llimits.h"
+	"lua.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldebug.h
+	"lstate.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldo.h
+	"lobject.h"
+	"lstate.h"
+	"lzio.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lfunc.h
+	"lobject.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lgc.h
+	"lobject.h"
+	"lstate.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lstring.h
+	"lgc.h"
+	"lobject.h"
+	"lstate.h"
+
+1377874181 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ltable.h
+	"lobject.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lundump.h
+	"lobject.h"
+	"lzio.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lvm.h
+	"ldo.h"
+	"lobject.h"
+	"ltm.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lauxlib.c
+	<errno.h>
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	<sys/wait.h>
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lauxlib.h
+	<stddef.h>
+	<stdio.h>
+	"lua.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lbaselib.c
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lualib.h
+	"lua.h"
+
+1373389301 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lbitlib.c
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lcode.c
+	<stdlib.h>
+	"lua.h"
+	"lcode.h"
+	"ldebug.h"
+	"ldo.h"
+	"lgc.h"
+	"llex.h"
+	"lmem.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lparser.h"
+	"lstring.h"
+	"ltable.h"
+	"lvm.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lcode.h
+	"llex.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lparser.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\llex.h
+	"lobject.h"
+	"lzio.h"
+
+1413826329 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lopcodes.h
+	"llimits.h"
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lparser.h
+	"llimits.h"
+	"lobject.h"
+	"lzio.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lcorolib.c
+	<stdlib.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lctype.c
+	"lctype.h"
+	<limits.h>
+
+1365788927 l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lctype.h
+	"lua.h"
+	<limits.h>
+	"llimits.h"
+	<ctype.h>
+
+1424366215 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldblib.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1424365513 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldebug.c
+	<stdarg.h>
+	<stddef.h>
+	<string.h>
+	"lua.h"
+	"lapi.h"
+	"lcode.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+	"lvm.h"
+
+1383934970 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldo.c
+	<setjmp.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lapi.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lparser.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+	"lundump.h"
+	"lvm.h"
+	"lzio.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ldump.c
+	<stddef.h>
+	"lua.h"
+	"lobject.h"
+	"lstate.h"
+	"lundump.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lfunc.c
+	<stddef.h>
+	"lua.h"
+	"lfunc.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+
+1409586908 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lgc.c
+	<string.h>
+	"lua.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\linit.c
+	"lua.h"
+	"lualib.h"
+	"lauxlib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\liolib.c
+	<errno.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1423504594 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\llex.c
+	<locale.h>
+	<string.h>
+	"lua.h"
+	"lctype.h"
+	"ldo.h"
+	"llex.h"
+	"lobject.h"
+	"lparser.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"lzio.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lmathlib.c
+	<stdlib.h>
+	<math.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lmem.c
+	<stddef.h>
+	"lua.h"
+	"ldebug.h"
+	"ldo.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\loadlib.c
+	<windows.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+	<dlfcn.h>
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lobject.c
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lctype.h"
+	"ldebug.h"
+	"ldo.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+	"lvm.h"
+	<math.h>
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lopcodes.c
+	"lopcodes.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\loslib.c
+	<errno.h>
+	<locale.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+	<unistd.h>
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lparser.c
+	<string.h>
+	"lua.h"
+	"lcode.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"llex.h"
+	"lmem.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lparser.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+
+1383932731 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lstate.c
+	<stddef.h>
+	<string.h>
+	"lua.h"
+	"lapi.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lgc.h"
+	"llex.h"
+	"lmem.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+	<time.h>
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lstring.c
+	<string.h>
+	"lua.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lstrlib.c
+	<ctype.h>
+	<stddef.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ltable.c
+	<string.h>
+	"lua.h"
+	"ldebug.h"
+	"ldo.h"
+	"lgc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"lvm.h"
+
+1399476775 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ltablib.c
+	<limits.h>
+	<stddef.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\ltm.c
+	<string.h>
+	"lua.h"
+	"lobject.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lua.c
+	<signal.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"lauxlib.h"
+	"lualib.h"
+	<unistd.h>
+	<io.h>
+	<stdio.h>
+	<stdio.h>
+	<readline/readline.h>
+	<readline/history.h>
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lundump.c
+	<string.h>
+	"lua.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lmem.h"
+	"lobject.h"
+	"lstring.h"
+	"lundump.h"
+	"lzio.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lvm.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"lua.h"
+	"ldebug.h"
+	"ldo.h"
+	"lfunc.h"
+	"lgc.h"
+	"lobject.h"
+	"lopcodes.h"
+	"lstate.h"
+	"lstring.h"
+	"ltable.h"
+	"ltm.h"
+	"lvm.h"
+
+1365788927 source:l:\home\ryan\documents\cpp\projects\lengine\windows\luainterpetor\lua-5.2.4\src\lzio.c
+	<string.h>
+	"lua.h"
+	"llimits.h"
+	"lmem.h"
+	"lstate.h"
+	"lzio.h"
+

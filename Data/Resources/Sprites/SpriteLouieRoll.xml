@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sprite width and height is used to calculate where the origin is-->
+<sprite origin="center" width="18" height="18" transparentColor="ff00ff" textureName="Louie.png">
+	<animation name="Roll" speed="1.0">
+		<image x="18"  y="46" w="18" h="18"/>
+	</animation>
+</sprite>
