@@ -52,6 +52,7 @@ TiledSet::TiledSet(const TiledSet& rhs, GIDManager* g)
     : GIDEnabled(g), name(rhs.name), textureName(rhs.textureName), tileWidth(rhs.tileWidth), tileHeight(rhs.tileHeight){
     Init(rhs.GetFirstGID(), g);
     transparentColor = rhs.transparentColor;
+    tileAnimations = rhs.tileAnimations;
     //tileHMAPs = rhs.tileHMAPs;
 }
 
@@ -137,6 +138,12 @@ CRect TiledSet::GetTextureRectFromGID(GID id) const {
     x=indexValue;
     CRect returnVal(x*16, y*16, 16, 16);
     return returnVal; //posX, posY, TileWidth, TileHeight
+}
+
+const LAnimation* TiledSet::GetAnimationDataFromGID (GID id) const{
+    auto it = tileAnimations.find(id);
+    if(it == tileAnimations.end()){return NULL;}
+    return it->second;
 }
 
 void TiledSet::LoadHeightMaps(GID id){
@@ -1316,8 +1323,10 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
         if(spriteName != ""){
             const LSprite* spr = K_SpriteMan.GetLoadItem(spriteName, spriteName);
             if(spr != NULL){
-                ts->tileAnimations[tilePropertyID].sprite      = spr;
-                ts->tileAnimations[tilePropertyID].animation   = animationName;
+                const LAnimation* animation = spr->GetAnimation(animationName);
+                if(animation != NULL){
+                    ts->tileAnimations[tilePropertyID]   = animation;
+                }
             }
         }
         ts->tileProperties[tilePropertyID]=properties;
