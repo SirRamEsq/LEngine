@@ -135,12 +135,6 @@ class GIDManager{
 class TiledSet : public GIDEnabled{
     friend LMap;
 
-    //Simply a length and speed to define a tiled animation
-    struct TiledAnimation{
-        const LSprite* sprite;
-        std::string animation;
-    };
-
     public:
         TiledSet(const std::string& n, const std::string& tex, const unsigned int tileW, const unsigned int tileH, GID first, GIDManager* man);
         TiledSet(const TiledSet& rhs, GIDManager* g);
@@ -150,7 +144,7 @@ class TiledSet : public GIDEnabled{
         void        LoadHeightMaps                (GID id);
         bool        ContainsTile                  (GID id) const;
         void        GetTextureCoordinatesFromGID  (GID id, float& left, float& right, float& top, float& bottom) const;
-        void        GetAnimationDataFromGID       (GID id, float animationSpeed, float animationFrames) const;
+        const LAnimation* GetAnimationDataFromGID       (GID id) const;
         CRect       GetTextureRectFromGID         (GID id) const;
 
         LHeightmap        GetHeightMap  (GID id) const {return tileHMAPs.find(id)->second; }
@@ -169,7 +163,7 @@ class TiledSet : public GIDEnabled{
         const std::string textureName;
 
     protected:
-        std::map<GID, TiledAnimation> tileAnimations; //This can be directly accessed by LMap (for the purpose of loading the animations in from a file)
+        std::map<GID, const LAnimation*> tileAnimations; //This can be directly accessed by LMap (for the purpose of loading the animations in from a file)
 
     private:
         bool initializationOK;
