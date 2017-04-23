@@ -193,7 +193,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     PHYSFS_File *file= PHYSFS_openRead(fileName.c_str());
     PHYSFS_seek(file, 0);
 
-    uint64_t fileSize=PHYSFS_fileLength(file);
+    PHYSFS_sint64 fileSize=PHYSFS_fileLength(file);
     if(fileSize<0){
         PHYSFS_close(file);
         throw LEngineFileException("Couldn't Load Generic Item", fileName);

@@ -44,7 +44,7 @@ GIDEnabled* GIDManager::GetItem (const GID& index) const {
 ////////////
 //TiledSet//
 ////////////
-TiledSet::TiledSet(const std::string& n, const std::string& tex, const unsigned int& tileW, const unsigned int& tileH, GID first, GIDManager* man)
+TiledSet::TiledSet(const std::string& n, const std::string& tex, const unsigned int tileW, const unsigned int tileH, GID first, GIDManager* man)
     : GIDEnabled(man), name(n), textureName(tex), tileWidth(tileW), tileHeight(tileH){
     Init(first, man);
 }
@@ -847,18 +847,20 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
             bool externalTilesetFile = (tileSetSource!="");
             xml_node<>* tileSetRootNode=node;
             xml_document<> tileSetDoc;
+            std::unique_ptr<FileData> file;
+            std::string xmlFile;
             if(externalTilesetFile){
                 try{
+                    //Some where in here memory may not be allocated properly, leading the the node name corruption in the tileset loader
                     std::stringstream externalTilesetFilePath;
                     externalTilesetFilePath << "/Resources/Maps/" << tileSetSource;
 
-                    auto file = LoadGenericFile(externalTilesetFilePath.str());
+                    file.reset( LoadGenericFile(externalTilesetFilePath.str()).release() );
 
                     if(file.get()->length==0){ErrorLog::WriteToFile("File Length is null", ErrorLog::GenericLogFile);}
                     if(file.get()->GetData()==NULL){ErrorLog::WriteToFile("Data is null", ErrorLog::GenericLogFile);}
 
-                    std::string xmlFile(file->GetData(),file->length);
-                    //0 means default parse flags, for some reason, this line will crash only half the time
+                    xmlFile = std::string(file->GetData(),file->length);
                     tileSetDoc.parse<0>((char*)xmlFile.c_str());
 
                     tileSetRootNode = tileSetDoc.first_node("tileset");
@@ -1316,12 +1318,8 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
             if(spr != NULL){
                 ts->tileAnimations[tilePropertyID].sprite      = spr;
                 ts->tileAnimations[tilePropertyID].animation   = animationName;
-                ErrorLog::WriteToFile("2spriteName " + spriteName + " Ani " + animationName, ErrorLog::GenericLogFile);
             }
         }
-
-
-                ErrorLog::WriteToFile("spriteName " + spriteName + " Ani " + animationName, ErrorLog::GenericLogFile);
         ts->tileProperties[tilePropertyID]=properties;
 
     }

@@ -142,7 +142,7 @@ class TiledSet : public GIDEnabled{
     };
 
     public:
-        TiledSet(const std::string& n, const std::string& tex, const unsigned int& tileW, const unsigned int& tileH, GID first, GIDManager* man);
+        TiledSet(const std::string& n, const std::string& tex, const unsigned int tileW, const unsigned int tileH, GID first, GIDManager* man);
         TiledSet(const TiledSet& rhs, GIDManager* g);
         void Init(GID first, GIDManager* man);
 
