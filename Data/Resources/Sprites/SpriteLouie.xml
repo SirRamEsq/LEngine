@@ -5,12 +5,8 @@
 		<image x="18" y="0" w="18" h="32"/>
 	</animation>
 
-	<animation name="Walk" speed="1.0">
-		<image x="0"  y="0" w="18" h="32"/>
-		<image x="18" y="0" w="18" h="32"/>
-		<image x="36" y="0" w="18" h="32"/>
-		<image x="54" y="0" w="18" h="32"/>
-	</animation>
+	<!-- animation sequence auto build an animation based on animation frames in a sequence on a texture-->
+	<animationSequence name="Walk" speed="1.0" startX="0" startY="0" w="18" h="32" imgs="4"/>
 
 	<animation name="Jump" speed="1.0">
 		<image x="0"  y="32" w="18" h="32"/>
