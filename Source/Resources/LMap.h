@@ -150,6 +150,7 @@ class TiledSet : public GIDEnabled{
         void        LoadHeightMaps                (GID id);
         bool        ContainsTile                  (GID id) const;
         void        GetTextureCoordinatesFromGID  (GID id, float& left, float& right, float& top, float& bottom) const;
+        void        GetAnimationDataFromGID       (GID id, float animationSpeed, float animationFrames) const;
         CRect       GetTextureRectFromGID         (GID id) const;
 
         LHeightmap        GetHeightMap  (GID id) const {return tileHMAPs.find(id)->second; }

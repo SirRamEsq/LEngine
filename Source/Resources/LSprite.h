@@ -4,6 +4,8 @@
 #include "../Defines.h"
 #include "LTexture.h"
 
+#include "rapidxml.hpp"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -71,11 +73,18 @@ class LImage{
 		int mHalfHeight, mHalfWidth, mHalfHeightN, mHalfWidthN;
 };*/
 
+enum AnimationLoadTag{
+    LOAD_TAG_UNK = 0,
+    LOAD_TAG_ANIMATION           = 1,
+    LOAD_TAG_ANIMATION_SEQUENCE  = 2
+};
+
 class LAnimation{
     typedef std::vector<CRect> imageVec;
 
     public:
-        LAnimation(const double& spd=0.5f);
+        LAnimation(const double&, AnimationLoadTag t);
+
         ~LAnimation();
         void Clear();
 
@@ -93,6 +102,8 @@ class LAnimation{
         int NumberOfImages() const {return images.size();}
 
         void SetColorKey(int image, unsigned int r, unsigned int g, unsigned int b);
+
+        const AnimationLoadTag loadTag;
 
     protected:
         void DeleteImages();
@@ -149,6 +160,10 @@ class LSprite{
         int transparentColorRed;
         int transparentColorGreen;
         int transparentColorBlue;
+
+    private:
+        void LoadAnimation(rapidxml::xml_node<>* animationNode);
+        void LoadAnimationSequence(rapidxml::xml_node<>* animationNode);
 };
 
 #endif
