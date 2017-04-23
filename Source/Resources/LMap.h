@@ -137,8 +137,8 @@ class TiledSet : public GIDEnabled{
 
     //Simply a length and speed to define a tiled animation
     struct TiledAnimation{
-        unsigned int imgLength;
-        int          imgSpeed;
+        const LSprite* sprite;
+        std::string animation;
     };
 
     public:

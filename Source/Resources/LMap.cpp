@@ -640,8 +640,6 @@ void LMap::TMXLoadAttributesFromProperties(const PropertyMap* properties, Attrib
 void LMap::TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap& properties){
     using namespace rapidxml;
     xml_node<>* propertyNode=rootPropertyNode->first_node(); //pointing to property
-    std::string listenString="";
-    PropertyMap::iterator i;
 
     std::string nameString, valueString, typeString;
 
@@ -877,7 +875,6 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
                     ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
                 }
             }
-            ErrorLog::WriteToFile("EXTERNAL TS?", ErrorLog::GenericLogFile);
             //External Tilesets don't have their first gid included in their file, only the actual map assigns gids
             //that's why the first gid is passed as a separate value here
             tiledData->AddTileSet(TMXLoadTiledSet(tileSetRootNode, tilesetFirstGID));
@@ -1255,8 +1252,6 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
     GID tilesetFirstGID=firstGID;
     std::string name="";
 
-    ErrorLog::WriteToFile("CAN YOU LOD A TS?", ErrorLog::GenericLogFile);
-
     unsigned int tileWidth;
     unsigned int tileHeight;
 
@@ -1276,15 +1271,9 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
     //attributes["width"]         = Attribute("unsigned long",      &ts->imageWidth);
     //attributes["height"]        = Attribute("unsigned long",      &ts->imageHeight);
     TMXLoadAttributes(subNodeImage, attributes);
-    ErrorLog::WriteToFile("Need to make transparent color do something", ErrorLog::GenericLogFile);
 
     //Load tileset into engine and set firstGID
     auto returnSmartPonter = std::unique_ptr<TiledSet>(new TiledSet(name, textureName, tileWidth, tileHeight, tilesetFirstGID, &tiledData->gid));
-    ErrorLog::WriteToFile(name, ErrorLog::GenericLogFile);
-    ErrorLog::WriteToFile(textureName, ErrorLog::GenericLogFile);
-    ErrorLog::WriteToFile(std::to_string(tileWidth), ErrorLog::GenericLogFile );
-    ErrorLog::WriteToFile(std::to_string(tileHeight), ErrorLog::GenericLogFile);
-    ErrorLog::WriteToFile(std::to_string(tilesetFirstGID), ErrorLog::GenericLogFile);
 
     TiledSet* ts=returnSmartPonter.get();
     ts->transparentColor=transparentColor;
@@ -1311,49 +1300,31 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
         rapidxml::xml_node<> *subNodeTileProperty = subNodeTileRoot->first_node(); //Points toward <properties>
 
         PropertyMap properties;
-        TMXLoadProperties(subNodeTileRoot, properties);
+        TMXLoadProperties(subNodeTileProperty, properties);
 
         attributes.clear();
         //Store animation data in the tileAnimations data structure
-        attributes["IMG_LENGTH"] = Attribute("int",      &ts->tileAnimations[tilePropertyID].imgLength);
-        attributes["IMG_SPEED"]  = Attribute("int",      &ts->tileAnimations[tilePropertyID].imgSpeed);
-
-        ErrorLog::WriteToFile("DERP3.5 Crashes here", ErrorLog::GenericLogFile);
-
+        std::string spriteName = "";
+        std::string animationName = "";
+        attributes["SPRITE"]     = Attribute("string",      &spriteName);
+        attributes["ANIMATION"]  = Attribute("string",      &animationName);
         //Store all other properties in the tileProperties data structure of type map<string, string>
         TMXLoadAttributesFromProperties(&properties, attributes);
+
+        if(spriteName != ""){
+            const LSprite* spr = K_SpriteMan.GetLoadItem(spriteName, spriteName);
+            if(spr != NULL){
+                ts->tileAnimations[tilePropertyID].sprite      = spr;
+                ts->tileAnimations[tilePropertyID].animation   = animationName;
+                ErrorLog::WriteToFile("2spriteName " + spriteName + " Ani " + animationName, ErrorLog::GenericLogFile);
+            }
+        }
+
+
+                ErrorLog::WriteToFile("spriteName " + spriteName + " Ani " + animationName, ErrorLog::GenericLogFile);
         ts->tileProperties[tilePropertyID]=properties;
 
-        ErrorLog::WriteToFile("DERP4", ErrorLog::GenericLogFile);
     }
-    ErrorLog::WriteToFile("Int should be changed to float for IMG_SPEED In tiledmaps", ErrorLog::GenericLogFile);
-
-    /*K_TileSetMan->LoadItem(ts->GetTextureName(), ts);
-    LSprite* spr= new LSprite(ts->GetTextureName());
-    //spr->SetSpeed(0);
-    LAnimation* ani= new LAnimation(0);
-    int x=0;
-    int y=0;
-    for(GID it = ts->GetFirstGID(); it < ts->GetLastGID(); it++){
-        CRect r(x,y,LENGINE_DEF_TILE_W,LENGINE_DEF_TILE_H);
-        //ani->AppendImage(new LImage(ts->imagePath, r));
-
-        x+=LENGINE_DEF_TILE_W;
-        if(x >= ts->GetTexture()->GetWidth()){
-            y+=LENGINE_DEF_TILE_H;
-            x=0;
-        }
-    }*/
-
-    ErrorLog::WriteToFile("Remember to fix Tileset animations", ErrorLog::GenericLogFile);
-    //spr->AddAnimationA(ts->imagePath,ani);
-    //K_SpriteMan.LoadItem(ts->GetTextureName(), spr);
-
-    //Add Path to GID manager
-    //GIDManager::AddPathToLoaded(ts->GetTextureName());
-    //GIDManager::SetRangeFromPath(ts->GetTextureName(), tilesetEngineRange);
-
-    ErrorLog::WriteToFile("yup!", ErrorLog::GenericLogFile);
 
     return returnSmartPonter;
 }

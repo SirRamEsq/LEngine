@@ -27,6 +27,8 @@ class GenericContainer{
         bool LoadItem   (const std::string& name, std::unique_ptr<const T>& item);
         //Load item from filesystem with 'fname' as path and store it under 'name'
         bool LoadItem   (const std::string& name, const std::string& fname);
+        //Get Item if it exists, try loading if it doesn't
+        const T* GetLoadItem   (const std::string& name, const std::string& fname);
         void DeleteItem (const std::string& name);
 
         mapIt ItBegin(){return items.begin();}
@@ -70,20 +72,6 @@ std::unique_ptr<T> GenericContainer<T>::GetItemCopy(const std::string& name){
     }
     return NULL;
 }
-/*
-template <class T>
-bool GenericContainer<T>::ChangeItem(const std::string& name, T* item){
-    mapIt i=items.find(name);
-    if(i==items.end()){
-       return false;
-    }
-
-    T* oldItem=(*i)->second;
-    (*i).second=item;
-    delete oldItem;
-
-    return true;
-}*/
 
 template <class T>
 bool GenericContainer<T>::LoadItem(const std::string& name, std::unique_ptr<const T>& item){
@@ -130,5 +118,18 @@ void GenericContainer<T>::DeleteItem(const std::string& name){
         items.erase(i);
         delete(item);
     }
+}
+
+template <class T>
+const T* GenericContainer<T>::GetLoadItem   (const std::string& name, const std::string& fname){
+    const T* item=GetItem(fname);
+    if(item==NULL){
+        if(LoadItem(name,fname)==false){
+            ErrorLog::WriteToFile("Could not get or load item named " + name + " At path " + fname, ErrorLog::GenericLogFile);
+            return NULL;
+        }
+        item=GetItem(fname);
+    }
+    return item;
 }
 #endif
