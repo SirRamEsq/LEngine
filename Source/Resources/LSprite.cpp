@@ -198,7 +198,7 @@ void LSprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
     attribute = animationNode->first_attribute("speed");
     if(attribute!=NULL){speed=attribute->value();}
 
-    animations.insert(std::make_pair(animationName, LAnimation( (atof(speed.c_str())), LOAD_TAG_ANIMATION)));
+    animations.insert(std::make_pair(animationName, LAnimation( (atof(speed.c_str())), LOAD_TAG_ANIMATION_SEQUENCE)));
     animation=&animations.find(animationName)->second;
 
     //Get parameters from xml node attributes
