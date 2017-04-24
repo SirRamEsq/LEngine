@@ -1325,7 +1325,19 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
             if(spr != NULL){
                 const LAnimation* animation = spr->GetAnimation(animationName);
                 if(animation != NULL){
-                    ts->tileAnimations[tilePropertyID]   = animation;
+                    /*
+                    Only load if the animation was created via animation sequence
+                    (Meaning that the animation frames are contiguous on the texture)
+                    */
+                    if(animation->loadTag == LOAD_TAG_ANIMATION_SEQUENCE){
+                        ts->tileAnimations[tilePropertyID]   = animation;
+                    }
+                    else{
+                        ErrorLog::WriteToFile("[C++] LMap::TMXLoadTiledSet; For TileSet " + name
+                                              + ": Animation named " + animationName + " in Sprite " + spriteName
+                                              + " cannot be loaded as it was not defined using an 'animationSequence' tag",
+                                              ErrorLog::GenericLogFile);
+                    }
                 }
             }
         }
