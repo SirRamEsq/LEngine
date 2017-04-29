@@ -224,7 +224,7 @@ class VAOWrapperTile{
         void UpdateGPU();
 
         Vec2*  GetVertexArray         (){return vboVertexArray.get();         }
-        Vec2*  GetTextureArray        (){return vboTextureArray.get();        }
+        Vec4*  GetTextureArray        (){return vboTextureArray.get();        }
         Vec2*  GetAnimationArray      (){return vboAnimationArray.get();      }
         Vec4*  GetColorArray          (){return vboColorArray.get();          }
 
@@ -239,7 +239,7 @@ class VAOWrapperTile{
         GLuint vao;
 
         std::unique_ptr< Vec2 [] > vboVertexArray         ;
-        std::unique_ptr< Vec2 [] > vboTextureArray        ;
+        std::unique_ptr< Vec4 [] > vboTextureArray        ;
         std::unique_ptr< Vec2 [] > vboAnimationArray      ;
         std::unique_ptr< Vec4 [] > vboColorArray          ;
 
@@ -254,8 +254,8 @@ class VAOWrapperTile{
         const GLint vertexAttributeSize         = 2;
         const GLenum vertexAttributeType        = GL_FLOAT;
 
-        //Each texture coordinate for each vertex point consists of 2 floats    [S,T] (vec2)
-        const GLint textureAttributeSize        = 2;
+        //Each texture coordinate for each vertex point consists of 4 floats    [S,T, texW,texH] (vec2)
+        const GLint textureAttributeSize        = 4;
         const GLenum textureAttributeType       = GL_FLOAT;
 
         //Each Color for each vertex point consists of 4 floats                 [RGBA], (vec4)

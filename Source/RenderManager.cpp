@@ -174,12 +174,12 @@ VAOWrapper::~VAOWrapper(){
 VAOWrapperTile::VAOWrapperTile(const unsigned int& maxSize)
     : vboMaxSize(maxSize),
     vboVertexSize         (maxSize * sizeof(Vec2)  * 4),//4 verticies per object
-    vboTextureSize        (maxSize * sizeof(Vec2)  * 4),
+    vboTextureSize        (maxSize * sizeof(Vec4)  * 4),
     vboColorSize          (maxSize * sizeof(Vec4)  * 4),
     vboAnimationSize      (maxSize * sizeof(Vec2)  * 4),
 
     vboVertexArray            ( new Vec2           [maxSize * 4] ),
-	vboTextureArray           ( new Vec2           [maxSize * 4] ),
+	vboTextureArray           ( new Vec4           [maxSize * 4] ),
 	vboColorArray             ( new Vec4           [maxSize * 4] ),
 	vboAnimationArray         ( new Vec2           [maxSize * 4] ){
 
@@ -475,6 +475,8 @@ void RenderTiledTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
     Vec2 animationVertex(0,1);
 
     float topTex, rightTex, leftTex, bottomTex;
+    float textureWidth = tiledSet->GetTexture()->GetWidth();
+    float textureHeight = tiledSet->GetTexture()->GetHeight();
     GID gid;
 
     Vec4 color;
@@ -500,10 +502,10 @@ void RenderTiledTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
     }
 
     tiledSet->GetTextureCoordinatesFromGID(gid, leftTex,rightTex,topTex,bottomTex);
-    Vec2 topLeftTex     (leftTex,  topTex);
-    Vec2 topRightTex    (rightTex, topTex);
-    Vec2 bottomLeftTex  (rightTex, bottomTex);
-    Vec2 bottomRightTex (leftTex,  bottomTex);
+    Vec4 topLeftTex     (leftTex,  topTex, textureWidth, textureHeight);
+    Vec4 topRightTex    (rightTex, topTex, textureWidth, textureHeight);
+    Vec4 bottomLeftTex  (rightTex, bottomTex, textureWidth, textureHeight);
+    Vec4 bottomRightTex (leftTex,  bottomTex, textureWidth, textureHeight);
 
     vao.GetTextureArray()[vertexIndex]     = topLeftTex;
     vao.GetTextureArray()[vertexIndex + 1] = topRightTex;
