@@ -37,12 +37,6 @@ class FileData{
 class Kernel;//Forward Declare
 
 std::unique_ptr<FileData> LoadGenericFile (const std::string& fileName);
-
-LSprite*        LoadSPR     (const std::string& fname);
-LMusic*         LoadMUS     (const std::string& fname);
-LSound*         LoadSND     (const std::string& fname);
-LTexture*       LoadTEX     (const std::string& fname);
-LScript*        LoadSCRIPT  (const std::string& fname);
 LEvent*         LoadEVENT   (const std::string& fname);
 LMap*           LoadMAP     (const std::string& fname);
 

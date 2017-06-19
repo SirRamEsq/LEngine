@@ -23,6 +23,23 @@ LSound::~LSound(){
     Mix_FreeChunk(chunk);
 }
 
+std::unique_ptr<LSound> LSound::LoadResource(const std::string& fname){
+    LSound* sound = NULL;
+    try{
+        std::string fullPath = "Resources/Sounds/"+fname;
+        auto data=LoadGenericFile(fullPath);
+        if(data.get()->GetData()==NULL){
+            return NULL;
+        }
+        sound = new LSound(fname, data.get()->GetData(), data.get()->length);
+    }
+    catch(LEngineFileException e){
+        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+    }
+
+    return sound;
+}
+
 //////////
 //LMUSIC//
 //////////
@@ -37,4 +54,20 @@ LMusic::LMusic(const std::string& name, char* data, unsigned int dataSize) : mus
 
 LMusic::~LMusic(){
     Mix_FreeMusic(music);
+}
+std::unique_ptr<LMusic> LMusic::LoadResource(const std::string& fname){
+    LMusic* music = NULL;
+    try{
+        std::string fullPath = "Resources/Music/"+fname;
+        auto data=LoadGenericFile(fullPath);
+        if(data.get()->GetData()==NULL){
+            return NULL;
+        }
+        music = new LMusic(fname, data.get()->GetData(), data.get()->length);
+    }
+    catch(LEngineFileException e){
+        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+    }
+
+    return music;
 }

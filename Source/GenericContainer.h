@@ -12,7 +12,7 @@ class GenericContainer{
     typedef std::map<std::string, std::unique_ptr<const T> > tMap;
     typedef typename tMap::iterator mapIt;
 
-    typedef T* (*LoadFunction)(const std::string&); //function pointer called "LoadFunction"
+    typedef std::unique_ptr<T> (*LoadFunction)(const std::string&); //function pointer called "LoadFunction"
 
     public:
         GenericContainer();
@@ -104,7 +104,7 @@ bool GenericContainer<T>::LoadItem(const std::string& name, const std::string& f
         return false;
     }
 
-    items[name]=std::unique_ptr<const T> (newItem.release());
+    items[name]=std::move(newItem);
     return true;
 }
 
@@ -114,21 +114,26 @@ void GenericContainer<T>::DeleteItem(const std::string& name){
     if(i==items.end()){return;}
 
     else{
-        T* item = (*i).second;
         items.erase(i);
-        delete(item);
     }
 }
 
+/** \breif Will try to get then load specified resource
+ *
+ * \param name of resource
+ * \param fpath of resource
+ * \return
+ *
+ */
 template <class T>
 const T* GenericContainer<T>::GetLoadItem   (const std::string& name, const std::string& fname){
-    const T* item=GetItem(fname);
+    const T* item=GetItem(name);
     if(item==NULL){
         if(LoadItem(name,fname)==false){
             ErrorLog::WriteToFile("Could not get or load item named " + name + " At path " + fname, ErrorLog::GenericLogFile);
             return NULL;
         }
-        item=GetItem(fname);
+        item=GetItem(name);
     }
     return item;
 }

@@ -1,21 +1,21 @@
 #ifndef L_SPRITE
 #define L_SPRITE
 
-#include "../Defines.h"
 #include "LTexture.h"
+#include "../GenericContainer.h"
 
 #include "rapidxml.hpp"
 
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 //SpriteContainer owns sprites
 //sprites own animations
 //animations own images
 //images do not own textures
 
-class Kernel;//Forward Declare
 /*
 class LImage{
     public:
@@ -160,6 +160,8 @@ class LSprite{
         int transparentColorRed;
         int transparentColorGreen;
         int transparentColorBlue;
+
+        static std::unique_ptr<LSprite> LoadResource(const std::string& fname);
 
     private:
         void LoadAnimation(rapidxml::xml_node<>* animationNode);

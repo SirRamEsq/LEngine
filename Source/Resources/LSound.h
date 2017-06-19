@@ -13,6 +13,8 @@ class LSound{
 
         const std::string soundName;
 
+        static std::unique_ptr<LSound> LoadResource(const std::string& fname);
+
     private:
         Mix_Chunk* chunk;
 };
@@ -22,6 +24,8 @@ class LMusic{
         LMusic(const std::string& name, char* data, unsigned int dataSize);
         ~LMusic();
         std::string musicName;
+
+        static std::unique_ptr<LMusic> LoadResource(const std::string& fname);
 
     private:
         Mix_Music* music;

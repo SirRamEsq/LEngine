@@ -1,99 +1,6 @@
 #include "ResourceLoading.h"
-#include "../Kernel.h"
 
-LSprite* LoadSPR(const std::string& fname){
-    LSprite* sprite = NULL;
-    try{
-        std::string fullPath = "Resources/Sprites/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        sprite = new LSprite(fname);
-        if(sprite->LoadFromXML(data.get()->GetData(), data.get()->length)==false){
-            ErrorLog::WriteToFile("Couldn't parse XML Sprite Data for sprite " + fname, ErrorLog::GenericLogFile);
-            delete sprite;
-            return NULL;
-        }
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return sprite;
-}
-
-LMusic* LoadMUS(const std::string& fname){
-    LMusic* music = NULL;
-    try{
-        std::string fullPath = "Resources/Music/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        music = new LMusic(fname, data.get()->GetData(), data.get()->length);
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return music;
-}
-
-LSound* LoadSND(const std::string& fname){
-    LSound* sound = NULL;
-    try{
-        std::string fullPath = "Resources/Sounds/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        sound = new LSound(fname, data.get()->GetData(), data.get()->length);
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return sound;
-}
-
-LTexture* LoadTEX(const std::string& fname){
-    LTexture* texture = NULL;
-    try{
-        std::string fullPath = "Resources/Images/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        texture = new LTexture((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
-        texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return texture;
-
-}
-
-LScript* LoadSCRIPT(const std::string& fname){
-    LScript* script = NULL;
-    try{
-        std::string fullPath = "Resources/Scripts/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        script = new LScript(fname, data.get()->GetData(), data.get()->length);
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return script;
-}
-
-
+/*
 LEvent* LoadEVENT(const std::string& fname){
     std::string strfname;
     //Look in the "Resources" folder in the zip file
@@ -181,7 +88,7 @@ LMap* LoadMAP(const std::string& fname){
     }
 
     return lmap;
-}
+}*/
 
 std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     if(PHYSFS_exists(fileName.c_str())==0){
