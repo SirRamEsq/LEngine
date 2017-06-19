@@ -12,6 +12,7 @@ class LScript{
 
         const std::string script;
         const std::string scriptName;
+        static std::unique_ptr<LScript> LoadResource(const std::string& fname);
 };
 
 #endif

@@ -1,7 +1,10 @@
 #include "LSprite.h"
 
-#include "../Kernel.h"
+#include "ResourceLoading.h"
+#include "../Defines.h"
 
+#include <stdio.h>
+#include <string.h>
 //////////////
 //LAnimation//
 //////////////
@@ -129,7 +132,6 @@ bool LSprite::LoadFromXML(const char* dat, unsigned int fsize){
 
         attribute = node->first_attribute("textureName");
         if(attribute!=NULL){mTextureName=attribute->value();}
-        K_TextureMan.LoadItem(mTextureName, mTextureName);
 
 
     xml_node<>* animationNode=node->first_node(); //point to the first child of <sprite>
@@ -223,5 +225,25 @@ void LSprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
 
         rect.x += rect.w;
     }
+}
 
+std::unique_ptr<LSprite> LSprite::LoadResource(const std::string& fname){
+    std::unique_ptr<LSprite> sprite = NULL;
+    try{
+        std::string fullPath = "Resources/Sprites/"+fname;
+        auto data=LoadGenericFile(fullPath);
+        if(data.get()->GetData()==NULL){
+            return NULL;
+        }
+        sprite = make_unique<LSprite>(fname);
+        if(sprite->LoadFromXML(data.get()->GetData(), data.get()->length)==false){
+            ErrorLog::WriteToFile("Couldn't parse XML Sprite Data for sprite " + fname, ErrorLog::GenericLogFile);
+            return NULL;
+        }
+    }
+    catch(LEngineFileException e){
+        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+    }
+
+    return sprite;
 }

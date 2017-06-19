@@ -42,6 +42,8 @@ class LTexture{
 
         static void BindNull();
 
+        static std::unique_ptr<LTexture> LoadResource(const std::string& fname);
+
     private:
         void DeleteGLTexture();
         void LoadFile(const std::string& fName);

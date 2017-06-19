@@ -8,10 +8,13 @@
 #define GLEW_STATIC
 
 #include <string>
+
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
 
+
+#include <memory>
 #include <sstream>
 
 #define LENGINE_DEF_TILE_W 16
@@ -310,6 +313,13 @@ T StringToNumber ( const std::string &Text ){//Text not by const reference so th
 	std::stringstream ss(Text);
 	T result;
 	return ss >> result ? result : 0;
+}
+
+//Herb sutters make_unique function
+//https://herbsutter.com/gotw/_102/
+template<typename T, typename ...Args>
+std::unique_ptr<T> make_unique( Args&& ...args ){
+    return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
 }
 
 //Double packing, not mine

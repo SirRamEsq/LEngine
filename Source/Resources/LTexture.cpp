@@ -1,6 +1,8 @@
 #include "LTexture.h"
 
+#include "ResourceLoading.h"
 #include <cstring>
+#include <string>
 
 GLuint LTexture::GLBoundTexture=0;
 
@@ -205,7 +207,7 @@ int LTexture::RenderToTexture(const CRect& area, LTexture* otherTexture, LOrigin
 
     GLint errorcode=glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(errorcode != GL_FRAMEBUFFER_COMPLETE){
-        ErrorLog::WriteToFile("ERROR: Framebuffer not complete, error code: " + std::to_string(errorcode), ErrorLog::GenericLogFile);
+        ErrorLog::WriteToFile("ERROR: Framebuffer not complete, error code: " + errorcode, ErrorLog::GenericLogFile);
         return false;
     }
 
@@ -253,4 +255,23 @@ void LTexture::Clear(){
     Bind();
     glClearColor( 1.f, 0.f, 1.f, 1.f );
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
+    std::unique_ptr<LTexture> texture = NULL;
+    try{
+        std::string fullPath = "Resources/Images/"+fname;
+        auto data=LoadGenericFile(fullPath);
+        if(data.get()->GetData()==NULL){
+            return NULL;
+        }
+        texture = make_unique<LTexture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
+        texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
+    }
+    catch(LEngineFileException e){
+        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+    }
+
+    return texture;
+
 }
