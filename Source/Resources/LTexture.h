@@ -12,6 +12,8 @@
 
 class LTexture{
     public:
+        class Exception : public LEngineException{using LEngineException::LEngineException;};
+
         void SetColorKey(unsigned char Red, unsigned char Green, unsigned char Blue, bool useCurrentAlpha=false);
 
         int GetWidth()       const {return mTexData.width;}
