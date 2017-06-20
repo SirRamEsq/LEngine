@@ -4,6 +4,10 @@
 #include <exception>
 #include <string>
 
+//Ideally, whatever class wants to use this should inheret it's own exception from it using
+//class Exception : public LEngineException{using LEngineException::LEngineException;};
+//This way exception types can be specified with SomeClass::Exception
+//and LEngineException can be used to refer to any engine generated exception
 class LEngineException : public std::exception{
     public:
         LEngineException(const std::string& w) : wot(w){}
@@ -12,6 +16,7 @@ class LEngineException : public std::exception{
             return wot.c_str();
         }
 
+    private:
         const std::string wot;
 };
 

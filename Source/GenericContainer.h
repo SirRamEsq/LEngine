@@ -35,6 +35,8 @@ class GenericContainer{
         mapIt ItEnd()  {return items.end();  }
         int GetSize()  {return items.size(); }
 
+        void Clear();
+
     private:
         tMap items;
         LoadFunction function;
@@ -52,6 +54,12 @@ GenericContainer<T>::GenericContainer(){
 
 template <class T>
 GenericContainer<T>::~GenericContainer(){
+    Clear();
+}
+
+template <class T>
+void GenericContainer<T>::Clear(){
+    function = NULL;
     items.clear();
 }
 

@@ -1,6 +1,7 @@
 #include "LTexture.h"
 
 #include "ResourceLoading.h"
+#include "../Defines.h"
 #include <cstring>
 #include <string>
 
@@ -92,7 +93,10 @@ void LTexture::UpdateDataFromGL(){
 bool LTexture::ExportTexture(const char* path) const {
     //UpdateDataFromGL();
     if(SOIL_save_image(path,SOIL_SAVE_TYPE_BMP,mTexData.width,mTexData.height,mBytesPerPixel,mTexData.data.get())==0){
-        ErrorLog::WriteToFile("Texture Write to Disk Failed", ErrorLog::GenericLogFile);
+        std::string pathString (path);
+        std::string errorString = "Texture Write to Disk Failed @ Path: " + pathString;
+        ErrorLog::WriteToFile(errorString, ErrorLog::GenericLogFile);
+        throw Exception(errorString);
     }
 }
 
@@ -117,6 +121,16 @@ void LTexture::Bind() const {
     if(mGLID==0){
 		// Generate one new texture Id.
 		glGenTextures(1,&mGLID);
+
+		if(mGLID == 0){//error
+            auto glError = glGetError();
+            std::string glMessage = reinterpret_cast<const char*>(gluErrorString(glError));
+            std::string exceptionMessage = "OpenGL cannot generate texture ID; Failed with error \"" + glMessage + "\"";
+            if(glError == GL_INVALID_OPERATION){
+                exceptionMessage += "\nIs OpenGL Initialized?";
+            }
+            throw Exception(exceptionMessage);
+		}
 
 		// Make this texture active
 		glBindTexture(GL_TEXTURE_2D,mGLID);
@@ -253,7 +267,7 @@ void LTexture::BlitArea(const CRect& are, LOrigin origin) const{
 
 void LTexture::Clear(){
     Bind();
-    glClearColor( 1.f, 0.f, 1.f, 1.f );
+    glClearColor( 1.0f, 0.0f, 1.0f, 1.0f );
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -270,6 +284,7 @@ std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
     }
     catch(LEngineFileException e){
         ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        throw e;
     }
 
     return texture;

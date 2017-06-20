@@ -1,6 +1,8 @@
 #ifndef RY_ERRORLOG
 #define RY_ERRORLOG
 
+#include "Exceptions.h"
+
 #include <fstream>
 #include <string>
 #include <map>
@@ -8,15 +10,7 @@
 
 class ErrorLog{;
     public:
-        class Exception : std::exception{
-            public:
-                Exception(const std::string& w) : wot(w){}
-
-                virtual const char* what () const throw () {
-                    return wot.c_str();
-            }
-            const std::string wot;
-        };
+        class Exception : public LEngineException{using LEngineException::LEngineException;};
 
         enum class SEVERITY{
             FATAL = 0,

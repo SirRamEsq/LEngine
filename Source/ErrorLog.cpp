@@ -1,5 +1,5 @@
 #include "Errorlog.h"
-#include "HelperFunctions.h"
+#include "Defines.h"
 #include <exception>
 
 std::map<std::string, std::unique_ptr<std::ofstream> > ErrorLog::errorFiles;
