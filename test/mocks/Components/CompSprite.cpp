@@ -1,5 +1,5 @@
-#include "CompSprite.h"
-#include "../Kernel.h"
+#include "../../../Source/Components/CompSprite.h"
+#include "../../../Source/Kernel.h"
 
 #ifdef TEST_ComponentScript_MOCK
 

@@ -1,5 +1,5 @@
-#include "CompLight.h"
-#include "../Kernel.h"
+#include "../../../Source/Components/CompLight.h"
+#include "../../../Source/Kernel.h"
 
 //Only use this file if mocking
 #ifdef TEST_ComponentLight_MOCK

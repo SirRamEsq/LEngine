@@ -1,4 +1,4 @@
-#include "CompCamera.h"
+#include "../../../Source/Components/CompCamera.h"
 #include "math.h"
 //Only use this file if mocking
 #ifdef TEST_ComponentCamera_MOCK

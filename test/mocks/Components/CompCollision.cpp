@@ -1,5 +1,5 @@
-#include "CompCollision.h"
-#include "../Kernel.h"
+#include "../../../Source/Components/CompCollision.h"
+#include "../../../Source/Kernel.h"
 #include "math.h"
 //Only use this file if mocking
 #ifdef TEST_ComponentCollision_MOCK

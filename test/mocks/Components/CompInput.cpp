@@ -1,5 +1,5 @@
-#include "CompInput.h"
-#include "../Kernel.h"
+#include "../../../Source/Components/CompInput.h"
+#include "../../../Source/Kernel.h"
 
 //Only use this file if mocking
 #ifdef TEST_ComponentCamera_MOCK

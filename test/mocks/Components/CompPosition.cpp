@@ -1,4 +1,4 @@
-#include "CompPosition.h"
+#include "../../../Source/Components/CompPosition.h"
 #include "math.h"
 #include "../../../Source/Errorlog.h"
 
