@@ -1,5 +1,5 @@
-#include "Event.h"
-#include "Kernel.h"
+#include "../../Source/Event.h"
+#include "../../Source/Kernel.h"
 
 #ifdef TEST_Event_MOCK
 

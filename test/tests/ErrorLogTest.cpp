@@ -1,7 +1,7 @@
-#include "catch.hpp"
-#include "../../Source/IniHandler.h"
+#include "../catch.hpp"
+//#include "../../Source/IniHandler.h"
 #include "../../Source/Errorlog.h"
-/*
+
 TEST_CASE( "ErrorLog can write to default file", "[errorlog]" ) {
     //Using C11 Lambda
     REQUIRE_NOTHROW([&](){
@@ -35,4 +35,3 @@ TEST_CASE( "ErrorLog throws when given unusable file name", "[errorlog]" ) {
     std::string willThrowLogName = "loglkjanrgf983u9546][\\///2";
     REQUIRE_THROWS_AS(  ErrorLog::WriteToFile("TEST", willThrowLogName), ErrorLog::Exception );
 }
-*/

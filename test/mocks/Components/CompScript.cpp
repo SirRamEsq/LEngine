@@ -1,7 +1,7 @@
-#include "CompScript.h"
+#include "../../../Source/Components/CompScript.h"
 
-#include "../Kernel.h"
-#include "CompCollision.h"
+#include "../../../Source/Kernel.h"
+#include "../../../Source/Components/CompCollision.h"
 #include <sstream>
 
 #ifdef TEST_ComponentScript_MOCK

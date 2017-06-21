@@ -1,4 +1,4 @@
-#include "Kernel.h"
+#include "../../Source/Kernel.h"
 #ifdef TEST_Kernel_MOCK
 
 Kernel*                     Kernel::pointertoself;

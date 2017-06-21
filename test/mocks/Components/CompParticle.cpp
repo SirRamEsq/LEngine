@@ -1,6 +1,6 @@
-#include "CompParticle.h"
+#include "../../../Source/Components/CompParticle.h"
 #include <math.h>
-#include "../Kernel.h"
+#include "../../../Source/Kernel.h"
 
 //Only use this file if mocking
 #ifdef TEST_ComponentParticle_MOCK

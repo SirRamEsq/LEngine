@@ -1,6 +1,6 @@
-#include "catch.hpp"
+#include "../catch.hpp"
 #include "../../Source/Kernel.h"
-/*
+
 TEST_CASE( "Can Load and Bind Texture", "[resources][texture]" ) {
     Kernel::Inst();
 
@@ -30,4 +30,4 @@ TEST_CASE( "Can Load and Bind Texture", "[resources][texture]" ) {
 
     itemCount = Kernel::rscTexMan.GetSize();
     REQUIRE(itemCount == 0);
-}*/
+}

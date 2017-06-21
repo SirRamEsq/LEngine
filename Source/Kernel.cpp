@@ -33,6 +33,13 @@ void Kernel::Close(){
     ErrorLog::CloseFiles();
     SDLMan->CloseSDL();
 
+    rscTexMan    .Clear();
+    rscSpriteMan .Clear();
+    rscMusicMan  .Clear();
+    rscSoundMan  .Clear();
+    rscScriptMan .Clear();
+    rscMapMan    .Clear();
+
     delete entMan;
 }
 
