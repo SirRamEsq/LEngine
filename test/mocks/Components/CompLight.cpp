@@ -1,10 +1,12 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
+//Only use this file if mocking
+#ifdef TEST_ComponentLight_MOCK
+
 ///////////////
 //LightSource//
 ///////////////
-
 LightSource::LightSource(const float& iStart, const float& iEnd, const float& rad, const float& n, const Vec2& off)
     : intensityStart(iStart), intensityEnd(iEnd), radius(rad), noise(n), offset(off){
     render=true;
@@ -70,3 +72,5 @@ void ComponentLightManager::BuildVAOFirst(){
 void ComponentLightManager::BuildVAO(){
 
 }
+
+#endif // TEST_ComponentCamera_MOCK

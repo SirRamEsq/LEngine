@@ -3,6 +3,8 @@
 #include "StateManager.h"
 #include "EntityManager.h"
 
+#ifndef TEST_Event_MOCK
+
 EventDispatcher::EventDispatcher(GameStateManager* gs, EntityManager* em){
     gameStateManager  = gs;
     gameStateEntityManager  = em;
@@ -24,3 +26,5 @@ void EventDispatcher::DispatchImmediateEvent(std::unique_ptr<Event> event){
     //else if(id==EID_ALLOBJS) {gameStateEntityManager->BroadcastEvent(event);}
     else                     {gameStateEntityManager->DispatchEvent (event.get());}
 }
+
+#endif

@@ -1,5 +1,7 @@
 #include "Kernel.h"
 
+#ifndef TEST_Kernel_MOCK
+
 EntityManager*              Kernel::entMan;
 SDLInit*                    Kernel::SDLMan;
 GameStateManager            Kernel::stateMan;
@@ -38,7 +40,10 @@ Kernel* Kernel::Instance(){
     if(pointertoself==NULL){pointertoself=new Kernel();}
     return pointertoself;
 }
-
+void Kernel::Inst(){
+    int argc=0; char *argv[0];
+    Kernel::Inst(argc, argv);
+}
 void Kernel::Inst(int argc, char *argv[]){
     ErrorLog::Inst();
     ErrorLog::OpenFile(ErrorLog::GenericLogFile);
@@ -52,11 +57,11 @@ void Kernel::Inst(int argc, char *argv[]){
     SDLMan->InitSDL();
     SDLMan->InitOpenGL();
 
-    rscTexMan       .SetLoadFunction(&LoadTEX   );
-    rscSpriteMan    .SetLoadFunction(&LoadSPR   );
-    rscMusicMan     .SetLoadFunction(&LoadMUS   );
-    rscSoundMan     .SetLoadFunction(&LoadSND   );
-    rscScriptMan    .SetLoadFunction(&LoadSCRIPT);
+    rscTexMan       .SetLoadFunction(&LTexture::LoadResource   );
+    rscSpriteMan    .SetLoadFunction(&LSprite::LoadResource   );
+    rscMusicMan     .SetLoadFunction(&LMusic::LoadResource   );
+    rscSoundMan     .SetLoadFunction(&LSound::LoadResource   );
+    rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
     rscMapMan       .SetLoadFunction(&LoadMAP   );
 
     entMan      = new EntityManager;
@@ -106,3 +111,5 @@ bool Kernel::Run(){
     }
     return true;
 }
+
+#endif

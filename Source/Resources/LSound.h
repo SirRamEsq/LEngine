@@ -2,6 +2,7 @@
 #define L_ENGINE_SOUND
 
 #include "SDL2/SDL_mixer.h"
+#include <memory>
 #include <string>
 
 class LSound{

@@ -4,6 +4,8 @@
 #include "CompCollision.h"
 #include <sstream>
 
+#ifdef TEST_ComponentScript_MOCK
+
 using namespace luabridge;
 
 void RunInit(){
@@ -155,3 +157,5 @@ void ComponentScriptManager::AddComponent(EID id){
     ComponentScript* script=new ComponentScript(id, logFileName);
     componentList[id]=script;
 }
+
+#endif

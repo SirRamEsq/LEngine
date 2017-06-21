@@ -1,5 +1,6 @@
 #include "LSound.h"
-
+#include "../Defines.h"
+#include "ResourceLoading.h"
 //////////
 //LSOUND//
 //////////
@@ -24,14 +25,14 @@ LSound::~LSound(){
 }
 
 std::unique_ptr<LSound> LSound::LoadResource(const std::string& fname){
-    LSound* sound = NULL;
+    std::unique_ptr<LSound> sound = NULL;
     try{
         std::string fullPath = "Resources/Sounds/"+fname;
         auto data=LoadGenericFile(fullPath);
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        sound = new LSound(fname, data.get()->GetData(), data.get()->length);
+        sound = make_unique<LSound>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
         ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
@@ -56,14 +57,14 @@ LMusic::~LMusic(){
     Mix_FreeMusic(music);
 }
 std::unique_ptr<LMusic> LMusic::LoadResource(const std::string& fname){
-    LMusic* music = NULL;
+    std::unique_ptr<LMusic> music = NULL;
     try{
         std::string fullPath = "Resources/Music/"+fname;
         auto data=LoadGenericFile(fullPath);
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        music = new LMusic(fname, data.get()->GetData(), data.get()->length);
+        music = make_unique<LMusic>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
         ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);

@@ -18,6 +18,7 @@
 #include "../Exceptions.h"
 
 #include <string>
+#include <memory>
 
 class FileData{
     public:
@@ -36,9 +37,9 @@ class FileData{
 
 class Kernel;//Forward Declare
 
-std::unique_ptr<FileData> LoadGenericFile (const std::string& fileName);
-LEvent*         LoadEVENT   (const std::string& fname);
-LMap*           LoadMAP     (const std::string& fname);
+std::unique_ptr<FileData>   LoadGenericFile (const std::string& fileName);
+LEvent*                     LoadEVENT   (const std::string& fname);
+std::unique_ptr<LMap>       LoadMAP     (const std::string& fname);
 
 
 #endif

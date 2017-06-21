@@ -2,6 +2,7 @@
 #define L_SCRIPT
 
 #include <string>
+#include <memory>
 
 //find a way to compile the lua string into bytecode and store it here,
 //that way the lua interface won't have to compile every time it wants to run an LScript

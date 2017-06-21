@@ -46,6 +46,7 @@
 class Kernel{
     public:
         static void Inst(int argc, char *argv[]);
+        static void Inst();
         static bool Run();
         static void Close();
 

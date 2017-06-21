@@ -2,6 +2,9 @@
 #include "../Kernel.h"
 #include "math.h"
 
+//only use if not mocked
+#ifndef TEST_ComponentCollision_MOCK
+
 const TiledTileLayer* TColPacket::GetLayer(){
     return tl;
 }
@@ -441,3 +444,5 @@ void ComponentCollisionManager::Update(){
     UpdateCheckEntityCollision();
     UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
 }
+
+#endif

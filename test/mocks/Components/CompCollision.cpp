@@ -1,6 +1,8 @@
 #include "CompCollision.h"
 #include "../Kernel.h"
 #include "math.h"
+//Only use this file if mocking
+#ifdef TEST_ComponentCollision_MOCK
 
 
 const TiledTileLayer* TColPacket::GetLayer(){
@@ -247,3 +249,5 @@ void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, con
 void ComponentCollisionManager::Update(){
 
 }
+
+#endif // TEST_ComponentCollision_MOCK

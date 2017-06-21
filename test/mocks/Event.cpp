@@ -1,6 +1,8 @@
 #include "Event.h"
 #include "Kernel.h"
 
+#ifdef TEST_Event_MOCK
+
 EventDispatcher::EventDispatcher(void* gs, void* em){
     //gameStateManager  = gs;
     //gameStateEntityManager  = em;
@@ -23,3 +25,5 @@ void EventDispatcher::DispatchImmediateEvent(std::unique_ptr<Event> event){
     //else if(id==EID_ALLOBJS) {gameStateEntityManager->BroadcastEvent(event);}
     else                     {gameStateEntityManager->DispatchEvent (event.get());}*/
 }
+
+#endif
