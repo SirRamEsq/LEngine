@@ -146,6 +146,8 @@ class LSprite{
         int GetTransparentColorGreen () const {return transparentColorGreen;}
         int GetTransparentColorBlue  () const {return transparentColorBlue; }
 
+        static std::unique_ptr<LSprite> LoadResource(const std::string& fname);
+
     protected:
         void DeleteAnimations();
 
@@ -160,8 +162,6 @@ class LSprite{
         int transparentColorRed;
         int transparentColorGreen;
         int transparentColorBlue;
-
-        static std::unique_ptr<LSprite> LoadResource(const std::string& fname);
 
     private:
         void LoadAnimation(rapidxml::xml_node<>* animationNode);

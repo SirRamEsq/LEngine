@@ -29,16 +29,14 @@ void GameStartState::Init(){
     std::string mapName=cmd.GetValue(L_CMD_LEVELNAME);
 
     std::unique_ptr<const LMap> mapData;
-    if(mapName!=""){mapData.reset(LoadMAP(mapName));}
-    else{mapName="mmap2.tmx"; mapData.reset(LoadMAP(mapName));}
+    if(mapName==""){
+        mapName="mmap2.tmx";
+    }
+    mapData=LoadMAP(mapName);
 
     if(mapData==NULL){
         ErrorLog::WriteToFile("Couldn't load map named: " + mapName, ErrorLog::GenericLogFile);
-        mapData.reset(LoadMAP("mmap2.tmx"));
-        if(mapData==NULL){
-            ErrorLog::WriteToFile("Couldn't load any maps", ErrorLog::GenericLogFile);
-            countdown=0;
-        }
+        countdown=0;
     }
     K_MapMan.LoadItem(mapName,  mapData);
 

@@ -2,6 +2,8 @@
 #include "math.h"
 #include "../../../Source/Errorlog.h"
 
+//Only use this file if mocking
+#ifdef TEST_ComponentPosition_MOCK
 
 
 MapNode::MapNode(MapNode* parent){
@@ -214,3 +216,4 @@ Coord2df ComponentPosition::TranslateLocalToWorld(Coord2df local){
 }
 
 
+#endif

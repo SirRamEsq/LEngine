@@ -235,7 +235,7 @@ int LuaInterface::LoadScriptFromChunk(const LScript* script){
     if(error !=0){
         std::stringstream errorMsg;
         errorMsg << "Script [" << script->scriptName << "] could not be loaded from C++\n"
-        << "   ...Error code "  << std::to_string(error) << "\n"
+        << "   ...Error code "  << error << "\n"
         << "   ...Error Message is " << lua_tostring(lState,-1);
         // completely clear the stack before return
         lua_settop(lState, 0);
@@ -251,7 +251,7 @@ int LuaInterface::LoadScriptFromChunk(const LScript* script){
                                                         //a table with "Update", "Init", etc... methods
         std::stringstream errorMsg;
         errorMsg << "Script [" << script->scriptName << "] could not be run from C++\n"
-        << "   ...Error code "  << std::to_string(error) << "\n"
+        << "   ...Error code "  << error << "\n"
         << "   ...Error Message is " << lua_tostring(lState,-1);
         // completely clear the stack before return
         lua_settop(lState, 0);
@@ -331,7 +331,7 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
         //Call function and place table at the top of the stack
         if(int error= lua_pcall (lState, 0, 1, 0)  != 0){
             std::stringstream ss;
-            ss << "Base class did not return a callable function\n" << "   ...Error code "  << std::to_string(error) << "\n";
+            ss << "Base class did not return a callable function\n" << "   ...Error code "  << error << "\n";
             // completely clear the stack before return
             lua_settop(lState, 0);
             ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
@@ -345,8 +345,8 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
     //Call function (passing either baseclass or nil) and place table at the top of the stack
     if(int error= lua_pcall (lState, 1, 1, 0)  != 0){
         std::stringstream ss;
-        ss << "Script [" << script->scriptName << "] with EID [" << std::to_string(id) << "] did not return a callable function \n"
-        << "   ...Error code "  << std::to_string(error) << "\n"
+        ss << "Script [" << script->scriptName << "] with EID [" << id << "] did not return a callable function \n"
+        << "   ...Error code "  << error << "\n"
         << "   ...Error Message is " << lua_tostring(lState,-1);
         // completely clear the stack before return
         lua_settop(lState, 0);
@@ -358,7 +358,7 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
     if(lua_istable(lState, stackTop)==false){ //Returned value isn't table; cannot be used
         std::stringstream errorMsg;
         errorMsg << "Returned value from lua function is not a table in script [" << script->scriptName
-        << "] with EID [" << std::to_string(id) << "] \n"
+        << "] with EID [" << id << "] \n"
         << " ...Type is: [" << lua_typename(lState, lua_type(lState, stackTop)) << "]";
         ErrorLog::WriteToFile(errorMsg.str(), DEBUG_LOG);
         // completely clear the stack before return
@@ -611,10 +611,10 @@ void LuaInterface::EventLuaObserveEntity  (EID listenerID, EID senderID){
     ComponentScript* senderScript=((ComponentScript*)(parentState->comScriptMan.GetComponent(senderID)));
     ComponentScript* listenerScript=((ComponentScript*)(parentState->comScriptMan.GetComponent(listenerID)));
     if(senderScript==NULL){
-        ErrorLog::WriteToFile("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + std::to_string(senderID), DEBUG_LOG);
+        ErrorLog::WriteToFile("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (senderID), DEBUG_LOG);
         return;
     }if(listenerScript==NULL){
-        ErrorLog::WriteToFile("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + std::to_string(listenerID), DEBUG_LOG);
+        ErrorLog::WriteToFile("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (listenerID), DEBUG_LOG);
         return;
     }
 

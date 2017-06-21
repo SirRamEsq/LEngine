@@ -1,6 +1,8 @@
 #include "CompSprite.h"
 #include "../Kernel.h"
 
+#ifndef TEST_ComponentScript_MOCK
+
 AnimationData::AnimationData(const TAnimationMap* aniMap)
     : animations(aniMap){
 
@@ -282,3 +284,5 @@ void ComponentSpriteManager::Update(){
        i->second->Update();
     }
 }
+
+#endif

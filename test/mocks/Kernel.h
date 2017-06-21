@@ -1,32 +1,13 @@
 #ifndef L_ENGINE_KERNEL_MOCK
 #define L_ENGINE_KERNEL_MOCK
 
-/*
-#include "Components/CompPosition.h"
-#include "Components/CompScript.h"
-#include "Components/CompInput.h"
-#include "Components/CompSprite.h"
-#include "Components/CompCollision.h"
-#include "Components/CompParticle.h"
-#include "Components/CompParticle.h"
-#include "Components/CompCamera.h"
-#include "Components/CompLight.h"
-*/
-
 #include "../../Source/Errorlog.h"
 #include "../../Source/GenericContainer.h"
 #include "physfs.h"
 #include "Event.h"
-//#include "../../Source/StateManager.h"
-/*#include "BaseComponent.h"
-#include "SDLInit.h"
-#include "IniHandler.h"
-#include "Input.h"
-#include "RenderManager.h"
+#include "../../Source/StateManager.h"
 
-#include "GameStates/GameStart.h"
-
-*/
+#include "../../Source/EntityManager.h"
 #include "../../Source/Resources/ResourceLoading.h"
 #include "../../Source/Resources/LTexture.h"
 #include "../../Source/Resources/LSprite.h"
@@ -56,22 +37,22 @@ class Kernel{
         static void Close();
 
         static EventDispatcher              eventMan;
-        //static GameStateManager             stateMan;
+        static GameStateManager             stateMan;
         /*static AudioSubsystem               audioSubsystem;
         static InputManager                 inputMan;
         static CommandLineArgs              commandLine;*/
 
         //Need moved to stateMan
-        //static EntityManager*               entMan;
+        static EntityManager*               entMan;
 
 
         static GenericContainer<LTexture>      rscTexMan;
-//        static GenericContainer<LSprite>       rscSpriteMan;
-        /*static GenericContainer<LSound>        rscSoundMan;
+        static GenericContainer<LSprite>       rscSpriteMan;
+        static GenericContainer<LSound>        rscSoundMan;
         static GenericContainer<LMusic>        rscMusicMan;
         static GenericContainer<LScript>       rscScriptMan;
         static GenericContainer<LMap>          rscMapMan;
-        static GenericContainer<L_GL_Shader>   rscShaderMan;*/
+        static GenericContainer<L_GL_Shader>   rscShaderMan;
 
         static Kernel* pointertoself;
         static Kernel* Instance();

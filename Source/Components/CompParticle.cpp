@@ -2,6 +2,9 @@
 #include <math.h>
 #include "../Kernel.h"
 
+#ifndef TEST_ComponentParticle_MOCK
+
+
 /*
 The CPU will determine how many Particles to render based on its state (STARTING, STOPPING, SUSTAINING, etc...)
 and by how much time has passed since having been started
@@ -533,3 +536,4 @@ void ComponentParticleManager::AddComponent(EID id){
     componentList[id]=par;
 }
 
+#endif // TEST_ComponentParticle_MOCK

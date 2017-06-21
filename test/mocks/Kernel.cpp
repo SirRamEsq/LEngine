@@ -1,12 +1,12 @@
 #include "Kernel.h"
-
+#ifdef TEST_Kernel_MOCK
 
 Kernel*                     Kernel::pointertoself;
 EventDispatcher             Kernel::eventMan(NULL, NULL);
 SDLInit*                    Kernel::SDLMan;
-//GameStateManager            Kernel::stateMan;
-/*
+GameStateManager            Kernel::stateMan;
 EntityManager*              Kernel::entMan;
+/*
 InputManager                Kernel::inputMan;
 CommandLineArgs             Kernel::commandLine;
 AudioSubsystem              Kernel::audioSubsystem;
@@ -15,14 +15,14 @@ int          Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int          Kernel::returnValue;
 
-//GenericContainer<LSprite>      Kernel::rscSpriteMan;
+GenericContainer<LSprite>      Kernel::rscSpriteMan;
 GenericContainer<LTexture>     Kernel::rscTexMan;
-/*GenericContainer<LSound>       Kernel::rscSoundMan;
+GenericContainer<L_GL_Shader>  Kernel::rscShaderMan;
+GenericContainer<LSound>       Kernel::rscSoundMan;
 GenericContainer<LMusic>       Kernel::rscMusicMan;
 GenericContainer<LScript>      Kernel::rscScriptMan;
 GenericContainer<LMap>         Kernel::rscMapMan;
-GenericContainer<L_GL_Shader>  Kernel::rscShaderMan;
-*/
+
 Kernel::Kernel(){}
 Kernel::~Kernel(){}
 
@@ -34,7 +34,7 @@ void Kernel::Close(){
     SDLMan->CloseSDL();
     rscTexMan.Clear();
 
-    //delete entMan;
+    delete entMan;
 }
 
 Kernel* Kernel::Instance(){
@@ -60,15 +60,15 @@ void Kernel::Inst(int argc, char *argv[]){
     SDLMan->InitOpenGL();
 
     rscTexMan       .SetLoadFunction(&LTexture::LoadResource);
-//    stateMan.Init();
-    //rscSpriteMan    .SetLoadFunction(&LoadSPR   );
-/*    rscMusicMan     .SetLoadFunction(&LoadMUS   );
-    rscSoundMan     .SetLoadFunction(&LoadSND   );
-    rscScriptMan    .SetLoadFunction(&LoadSCRIPT);
-    rscMapMan       .SetLoadFunction(&LoadMAP   );
-
+    stateMan.Init();
     entMan      = new EntityManager;
+    rscSpriteMan    .SetLoadFunction(&LSprite::LoadResource);
+    rscMusicMan     .SetLoadFunction(&LMusic::LoadResource   );
+    rscSoundMan     .SetLoadFunction(&LSound::LoadResource   );
+    rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
+//    rscMapMan       .SetLoadFunction(&LoadMAP   );
 
+/*
     commandLine.ParseArgs(argc, argv);
 
 
@@ -83,3 +83,4 @@ bool Kernel::Run(){
 
 }
 
+#endif

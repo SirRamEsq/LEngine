@@ -2,6 +2,9 @@
 #include "../Kernel.h"
 #include "math.h"
 
+//only use if not mocked
+#ifndef TEST_ComponentCamera_MOCK
+
 ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, const std::string& logFile) : BaseComponent(id, logFile){
     mPosition= pos;
 }
@@ -49,3 +52,5 @@ void ComponentCameraManager::AddComponent(EID id){
     ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
     componentList[id]=cam;
 }
+
+#endif // TEST_ComponentCamera_MOCK

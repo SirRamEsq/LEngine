@@ -1,6 +1,9 @@
 #include "CompInput.h"
 #include "../Kernel.h"
 
+//Only use this file if mocking
+#ifdef TEST_ComponentCamera_MOCK
+
 ComponentInput::ComponentInput(EID id, const std::string& logName) : BaseComponent(id, logName){
 
 }
@@ -35,3 +38,5 @@ void ComponentInputManager::AddComponent(EID id){
 ComponentInputManager::ComponentInputManager() : BaseComponentManager("LOG_COMP_INPUT"){
 
 }
+
+#endif // TEST_ComponentCamera_MOCK

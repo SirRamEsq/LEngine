@@ -1,5 +1,7 @@
 #include "CompCamera.h"
 #include "math.h"
+//Only use this file if mocking
+#ifdef TEST_ComponentCamera_MOCK
 
 ComponentCamera::ComponentCamera(EID id, const std::string& logFile)
 : BaseComponent(id, logFile), mCamera(0.0f, 0.0f, 16.0f, 16.0f){
@@ -44,3 +46,5 @@ void ComponentCameraManager::AddComponent(EID id){
     ComponentCamera* cam=new ComponentCamera(id, logFileName);
     componentList[id]=cam;
 }
+
+#endif // TEST_ComponentCamera_MOCK
