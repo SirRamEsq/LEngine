@@ -34,6 +34,8 @@ class ErrorLog{;
         static const std::string fileExtension;
         static const std::string logPath;
 
+        static bool noThrow;
+
     protected:
         ErrorLog();
         static std::map<std::string, std::unique_ptr<std::ofstream> > errorFiles;
