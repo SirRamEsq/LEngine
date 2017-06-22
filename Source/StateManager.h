@@ -99,6 +99,14 @@ class GameStateManager{
         void PushState(std::unique_ptr<GameState> state);
         void PopState();
 
+        int stackSize(){
+            return mGameStates.size();
+        }
+
+        bool IsEmpty(){
+            return mGameStates.empty();
+        }
+
     protected:
         void Init();
         void Close();
@@ -108,10 +116,6 @@ class GameStateManager{
         void Draw();
 
         void UpdateCurrentState();
-
-        bool IsEmpty(){
-            return mGameStates.empty();
-        }
 
         void DrawPreviousState(GameState* gs);
 

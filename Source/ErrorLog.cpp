@@ -16,6 +16,7 @@ ErrorLog::ErrorLog(){}
 const std::string ErrorLog::logPath         = "Logs/";
 const std::string ErrorLog::GenericLogFile  = "Error";
 const std::string ErrorLog::fileExtension   = ".txt" ;
+bool ErrorLog::noThrow   = true ;
 
 ErrorLog* ErrorLog::Inst(){
     pointertoself=new ErrorLog();
@@ -50,6 +51,9 @@ std::ofstream* ErrorLog::GetFilePointer(const std::string& fname){
     if(filePointerIt == errorFiles.end()){
         OpenFile(fname);
         filePointerIt=errorFiles.find(fname);
+        if(noThrow){
+            return NULL;
+        }
         if(filePointerIt == errorFiles.end()){
             throw Exception("Couldn't create file for errorlog named " + fname);
         }
