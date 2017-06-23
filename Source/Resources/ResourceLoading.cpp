@@ -73,23 +73,6 @@ LEvent* LoadEVENT(const std::string& fname){
     return new LEvent(eventScriptName, flags);
 }*/
 
-std::unique_ptr<LMap> LoadMAP(const std::string& fname){
-    std::unique_ptr<LMap> lmap= NULL;
-    try{
-        std::string fullPath= "Resources/Maps/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        lmap= make_unique<LMap>(fname, data.get()->GetData(), data.get()->length);
-    }
-    catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
-    }
-
-    return lmap;
-}
-
 std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     if(PHYSFS_exists(fileName.c_str())==0){
         std::stringstream ss;

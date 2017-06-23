@@ -69,7 +69,7 @@ void Kernel::Inst(int argc, char *argv[]){
     rscMusicMan     .SetLoadFunction(&LMusic::LoadResource   );
     rscSoundMan     .SetLoadFunction(&LSound::LoadResource   );
     rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
-    rscMapMan       .SetLoadFunction(&LoadMAP   );
+    rscMapMan       .SetLoadFunction(&LMap::LoadResource   );
 
     entMan      = new EntityManager;
 

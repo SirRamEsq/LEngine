@@ -33,6 +33,7 @@ void CopyPropertyMap(const PropertyMap& source, PropertyMap& destination);
 
 //Forward declares
 class LMap;
+class TiledData;
 class GIDManager;
 
 //coupling here
@@ -134,6 +135,7 @@ class GIDManager{
 //It's up to the GID Manager to keep track of what ranges belong to which tilesets.
 class TiledSet : public GIDEnabled{
     friend LMap;
+    friend TiledData;
 
     public:
         TiledSet(const std::string& n, const std::string& tex, const unsigned int tileW, const unsigned int tileH, GID first, GIDManager* man);
@@ -186,6 +188,7 @@ class TiledSet : public GIDEnabled{
 
 class TiledLayerGeneric{
     friend LMap;
+    friend TiledData;
     public:
         TiledLayerGeneric(const unsigned int& tileW, const unsigned int& tileH, const std::string& name,
                           const MAP_DEPTH& depth, const GIDManager* g, const L_TILED_LAYER_TYPE& type=LAYER_GENERIC);
@@ -225,6 +228,7 @@ class TiledLayerGeneric{
 
 class TiledTileLayer : public TiledLayerGeneric{
     friend LMap;
+    friend TiledData;
 
     public:
         TiledTileLayer(const unsigned int& w, const unsigned int& h, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g);
@@ -334,7 +338,7 @@ An entrance can only be used to enter the map
 An Exit can only be used to exit the map
 */
 
-//TiledData owns sets, layers, and objects
+//Encapsulates data from Tiled, TiledData owns sets, layers, and objects
 class TiledData{
     typedef std::map<int, MapEntrance> tEntrances;
     typedef std::map<int, MapExit> tExits; //leave string blank ("") to refer to previous map
@@ -364,14 +368,20 @@ class TiledData{
         const unsigned int tileHeight;
         int bgColor;
 
-
-
         //this data structure enables layers to be looked up by their name, this structure does not assume ownership of the layers
         std::map<std::string, TiledLayerGeneric*> tiledLayers;
         //this data structure enables sets to be looked up by their name, this structure does not assume ownership of the sets
         std::map<std::string, TiledSet*> tiledSets;
         //contains tile layers and image layers sorted by map depth, this structure does not assume ownership of the layers
         std::map <MAP_DEPTH, TiledLayerGeneric*>   tiledRenderableLayers;
+
+
+        static std::unique_ptr<TiledData> LoadResourceFromTMX(const std::string& TMXname, const char* dat, unsigned int fsize);
+
+
+        std::string GetProperty (const std::string& property);
+        //Can access tiled layers by their name
+        TiledTileLayer* GetTileLayer(const std::string& name);
 
     protected:
         //These variable names are brought to you by the redundancy department of redundancy
@@ -382,15 +392,39 @@ class TiledData{
 
         tExits mMapExits;
         tEntrances mMapEntrances;
+
+    private:
+        //Give the function a string, its type, and where to store the data
+        static void TMXProcessType(std::string& type, std::string& value, void* data);
+
+        //for use with an empty property map, stores all properties found with type information
+        static void TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap& properties);
+
+        //Will insert data from the property map into the data pointed by the attribute map
+        static void TMXLoadAttributesFromProperties(const PropertyMap* properties, AttributeMap& attributes);
+
+        //For use with either an empty or populated attribute map
+        static void TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, AttributeMap& attributes);
+        static void TMXProcessEventListeners(std::string& listenersString, std::vector<EID>& listeners);
+
+        static std::unique_ptr<TiledSet>           TMXLoadTiledSet         (rapidxml::xml_node<>* tiledSetRootNode,  const GID& firstGID, GIDManager& gidManager);
+        static std::unique_ptr<TiledTileLayer>     TMXLoadTiledTileLayer   (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager    );
+        static std::unique_ptr<TiledObjectLayer>   TMXLoadTiledObjectLayer (rapidxml::xml_node<>* rootNode, TiledData* tiledData    );
+        static std::unique_ptr<TiledImageLayer>    TMXLoadTiledImageLayer  (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager    );
+
+        PropertyMap properties;
 };
 
 
 class ComponentScript;
-class LMap{
+//serves as the interface for scripts
+class LMap{;
     friend GameState;
 
     public:
-        LMap(std::string sname, const char* dat, unsigned int fsize);
+        class Exception : public LEngineException{using LEngineException::LEngineException;};
+
+        LMap(std::unique_ptr<TiledData> td);
         LMap(const LMap& rhs);
         ~LMap();
 
@@ -399,65 +433,25 @@ class LMap{
         int GetWidthPixels();
         int GetHeightPixels();
 
-        void LoadTMX(std::string TMXname, const char* dat, unsigned int fsize);
-
-        const TiledTileLayer* GetTileLayerCollision(const int& x, const int& y, const bool& areTheseTileCoords) const;
-
-        std::string GetMapName()            const {return mMapName;}
-        std::string GetGlobalScriptName()   const {return globalScriptName;}
-
-        //Can access tiled layers by their name
-        const TiledLayerGeneric* GetLayer(const std::string& layerName) const;
-
+        std::string GetProperty (const std::string& property) const;
+        std::string GetMapName  () const {return mMapName;}
+        TiledTileLayer* GetTileLayer(const std::string& name);
         //returns 0 if name doesn't exist
         EID GetEIDFromName(const std::string& name) const;
 
-        TiledTileLayer* GetTileLayer(const std::string& name);
-        std::string     GetProperty (const std::string& property);
 
+        const TiledTileLayer* GetTileLayerCollision(const int& x, const int& y, const bool& areTheseTileCoords) const;
 
         //Data
         std::unique_ptr<TiledData> tiledData;
-        std::vector<EID> mEventSources;
+
+        static std::unique_ptr<LMap> LoadResource(const std::string& fname);
 
     private:
-        std::unique_ptr<TiledSet>           TMXLoadTiledSet         (rapidxml::xml_node<>* tiledSetRootNode,  const GID& firstGID       );
-        std::unique_ptr<TiledTileLayer>     TMXLoadTiledTileLayer   (rapidxml::xml_node<>* rootNode                       );
-        std::unique_ptr<TiledObjectLayer>   TMXLoadTiledObjectLayer (rapidxml::xml_node<>* rootNode                       );
-        std::unique_ptr<TiledImageLayer>    TMXLoadTiledImageLayer  (rapidxml::xml_node<>* rootNode                                     );
-
-        //Give the function a string, its type, and where to store the data
-        void TMXProcessType(std::string& type, std::string& value, void* data);
-
-        //for use with an empty property map, stores all properties found with type information
-        void TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap& properties);
-
-        //Will insert data from the property map into the data pointed by the attribute map
-        void TMXLoadAttributesFromProperties(const PropertyMap* properties, AttributeMap& attributes);
-
-        //For use with either an empty or populated attribute map
-        void TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, AttributeMap& attributes);
-        void TMXProcessEventListeners(std::string& listenersString, std::vector<EID>& listeners);
+        std::string mMapName;
 
         //Increment every child's GID by this
-        std::string mMapName;
-        std::string globalScriptName;
-
         GID firstGID;
-
-        PropertyMap properties;
 };
-/*
-class LMapStack{
-    public:
-        void PushMap(LMap* newMap);
-        LMap* PopMap();
-        void ChangeMap(LMap* newMap); //change map that is highest on the stack (first one out, last one added) to another map. depreciated
-
-        int GetStackSize(){return mMapStack.size();}
-
-    private:
-        std::stack<LMap*> mMapStack;
-};*/
 
 #endif
