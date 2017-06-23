@@ -43,15 +43,15 @@ TEST_CASE( "Can Push to, Pop from, and Empty out StateManager", "[state]" ) {
     Kernel::Inst();
 
     auto stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 1);
+    REQUIRE(stateSize == 0);
 
     K_StateMan.PushState(std::move(make_unique<_test_State>(&K_StateMan)));
     stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 2);
+    REQUIRE(stateSize == 1);
 
     K_StateMan.PopState();
     stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 1);
+    REQUIRE(stateSize == 0);
 
     Kernel::Close();
 
