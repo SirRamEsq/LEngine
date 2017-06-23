@@ -274,7 +274,7 @@ void GameState::SetMapLinkEntities(
 }
 
 
-bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
+bool GameState::SetCurrentMap(const LMap* m, unsigned int entranceID){
     if(m==NULL){
         ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
         return false;
