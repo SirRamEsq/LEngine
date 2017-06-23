@@ -76,9 +76,6 @@ void Kernel::Inst(int argc, char *argv[]){
     stateMan.Init();
     commandLine.ParseArgs(argc, argv);
 
-    stateMan.PushState(std::move( std::unique_ptr<GameStartState> (new GameStartState(&stateMan)) ));
-    stateMan.UpdateCurrentState();
-
     gameLoops=0;
     nextGameTick=SDL_GetTicks() - 1;
 }
