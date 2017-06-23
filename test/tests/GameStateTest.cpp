@@ -80,3 +80,7 @@ TEST_CASE( "State Update and Draw Called Correctly", "[state]" ) {
 
     Kernel::Close();
 }
+
+TEST_CASE( "Load Map from File", "[state][LMap]"){
+    //make and deploy test map
+}

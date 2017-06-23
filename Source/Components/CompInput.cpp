@@ -1,9 +1,6 @@
 #include "CompInput.h"
 #include "../Kernel.h"
 
-//only use if not mocked
-#ifndef TEST_ComponentCamera_MOCK
-
 using namespace luabridge;
 
 ComponentInput::ComponentInput(EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName){
@@ -41,5 +38,3 @@ void ComponentInputManager::AddComponent(EID id){
 ComponentInputManager::ComponentInputManager() : BaseComponentManager("LOG_COMP_INPUT"){
 
 }
-
-#endif // TEST_ComponentCamera_MOCK

@@ -2,8 +2,6 @@
 #include "math.h"
 #include "../Errorlog.h"
 
-#ifndef TEST_ComponentPosition_MOCK
-
 MapNode::MapNode(MapNode* parent){
     mDirty=true;
     mParent=parent;
@@ -213,4 +211,4 @@ Coord2df ComponentPosition::TranslateLocalToWorld(Coord2df local){
     return local;
 }
 
-#endif
+

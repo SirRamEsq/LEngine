@@ -33,7 +33,6 @@ class BaseComponent{
 
 class BaseComponentManager{
     public:
-
         BaseComponentManager(const std::string& logName)
             : logFileName(logName){}
 
@@ -42,50 +41,16 @@ class BaseComponentManager{
         typedef std::map<EID, BaseComponent*> compMap;
         typedef compMap::iterator compMapIt;
 
-        virtual void AddComponent(EID id)=0; //Create a new component with the specified ID
+        virtual void    AddComponent        (EID id)=0; //Create a new component with the specified ID
+        virtual void    AddComponent        (std::unique_ptr<BaseComponent> comp); //Add a loaded component (good for mocking)
+        void            DeleteAllComponents ();
+        void            DeleteComponent     (EID id);
+        bool            HasComponent        (EID id);
+        BaseComponent*  GetComponent        (EID id);
+        int             GetComponentCount   ();
 
-        void DeleteAllComponents(){
-            compMapIt comp=componentList.begin();
-            for(;comp!=componentList.end();comp++){
-                delete comp->second;
-            }
-            componentList.clear();
-        }
-
-        void DeleteComponent(EID id){
-            compMapIt comp=componentList.find(id);
-            if(comp!=componentList.end()){
-                componentList.erase(id);
-                delete comp->second;
-            }
-        }
-        bool HasComponent(EID id){
-            if(componentList.find(id)!=componentList.end()){
-                return true;
-            }
-            return false;
-        }
-
-        virtual void Update(){
-            compMapIt i=componentList.begin();
-            for(; i!=componentList.end(); i++){
-                i->second->Update();
-            }
-        }
-
-        virtual void HandleEvent(const Event* event){
-            BaseComponent* comp=GetComponent(event->reciever);
-            if(comp==NULL){return;}
-            comp->HandleEvent(event);
-        }
-
-        BaseComponent* GetComponent(EID id){
-            compMap::iterator i=componentList.find(id);
-            if(i!=componentList.end()){
-                return i->second;
-            }
-            return NULL;
-        }
+        virtual void Update();
+        virtual void HandleEvent(const Event* event);
 
         const std::string logFileName;
 

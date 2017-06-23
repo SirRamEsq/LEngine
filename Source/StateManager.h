@@ -82,6 +82,17 @@ class GameState{
         void DrawPreviousState();
 
     private:
+        void SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLayerGeneric*>& layers);
+        //returns a data structure mapping tiled EIDS to engine EIDS
+        std::map<EID,EID> SetMapCreateEntitiesFromLayers(const std::vector<std::unique_ptr<TiledObjectLayer> >& layers);
+        std::vector<EID> SetMapGetEntitiesUsingEntrances(const std::vector<std::unique_ptr<TiledObjectLayer> >& layers);
+        void SetMapLinkEntities(
+                const std::vector<std::unique_ptr<TiledObjectLayer> >& layers,
+                const std::map<EID,EID>& tiledIDtoEntityID,
+                const std::vector<EID>& objectsUsingEntrance
+        );
+
+
         //is copy of what is stored in resource manager
         std::unique_ptr<LMap> mCurrentMap;
         std::vector<std::unique_ptr<RenderableObjectWorld> > mCurrentMapTileLayers;
