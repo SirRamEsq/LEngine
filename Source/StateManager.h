@@ -54,6 +54,7 @@ class GameState{
 
 
         RenderManager               renderMan;
+        bool SetCurrentMap(const LMap* m, unsigned int entranceID);
 
     protected:
         virtual void Init()=0;
@@ -74,8 +75,6 @@ class GameState{
         ComponentParticleManager    comParticleMan;
         ComponentCameraManager      comCameraMan;
         ComponentLightManager       comLightMan;
-
-        bool SetCurrentMap(const LMap* m, const unsigned int& entranceID);
 
         GameStateManager*           gameStateManager;
 

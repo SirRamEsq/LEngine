@@ -83,4 +83,16 @@ TEST_CASE( "State Update and Draw Called Correctly", "[state]" ) {
 
 TEST_CASE( "Load Map from File", "[state][LMap]"){
     //make and deploy test map
+    Kernel::Inst();
+    auto stateSmart = make_unique<_test_State>(&K_StateMan);
+    auto state = stateSmart.get();
+    K_StateMan.PushState(std::move(stateSmart));
+
+    std::string mapName = "MAP1.tmx";
+    auto mapToLoad = LMap::LoadResource(mapName);
+
+    //segfault here
+    //lstate->SetCurrentMap(mapToLoad.get(), 0);
+
+    Kernel::Close();
 }
