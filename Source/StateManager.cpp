@@ -102,70 +102,53 @@ void GameStateManager::Draw(){
     if(mCurrentState!=NULL){mCurrentState->Draw();}
 }
 
+void GameState::SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLayerGeneric*>& layers){
+    for(auto i = layers.begin(); i != layers.end(); i++){
 
-bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
-    if(m==NULL){
-        ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
-        return false;
-    }
-
-    if(mCurrentMap!=NULL){
-        //Unload all layers from last map
-        mCurrentMapTileLayers.clear();
-        K_EntMan->ClearAllEntities();
-
-        if(mCurrentMap->mScriptComp!=NULL){
-                //need to move this to the gamestate, not the LMap (which should be data only)
-                //memory leak
-            //delete mCurrentMap->mScriptComp;
-            //mCurrentMap->mScriptComp=NULL;
-        }
-    }
-
-    //Copy map passed
-    mCurrentMap.reset( new LMap(*m) );
-
-    TiledData* td=(mCurrentMap->tiledData.get());
-
-    //Load all Layers from this map
-    for(auto i=td->tiledRenderableLayers.begin(); i!=td->tiledRenderableLayers.end(); i++){
         if(i->second->layerType == LAYER_TILE){
-            auto layer=std::unique_ptr<RenderTiledTileLayer> ( new RenderTiledTileLayer((TiledTileLayer*)i->second) );
+            auto layer=std::unique_ptr<RenderTiledTileLayer> ( make_unique<RenderTiledTileLayer> ((TiledTileLayer*)i->second) );
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
+
         if(i->second->layerType == LAYER_IMAGE){
-            auto layer=std::unique_ptr<RenderTiledImageLayer> ( new RenderTiledImageLayer((TiledImageLayer*)i->second) );
+            auto layer=std::unique_ptr<RenderTiledImageLayer> ( make_unique<RenderTiledImageLayer> ((TiledImageLayer*)i->second) );
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
     }
+}
 
-    //Try to run this map's script
-    /*if(mCurrentMap->GetGlobalScriptName()!=""){
-        //mCurrentMap->mScriptComp=new ComponentScript(EID_MAPSCRIPT, K_ComScriptMan->logFileName);
-        if(!mCurrentMap->mScriptComp->FullInitialize(mCurrentMap->GetGlobalScriptName(), 0, 0, "MAPSCRIPT", "MAPSCRIPT")){
-            delete mCurrentMap->mScriptComp;
-            ErrorLog::WriteToFile("Couldn't load map script", ErrorLog::GenericLogFile);
-            ErrorLog::WriteToFile(mCurrentMap->GetGlobalScriptName(), ErrorLog::GenericLogFile);
+
+std::vector<EID> GameState::SetMapGetEntitiesUsingEntrances(const std::vector<std::unique_ptr<TiledObjectLayer> >& layers){
+    std::vector<EID> objectsUsingEntrance;
+
+    for(auto ii = layers.begin(); ii != layers.end(); ii++){
+        for(auto objectIt=(*ii)->objects.begin(); objectIt!=(*ii)->objects.end(); objectIt++){
+
+            //Include object if it utilizes an entrance
+            if((objectIt)->second.useEntrance){
+                EID id=K_EntMan->NewEntity(objectIt->second.name);
+                objectsUsingEntrance.push_back(id);
+            }
+
         }
     }
-    else{mCurrentMap->mScriptComp=NULL;}*/
 
-    //Get Objects from map ready
-    std::vector<EID> objectsUsingEntrance;
-    MapEntrance* correctEntrance=NULL;
-    int correctEntranceX=0;
-    int correctEntranceY=0;
-    std::map<EID,EID> TiledIDtoEntityID; //This is for the purpose of sending events
+    return objectsUsingEntrance;
+}
 
-    for(auto ii=td->tiledObjectLayers.begin(); ii!=td->tiledObjectLayers.end(); ii++){
-        //first pass (Creation)
+//returns a data structure mapping tiled EIDS to engine EIDS
+std::map<EID,EID> GameState::SetMapCreateEntitiesFromLayers(const std::vector<std::unique_ptr<TiledObjectLayer> >& layers){
+
+    std::map<EID,EID> tiledIDtoEntityID; //This is for the purpose of linking event listeners later
+
+    for(auto ii = layers.begin(); ii != layers.end(); ii++){
         for(auto objectIt=(*ii)->objects.begin(); objectIt!=(*ii)->objects.end(); objectIt++){
             //New Entity
             //If the entity has a name, map that name to it's engine generated ID
             EID ent=K_EntMan->NewEntity(objectIt->second.name);
 
             //Map Tile map ID to Engine generated ID
-            TiledIDtoEntityID[objectIt->first]=ent;
+            tiledIDtoEntityID[objectIt->first]=ent;
 
             //Set position
             comPosMan.AddComponent(ent);
@@ -181,11 +164,6 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
                 comLightMan.AddComponent(ent);
             }
 
-            //Save object for later if it utilizes an entrance
-            if((objectIt)->second.useEntrance){
-                objectsUsingEntrance.push_back(ent);
-            }
-
             //Special treatment to certain object types
             else if(objectIt->second.type==global_TiledStrings[TILED_CAMERA]){
                 if((objectIt->second.flags & TILED_OBJECT_IS_MAIN_CAMERA)==TILED_OBJECT_IS_MAIN_CAMERA){
@@ -195,6 +173,22 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
                 }
             }
         }
+    }
+
+    return tiledIDtoEntityID;
+}
+
+void GameState::SetMapLinkEntities(
+    const std::vector<std::unique_ptr<TiledObjectLayer> >& layers,
+    const std::map<EID,EID>& tiledIDtoEntityID,
+    const std::vector<EID>& objectsUsingEntrance
+){
+
+    MapEntrance* correctEntrance=NULL;
+    int correctEntranceX=0;
+    int correctEntranceY=0;
+
+    for(auto ii = layers.begin(); ii != layers.end(); ii++){
         //second pass (Linking)
         EID entityID,listenerID;
         EID parent=0;
@@ -202,9 +196,9 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
         EID child=0;
         for(auto objectIt=(*ii)->objects.begin(); objectIt!=(*ii)->objects.end(); objectIt++){
 
-            parent=objectIt->second.parent;
-            child=TiledIDtoEntityID[objectIt->first];
-            parentEID=TiledIDtoEntityID[parent];
+            parent      =   objectIt->second.parent;
+            child       =   tiledIDtoEntityID.find(objectIt->first)->second;
+            parentEID   =   tiledIDtoEntityID.find(parent)->second;
 
             //Initialize Script
             std::string& scriptName = objectIt->second.script;
@@ -224,12 +218,12 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
             }
 
 
-
             //Event Linking
             //I think i need to increment the listeners ids with the global GID
+            //Can move into scriptManager
             for(auto eventSource=objectIt->second.eventSources.begin(); eventSource!=objectIt->second.eventSources.end(); eventSource++){
-                entityID=TiledIDtoEntityID[(*eventSource)];
-                listenerID=TiledIDtoEntityID[objectIt->first];
+                entityID    = tiledIDtoEntityID.find((*eventSource))->second;
+                listenerID  = tiledIDtoEntityID.find(objectIt->first)->second;
 
                 ComponentScript* listenerScript=((ComponentScript*)comScriptMan.GetComponent(listenerID));
                 ComponentScript* senderScript=((ComponentScript*)comScriptMan.GetComponent(entityID));
@@ -254,9 +248,10 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
                 }
             }
         }
+        /*
         //Link the map script as well
         for(auto eventSource=mCurrentMap->mEventSources.begin(); eventSource!=mCurrentMap->mEventSources.begin(); eventSource++){
-            entityID=TiledIDtoEntityID[(*eventSource)];
+            entityID = tiledIDtoEntityID.find((*eventSource))->second;
 
             ComponentScript* listenerScript=((ComponentScript*)comScriptMan.GetComponent(listenerID));
             if(listenerScript==NULL){
@@ -267,15 +262,54 @@ bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
             }
 
             mCurrentMap->mScriptComp->EventLuaAddObserver(listenerScript);
-        }
+        }*/
     }
 
     //Set all objects that use entrances to their proper entrance
     if(correctEntrance!=NULL){
-        for(std::vector<EID>::iterator i=objectsUsingEntrance.begin(); i!=objectsUsingEntrance.end(); i++){
+        for(auto i = objectsUsingEntrance.begin(); i != objectsUsingEntrance.end(); i++){
             ((ComponentPosition*)(comPosMan.GetComponent(*i)) )->SetPositionLocal( Coord2df(correctEntranceX, correctEntranceY) );
         }
     }
+}
+
+
+bool GameState::SetCurrentMap(const LMap* m, const unsigned int& entranceID){
+    if(m==NULL){
+        ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
+        return false;
+    }
+
+    //Unload all layers from last map
+    mCurrentMapTileLayers.clear();
+    //ent man needs moved into stateman
+    K_EntMan->ClearAllEntities();
+
+    //Copy map passed
+    mCurrentMap.reset();
+    mCurrentMap = make_unique<LMap>(*m);
+
+    TiledData* td=(mCurrentMap->tiledData.get());
+    SetMapHandleRenderableLayers(td->tiledRenderableLayers);
+
+
+    const std::vector<std::unique_ptr<TiledObjectLayer> >& layers = td->tiledObjectLayers;
+    auto tiledIDtoEntityID = SetMapCreateEntitiesFromLayers(layers);
+    auto objectsUsingEntrance = SetMapGetEntitiesUsingEntrances(layers);
+
+    SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
+
+
+    //Try to run this map's script
+    /*if(mCurrentMap->GetGlobalScriptName()!=""){
+        //mCurrentMap->mScriptComp=new ComponentScript(EID_MAPSCRIPT, K_ComScriptMan->logFileName);
+        if(!mCurrentMap->mScriptComp->FullInitialize(mCurrentMap->GetGlobalScriptName(), 0, 0, "MAPSCRIPT", "MAPSCRIPT")){
+            delete mCurrentMap->mScriptComp;
+            ErrorLog::WriteToFile("Couldn't load map script", ErrorLog::GenericLogFile);
+            ErrorLog::WriteToFile(mCurrentMap->GetGlobalScriptName(), ErrorLog::GenericLogFile);
+        }
+    }
+    else{mCurrentMap->mScriptComp=NULL;}*/
 
     return true;
 }

@@ -543,7 +543,6 @@ LMap::LMap(const LMap& rhs){
     globalScriptName    = rhs.globalScriptName;
     mMapName            = rhs.mMapName;
     firstGID            = rhs.firstGID;
-    mScriptComp         = rhs.mScriptComp;
     for(auto eventIt = rhs.mEventSources.begin(); eventIt != rhs.mEventSources.end(); eventIt++){
         mEventSources.push_back(*eventIt);
     }
@@ -1240,7 +1239,7 @@ std::unique_ptr<TiledImageLayer> LMap::TMXLoadTiledImageLayer(rapidxml::xml_node
 }
 
 std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRootNode, const GID& firstGID){
-/*Tile property structure goes like this;
+/*XML Tile property structure goes like this;
     <tileset>
         <image source="Images/GrassTerrain.png" trans="ff00ff" width="256" height="256"/>
         <tile ID="44">

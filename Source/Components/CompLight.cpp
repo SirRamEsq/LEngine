@@ -1,8 +1,6 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
-//only use if not mocked
-#ifndef TEST_ComponentLight_MOCK
 
 ///////////////
 //LightSource//
@@ -249,4 +247,3 @@ void ComponentLightManager::BuildVAO(){
     vao.UpdateGPU();
 }
 
-#endif // TEST_ComponentCamera_MOCK

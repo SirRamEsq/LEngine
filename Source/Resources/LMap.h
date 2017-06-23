@@ -419,7 +419,6 @@ class LMap{
         //Data
         std::unique_ptr<TiledData> tiledData;
         std::vector<EID> mEventSources;
-        ComponentScript* mScriptComp;
 
     private:
         std::unique_ptr<TiledSet>           TMXLoadTiledSet         (rapidxml::xml_node<>* tiledSetRootNode,  const GID& firstGID       );
