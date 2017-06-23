@@ -30,9 +30,9 @@ void GameStartState::Init(){
 
     std::unique_ptr<const LMap> mapData;
     if(mapName==""){
-        mapName="mmap2.tmx";
+        mapName="MAP1.tmx";
     }
-    mapData=LoadMAP(mapName);
+    mapData=LMap::LoadResource(mapName);
 
     if(mapData==NULL){
         ErrorLog::WriteToFile("Couldn't load map named: " + mapName, ErrorLog::GenericLogFile);

@@ -474,6 +474,8 @@ TiledData::TiledData(const TiledData& rhs)
 
         AddLayer( std::unique_ptr<TiledLayerGeneric> (layer.release()) );
     }
+
+    CopyPropertyMap(rhs.properties, properties);
 }
 
 TiledData::~TiledData(){
@@ -534,22 +536,16 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer){
 //LMap//
 ////////
 
-LMap::LMap(std::string sname, const char* dat, unsigned int fsize){
-    globalScriptName="";
-    LoadTMX(sname, dat, fsize);
+LMap::LMap(std::unique_ptr<TiledData> td){
+    tiledData.reset();
+    tiledData = std::move(td);
 }
 
 LMap::LMap(const LMap& rhs){
-    globalScriptName    = rhs.globalScriptName;
     mMapName            = rhs.mMapName;
     firstGID            = rhs.firstGID;
-    for(auto eventIt = rhs.mEventSources.begin(); eventIt != rhs.mEventSources.end(); eventIt++){
-        mEventSources.push_back(*eventIt);
-    }
 
-    CopyPropertyMap(rhs.properties, properties);
-
-    tiledData.reset(new TiledData (*rhs.tiledData.get()));
+    tiledData = make_unique<TiledData> (*rhs.tiledData.get());
 }
 
  LMap::~LMap(){
@@ -599,7 +595,7 @@ const TiledTileLayer* LMap::GetTileLayerCollision(const int& x, const int& y, co
 
 //Pass a map with keys to get their respective values from the xml file
 //Pass an empty map to get everything
-void LMap::TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, AttributeMap& attributes){
+void TiledData::TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, AttributeMap& attributes){
     using namespace rapidxml;
     std::string key, value, type;
     AttributeMap::iterator i;
@@ -627,7 +623,7 @@ void LMap::TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, AttributeM
     }
 }
 
-void LMap::TMXLoadAttributesFromProperties(const PropertyMap* properties, AttributeMap& attributes){
+void TiledData::TMXLoadAttributesFromProperties(const PropertyMap* properties, AttributeMap& attributes){
     std::string data;
     std::string type;
     std::string name;
@@ -643,7 +639,7 @@ void LMap::TMXLoadAttributesFromProperties(const PropertyMap* properties, Attrib
     }
 }
 //root node passed should point to <properties> tag
-void LMap::TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap& properties){
+void TiledData::TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap& properties){
     using namespace rapidxml;
     xml_node<>* propertyNode=rootPropertyNode->first_node(); //pointing to property
 
@@ -669,7 +665,7 @@ void LMap::TMXLoadProperties(rapidxml::xml_node<>* rootPropertyNode, PropertyMap
     }
 }
 
-void LMap::TMXProcessEventListeners(std::string& listenersString, std::vector<EID>& listeners){
+void TiledData::TMXProcessEventListeners(std::string& listenersString, std::vector<EID>& listeners){
     if(listenersString!=""){
         std::vector<const char *> subStrings;
         char* tempString=NULL;
@@ -702,7 +698,7 @@ void LMap::TMXProcessEventListeners(std::string& listenersString, std::vector<EI
     }
 }
 
-void LMap::TMXProcessType(std::string& type, std::string& value, void* data){
+void TiledData::TMXProcessType(std::string& type, std::string& value, void* data){
     if      (type=="string")    {
         *((std::string*)(data))=value;
     }
@@ -735,8 +731,11 @@ void LMap::TMXProcessType(std::string& type, std::string& value, void* data){
     }
 }
 
+std::string     LMap::GetProperty (const std::string& property) const{
+    tiledData->GetProperty(property);
+}
 
-std::string     LMap::GetProperty (const std::string& property){
+std::string     TiledData::GetProperty (const std::string& property){
     auto i = properties.find(property);
     if(i == properties.end()){
         return "";
@@ -744,8 +743,12 @@ std::string     LMap::GetProperty (const std::string& property){
     return i->second.second;
 }
 
-TiledTileLayer* LMap::GetTileLayer(const std::string& name){
-    TiledLayerGeneric* layer = tiledData->tiledLayers[name];
+TiledTileLayer* LMap::GetTileLayer (const std::string& property){
+    tiledData->GetTileLayer(property);
+}
+
+TiledTileLayer* TiledData::GetTileLayer(const std::string& name){
+    TiledLayerGeneric* layer = tiledLayers[name];
     if(layer != NULL){
         if(layer->layerType == LAYER_TILE){
             return (TiledTileLayer*)layer;
@@ -754,7 +757,33 @@ TiledTileLayer* LMap::GetTileLayer(const std::string& name){
     return NULL;
 }
 
-void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
+std::unique_ptr<LMap> LMap::LoadResource(const std::string& fname){
+    std::unique_ptr<LMap> lmap = NULL;
+    try{
+        std::string fullPath= "Resources/Maps/"+fname;
+        auto data=LoadGenericFile(fullPath);
+        if(data.get()->GetData()==NULL){
+            throw LEngineFileException("Couldn't load LMAP from path", fname);
+        }
+
+        try{
+            auto tiledData = TiledData::LoadResourceFromTMX(fname, data.get()->GetData(), data.get()->length);
+            lmap = make_unique<LMap>( std::move(tiledData) ) ;
+        }
+        catch(LMap::Exception e){
+            ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+            throw e;
+        }
+    }
+    catch(LEngineFileException e){
+        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        throw e;
+    }
+
+    return lmap;
+}
+
+std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMXname, const char* dat, unsigned int fsize){
     //There are three primary data structures this function looks for
     //TileSets
     //TileLayers (Large 2D array that references TileSets)
@@ -771,7 +800,8 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
     xml_document<> doc;    // character type defaults to char
     AttributeMap attributes; //this will contain all of the attributes of a given part of the map as the function goes on
     //Convert const char to char
-    //MIGHT CAUSE PROBLEMS :/
+
+    //WILL CAUSE PROBLEMS IF std::string XML IS USED BEYOND THIS POINT
     doc.parse<0>((char*)(XML.c_str()));    // 0 means default parse flags
 
     GID id;
@@ -795,7 +825,8 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
     attributes["height"]            = Attribute("unsigned int", &tilesHigh);
     attributes["tilewidth"]         = Attribute("unsigned int", &sizeOfTileWidth);
     attributes["tileheight"]        = Attribute("unsigned int", &sizeOfTileHeight);
-    TMXLoadAttributes(node, attributes);
+    TiledData::TMXLoadAttributes(node, attributes);
+    auto tiledData = make_unique<TiledData>(tilesWide, tilesHigh);
 
     if((sizeOfTileWidth != LENGINE_DEF_TILE_W) or (sizeOfTileHeight != LENGINE_DEF_TILE_H)){
         std::stringstream ss;
@@ -803,8 +834,6 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
         << "\n    Tile width and height are not 16 pixels";
         ErrorLog::WriteToFile(ss.str());
     }
-
-    tiledData=std::unique_ptr<TiledData>(new TiledData(tilesWide, tilesHigh));
 
     //Translate background color from string to int
     const char* pointer=valueString.c_str();
@@ -824,20 +853,17 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
             std::string listenString="";
             std::string scriptString="";
 
-            TMXLoadProperties(node, properties);
+            TiledData::TMXLoadProperties(node, tiledData->properties);
 
             attributes.clear();
             attributes["SCRIPT"]           = Attribute("string", &scriptString);
             attributes["LISTEN"]           = Attribute("string", &listenString);
-            TMXLoadAttributesFromProperties(&properties, attributes);
+            TMXLoadAttributesFromProperties(&tiledData->properties, attributes);
 
             if(scriptString==""){continue;}
 
-            globalScriptName=scriptString;
-            ErrorLog::WriteToFile(scriptString);
-            ErrorLog::WriteToFile(listenString);
-            TMXProcessEventListeners(listenString,mEventSources);
-            ErrorLog::WriteToFile("WOT");
+            //globalScriptName=scriptString;
+            //TiledData::TMXProcessEventListeners(listenString,mEventSources);
         }
 
         else if(nn=="tileset"){
@@ -885,19 +911,19 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
             }
             //External Tilesets don't have their first gid included in their file, only the actual map assigns gids
             //that's why the first gid is passed as a separate value here
-            tiledData->AddTileSet(TMXLoadTiledSet(tileSetRootNode, tilesetFirstGID));
+            tiledData->AddTileSet(TMXLoadTiledSet(tileSetRootNode, tilesetFirstGID, tiledData->gid));
         }
 
         else if(nn=="layer"){
-            tiledData->AddLayer(TMXLoadTiledTileLayer(node));
+            tiledData->AddLayer(TMXLoadTiledTileLayer(node, tiledData->gid));
         }
 
         else if(nn=="objectgroup"){
-            tiledData->AddLayer(TMXLoadTiledObjectLayer(node));
+            tiledData->AddLayer(TMXLoadTiledObjectLayer(node, tiledData.get()));
         }
 
         else if(nn=="imagelayer"){
-            tiledData->AddLayer(TMXLoadTiledImageLayer(node));
+            tiledData->AddLayer(TMXLoadTiledImageLayer(node, tiledData->gid));
         }
 
     }
@@ -943,9 +969,10 @@ void LMap::LoadTMX(std::string TMXname, const char* dat, unsigned int fsize){
         }
     }
     //GIDManager::SetHighestGID(finalGID);
+    return tiledData;
 }
 
-std::unique_ptr<TiledTileLayer> LMap::TMXLoadTiledTileLayer (rapidxml::xml_node<>* rootNode){
+std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager){
     unsigned int animationRate=0; //if this variable stays zero, then there won't be any tile animations
     int depth;
     unsigned int width;
@@ -988,7 +1015,7 @@ std::unique_ptr<TiledTileLayer> LMap::TMXLoadTiledTileLayer (rapidxml::xml_node<
     attributes["ANIMATIONSPEED"]= Attribute("unsigned int",  &animationRate);
     TMXLoadAttributesFromProperties(&properties, attributes); //store unspecified properties in tileLayer->extraproperties
 
-    std::unique_ptr<TiledTileLayer> tileLayer(new TiledTileLayer(width, height, name, depth, &tiledData->gid));
+    std::unique_ptr<TiledTileLayer> tileLayer(new TiledTileLayer(width, height, name, depth, &gidManager));
     tileLayer->layerFlags=0;
     tileLayer->friction=friction;
     tileLayer->layerOpacity=alpha;
@@ -1031,7 +1058,7 @@ std::unique_ptr<TiledTileLayer> LMap::TMXLoadTiledTileLayer (rapidxml::xml_node<
     for(unsigned int i=0; i<data.size(); i++){
         if(tileLayer->tileSet==""){
             if(data[i]!=0){
-                tileLayer->tileSet = ((TiledSet*)tiledData->gid.GetItem(data[i]))->name;
+                tileLayer->tileSet = ((TiledSet*)gidManager.GetItem(data[i]))->name;
             }
         }
         tileLayer->data2D[x][y]=data[i];
@@ -1046,7 +1073,7 @@ std::unique_ptr<TiledTileLayer> LMap::TMXLoadTiledTileLayer (rapidxml::xml_node<
     return tileLayer;
 }
 
-std::unique_ptr<TiledObjectLayer> LMap::TMXLoadTiledObjectLayer (rapidxml::xml_node<>* rootNode){
+std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer (rapidxml::xml_node<>* rootNode, TiledData* tiledData){
     AttributeMap attributes;
     std::string objectLayerName=rootNode->first_attribute()->value();
 
@@ -1062,7 +1089,7 @@ std::unique_ptr<TiledObjectLayer> LMap::TMXLoadTiledObjectLayer (rapidxml::xml_n
     attributes["DEPTH"] = Attribute("int", &depth);
     TMXLoadAttributesFromProperties(&properties, attributes);
 
-    std::unique_ptr<TiledObjectLayer> objectLayer (new TiledObjectLayer(0,0, objectLayerName, depth, &tiledData->gid));
+    std::unique_ptr<TiledObjectLayer> objectLayer = make_unique<TiledObjectLayer>(0,0, objectLayerName, depth, &tiledData->gid);
     objectLayer->properties=properties;
 
     //Siblings of <properties> are actual objects
@@ -1191,7 +1218,7 @@ std::unique_ptr<TiledObjectLayer> LMap::TMXLoadTiledObjectLayer (rapidxml::xml_n
     return objectLayer;
 }
 
-std::unique_ptr<TiledImageLayer> LMap::TMXLoadTiledImageLayer(rapidxml::xml_node<>* rootNode){
+std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml_node<>* rootNode, const GIDManager& gidManager){
     rapidxml::xml_node<> *subNodeImage=rootNode->first_node();
 
     std::string name;
@@ -1221,7 +1248,7 @@ std::unique_ptr<TiledImageLayer> LMap::TMXLoadTiledImageLayer(rapidxml::xml_node
             return NULL;
         }
     }
-    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(w,h,name,depth, &tiledData->gid, texture));
+    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(w,h,name,depth, &gidManager, texture));
 
     float paralaxX, paralaxY;
     bool repeatX, repeatY;
@@ -1238,7 +1265,7 @@ std::unique_ptr<TiledImageLayer> LMap::TMXLoadTiledImageLayer(rapidxml::xml_node
     return imageLayer;
 }
 
-std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRootNode, const GID& firstGID){
+std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRootNode, const GID& firstGID, GIDManager& gidManager){
 /*XML Tile property structure goes like this;
     <tileset>
         <image source="Images/GrassTerrain.png" trans="ff00ff" width="256" height="256"/>
@@ -1281,7 +1308,7 @@ std::unique_ptr<TiledSet> LMap::TMXLoadTiledSet(rapidxml::xml_node<>* tiledSetRo
     TMXLoadAttributes(subNodeImage, attributes);
 
     //Load tileset into engine and set firstGID
-    auto returnSmartPonter = std::unique_ptr<TiledSet>(new TiledSet(name, textureName, tileWidth, tileHeight, tilesetFirstGID, &tiledData->gid));
+    auto returnSmartPonter = std::unique_ptr<TiledSet>(new TiledSet(name, textureName, tileWidth, tileHeight, tilesetFirstGID, &gidManager));
 
     TiledSet* ts=returnSmartPonter.get();
     ts->transparentColor=transparentColor;
