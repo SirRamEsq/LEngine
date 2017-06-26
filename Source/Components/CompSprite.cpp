@@ -122,7 +122,7 @@ void ComponentSprite::Update(){
     }
 }
 
-void ComponentSprite::CalculateVerticies(const int& index){
+void ComponentSprite::CalculateVerticies(int index){
     LOrigin origin=mSprites[index]->GetOrigin();
     float spriteWidth=mSprites[index]->GetWidth();
     float spriteHeight=mSprites[index]->GetHeight();
@@ -173,68 +173,70 @@ void ComponentSprite::CalculateVerticies(const int& index){
         }
 }
 
-bool ComponentSprite::SpriteExists(const int& index){
-    return (index<mNumberOfLoadedSprites);
+bool ComponentSprite::SpriteExists(int index){
+    if( (index < 0) || (index >= mNumberOfLoadedSprites) ){
+        std::stringstream ss;
+        ss << "Sprite Index out of range: Sprite Index '" << index << "' doesn't exist for entity with ID " << mEntityID;
+        ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::WARN, logFileName);
+        return false;
+    }
+    return true;
 }
 
-void ComponentSprite::SetRotation(const int& index, const float& rotation){
+void ComponentSprite::SetRotation(int index, float rotation){
     if(!SpriteExists(index)){return;}
     mRenderableSprites[index].get()->rotation=rotation;
 }
-void ComponentSprite::SetScaling(const int& index, const float& scalingX, const float& scalingY){
+void ComponentSprite::SetScaling(int index, float scalingX, float scalingY){
     if(!SpriteExists(index)){return;}
     RenderableSprite* sprite = mRenderableSprites[index].get();
     sprite->scaleX=scalingX;
     sprite->scaleY=scalingY;
 }
-void ComponentSprite::SetScalingX(const int& index, const float& scalingX){
+void ComponentSprite::SetScalingX(int index, float scalingX){
     if(!SpriteExists(index)){return;}
     mRenderableSprites[index].get()->scaleX=scalingX;
 }
-void ComponentSprite::SetScalingY(const int& index, const float& scalingY){
+void ComponentSprite::SetScalingY(int index, float scalingY){
     if(!SpriteExists(index)){return;}
     mRenderableSprites[index].get()->scaleY=scalingY;
 }
 
-
-bool ComponentSprite::SetAnimation(const int& index, const std::string& animationName){
-    if(index>=mNumberOfLoadedSprites){return false;}
-    return mAnimationData[index].SetAnimation(animationName);
+void ComponentSprite::SetAnimation(int index, const std::string& animationName){
+    if(!SpriteExists(index)){return;}
+    mAnimationData[index].SetAnimation(animationName);
 }
 
-bool ComponentSprite::SetAnimationSpeed(const int& index, const float& speed){
-    if(index>=mNumberOfLoadedSprites){return false;}
+void ComponentSprite::SetAnimationSpeed(int index, float speed){
+    if(!SpriteExists(index)){return;}
     mAnimationData[index].animationSpeed=speed;
-    return true;
 }
 
-bool ComponentSprite::SetImageIndex(const int& index, const int& imageIndex){
-    if(index>=mNumberOfLoadedSprites){return false;}
-    return mAnimationData[index].SetImageIndex(imageIndex);
+void ComponentSprite::SetImageIndex(int index,  int imageIndex){
+    if(!SpriteExists(index)){return;}
+    mAnimationData[index].SetImageIndex(imageIndex);
 }
 
-bool ComponentSprite::RenderSprite(const int& index, const bool& render){
-    if(index>=mNumberOfLoadedSprites){return false;}
+bool ComponentSprite::RenderSprite(int index, bool render){
+    if(!SpriteExists(index)){return false;}
     mRenderableSprites[index].get()->isActive=render;
     return true;
 }
 
-bool ComponentSprite::AnimateSprite(const int& index, const bool& animate){
-    if(index>=mNumberOfLoadedSprites){return false;}
+bool ComponentSprite::AnimateSprite(int index, bool animate){
+    if(!SpriteExists(index)){return false;}
     mAnimationData[index].animate=animate;
     return true;
 }
 
-bool ComponentSprite::SetOffset(const int& index, const float& x, const float& y){
-    if(index>=mNumberOfLoadedSprites){return false;}
+void ComponentSprite::SetOffset(int index, float x, float y){
+    if(!SpriteExists(index)){return;}
 
     mRenderableSprites[index]->offset.x = x;
     mRenderableSprites[index]->offset.y = y;
-
-    return true;
 }
 
-int ComponentSprite::AddSprite(const LSprite* sprite, const MAP_DEPTH& depth, const float& x, const float& y){
+int ComponentSprite::AddSprite(const LSprite* sprite, const MAP_DEPTH& depth, float x, float y){
     Vec2 offset(x,y);
     AnimationData data(sprite->GetAnimationMapPointer());
     const LTexture* texture=K_TextureMan.GetItem(sprite->GetTextureName());

@@ -202,6 +202,7 @@ void GameState::SetMapLinkEntities(
 
             //Initialize Script
             std::string& scriptName = objectIt->second.script;
+
             if(scriptName!=""){
                 const LScript* script=K_ScriptMan.GetItem(scriptName);
                 if(script==NULL){

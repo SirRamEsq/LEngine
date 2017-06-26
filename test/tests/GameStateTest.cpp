@@ -92,7 +92,7 @@ TEST_CASE( "Load Map from File", "[state][LMap]"){
     auto mapToLoad = LMap::LoadResource(mapName);
 
     //segfault here
-    //lstate->SetCurrentMap(mapToLoad.get(), 0);
+    state->SetCurrentMap(mapToLoad.get(), 0);
 
     Kernel::Close();
 }
