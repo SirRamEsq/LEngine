@@ -220,7 +220,7 @@ ComponentCollisionManager::ComponentCollisionManager() : BaseComponentManager("L
 void ComponentCollisionManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentCollision* cbox=new ComponentCollision(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
+    ComponentCollision* cbox=new ComponentCollision(id, (ComponentPosition*)dependencyPosition->GetComponent(id), logFileName);
     componentList[id]=cbox;
 }
 

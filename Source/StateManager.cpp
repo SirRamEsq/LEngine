@@ -2,6 +2,15 @@
 #include "Kernel.h"
 
 
+GameState::GameState(GameStateManager* gsm)
+    :gameStateManager(gsm), luaInterface(this, SCREEN_W, SCREEN_H, CAMERA_W, CAMERA_H),
+    comScriptMan(luaInterface.GetState(), &luaInterface){
+
+    mCurrentMap=NULL;
+
+    //set up dependencies
+    comCollisionMan.dependencyPosition = &comPosMan;
+}
 void GameState::DrawPreviousState(){
     gameStateManager->DrawPreviousState(this);
 }

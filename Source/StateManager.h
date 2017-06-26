@@ -40,11 +40,7 @@ class GameState{
     friend ComponentLightManager;
 
     public:
-        GameState(GameStateManager* gsm)
-            :gameStateManager(gsm), luaInterface(this, SCREEN_W, SCREEN_H, CAMERA_W, CAMERA_H),
-             comScriptMan(luaInterface.GetState(), &luaInterface){
-            mCurrentMap=NULL;
-        }
+        GameState(GameStateManager* gsm);
 
         //Virtual destructor; enables derived classes to be fully deleted from a base GameState pointer
         virtual ~GameState(){
