@@ -44,28 +44,28 @@ class ComponentSprite : public BaseComponent{
         void    HandleEvent(const Event* event);
 
         //returns sprite index
-        int     AddSprite   (const LSprite* sprite, const MAP_DEPTH& depth, const float& x=0.0f, const float& y=0.0f);
+        int     AddSprite   (const LSprite* sprite, const MAP_DEPTH& depth, float x=0.0f, float y=0.0f);
 
-        bool    SetAnimation        (const int& index, const std::string& animationName);
-        bool    SetAnimationSpeed   (const int& index, const float& speed);
-        bool    SetImageIndex       (const int& index, const int& imageIndex);
+        void    SetAnimation        (int index, const std::string& animationName);
+        void    SetAnimationSpeed   (int index, float speed);
+        void    SetImageIndex       (int index, int imageIndex);
 
         //Set whether a given sprite is rendered
-        bool    RenderSprite    (const int& index, const bool& render);
+        bool    RenderSprite    (int index, bool render);
         //Set whether a given sprite is animated
-        bool    AnimateSprite   (const int& index, const bool& animate);
+        bool    AnimateSprite   (int index, bool animate);
         //Set rotation of sprite
-        void    SetRotation     (const int& index, const float& rotation);
+        void    SetRotation     (int index, float rotation);
         //Set Scaling of Sprite
-        void    SetScaling     (const int& index, const float& scalingX, const float& scalingY);
-        void    SetScalingX    (const int& index, const float& scalingX);
-        void    SetScalingY    (const int& index, const float& scalingY);
+        void    SetScaling     (int index, float scalingX, float scalingY);
+        void    SetScalingX    (int index, float scalingX);
+        void    SetScalingY    (int index, float scalingY);
 
-        bool    SetOffset      (const int& index, const float& x, const float& y);
+        void    SetOffset      (int index, float x, float y);
 
-        bool    SpriteExists    (const int& index);
+        bool    SpriteExists    (int index);
 
-        void    CalculateVerticies(const int& index);
+        void    CalculateVerticies(int index);
 
     protected:
         ComponentPosition* myPos;
