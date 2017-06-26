@@ -275,7 +275,7 @@ void GameState::SetMapLinkEntities(
 }
 
 
-bool GameState::SetCurrentMap(const LMap* m, unsigned int entranceID){
+bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
     if(m==NULL){
         ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
         return false;
@@ -288,9 +288,9 @@ bool GameState::SetCurrentMap(const LMap* m, unsigned int entranceID){
 
     //Copy map passed
     mCurrentMap.reset();
-    mCurrentMap = make_unique<LMap>(*m);
+    mCurrentMap = make_unique<RSC_MapImpl>(*((RSC_MapImpl*)(m)));
 
-    TiledData* td=(mCurrentMap->tiledData.get());
+    TiledData* td=(mCurrentMap->GetTiledData());
     SetMapHandleRenderableLayers(td->tiledRenderableLayers);
 
 

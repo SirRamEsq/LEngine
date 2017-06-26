@@ -4,7 +4,7 @@
 #include "CompPosition.h"
 #include "CompScript.h"
 
-#include "../Resources/LMap.h"
+#include "../Resources/RSC_Map.h"
 #include "../Defines.h"
 #include <list>
 
@@ -128,7 +128,7 @@ struct CollisionGrid{
     //Hash value to eid vector
     std::map< int, std::vector<EID> > buckets;
 
-    void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const LMap* currentMap);
+    void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const I_RSC_Map* currentMap);
 };
 class ComponentCollisionManager : public BaseComponentManager{
     public:
@@ -136,7 +136,7 @@ class ComponentCollisionManager : public BaseComponentManager{
         void AddComponent(EID id);
         void Update();
         void UpdateCheckEntityCollision ();
-        void UpdateCheckTileCollision   (const LMap* currentMap);
+        void UpdateCheckTileCollision   (const I_RSC_Map* currentMap);
 
         CollisionGrid grid;
 

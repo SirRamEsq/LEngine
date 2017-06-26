@@ -15,7 +15,7 @@
 #include "Components/CompLight.h"
 
 #include "Event.h"
-#include "Resources/LMap.h"
+#include "Resources/RSC_Map.h"
 #include "LuaInterface.h"
 
 //State manager owns all states given to it
@@ -50,11 +50,11 @@ class GameState{
         virtual ~GameState(){
         }
 
-        LMap* GetCurrentMap(){return mCurrentMap.get();}
+        I_RSC_Map* GetCurrentMap(){return mCurrentMap.get();}
 
 
         RenderManager               renderMan;
-        bool SetCurrentMap(const LMap* m, unsigned int entranceID);
+        bool SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID);
 
     protected:
         virtual void Init()=0;
@@ -93,7 +93,7 @@ class GameState{
 
 
         //is copy of what is stored in resource manager
-        std::unique_ptr<LMap> mCurrentMap;
+        std::unique_ptr<I_RSC_Map> mCurrentMap;
         std::vector<std::unique_ptr<RenderableObjectWorld> > mCurrentMapTileLayers;
 };
 

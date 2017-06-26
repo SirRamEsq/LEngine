@@ -16,7 +16,7 @@ long int frameCount=0;
 long int timeCount=0;
 
 bool changeMap=false;
-const LMap* changeMapM=NULL;
+const I_RSC_Map* changeMapM=NULL;
 std::string changeMapS="";
 int changeMapEntrance=0;
 int DEBUGrepeat=0;
@@ -28,11 +28,11 @@ void GameStartState::Init(){
     CommandLineArgs& cmd=(K_CommandLine);
     std::string mapName=cmd.GetValue(L_CMD_LEVELNAME);
 
-    std::unique_ptr<const LMap> mapData;
+    std::unique_ptr<const I_RSC_Map> mapData;
     if(mapName==""){
         mapName="MAP1.tmx";
     }
-    mapData=LMap::LoadResource(mapName);
+    mapData=RSC_MapImpl::LoadResource(mapName);
 
     if(mapData==NULL){
         ErrorLog::WriteToFile("Couldn't load map named: " + mapName, ErrorLog::GenericLogFile);
@@ -76,9 +76,9 @@ void GameStartState::HandleEvent(const Event* event){
         EColPacket* packet=((EColPacket*)(event->extradata));
         std::string mapName=((MapExit*)(packet->extraData))->mMapName;
         changeMapEntrance=((MapExit*)(packet->extraData))->mEntranceID;
-        const LMap* newMap=K_MapMan.GetItem(mapName);
+        const I_RSC_Map* newMap=K_MapMan.GetItem(mapName);
         if(newMap==NULL){
-            std::unique_ptr<const LMap> loadNewMap (LoadMAP(mapName));
+            std::unique_ptr<const I_RSC_Map> loadNewMap (LoadMAP(mapName));
             if(loadNewMap.get()==NULL){
                 ErrorLog::WriteToFile("Bad Map Name Passed", ErrorLog::GenericLogFile);
                 ErrorLog::WriteToFile(mapName, ErrorLog::GenericLogFile);
