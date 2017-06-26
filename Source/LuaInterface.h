@@ -49,7 +49,6 @@ class LuaInterface{
         //////////////
         //Components//
         //////////////
-            //bool create determines whether or not to create a component if it doesn't exist
             ComponentPosition*  GetPositionComponent (const EID& id);
             ComponentSprite*    GetSpriteComponent   (const EID& id);
             ComponentCollision* GetCollisionComponent(const EID& id);
@@ -110,7 +109,9 @@ class LuaInterface{
         const LScript* baseScript;
         int baseLuaClass;
 
-        int LoadScriptFromChunk(const LScript* script);
+        //RunScript Helper Functions
+        int RunScriptLoadFromChunk(const LScript* script);
+        int RunScriptGetChunk(const LScript* script);
 
         //Creates 'CPP' table in the global table
         void ExposeCPP();

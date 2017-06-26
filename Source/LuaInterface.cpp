@@ -207,7 +207,7 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
     }
     if(baseScript!=NULL){
         try{
-            int functionReference = LoadScriptFromChunk(baseScript);
+            int functionReference = RunScriptLoadFromChunk(baseScript);
 
             //saves function for later use
             baseLuaClass = functionReference;
@@ -227,7 +227,7 @@ LuaInterface::~LuaInterface(){
 
 }
 
-int LuaInterface::LoadScriptFromChunk(const LScript* script){
+int LuaInterface::RunScriptLoadFromChunk(const LScript* script){
     //////////////
     //Load Chunk//
     //////////////
@@ -274,35 +274,8 @@ int LuaInterface::LoadScriptFromChunk(const LScript* script){
     return luaL_ref(lState, LUA_REGISTRYINDEX);
 }
 
-///////////
-//General//
-///////////
-//Clears stack
-bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
-                             const TiledObject* obj, LuaRef* initTable){
-
-    /*
-    Returned value from script should be creator function that can create multiple instances of the entity it describes
-    Value is then saved and if another instance of this script is called, the returned lua function is simply called
-    to create another instance
-    */
-
-    //reference to function to be called to generate table containing class instance
+int LuaInterface::RunScriptGetChunk(const LScript* script){
     int functionReference = 0;
-
-    //check if entity has script component
-
-    ComponentScript* scriptComponent = (ComponentScript*) parentState->comScriptMan.GetComponent(id);
-    if(scriptComponent == NULL){
-        std::stringstream ss;
-        ss << "Couldn't run script for entity with EID " << id << " as this entity does not have a script component";
-        throw LEngineException (ss.str());
-    }
-
-    ////////////////////////////////////////
-    //Check if script has already been run//
-    ////////////////////////////////////////
-
     auto classDefinition = classes.find(script);
     if(classDefinition!=classes.end()){
         functionReference = classDefinition->second;
@@ -311,18 +284,37 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
     else{
         //Load chunk if it hasn't been loaded before
         try{
-            functionReference = LoadScriptFromChunk(script);
+            functionReference = RunScriptLoadFromChunk(script);
         }
         catch(LEngineException e){
-            ErrorLog::WriteToFile(e.what(), DEBUG_LOG);
-            return false;
+            ErrorLog::WriteToFile(e.what(), ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+            throw e;
         }
 
         //saves function for later use
         classes[script] = functionReference;
     }
+    return functionReference;
+}
 
-    //pushes class factory function back on the stack
+///////////
+//General//
+///////////
+//Clears stack
+bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
+                             const TiledObject* obj, LuaRef* initTable){
+
+    //check if entity has script component
+    ComponentScript* scriptComponent = (ComponentScript*) parentState->comScriptMan.GetComponent(id);
+    if(scriptComponent == NULL){
+        std::stringstream ss;
+        ss << "Couldn't run script for entity with EID " << id << " as this entity does not have a script component";
+        throw LEngineException (ss.str());
+    }
+
+    //reference to function to be called to generate table containing class instance
+    auto functionReference = RunScriptGetChunk(script);
+    //pushes class factory function on the stack
     lua_rawgeti(lState, LUA_REGISTRYINDEX, functionReference);
 
     if(baseScript != NULL){

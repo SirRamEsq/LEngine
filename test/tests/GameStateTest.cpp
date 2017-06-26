@@ -38,61 +38,54 @@ class _test_State : public GameState{
     bool init;
 };
 
-TEST_CASE( "Can Push to, Pop from, and Empty out StateManager", "[state]" ) {
-    //Pushes GameStartState
+TEST_CASE("Map Loading functional tests", "[state][lmap][kernel]"){
     Kernel::Inst();
 
-    auto stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 0);
+    SECTION( "Can Push to and Pop from StateManager") {
+        auto stateSize = K_StateMan.stackSize();
+        REQUIRE(stateSize == 0);
 
-    K_StateMan.PushState(std::move(make_unique<_test_State>(&K_StateMan)));
-    stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 1);
+        K_StateMan.PushState(std::move(make_unique<_test_State>(&K_StateMan)));
+        stateSize = K_StateMan.stackSize();
+        REQUIRE(stateSize == 1);
 
-    K_StateMan.PopState();
-    stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 0);
+        K_StateMan.PopState();
+        stateSize = K_StateMan.stackSize();
+        REQUIRE(stateSize == 0);
 
-    Kernel::Close();
+        stateSize = K_StateMan.stackSize();
+        REQUIRE(stateSize == 0);
+        REQUIRE(K_StateMan.IsEmpty());
+    }
 
-    stateSize = K_StateMan.stackSize();
-    REQUIRE(stateSize == 0);
-    REQUIRE(K_StateMan.IsEmpty());
-}
+    SECTION( "State Update and Draw Called Correctly" ) {
+        auto stateSmart = make_unique<_test_State>(&K_StateMan);
+        auto state = stateSmart.get();
+        K_StateMan.PushState(std::move(stateSmart));
 
-TEST_CASE( "State Update and Draw Called Correctly", "[state]" ) {
-    Kernel::Inst();
-    auto stateSmart = make_unique<_test_State>(&K_StateMan);
-    auto state = stateSmart.get();
-    K_StateMan.PushState(std::move(stateSmart));
+        REQUIRE(state->init == true);
+        REQUIRE(state->updateCount == 0);
+        REQUIRE(state->drawCount == 0);
+        REQUIRE(state->close == false);
 
-    REQUIRE(state->init == true);
-    REQUIRE(state->updateCount == 0);
-    REQUIRE(state->drawCount == 0);
-    REQUIRE(state->close == false);
+        Kernel::Run();
 
-    Kernel::Run();
+        REQUIRE(state->init == true);
+        REQUIRE(state->updateCount == 1);
+        REQUIRE(state->drawCount == 1);
+        REQUIRE(state->close == false);
+    }
 
-    REQUIRE(state->init == true);
-    REQUIRE(state->updateCount == 1);
-    REQUIRE(state->drawCount == 1);
-    REQUIRE(state->close == false);
+    SECTION( "Load Map from File"){
+        auto stateSmart = make_unique<_test_State>(&K_StateMan);
+        auto state = stateSmart.get();
+        K_StateMan.PushState(std::move(stateSmart));
 
-    Kernel::Close();
-}
+        std::string mapName = "MAP1.tmx";
+        auto mapToLoad = LMap::LoadResource(mapName);
 
-TEST_CASE( "Load Map from File", "[state][LMap]"){
-    //make and deploy test map
-    Kernel::Inst();
-    auto stateSmart = make_unique<_test_State>(&K_StateMan);
-    auto state = stateSmart.get();
-    K_StateMan.PushState(std::move(stateSmart));
-
-    std::string mapName = "MAP1.tmx";
-    auto mapToLoad = LMap::LoadResource(mapName);
-
-    //segfault here
-    state->SetCurrentMap(mapToLoad.get(), 0);
+        state->SetCurrentMap(mapToLoad.get(), 0);
+    }
 
     Kernel::Close();
 }
