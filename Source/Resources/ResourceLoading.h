@@ -9,12 +9,10 @@
 #include "LSprite.h"
 #include "LSound.h"
 #include "LScript.h"
-#include "LObj.h"
-#include "LTDF.h"
 #include "LHeightmap.h"
 #include "LBackground.h"
 #include "LEvent.h"
-#include "LMap.h"
+#include "RSC_Map.h"
 #include "../Exceptions.h"
 
 #include <string>

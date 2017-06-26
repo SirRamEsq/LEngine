@@ -10,7 +10,7 @@
 #include "Components/CompParticle.h"
 
 #include "Resources/LScript.h"
-#include "Resources/LMap.h"
+#include "Resources/RSC_Map.h"
 
 //Lua headers
 extern "C"{
@@ -88,7 +88,7 @@ class LuaInterface{
         ///////////
         //Handles//
         ///////////
-            LMap* GetMap();
+            I_RSC_Map* GetMap();
 
 
         static const std::string LUA_52_INTERFACE_ENV_TABLE;

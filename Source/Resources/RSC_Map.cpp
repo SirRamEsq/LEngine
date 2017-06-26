@@ -1,9 +1,10 @@
-#include "LMap.h"
+#include "RSC_Map.h"
 #include "../Kernel.h"
 #include "../Exceptions.h"
 
 #include <stdlib.h>
 #include <sstream>
+
 
 
 void CopyPropertyMap(const PropertyMap& source, PropertyMap& destination){
@@ -532,40 +533,54 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer){
 }
 
 
+I_RSC_Map::I_RSC_Map(){
+
+}
+I_RSC_Map::~I_RSC_Map(){
+
+}
 ////////
-//LMap//
+//RSC_MapImpl//
 ////////
 
-LMap::LMap(std::unique_ptr<TiledData> td){
+RSC_MapImpl::RSC_MapImpl(std::unique_ptr<TiledData> td){
     tiledData.reset();
     tiledData = std::move(td);
 }
 
-LMap::LMap(const LMap& rhs){
+EID RSC_MapImpl::GetEIDFromName(const std::string& name)const{
+    return 0;
+}
+
+
+std::string RSC_MapImpl::GetMapName() const {return mMapName;}
+TiledData* RSC_MapImpl::GetTiledData(){return tiledData.get();}
+
+RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl& rhs){
     mMapName            = rhs.mMapName;
     firstGID            = rhs.firstGID;
 
     tiledData = make_unique<TiledData> (*rhs.tiledData.get());
 }
 
- LMap::~LMap(){
+ RSC_MapImpl::~RSC_MapImpl(){
  }
 
 
-int LMap::GetWidthTiles(){
+int RSC_MapImpl::GetWidthTiles() const{
     return tiledData->tileWidth;
 }
-int LMap::GetHeightTiles(){
+int RSC_MapImpl::GetHeightTiles() const{
     return tiledData->tileWidth;
 }
-int LMap::GetWidthPixels(){
+int RSC_MapImpl::GetWidthPixels() const{
     return tiledData->width;
 }
-int LMap::GetHeightPixels(){
+int RSC_MapImpl::GetHeightPixels() const{
     return tiledData->height;
 }
 
-const TiledTileLayer* LMap::GetTileLayerCollision(const int& x, const int& y, const bool& areTheseTileCoords) const {
+const TiledTileLayer* RSC_MapImpl::GetTileLayerCollision(int x, int y, bool areTheseTileCoords) const {
     //Return first tile layer collided with
     if(tiledData.get()->tiledTileLayers.empty()){
         return NULL;
@@ -731,7 +746,7 @@ void TiledData::TMXProcessType(std::string& type, std::string& value, void* data
     }
 }
 
-std::string     LMap::GetProperty (const std::string& property) const{
+std::string     RSC_MapImpl::GetProperty (const std::string& property) const{
     tiledData->GetProperty(property);
 }
 
@@ -743,7 +758,7 @@ std::string     TiledData::GetProperty (const std::string& property){
     return i->second.second;
 }
 
-TiledTileLayer* LMap::GetTileLayer (const std::string& property){
+TiledTileLayer* RSC_MapImpl::GetTileLayer (const std::string& property){
     tiledData->GetTileLayer(property);
 }
 
@@ -757,20 +772,20 @@ TiledTileLayer* TiledData::GetTileLayer(const std::string& name){
     return NULL;
 }
 
-std::unique_ptr<LMap> LMap::LoadResource(const std::string& fname){
-    std::unique_ptr<LMap> lmap = NULL;
+std::unique_ptr<I_RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
+    std::unique_ptr<RSC_MapImpl> rscMap = NULL;
     try{
         std::string fullPath= "Resources/Maps/"+fname;
         auto data=LoadGenericFile(fullPath);
         if(data.get()->GetData()==NULL){
-            throw LEngineFileException("Couldn't load LMAP from path", fname);
+            throw LEngineFileException("Couldn't load RSC_MapImpl from path", fname);
         }
 
         try{
             auto tiledData = TiledData::LoadResourceFromTMX(fname, data.get()->GetData(), data.get()->length);
-            lmap = make_unique<LMap>( std::move(tiledData) ) ;
+            auto rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
-        catch(LMap::Exception e){
+        catch(I_RSC_Map::Exception e){
             ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
             throw e;
         }
@@ -780,7 +795,7 @@ std::unique_ptr<LMap> LMap::LoadResource(const std::string& fname){
         throw e;
     }
 
-    return lmap;
+    return rscMap;
 }
 
 std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMXname, const char* dat, unsigned int fsize){
@@ -793,7 +808,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     std::string XML=std::string(dat,fsize);
 
     std::stringstream mapInitializeDebugMessage;
-    mapInitializeDebugMessage << "[C++; LMAP:LoadTMX] Filename is: " << TMXname;
+    mapInitializeDebugMessage << "[C++; RSC_MapImpl:LoadTMX] Filename is: " << TMXname;
 
     ErrorLog::WriteToFile(mapInitializeDebugMessage.str(), ErrorLog::GenericLogFile);
     using namespace rapidxml;
@@ -899,13 +914,13 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
                 }
                 catch(rapidxml::parse_error e){
                     std::stringstream ss;
-                    ss << "[C++; LMap::LoadTMX] TileSetDoc threw a rapidxml::parse error" << "\n    What is: " << e.what();
+                    ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a rapidxml::parse error" << "\n    What is: " << e.what();
                     ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
 
                 }
                 catch(LEngineFileException e){
                     std::stringstream ss;
-                    ss << "[C++; LMap::LoadTMX] TileSetDoc threw a fileException error" << "\n    What is: " << e.what();
+                    ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a fileException error" << "\n    What is: " << e.what();
                     ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
                 }
             }
@@ -1359,7 +1374,7 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(rapidxml::xml_node<>* tiled
                         ts->tileAnimations[tilePropertyID]   = animation;
                     }
                     else{
-                        ErrorLog::WriteToFile("[C++] LMap::TMXLoadTiledSet; For TileSet " + name
+                        ErrorLog::WriteToFile("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name
                                               + ": Animation named " + animationName + " in Sprite " + spriteName
                                               + " cannot be loaded as it was not defined using an 'animationSequence' tag",
                                               ErrorLog::GenericLogFile);

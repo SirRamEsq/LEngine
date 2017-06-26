@@ -13,7 +13,7 @@ LHeightmap TColPacket::GetHmap(){
         return l;
     }
     GID id = tl->GetGID(x,y);
-    TiledSet* ts = (TiledSet*)K_StateMan.GetCurrentState()->GetCurrentMap()->tiledData.get()->gid.GetItem(id);
+    TiledSet* ts = (TiledSet*)K_StateMan.GetCurrentState()->GetCurrentMap()->GetTiledData()->gid.GetItem(id);
     return ts->GetHeightMap(id);
 }
 
@@ -308,7 +308,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
     }
 }
 
-void ComponentCollisionManager::UpdateCheckTileCollision(const LMap* currentMap){
+void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* currentMap){
     //Put event into smart pointer so that the same event can be reused (not multiple events allocated and deallocated on the stack)
     //May want to change this behaviour at some point, as recievers of the event may expect that they can hold on to it
     std::vector<ComponentCollision::ColBox>::iterator boxIt1;
@@ -392,8 +392,8 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const LMap* currentMap)
     }
 }
 
-void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const LMap* currentMap){
-    int mapWidth = currentMap->tiledData->width;
+void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const I_RSC_Map* currentMap){
+    int mapWidth = currentMap->GetWidthPixels();
 
     std::set<int> hashes;
     ComponentCollision::ColBox* primaryBox;

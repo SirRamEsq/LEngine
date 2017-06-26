@@ -28,12 +28,10 @@
 #include "Resources/LSprite.h"
 #include "Resources/LSound.h"
 #include "Resources/LScript.h"
-#include "Resources/LObj.h"
-#include "Resources/LTDF.h"
 #include "Resources/LHeightmap.h"
 #include "Resources/LBackground.h"
 #include "Resources/LEvent.h"
-#include "Resources/LMap.h"
+#include "Resources/RSC_Map.h"
 #include "Resources/LglShader.h"
 
 #include "AudioSubsystem.h"
@@ -64,7 +62,7 @@ class Kernel{
         static GenericContainer<LMusic>        rscMusicMan;
         static GenericContainer<LScript>       rscScriptMan;
         static GenericContainer<LTexture>      rscTexMan;
-        static GenericContainer<LMap>          rscMapMan;
+        static GenericContainer<I_RSC_Map>     rscMapMan;
         static GenericContainer<L_GL_Shader>   rscShaderMan;
 
         static Kernel* pointertoself;

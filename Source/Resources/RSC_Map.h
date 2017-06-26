@@ -32,7 +32,7 @@ typedef std::map<std::string, StringPair>   PropertyMap;
 void CopyPropertyMap(const PropertyMap& source, PropertyMap& destination);
 
 //Forward declares
-class LMap;
+class RSC_MapImpl;
 class TiledData;
 class GIDManager;
 
@@ -126,7 +126,7 @@ class GIDManager{
         //GIDEnabled items can be lookedup by Range
         std::map<Range,         GIDEnabled*> GIDItems;
 };
-//No more Global GID manager. Each LMap will contain its own set of data to create a map
+//No more Global GID manager. Each I_RSC_Map will contain its own set of data to create a map
 //The only reason they were shared before, was in order to share the same spriets
 //Now that these classes don't create sprites, it no longer serves a purpose
 
@@ -134,7 +134,7 @@ class GIDManager{
 //Each tile has a unique GID. Each tileSet has a Range of GIDs for each tile it defines
 //It's up to the GID Manager to keep track of what ranges belong to which tilesets.
 class TiledSet : public GIDEnabled{
-    friend LMap;
+    friend RSC_MapImpl;
     friend TiledData;
 
     public:
@@ -165,7 +165,7 @@ class TiledSet : public GIDEnabled{
         const std::string textureName;
 
     protected:
-        std::map<GID, const LAnimation*> tileAnimations; //This can be directly accessed by LMap (for the purpose of loading the animations in from a file)
+        std::map<GID, const LAnimation*> tileAnimations; //This can be directly accessed by I_RSC_Map (for the purpose of loading the animations in from a file)
 
     private:
         bool initializationOK;
@@ -187,7 +187,7 @@ class TiledSet : public GIDEnabled{
 //In addition to the properties outlined in the TiledSet, the TiledTileLayer can override and add to those properties.
 
 class TiledLayerGeneric{
-    friend LMap;
+    friend RSC_MapImpl;
     friend TiledData;
     public:
         TiledLayerGeneric(const unsigned int& tileW, const unsigned int& tileH, const std::string& name,
@@ -205,7 +205,7 @@ class TiledLayerGeneric{
         const L_TILED_LAYER_TYPE layerType;
         const std::string layerName;
 
-        //GID Manager for the LMap that this layer is a part of
+        //GID Manager for the I_RSC_Map that this layer is a part of
         const GIDManager*  GIDM;
 
         float       GetAlpha  () const {return layerOpacity;}
@@ -227,7 +227,7 @@ class TiledLayerGeneric{
 };
 
 class TiledTileLayer : public TiledLayerGeneric{
-    friend LMap;
+    friend RSC_MapImpl;
     friend TiledData;
 
     public:
@@ -347,7 +347,7 @@ class TiledData{
     friend ComponentCollisionManager;
     friend StateManager;
     friend GameState;
-    friend LMap;
+    friend RSC_MapImpl;
 
     public:
          TiledData(const unsigned int& tWidth, const unsigned int& tHeight);
@@ -417,35 +417,55 @@ class TiledData{
 
 
 class ComponentScript;
-//serves as the interface for scripts
-class LMap{;
-    friend GameState;
 
+class I_RSC_Map{
     public:
         class Exception : public LEngineException{using LEngineException::LEngineException;};
 
-        LMap(std::unique_ptr<TiledData> td);
-        LMap(const LMap& rhs);
-        ~LMap();
+        I_RSC_Map();
+        virtual ~I_RSC_Map();
+        virtual int GetWidthTiles() const   = 0;
+        virtual int GetHeightTiles() const  = 0;
+        virtual int GetWidthPixels() const  = 0;
+        virtual int GetHeightPixels() const = 0;
 
-        int GetWidthTiles();
-        int GetHeightTiles();
-        int GetWidthPixels();
-        int GetHeightPixels();
-
-        std::string GetProperty (const std::string& property) const;
-        std::string GetMapName  () const {return mMapName;}
-        TiledTileLayer* GetTileLayer(const std::string& name);
+        virtual std::string GetProperty (const std::string& property) const = 0;
+        virtual std::string GetMapName  () const = 0;
+        virtual TiledTileLayer* GetTileLayer(const std::string& name) = 0;
         //returns 0 if name doesn't exist
-        EID GetEIDFromName(const std::string& name) const;
+        virtual EID GetEIDFromName(const std::string& name) const = 0;
 
+        virtual const TiledTileLayer* GetTileLayerCollision(int x,  int y, bool areTheseTileCoords) const = 0;
 
-        const TiledTileLayer* GetTileLayerCollision(const int& x, const int& y, const bool& areTheseTileCoords) const;
+        virtual TiledData* GetTiledData() = 0;
+};
+
+class RSC_MapImpl : public I_RSC_Map{;;
+    friend GameState;
+
+    public:
+        RSC_MapImpl(std::unique_ptr<TiledData> td);
+        RSC_MapImpl(const RSC_MapImpl& rhs);
+        ~RSC_MapImpl();
 
         //Data
         std::unique_ptr<TiledData> tiledData;
 
-        static std::unique_ptr<LMap> LoadResource(const std::string& fname);
+        static std::unique_ptr<I_RSC_Map> LoadResource(const std::string& fname);
+
+        int GetWidthTiles() const;
+        int GetHeightTiles() const;
+        int GetWidthPixels() const;
+        int GetHeightPixels() const;
+
+        std::string GetProperty (const std::string& property) const;
+        std::string GetMapName  () const;
+        TiledTileLayer* GetTileLayer(const std::string& name);
+        EID GetEIDFromName(const std::string& name) const;
+
+        const TiledTileLayer* GetTileLayerCollision(int x, int y, bool areTheseTileCoords) const;
+
+        TiledData* GetTiledData();
 
     private:
         std::string mMapName;

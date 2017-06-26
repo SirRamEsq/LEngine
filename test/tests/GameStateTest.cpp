@@ -82,7 +82,7 @@ TEST_CASE("Map Loading functional tests", "[state][lmap][kernel]"){
         K_StateMan.PushState(std::move(stateSmart));
 
         std::string mapName = "MAP1.tmx";
-        auto mapToLoad = LMap::LoadResource(mapName);
+        auto mapToLoad = RSC_MapImpl::LoadResource(mapName);
 
         state->SetCurrentMap(mapToLoad.get(), 0);
     }

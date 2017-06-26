@@ -5,7 +5,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
-#include "Resources/LMap.h"
+#include "Resources/RSC_Map.h"
 
 std::string ROTypeRenderableObject          = "RenderableObject";
 std::string ROTypeRenderableObjectScreen    = "RenderableObjectScreen";
@@ -452,7 +452,7 @@ RenderTiledTileLayer::RenderTiledTileLayer(const TiledTileLayer *l)
 
     //Get Texture and TiledSet to be used
     const GIDManager* gid = layer->GIDM;
-    tiledSet = K_StateMan.GetCurrentState()->GetCurrentMap()->tiledData->tiledSets[layer->GetTiledSet()];
+    tiledSet = K_StateMan.GetCurrentState()->GetCurrentMap()->GetTiledData()->tiledSets[layer->GetTiledSet()];
     BuildVAO();
 
     AddToRenderManager();

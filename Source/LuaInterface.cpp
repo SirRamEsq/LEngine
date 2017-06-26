@@ -629,7 +629,7 @@ void LuaInterface::EventLuaSendEvent      (EID senderID, EID recieverID, const s
     script->HandleEvent(&e);
 }
 
-LMap* LuaInterface::GetMap(){
+I_RSC_Map* LuaInterface::GetMap(){
     return parentState->GetCurrentMap();
 }
 
@@ -880,13 +880,13 @@ void LuaInterface::ExposeCPP(){
                 .addFunction("GetY2",           &RenderLine::GetY2)
             .endClass()
 
-            .beginClass<LMap>("LMap")
-                .addFunction("GetTileLayer",    &LMap::GetTileLayer)
-                .addFunction("GetProperty",     &LMap::GetProperty)
-                .addFunction("GetWidthTiles",        &LMap::GetWidthTiles)
-                .addFunction("GetHeightTiles",       &LMap::GetHeightTiles)
-                .addFunction("GetWidthPixels",        &LMap::GetWidthPixels)
-                .addFunction("GetHeightPixels",       &LMap::GetHeightPixels)
+            .beginClass<I_RSC_Map>("I_RSC_Map")
+                .addFunction("GetTileLayer",    &I_RSC_Map::GetTileLayer)
+                .addFunction("GetProperty",     &I_RSC_Map::GetProperty)
+                .addFunction("GetWidthTiles",        &I_RSC_Map::GetWidthTiles)
+                .addFunction("GetHeightTiles",       &I_RSC_Map::GetHeightTiles)
+                .addFunction("GetWidthPixels",        &I_RSC_Map::GetWidthPixels)
+                .addFunction("GetHeightPixels",       &I_RSC_Map::GetHeightPixels)
             .endClass()
 
         .endNamespace()

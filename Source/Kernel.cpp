@@ -20,7 +20,7 @@ GenericContainer<LTexture>     Kernel::rscTexMan;
 GenericContainer<LSound>       Kernel::rscSoundMan;
 GenericContainer<LMusic>       Kernel::rscMusicMan;
 GenericContainer<LScript>      Kernel::rscScriptMan;
-GenericContainer<LMap>         Kernel::rscMapMan;
+GenericContainer<I_RSC_Map>         Kernel::rscMapMan;
 GenericContainer<L_GL_Shader>  Kernel::rscShaderMan;
 
 Kernel::Kernel(){}
@@ -69,7 +69,7 @@ void Kernel::Inst(int argc, char *argv[]){
     rscMusicMan     .SetLoadFunction(&LMusic::LoadResource   );
     rscSoundMan     .SetLoadFunction(&LSound::LoadResource   );
     rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
-    rscMapMan       .SetLoadFunction(&LMap::LoadResource   );
+    rscMapMan       .SetLoadFunction(&RSC_MapImpl::LoadResource   );
 
     entMan      = new EntityManager;
 
