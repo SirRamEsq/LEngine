@@ -274,9 +274,12 @@ void LTexture::Clear(){
 std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
     std::unique_ptr<LTexture> texture = NULL;
     try{
-        std::string fullPath = "Resources/Images/"+fname;
+        std::string fullPath = "Resources/Images/" + fname;
         auto data=LoadGenericFile(fullPath);
         if(data.get()->GetData()==NULL){
+            std::stringstream ss;
+            ss << "Texture " << fullPath << " couldn't be found.";
+            ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
             return NULL;
         }
         texture = make_unique<LTexture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
@@ -288,5 +291,4 @@ std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
     }
 
     return texture;
-
 }

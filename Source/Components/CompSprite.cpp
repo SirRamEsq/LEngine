@@ -177,7 +177,7 @@ bool ComponentSprite::SpriteExists(int index){
     if( (index < 0) || (index >= mNumberOfLoadedSprites) ){
         std::stringstream ss;
         ss << "Sprite Index out of range: Sprite Index '" << index << "' doesn't exist for entity with ID " << mEntityID;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::WARN, logFileName);
+        ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, logFileName);
         return false;
     }
     return true;
@@ -239,7 +239,8 @@ void ComponentSprite::SetOffset(int index, float x, float y){
 int ComponentSprite::AddSprite(const LSprite* sprite, const MAP_DEPTH& depth, float x, float y){
     Vec2 offset(x,y);
     AnimationData data(sprite->GetAnimationMapPointer());
-    const LTexture* texture=K_TextureMan.GetItem(sprite->GetTextureName());
+    auto textureName = sprite->GetTextureName();
+    const LTexture* texture=K_TextureMan.GetLoadItem(textureName, textureName);
     if(texture==NULL){
         std::stringstream ss;
         ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named " << sprite->GetTextureName();
