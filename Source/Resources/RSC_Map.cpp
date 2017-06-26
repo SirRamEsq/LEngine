@@ -338,9 +338,20 @@ TiledObjectLayer::TiledObjectLayer(const TiledObjectLayer& rhs, const GIDManager
 //TiledTileLayer//
 //////////////////
 
+void TiledTileLayer::InitializeMap(){
+    //Build 2D array
+    for(int x=0; x<tileWidth; x++){
+        std::vector<GID> g;
+        data2D.push_back(g);
+        for(int y=0; y<tileHeight; y++){
+            data2D.back().push_back(0);
+        }
+    }
+}
+
 TiledTileLayer::TiledTileLayer(const unsigned int& w, const unsigned int& h, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g)
     : TiledLayerGeneric(w, h, name, depth, g, LAYER_TILE){
-
+    InitializeMap();
 }
 
 TiledTileLayer::TiledTileLayer(const TiledTileLayer& rhs, const GIDManager* g)
@@ -1054,15 +1065,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     int tilesWide=tileLayer->tileWidth;
     int tilesHigh=tileLayer->tileHeight;
 
-    //Start getting the 2D array built
-    for(int x=0; x<tilesWide; x++){
-        std::vector<GID> g;
-        tileLayer->data2D.push_back(g);
-        for(int y=0; y<tilesHigh; y++){
-            tileLayer->data2D.back().push_back(31337);
-        }
-    }
-    //Now that it's properly sized, load the correct data into it
+    //load the correct data into 2dmap
     int x=0;
     int y=0;
 
