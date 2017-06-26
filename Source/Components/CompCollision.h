@@ -140,6 +140,8 @@ class ComponentCollisionManager : public BaseComponentManager{
 
         CollisionGrid grid;
 
+        ComponentPositionManager* dependencyPosition;
+
     private:
         void SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, MESSAGE_TYPE mes);
 };
