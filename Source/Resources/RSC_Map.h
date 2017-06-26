@@ -266,6 +266,8 @@ class TiledTileLayer : public TiledLayerGeneric{
 
     private:
         std::vector<std::vector<GID> > data2D;
+
+        void InitializeMap();
 };
 
 class TiledImageLayer : public TiledLayerGeneric{

@@ -38,7 +38,7 @@ class _test_State : public GameState{
     bool init;
 };
 
-TEST_CASE("Map Loading functional tests", "[state][lmap][kernel]"){
+TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
     Kernel::Inst();
 
     SECTION( "Can Push to and Pop from StateManager") {
