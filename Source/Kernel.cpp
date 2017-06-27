@@ -4,7 +4,6 @@
 
 SDLInit*                    Kernel::SDLMan;
 GameStateManager            Kernel::stateMan;
-Kernel*                     Kernel::pointertoself;
 InputManager                Kernel::inputMan;
 CommandLineArgs             Kernel::commandLine;
 AudioSubsystem              Kernel::audioSubsystem;
@@ -39,10 +38,6 @@ void Kernel::Close(){
     rscMapMan    .Clear();
 }
 
-Kernel* Kernel::Instance(){
-    if(pointertoself==NULL){pointertoself=new Kernel();}
-    return pointertoself;
-}
 void Kernel::Inst(){
     int argc=0; char *argv[0];
     Kernel::Inst(argc, argv);

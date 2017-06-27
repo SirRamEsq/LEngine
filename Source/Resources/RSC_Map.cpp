@@ -382,22 +382,23 @@ TiledTileLayer::TiledTileLayer(const TiledTileLayer& rhs, const GIDManager* g)
 }
 
 GID TiledTileLayer::GetGID(unsigned int x, unsigned int y) const {
-    if((x < tileWidth) and (y < tileHeight)){
+    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
         return data2D[x][y];
     }
+    return 0;
 }
 void TiledTileLayer::SetGID(unsigned int x, unsigned int y, GID id) {
-    if((x < tileWidth) and (y < tileHeight)){
+    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
         data2D[x][y] = id;
     }
 }
 unsigned int TiledTileLayer::GetTile(unsigned int x, unsigned int y) const {
-    if((x < tileWidth) and (y < tileHeight)){
+    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
         return data2D[x][y];
     }
 }
 void TiledTileLayer::SetTile(unsigned int x, unsigned int y, unsigned int id) {
-    if((x < tileWidth) and (y < tileHeight)){
+    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
         data2D[x][y] = id;
     }
 }
@@ -606,6 +607,8 @@ const TiledTileLayer* RSC_MapImpl::GetTileLayerCollision(int x, int y, bool areT
     auto i=tiledData.get()->tiledTileLayers.begin();
     if(x>=i->get()->data2D.size())      {return NULL;}
     if(y>=i->get()->data2D[xt].size())  {return NULL;}
+    if(x<0){return NULL;}
+    if(y<0){return NULL;}
 
     GID id=0;
     for(; i!=tiledData.get()->tiledTileLayers.end(); i++){
