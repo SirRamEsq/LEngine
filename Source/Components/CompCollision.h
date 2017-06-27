@@ -82,7 +82,6 @@ class ComponentCollision : public BaseComponent{
         bool noTiles;//Don't check against any tiles ever
 
         void Update();
-        void HandleEvent(const Event* event);
 
         void AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int orderNum=0); //x and y are relative to myPos
         void AddCollisionBox(CRect rect, int boxid, int orderNum=0);

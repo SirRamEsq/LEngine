@@ -56,7 +56,6 @@ ComponentCollision::~ComponentCollision(){
 }
 
 void ComponentCollision::Update(){}
-void ComponentCollision::HandleEvent(const Event* event){}
 
 ComponentCollision::ColBox::ColBox(CRect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH d) : myPos(pos){
     if(r.w==0){r.w=1;}

@@ -12,6 +12,9 @@ class BaseComponent{
     friend class BaseComponentManager;
     friend class ComponentPositionManager;
 
+    //callback function called on event
+    typedef void (*EventFunction)(const Event* event);
+
     public:
         virtual ~BaseComponent();
 
@@ -20,15 +23,19 @@ class BaseComponent{
         }
 
         virtual void Update()=0;
-        virtual void HandleEvent(const Event* event)=0;
+        virtual void HandleEvent(const Event* event);
 
         EID GetEID() const {return mEntityID;}
 
         const std::string logFileName;
+        void SetEventCallbackFunction(EventFunction f);
 
     protected:
         EID mEntityID;
         BaseComponentManager* mManager;
+
+    private:
+        EventFunction eventCallback;
 };
 
 class BaseComponentManager{
