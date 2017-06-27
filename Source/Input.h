@@ -28,8 +28,6 @@ class InputManager{
         std::shared_ptr<KeyMapping> SetEventDispatcher(EventDispatcher* e, std::shared_ptr<KeyMapping>* mapping=NULL);
 
     private:
-        //KeyMapping      keyListeners;
-
         asciiMap    ascii;
         asciiMapREV asciiREV;
         EventDispatcher* eventDispatcher;
