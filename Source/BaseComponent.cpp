@@ -5,6 +5,17 @@ BaseComponent::~BaseComponent(){
     //K_EventMan.DispatchEvent(event);
 }
 
+void BaseComponent::SetEventCallbackFunction(EventFunction f){
+    eventCallback=f;
+}
+
+void BaseComponent::HandleEvent(const Event* event){
+    if(eventCallback!=NULL){
+        eventCallback(event);
+    }
+}
+
+
 int BaseComponentManager::GetComponentCount(){
     return componentList.size();
 }

@@ -1,14 +1,28 @@
 #ifndef L_ENTITY_MAN
 #define L_ENTITY_MAN
 
-#include <vector>
-#include <map>
-
+#include "BaseComponent.h"
+#include "Exceptions.h"
 #include "Defines.h"
 #include "Event.h"
 
+#include <vector>
+#include <map>
+
 class EntityManager{
     public:
+        class Exception : public LEngineException{using LEngineException::LEngineException;};
+        enum DEFAULT_UPDATE_ORDER{
+            PARTICLE    = 10,
+            COLLISION   = 20,
+            INPUT       = 30,
+            POSITION    = 40,
+            SCRIPT      = 50,
+            SPRITE      = 60,
+            CAMERA      = 70,
+            LIGHT       = 80
+        };
+
         EntityManager(){entityNumber=EID_MIN;mFlagDeleteAll=false;}
 
         //Can optionally pass in a name to associate with the EID
@@ -22,6 +36,8 @@ class EntityManager{
 
         void ClearAllEntities();
 
+        void RegisterComponentManager(int order, BaseComponentManager* manager);
+
     protected:
         void ClearNameMappings();
 
@@ -34,6 +50,9 @@ class EntityManager{
         //Map of names to EIDS and an inverse lookup map (this is fine because both the names and EIDs are unique
         std::map<std::string, EID> nameToEID;
         std::map<EID, std::string> EIDToName;
+
+        //components sorted by priority in ascending order
+        std::map<int, BaseComponentManager*, std::less<int>> componentsRegistered;
 };
 
 #endif
