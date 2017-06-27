@@ -84,7 +84,6 @@ void ComponentCollision::AddCollisionBox(CRect rect, int boxid, int orderNum){
 }
 
 void ComponentCollision::SetPrimaryCollisionBox(int boxid, bool ntile){
-    noTiles=ntile;
     ColBox* cb=GetColBox(boxid);
     if(cb!=NULL){cb->flags= (cb->flags|PRIMARY);}
     else{
@@ -391,9 +390,12 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* curren
     }
 }
 
-void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const I_RSC_Map* currentMap){
-    int mapWidth = currentMap->GetWidthPixels();
 
+void ComponentCollisionManager::UpdateBuckets (int widthPixels){
+    grid.UpdateBuckets((std::map<EID, ComponentCollision*>*)(&componentList), widthPixels);
+}
+
+void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int mapWidthPixels){
     std::set<int> hashes;
     ComponentCollision::ColBox* primaryBox;
     CRect rect;
@@ -405,10 +407,10 @@ void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, con
 
         rect = primaryBox->ToGameCoords();
 
-        hashes.insert( (rect.GetLeft()  / COLLISION_GRID_SIZE) + ( (rect.GetTop()    / COLLISION_GRID_SIZE) * mapWidth) );
-        hashes.insert( (rect.GetRight() / COLLISION_GRID_SIZE) + ( (rect.GetTop()    / COLLISION_GRID_SIZE) * mapWidth) );
-        hashes.insert( (rect.GetLeft()  / COLLISION_GRID_SIZE) + ( (rect.GetBottom() / COLLISION_GRID_SIZE) * mapWidth) );
-        hashes.insert( (rect.GetRight() / COLLISION_GRID_SIZE) + ( (rect.GetBottom() / COLLISION_GRID_SIZE) * mapWidth) );
+        hashes.insert( (rect.GetLeft()  / COLLISION_GRID_SIZE) + ( (rect.GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (rect.GetRight() / COLLISION_GRID_SIZE) + ( (rect.GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (rect.GetLeft()  / COLLISION_GRID_SIZE) + ( (rect.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (rect.GetRight() / COLLISION_GRID_SIZE) + ( (rect.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
 
         for(auto hashIt = hashes.begin(); hashIt != hashes.end(); hashIt++){
             buckets[*hashIt].push_back(it->second->GetEID());
@@ -437,7 +439,8 @@ void ComponentCollisionManager::Update(){
     that was collided with is the reciever and the boxid is the extra data.
     */
 
-    grid.UpdateBuckets((std::map<EID, ComponentCollision*>*)(&componentList), K_StateMan.GetCurrentState()->GetCurrentMap());
+    //update grid
+    UpdateBuckets(K_StateMan.GetCurrentState()->GetCurrentMap()->GetWidthPixels());
     UpdateCheckEntityCollision();
     UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
 }

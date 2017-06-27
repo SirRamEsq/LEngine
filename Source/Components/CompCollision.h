@@ -127,13 +127,14 @@ struct CollisionGrid{
     //Hash value to eid vector
     std::map< int, std::vector<EID> > buckets;
 
-    void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, const I_RSC_Map* currentMap);
+    void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int mapWidthPixels);
 };
 class ComponentCollisionManager : public BaseComponentManager{
     public:
         ComponentCollisionManager(EventDispatcher* e);
         void AddComponent(EID id);
         void Update();
+        void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
         void UpdateCheckTileCollision   (const I_RSC_Map* currentMap);
 
