@@ -440,7 +440,7 @@ const LSprite* LuaInterface::LoadSprite(const std::string& sprPath){
 }
 
 void LuaInterface::ListenForInput (EID id, const std::string& inputName){
-     K_InputMan.ListenForInput(inputName, id);
+     ((ComponentInput*)(parentState->comInputMan.GetComponent(id)))->ListenForInput(inputName);
 }
 
 void LuaInterface::WriteError     (EID id, const std::string& error){
@@ -547,7 +547,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
                                 const std::string& name, const std::string& type,
                                 luabridge::LuaRef propertyTable){
     //New Entity
-    EID ent=K_EntMan->NewEntity();
+    EID ent=parentState->entityMan.NewEntity();
 
     //New Position Component for Entity
     parentState->comPosMan.AddComponent(ent);
@@ -576,7 +576,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
 }
 
 void LuaInterface::EntityDelete(EID entity){
-    K_EntMan->DeleteEntity(entity);
+    parentState->entityMan.DeleteEntity(entity);
 }
 
 /////////////

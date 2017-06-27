@@ -8,29 +8,33 @@
 #include "IniHandler.h"
 
 #include <map>
-#include <vector>
+#include <set>
 
 class Kernel; //forward declare
 
 class InputManager{
     typedef std::map<std::string, int> asciiMap;
     typedef std::map<int, std::string>  asciiMapREV;
-    typedef std::vector<EID> entityVec;
-    typedef std::map<std::string, entityVec> keyMapping;
+
     public:
+        typedef std::set<EID> EntitySet;
+        typedef std::map<std::string, EntitySet> KeyMapping;
+
         InputManager();
         ~InputManager();
 
-        void ListenForInput(std::string input, EID id); //Set a certain entity to listen for certain input
-        void ClearAllListeners();
-
         void HandleInput();
 
+        std::shared_ptr<KeyMapping> SetEventDispatcher(EventDispatcher* e, std::shared_ptr<KeyMapping>* mapping=NULL);
+
     private:
-        keyMapping      keyListeners;
+        //KeyMapping      keyListeners;
 
         asciiMap    ascii;
         asciiMapREV asciiREV;
+        EventDispatcher* eventDispatcher;
+
+        std::shared_ptr<KeyMapping> keyListeners;
 };
 
 #endif

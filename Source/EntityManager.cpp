@@ -69,7 +69,7 @@ void EntityManager::Cleanup(){
     deadEntities.clear();
 }
 
-void EntityManager::RegisterComponentManager(int order, BaseComponentManager* manager){
+void EntityManager::RegisterComponentManager(BaseComponentManager* manager, int order){
     if(componentsRegistered.find(order)!=componentsRegistered.end()){
         std::stringstream ss;
         ss << "Couldn't register component with order: '" << order << "' order id already taken.";

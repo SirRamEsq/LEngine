@@ -164,7 +164,7 @@ class ComponentParticle : public BaseComponent{
 
 class ComponentParticleManager : public BaseComponentManager{
     public:
-        ComponentParticleManager();
+        ComponentParticleManager(EventDispatcher* e);
         ~ComponentParticleManager();
 
         void Update();

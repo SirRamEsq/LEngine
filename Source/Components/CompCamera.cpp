@@ -37,7 +37,7 @@ void ComponentCameraManager::Update(){
     }
 }
 
-ComponentCameraManager::ComponentCameraManager() : BaseComponentManager("LOG_COMP_CAMERA"){
+ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_CAMERA", e){
 }
 
 ComponentCameraManager::~ComponentCameraManager(){

@@ -252,8 +252,8 @@ void ComponentScript::RunFunction(const std::string& fname){
 //ComponentScriptManager//
 //////////////////////////
 
-ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* interface)
-    : BaseComponentManager("LOG_COMP_SCRIPT"), lState(state), lInterface(interface){
+ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e)
+    : BaseComponentManager("LOG_COMP_SCRIPT", e), lState(state), lInterface(interface){
 
 }
 

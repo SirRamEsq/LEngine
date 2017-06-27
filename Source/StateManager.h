@@ -59,9 +59,12 @@ class GameState{
         virtual void HandleEvent(const Event* event)=0;
         virtual bool Update()=0;
         virtual void Draw()=0;
+        virtual void SetDependencies();
         void UpdateComponentManagers();
 
         LuaInterface                luaInterface;
+        EventDispatcher             eventDispatcher;
+        EntityManager               entityMan;
 
         ComponentPositionManager    comPosMan;
         ComponentInputManager       comInputMan;
@@ -73,6 +76,8 @@ class GameState{
         ComponentLightManager       comLightMan;
 
         GameStateManager*           gameStateManager;
+
+        std::shared_ptr<InputManager::KeyMapping> input;
 
         void DrawPreviousState();
 
@@ -129,6 +134,8 @@ class GameStateManager{
         GameState* GetPreviousState(GameState* gs);
         GameState* mCurrentState;
         std::vector<std::unique_ptr<GameState> > mGameStates;
+
+        InputManager input;
 };
 
 #endif

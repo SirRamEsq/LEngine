@@ -131,7 +131,7 @@ struct CollisionGrid{
 };
 class ComponentCollisionManager : public BaseComponentManager{
     public:
-        ComponentCollisionManager();
+        ComponentCollisionManager(EventDispatcher* e);
         void AddComponent(EID id);
         void Update();
         void UpdateCheckEntityCollision ();

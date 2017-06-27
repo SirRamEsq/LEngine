@@ -2,10 +2,8 @@
 
 #ifndef TEST_Kernel_MOCK
 
-EntityManager*              Kernel::entMan;
 SDLInit*                    Kernel::SDLMan;
 GameStateManager            Kernel::stateMan;
-EventDispatcher             Kernel::eventMan(&Kernel::stateMan, Kernel::entMan);
 Kernel*                     Kernel::pointertoself;
 InputManager                Kernel::inputMan;
 CommandLineArgs             Kernel::commandLine;
@@ -20,7 +18,7 @@ GenericContainer<LTexture>     Kernel::rscTexMan;
 GenericContainer<LSound>       Kernel::rscSoundMan;
 GenericContainer<LMusic>       Kernel::rscMusicMan;
 GenericContainer<LScript>      Kernel::rscScriptMan;
-GenericContainer<I_RSC_Map>         Kernel::rscMapMan;
+GenericContainer<I_RSC_Map>    Kernel::rscMapMan;
 GenericContainer<L_GL_Shader>  Kernel::rscShaderMan;
 
 Kernel::Kernel(){}
@@ -39,8 +37,6 @@ void Kernel::Close(){
     rscSoundMan  .Clear();
     rscScriptMan .Clear();
     rscMapMan    .Clear();
-
-    delete entMan;
 }
 
 Kernel* Kernel::Instance(){
@@ -71,8 +67,6 @@ void Kernel::Inst(int argc, char *argv[]){
     rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
     rscMapMan       .SetLoadFunction(&RSC_MapImpl::LoadResource   );
 
-    entMan      = new EntityManager;
-
     stateMan.Init();
     commandLine.ParseArgs(argc, argv);
 
@@ -87,8 +81,6 @@ bool Kernel::Run(){
     while(SDL_GetTicks()>nextGameTick) {
         nextGameTick = SDL_GetTicks() + SKIP_TICKS;
 
-        entMan->Cleanup();
-        inputMan.HandleInput();
 
         returnValue=stateMan.Update();
         if(returnValue!=1){

@@ -88,7 +88,7 @@ class ComponentScript : public BaseComponent{
 class TiledObject;
 class ComponentScriptManager : public BaseComponentManager{
     public:
-        ComponentScriptManager(lua_State* state, LuaInterface* interface);
+        ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
 
         void AddComponent(EID id);
 

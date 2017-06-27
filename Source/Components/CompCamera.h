@@ -26,7 +26,7 @@ class ComponentCamera : public BaseComponent{
 
 class ComponentCameraManager : public BaseComponentManager{
     public:
-        ComponentCameraManager();
+        ComponentCameraManager(EventDispatcher* e);
         ~ComponentCameraManager();
 
         void Update();

@@ -88,7 +88,7 @@ class ComponentPosition : public BaseComponent{
 
 class ComponentPositionManager : public BaseComponentManager{
     public:
-        ComponentPositionManager();
+        ComponentPositionManager(EventDispatcher* e);
         ~ComponentPositionManager();
 
         void Update();
