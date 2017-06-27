@@ -193,7 +193,7 @@ void ComponentPositionManager::Update(){
     mRootNode->UpdateWorld(mRootNode->mPositionLocal, false);
 }
 
-ComponentPositionManager::ComponentPositionManager() : BaseComponentManager("LOG_COMP_POSITION"){
+ComponentPositionManager::ComponentPositionManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_POSITION", e){
     mRootNode=new MapNode(NULL);
 }
 

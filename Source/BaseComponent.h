@@ -40,8 +40,8 @@ class BaseComponent{
 
 class BaseComponentManager{
     public:
-        BaseComponentManager(const std::string& logName)
-            : logFileName(logName){}
+        BaseComponentManager(const std::string& logName, EventDispatcher* e)
+            : logFileName(logName), eventDispatcher(e){}
 
         //for better cache locality, may want to change this from a map of pointers to vector of basecomponents
         //...and use smart pointers, as Valgrind reports a mem leak in the Delete component function
@@ -63,6 +63,7 @@ class BaseComponentManager{
 
     protected:
         std::map<EID, BaseComponent*> componentList;
+        EventDispatcher* eventDispatcher;
 };
 
 #endif

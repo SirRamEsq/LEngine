@@ -11,7 +11,6 @@
 #include "LScript.h"
 #include "LHeightmap.h"
 #include "LBackground.h"
-#include "LEvent.h"
 #include "RSC_Map.h"
 #include "../Exceptions.h"
 
@@ -36,7 +35,7 @@ class FileData{
 class Kernel;//Forward Declare
 
 std::unique_ptr<FileData>   LoadGenericFile (const std::string& fileName);
-LEvent*                     LoadEVENT   (const std::string& fname);
+//LEvent*                     LoadEVENT   (const std::string& fname);
 
 
 #endif

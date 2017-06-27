@@ -35,7 +35,8 @@ struct EntityEvent : public Event{
 
 class EventDispatcher{
     public:
-        EventDispatcher(GameStateManager* gs, EntityManager* em);
+        EventDispatcher();
+        void SetDependencies(GameStateManager* gs, EntityManager* em);
         void DispatchEvent(std::unique_ptr<Event> event);
         //Immediate Events typcially slower but are good if you need a response from another object
         void DispatchImmediateEvent(std::unique_ptr<Event> event);

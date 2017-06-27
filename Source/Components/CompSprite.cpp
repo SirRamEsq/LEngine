@@ -265,7 +265,7 @@ void ComponentSprite::HandleEvent(const Event* event){}
 //ComponentSpriteManager//
 //////////////////////////
 
-ComponentSpriteManager::ComponentSpriteManager() : BaseComponentManager("LOG_COMP_SPRITE"){
+ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_SPRITE", e){
 
 }
 

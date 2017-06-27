@@ -4,13 +4,35 @@
 
 GameState::GameState(GameStateManager* gsm)
     :gameStateManager(gsm), luaInterface(this, SCREEN_W, SCREEN_H, CAMERA_W, CAMERA_H),
-    comScriptMan(luaInterface.GetState(), &luaInterface){
+    eventDispatcher(),
+    comPosMan(&eventDispatcher),
+    comCameraMan(&eventDispatcher),
+    comSpriteMan(&eventDispatcher),
+    comInputMan(&eventDispatcher),
+    comLightMan(&eventDispatcher),
+    comCollisionMan(&eventDispatcher),
+    comParticleMan(&eventDispatcher),
+    comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher){
 
     mCurrentMap=NULL;
+    SetDependencies();
+}
 
+void GameState::SetDependencies(){
     //set up dependencies
     comCollisionMan.dependencyPosition = &comPosMan;
+    comInputMan.SetDependency(input);
+
+    entityMan.RegisterComponentManager(&comPosMan,          EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
+    entityMan.RegisterComponentManager(&comInputMan,        EntityManager::DEFAULT_UPDATE_ORDER::INPUT);
+    entityMan.RegisterComponentManager(&comScriptMan,       EntityManager::DEFAULT_UPDATE_ORDER::SCRIPT);
+    entityMan.RegisterComponentManager(&comSpriteMan,       EntityManager::DEFAULT_UPDATE_ORDER::SPRITE);
+    entityMan.RegisterComponentManager(&comCollisionMan,    EntityManager::DEFAULT_UPDATE_ORDER::COLLISION);
+    entityMan.RegisterComponentManager(&comParticleMan,     EntityManager::DEFAULT_UPDATE_ORDER::PARTICLE);
+    entityMan.RegisterComponentManager(&comCameraMan,       EntityManager::DEFAULT_UPDATE_ORDER::CAMERA);
+    entityMan.RegisterComponentManager(&comLightMan,        EntityManager::DEFAULT_UPDATE_ORDER::LIGHT);
 }
+
 void GameState::DrawPreviousState(){
     gameStateManager->DrawPreviousState(this);
 }
@@ -56,6 +78,7 @@ void GameStateManager::Close(){
 void GameStateManager::PushState(std::unique_ptr<GameState> state){
     mGameStates.push_back( std::move(state) );
     mCurrentState=mGameStates.back().get();
+    mCurrentState->input = input.SetEventDispatcher(&mCurrentState->eventDispatcher);
     mCurrentState->Init();
 }
 
@@ -79,6 +102,7 @@ void GameStateManager::PopState(){
     }
 
     mCurrentState  = mGameStates.back().get();
+    input.SetEventDispatcher(&mCurrentState->eventDispatcher, &mCurrentState->input);
 }
 
 void GameStateManager::DrawPreviousState(GameState* gs){
@@ -103,7 +127,11 @@ void GameStateManager::HandleEvent(const Event* event){
 }
 
 bool GameStateManager::Update(){
+    mCurrentState->entityMan.Cleanup();
+    input.HandleInput();
+
     if(mCurrentState!=NULL){return mCurrentState->Update();}
+
     return false;
 }
 
@@ -135,7 +163,7 @@ std::vector<EID> GameState::SetMapGetEntitiesUsingEntrances(const std::vector<st
 
             //Include object if it utilizes an entrance
             if((objectIt)->second.useEntrance){
-                EID id=K_EntMan->NewEntity(objectIt->second.name);
+                EID id = entityMan.NewEntity(objectIt->second.name);
                 objectsUsingEntrance.push_back(id);
             }
 
@@ -154,7 +182,7 @@ std::map<EID,EID> GameState::SetMapCreateEntitiesFromLayers(const std::vector<st
         for(auto objectIt=(*ii)->objects.begin(); objectIt!=(*ii)->objects.end(); objectIt++){
             //New Entity
             //If the entity has a name, map that name to it's engine generated ID
-            EID ent=K_EntMan->NewEntity(objectIt->second.name);
+            EID ent = entityMan.NewEntity(objectIt->second.name);
 
             //Map Tile map ID to Engine generated ID
             tiledIDtoEntityID[objectIt->first]=ent;
@@ -293,7 +321,7 @@ bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
     //Unload all layers from last map
     mCurrentMapTileLayers.clear();
     //ent man needs moved into stateman
-    K_EntMan->ClearAllEntities();
+    entityMan.ClearAllEntities();
 
     //Copy map passed
     mCurrentMap.reset();

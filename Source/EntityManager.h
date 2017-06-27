@@ -36,7 +36,7 @@ class EntityManager{
 
         void ClearAllEntities();
 
-        void RegisterComponentManager(int order, BaseComponentManager* manager);
+        void RegisterComponentManager(BaseComponentManager* manager, int order);
 
     protected:
         void ClearNameMappings();

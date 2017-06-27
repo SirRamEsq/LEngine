@@ -79,7 +79,7 @@ int ComponentLight::NewLightSource (const float& intensityStart, const float& in
 //ComponentLightManager//
 //////////////////////////
 
-ComponentLightManager::ComponentLightManager() : BaseComponentManager("LOG_COMP_LIGHT"), vao(MAX_LIGHTS) {
+ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_LIGHT", e), vao(MAX_LIGHTS) {
     glGenFramebuffers(1, &FBO);
     BuildVAOFirst();
 }

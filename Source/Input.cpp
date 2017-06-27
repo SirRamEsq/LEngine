@@ -22,33 +22,32 @@ InputManager::InputManager(){
         }
     }
     ini.CloseReadFile();
+
+    eventDispatcher=NULL;
 }
 
 InputManager::~InputManager(){}
 
-void InputManager::ListenForInput(std::string input, EID id){
-    /*keyMapping::iterator i;
-    i=keyListeners.find(input);
-    if(i==keyListeners.end()){return;}
-
-    i->second.push_back(id);*/
-    keyListeners[input].push_back(id);
-}
-
-void InputManager::ClearAllListeners(){
-    keyMapping::iterator i=keyListeners.begin();
-    for(; i!=keyListeners.end(); i++){
-        i->second.clear();
+std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(EventDispatcher* e, std::shared_ptr<InputManager::KeyMapping>* mapping){
+    //will set key mapping to one specified, or generate a new one if none is specified
+    eventDispatcher = e;
+    if(mapping == NULL){
+        keyListeners = std::shared_ptr<KeyMapping>(new KeyMapping());
     }
+    else{
+        keyListeners = *mapping;
+    }
+
+    //will return data structure to allow caller to directly set key listeners
+    return keyListeners;
 }
 
 void InputManager::HandleInput(){
+    if(eventDispatcher==NULL){return;}
     SDL_Event event;
 
-    entityVec::iterator veci;
-    std::vector<EID>* vec;
     asciiMapREV::iterator keyi;
-    keyMapping::iterator keyMI;
+    KeyMapping::iterator keyMI;
 
     std::string keyStr;
     bool keyup;
@@ -69,17 +68,15 @@ void InputManager::HandleInput(){
             if(keyi!=asciiREV.end()){
                 keyStr=keyi->second;
                 //Stateman is informed first of the event
-                K_EventMan.DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, EID_STATEMAN, msg, &keyStr)) );
+                eventDispatcher->DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, EID_STATEMAN, msg, &keyStr)) );
 
                 //send event to all the entities listening
-                keyMI=keyListeners.find(keyStr);
-                if(keyMI==keyListeners.end()){continue;}
-                vec=&keyMI->second;
-                veci=vec->begin();
+                keyMI=keyListeners->find(keyStr);
+                if(keyMI==keyListeners->end()){continue;}
+                auto vec=&keyMI->second;
 
-                while(veci!=vec->end()){
-                    K_EventMan.DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, *veci, msg, &keyStr)) );
-                    veci++;
+                for(auto veci = vec->begin(); veci!=vec->end(); veci++){
+                    eventDispatcher->DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, *veci, msg, &keyStr)) );
                 }
             }
         }

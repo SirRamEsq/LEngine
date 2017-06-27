@@ -521,7 +521,7 @@ void ComponentParticleManager::Update(){
     }
 }
 
-ComponentParticleManager::ComponentParticleManager() : BaseComponentManager("LOG_COMP_PARTICLE"){
+ComponentParticleManager::ComponentParticleManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_PARTICLE", e){
 }
 
 ComponentParticleManager::~ComponentParticleManager(){

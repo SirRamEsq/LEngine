@@ -3,12 +3,13 @@
 
 using namespace luabridge;
 
-ComponentInput::ComponentInput(EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName){
+ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName){
     mEntityID=id;
     myScript=script;
 }
 
 void ComponentInput::Update(){}
+
 
 void ComponentInput::HandleEvent(const Event* event){
     bool keyup;
@@ -25,16 +26,20 @@ void ComponentInput::HandleEvent(const Event* event){
 }
 
 void ComponentInput::ListenForInput(std::string keyName){
-    K_InputMan.ListenForInput(keyName, mEntityID);
+    (*keyMapping)[keyName].insert(mEntityID);
 }
 
 void ComponentInputManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentInput* input=new ComponentInput(id, (ComponentScript*)Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id), logFileName);
+    ComponentInput* input=new ComponentInput(keyMapping.get(), id, (ComponentScript*)Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id), logFileName);
     componentList[id]=input;
 }
 
-ComponentInputManager::ComponentInputManager() : BaseComponentManager("LOG_COMP_INPUT"){
+void ComponentInputManager::SetDependency(std::shared_ptr<InputManager::KeyMapping> keys){
+    keyMapping = keys;
+}
+
+ComponentInputManager::ComponentInputManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_INPUT", e){
 
 }

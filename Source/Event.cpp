@@ -5,8 +5,14 @@
 
 #ifndef TEST_Event_MOCK
 
-EventDispatcher::EventDispatcher(GameStateManager* gs, EntityManager* em){
-    gameStateManager  = gs;
+
+EventDispatcher::EventDispatcher(){
+    gameStateManager        = NULL;
+    gameStateEntityManager  = NULL;
+}
+
+void EventDispatcher::SetDependencies(GameStateManager* gs, EntityManager* em){
+    gameStateManager        = gs;
     gameStateEntityManager  = em;
 
     if(gameStateManager==NULL){ErrorLog::WriteToFile("GameStateManager is NULL in the EventDispatcher", ErrorLog::GenericLogFile);}

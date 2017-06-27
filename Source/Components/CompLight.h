@@ -58,7 +58,7 @@ class ComponentLight : public BaseComponent{
 
 class ComponentLightManager : public BaseComponentManager{
     public:
-        ComponentLightManager();
+        ComponentLightManager(EventDispatcher* e);
 
         void AddComponent(EID id);
         void HandleEvent(const Event* event);

@@ -7,7 +7,7 @@
 
 class ComponentInput : public BaseComponent{
     public:
-        ComponentInput(EID id, ComponentScript* script, const std::string& logFile);
+        ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logFile);
 
         void Update();
         void HandleEvent(const Event* event);
@@ -15,15 +15,18 @@ class ComponentInput : public BaseComponent{
 
     private:
         ComponentScript* myScript;
+
+        InputManager::KeyMapping* keyMapping;
 };
 
 class ComponentInputManager : public BaseComponentManager{
     public:
-        ComponentInputManager();
+        ComponentInputManager(EventDispatcher* e);
+        void SetDependency(std::shared_ptr<InputManager::KeyMapping> keys);
 
         void AddComponent(EID id);
     private:
-
+        std::shared_ptr<InputManager::KeyMapping> keyMapping;
 };
 
 #endif

@@ -212,7 +212,7 @@ void ComponentCollision::ChangeBox(int boxid, CRect& box){
 //Component Collision Manager//
 ///////////////////////////////
 
-ComponentCollisionManager::ComponentCollisionManager() : BaseComponentManager("L_COMP_COLLISION"){
+ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseComponentManager("L_COMP_COLLISION", e){
 
 }
 
@@ -229,7 +229,7 @@ void ComponentCollisionManager::SendCollisionEvent(const ComponentCollision& sen
     ePacket.objType   = sender.objType;
     ePacket.box       = recieverBoxID;
 
-    K_EventMan.DispatchEvent(std::unique_ptr<Event>(new Event(sender.GetEID(), reciever.GetEID(), mes, &ePacket)));
+    eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(sender.GetEID(), reciever.GetEID(), mes, &ePacket)));
 }
 
 void ComponentCollisionManager::UpdateCheckEntityCollision(){
@@ -348,7 +348,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* curren
                 packet.x=txx1;
                 packet.y=tyy2;
                 packet.box=boxIt1->id;
-                K_EventMan.DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first,  MSG_TILE_COLLISION, &packet)));
+                eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first,  MSG_TILE_COLLISION, &packet)));
 
                 continue;
             }
@@ -374,7 +374,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* curren
                         packet.y=ty;
                         packet.box=boxIt1->id;
                         packet.tl=tLayer;
-                        K_EventMan.DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first, MSG_TILE_COLLISION, &packet)));
+                        eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first, MSG_TILE_COLLISION, &packet)));
                         breakOut=true;
                     }
                     if(!negativeH)  {ty+=1;}
