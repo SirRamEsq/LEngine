@@ -76,7 +76,6 @@ bool Kernel::Run(){
     while(SDL_GetTicks()>nextGameTick) {
         nextGameTick = SDL_GetTicks() + SKIP_TICKS;
 
-
         returnValue=stateMan.Update();
         if(returnValue!=1){
             stateMan.PopState();

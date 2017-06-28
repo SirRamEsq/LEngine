@@ -24,7 +24,6 @@ class GamePauseState : public GameState{
         void Draw();
 
     private:
-        LImage* title;
         bool exit;
         EID ent;
 };

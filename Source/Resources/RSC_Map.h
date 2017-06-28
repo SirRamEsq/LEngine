@@ -9,7 +9,7 @@
 
 #include "LSprite.h"
 #include "LHeightmap.h"
-#include "../RenderManager.h"
+//#include "../RenderManager.h"
 
 //These Types are used as helpers in the TMX loading functions
 //Attributes have a name and reference a variable to store data in

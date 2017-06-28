@@ -143,12 +143,12 @@ void GameState::SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLay
     for(auto i = layers.begin(); i != layers.end(); i++){
 
         if(i->second->layerType == LAYER_TILE){
-            auto layer=std::unique_ptr<RenderTiledTileLayer> ( make_unique<RenderTiledTileLayer> ((TiledTileLayer*)i->second) );
+            auto layer=std::unique_ptr<RenderTileLayer> ( make_unique<RenderTileLayer> ((TiledTileLayer*)i->second) );
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
 
         if(i->second->layerType == LAYER_IMAGE){
-            auto layer=std::unique_ptr<RenderTiledImageLayer> ( make_unique<RenderTiledImageLayer> ((TiledImageLayer*)i->second) );
+            auto layer=std::unique_ptr<RenderImageLayer> ( make_unique<RenderImageLayer> ((TiledImageLayer*)i->second) );
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
     }
