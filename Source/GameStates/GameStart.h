@@ -28,7 +28,6 @@ class GameStartState : public GameState{
         void Draw();
 
     private:
-        LImage* title;
         bool pause;
         int countdown;
         EID ent;

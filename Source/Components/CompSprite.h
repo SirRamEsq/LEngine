@@ -80,7 +80,7 @@ class ComponentSprite : public BaseComponent{
 
         std::vector<AnimationData>      mAnimationData;     //Used to determine what part of the sprite to use
         std::vector<const LSprite*>           mSprites;
-        std::vector< std::unique_ptr<RenderableSprite> >   mRenderableSprites; //class owns renderableSprites, which auto adds and deletes itself to the appropriate sprite batch when instantiated and deleted
+        std::vector< std::unique_ptr<RenderSpriteBatch::Sprite> >   mRenderableSprites; //class owns renderableSprites, which auto adds and deletes itself to the appropriate sprite batch when instantiated and deleted
 };
 
 class ComponentSpriteManager : public BaseComponentManager{

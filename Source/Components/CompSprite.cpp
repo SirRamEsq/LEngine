@@ -56,9 +56,9 @@ ComponentSprite::~ComponentSprite(){
 
 
 void ComponentSprite::Update(){
-    AnimationData*      animation    = NULL;
-    RenderableSprite*   renderSprite = NULL;
-    const LSprite*      spriteData   = NULL;
+    AnimationData*                  animation    = NULL;
+    RenderSpriteBatch::Sprite*      renderSprite = NULL;
+    const LSprite*                  spriteData   = NULL;
 
     Coord2df pos=myPos->GetPositionWorld();
 
@@ -133,7 +133,7 @@ void ComponentSprite::CalculateVerticies(int index){
     float spriteWidthHalf=spriteWidth/2;
     float spriteHeightHalf=spriteHeight/2;
 
-    RenderableSprite* rSprite=mRenderableSprites[index].get();
+    RenderSpriteBatch::Sprite* rSprite=mRenderableSprites[index].get();
 
     switch(origin){
         case L_ORIGIN_CENTER:
@@ -189,7 +189,7 @@ void ComponentSprite::SetRotation(int index, float rotation){
 }
 void ComponentSprite::SetScaling(int index, float scalingX, float scalingY){
     if(!SpriteExists(index)){return;}
-    RenderableSprite* sprite = mRenderableSprites[index].get();
+    RenderSpriteBatch::Sprite* sprite = mRenderableSprites[index].get();
     sprite->scaleX=scalingX;
     sprite->scaleY=scalingY;
 }
@@ -250,7 +250,7 @@ int ComponentSprite::AddSprite(const LSprite* sprite, const MAP_DEPTH& depth, fl
 
     mSprites.            push_back(sprite);
     mAnimationData.      push_back(data);
-    mRenderableSprites.  push_back(std::unique_ptr<RenderableSprite>(new RenderableSprite (sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(), depth, offset)));
+    mRenderableSprites.  push_back(make_unique<RenderSpriteBatch::Sprite> (sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(), depth, offset));
 
     CalculateVerticies(mNumberOfLoadedSprites);
 
