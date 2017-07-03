@@ -677,7 +677,6 @@ void LuaInterface::ExposeCPP(){
                 .addFunction("IsDestructible",  &TiledTileLayer::IsDestructible)
                 .addFunction("IsWater",         &TiledTileLayer::IsWater)
                 .addFunction("UsesHMaps",       &TiledTileLayer::UsesHMaps)
-                .addFunction("HasTile",         &TiledTileLayer::HasTile)
                 .addFunction("GetTile",         &TiledTileLayer::GetTile)
                 .addFunction("SetTile",         &TiledTileLayer::SetTile)
                 .addFunction("UpdateRenderArea",    &TiledTileLayer::UpdateRenderArea)

@@ -12,7 +12,6 @@ collision.cComp=nil;
 	collision.TILEWIDTH=16;
 	collision.TILEHEIGHT=16;
 
-	collision={}
 	collision.footHeightValue=0
 	collision.boxID={}
 	collision.coordinates={}
@@ -20,13 +19,13 @@ collision.cComp=nil;
 	collision.previous={};
 	collision.previous.tileLeft =false;
 	collision.previous.tileRight=false;
-	collision.previous.tileUp		=false;
+	collision.previous.tileUp	=false;
 
 	collision.callbackFunctions={};
 	collision.callbackFunctions.TileUp		=nil; --Arguments are: newPosition (world)
 	collision.callbackFunctions.TileDown	=nil; --Arguments are: newPosition (world) and Angle (unsigned)
 	collision.callbackFunctions.TileLeft	=nil; --Arguments are: newPosition (world)
-	collision.callbackFunctions.TileRight =nil; --Arguments are: newPosition (world)
+	collision.callbackFunctions.TileRight 	=nil; --Arguments are: newPosition (world)
 
 	collision.boxID.BOX_TILE_UP=5;
 	collision.boxID.BOX_TILE_LEFT=6;
@@ -38,29 +37,29 @@ collision.cComp=nil;
 		--Should check horizontal boxes first
 		collision.BOX_FEET_OFFSET=8;
 
-		collision.coordinates.BOX_GROUND_A_X_OFFSET =  2
-		collision.coordinates.BOX_GROUND_B_X_OFFSET =  2;
-		collision.coordinates.BOX_GROUND_Y_OFFSET		=  collision.BOX_FEET_OFFSET;
-		collision.coordinates.BOX_GROUND_H_OFFSET		=  1+collision.BOX_FEET_OFFSET;
-		collision.coordinates.BOX_GROUND_ORDER			=  5;
+		collision.coordinates.BOX_GROUND_A_X_OFFSET =  -2 --right box
+		collision.coordinates.BOX_GROUND_B_X_OFFSET =  2 --left box
+		collision.coordinates.BOX_GROUND_Y_OFFSET	=  collision.BOX_FEET_OFFSET;
+		collision.coordinates.BOX_GROUND_H_OFFSET	=  1+collision.BOX_FEET_OFFSET;
+		collision.coordinates.BOX_GROUND_ORDER		=  5;
 
-		collision.coordinates.BOX_RIGHT_X_OFFSET		=  0
-		collision.coordinates.BOX_RIGHT_Y_OFFSET		=  4
-		collision.coordinates.BOX_RIGHT_W_OFFSET		=  1
-		collision.coordinates.BOX_RIGHT_H_OFFSET		=  8;
-		collision.coordinates.BOX_RIGHT_ORDER				=  15;
+		collision.coordinates.BOX_RIGHT_X_OFFSET	=  0
+		collision.coordinates.BOX_RIGHT_Y_OFFSET	=  4
+		collision.coordinates.BOX_RIGHT_W_OFFSET	=  1
+		collision.coordinates.BOX_RIGHT_H_OFFSET	=  8;
+		collision.coordinates.BOX_RIGHT_ORDER		=  15;
 
-		collision.coordinates.BOX_LEFT_X_OFFSET			=  0;
-		collision.coordinates.BOX_LEFT_Y_OFFSET			=  4;
-		collision.coordinates.BOX_LEFT_W_OFFSET			=  -1;
-		collision.coordinates.BOX_LEFT_H_OFFSET			=  8;
-		collision.coordinates.BOX_LEFT_ORDER				=  15;
+		collision.coordinates.BOX_LEFT_X_OFFSET		=  0;
+		collision.coordinates.BOX_LEFT_Y_OFFSET		=  4;
+		collision.coordinates.BOX_LEFT_W_OFFSET		=  -1;
+		collision.coordinates.BOX_LEFT_H_OFFSET		=  8;
+		collision.coordinates.BOX_LEFT_ORDER		=  15;
 
-		collision.coordinates.BOX_UP_Y_OFFSET				=  0;
-		collision.coordinates.BOX_UP_H_OFFSET				=  -1;
-		collision.coordinates.BOX_UP_W_OFFSET				=  2;
-		collision.coordinates.BOX_UP_X_OFFSET				=  1;
-		collision.coordinates.BOX_UP_ORDER					=  10
+		collision.coordinates.BOX_UP_Y_OFFSET		=  0;
+		collision.coordinates.BOX_UP_H_OFFSET		=  -1;
+		collision.coordinates.BOX_UP_W_OFFSET		=  2;
+		collision.coordinates.BOX_UP_X_OFFSET		=  1;
+		collision.coordinates.BOX_UP_ORDER			=  10
 
 
 --Collision Boxes
@@ -142,7 +141,7 @@ function collision.SetWidthHeight(self, w, h)
 	self.coordinates.BOX_RIGHT_ORDER				=  15;
 
 	self.coordinates.BOX_LEFT_X_OFFSET			=  0;
-	self.coordinates.BOX_LEFT_Y_OFFSET			=  6;
+	self.coordinates.BOX_LEFT_Y_OFFSET			=  6
 	self.coordinates.BOX_LEFT_W_OFFSET			=  -1;
 	self.coordinates.BOX_LEFT_H_OFFSET			=  h-14;
 	self.coordinates.BOX_LEFT_ORDER				=  15;
@@ -155,6 +154,7 @@ function collision.SetWidthHeight(self, w, h)
 end
 
 function collision.GetHeightMapValue(self, absoluteX, tileCollisionPacket)
+	if(tileCollisionPacket.layer:UsesHMaps() == true) then return 16 end
 	local box_value = 0;
 	local boxid=tileCollisionPacket:GetID();
 	local hmap=tileCollisionPacket:GetHmap();
@@ -163,9 +163,9 @@ function collision.GetHeightMapValue(self, absoluteX, tileCollisionPacket)
 
 	--First, figure out the x-coordinate of the heightmap value (height map index value)
 	if(boxid==collision.boxID.BOX_TILE_DOWN_A) then
-	box_value = collision.coordinates.BOX_GROUND_A_X_OFFSET;
+		box_value = self.coordinates.BOX_GROUND_A_X_OFFSET;
 	elseif(boxid==collision.boxID.BOX_TILE_DOWN_B) then
-	box_value = collision.coordinates.BOX_GROUND_B_X_OFFSET;
+		box_value = self.coordinates.BOX_GROUND_B_X_OFFSET;
 	end
 
 	--Get the world x position of the collision box
@@ -174,7 +174,7 @@ function collision.GetHeightMapValue(self, absoluteX, tileCollisionPacket)
 
 	--Got the heightmap index value, now actually get the height value and set the proper y-value
 	if((HMAP_index_value>15)or(HMAP_index_value<0))then
-		self.cpp:WriteError(collision.EID, "Uh-Oh, HMAP Value out of bounds");
+		self.cpp:WriteError(collision.EID, "Uh-Oh, index '" .. HMAP_index_value .. "' is out of bounds with boxValue '" .. box_value .. "' and tx '" .. tx .. "'");
 		self.cpp:WriteError(collision.EID, tostring(HMAP_index_value));
 		return;
 	end
@@ -192,7 +192,7 @@ function collision.Update(self, xspd, yspd)
 	self.cComp:ChangeHeight(self.boxID.BOX_TILE_DOWN_A,  self.footHeightValue);
 	self.cComp:ChangeHeight(self.boxID.BOX_TILE_DOWN_B,  self.footHeightValue);
 	self.cComp:ChangeHeight(self.boxID.BOX_TILE_UP,		math.floor(yspd - 2.5));
-	self.cComp:ChangeWidth(self.boxID.BOX_TILE_LEFT,		math.floor(xspd - 0.5)-1);
+	self.cComp:ChangeWidth(self.boxID.BOX_TILE_LEFT,		math.floor(xspd - 0.5));
 	self.cComp:ChangeWidth(self.boxID.BOX_TILE_RIGHT,		math.floor(xspd + 0.5));
 
 	self.previous.tileLeft =false;
@@ -204,7 +204,11 @@ function collision.Update(self, xspd, yspd)
 	self.frameProperties.firstCollision=false;
 end
 
-function collision.OnTileCollision(self, packet, hspd, vspd, absoluteX, absoluteY)
+function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
+	--[[
+	The fact that this function has been called means that the CPP engine has decided a collision exists here
+	]]--
+
 	--Easy access to context data
 	local boxid=packet:GetID();
 	local tx=packet:GetX();
@@ -213,8 +217,8 @@ function collision.OnTileCollision(self, packet, hspd, vspd, absoluteX, absolute
 	local hmap=packet:GetHmap();
 	local usesHMaps=layer:UsesHMaps();
 	local newPosition;
-	local xval=absoluteX;
-	local yval=absoluteY;
+	local xval=exactX;
+	local yval=exactY;
 
 	--Commonly used variables
 	local HMAPheight=0;
@@ -235,8 +239,8 @@ function collision.OnTileCollision(self, packet, hspd, vspd, absoluteX, absolute
 
 		local thisAngle=hmap.angleH;
 		local thisAngleSigned= self.AngleToSignedAngle(thisAngle);
-		local maximumFootY=self.footHeightValue + absoluteY + self.coordinates.BOX_GROUND_Y_OFFSET;
-		local HMAPheight= self:GetHeightMapValue(absoluteX, packet);
+		local maximumFootY=self.footHeightValue + exactY + self.coordinates.BOX_GROUND_Y_OFFSET;
+		local HMAPheight= self:GetHeightMapValue(exactX, packet);
 
 		--Don't register a self if there isn't any height value
 		if (HMAPheight==0 or HMAPheight==nil) then return; end

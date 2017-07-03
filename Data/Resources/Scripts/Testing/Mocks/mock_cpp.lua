@@ -1,6 +1,10 @@
 function mockCPP()
 	local mock = {}
 
+	function mock.WriteError(self, eid, errorString)
+		error("[EID " .. eid .. "] " .. errorString)
+	end
+
 	function mock.CRect(x, y, w, h)
 		local rect = {}
 		rect.x=x
@@ -25,6 +29,14 @@ function mockCPP()
 			return self.x + self.w
 		end
 		return rect
+	end
+
+	function mock.Coord2df(x,y)
+		local coord = {}
+		coord.x=x
+		coord.y=y
+
+		return coord
 	end
 
 	return mock

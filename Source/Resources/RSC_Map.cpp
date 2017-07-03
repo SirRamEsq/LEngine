@@ -409,7 +409,7 @@ void TiledTileLayer::UpdateRenderArea(CRect area){
 
 
 bool TiledTileLayer::HasTile(unsigned int x, unsigned int y) const{
-    return (GetGID(x/16,y/16)!=0);
+    return (GetGID(x,y)!=0);
 }
 
 bool TiledTileLayer::IsDestructible() const {
