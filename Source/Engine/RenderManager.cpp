@@ -24,6 +24,7 @@ RenderCamera::RenderCamera()
 
 	glGenFramebuffers(1, &FBO);
 
+	//TODO - RenderCamera, remove reliance on Kernel to satisfy RenderMan dependency
 	Kernel::stateMan.GetCurrentState()->renderMan.AddCamera( this);
 }
 void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
@@ -149,7 +150,7 @@ RenderManager::RenderManager()
 	listChange=false;
 	nextTextID=0;
 
-	//All of this init code needs moved somewhere now that RenderManager isn't a singleton.
+	//TODO - RenderMan init code needs moved somewhere now that RenderManager isn't a singleton. maybe into it's own Generic Resource container attached to the Kernel?
 
 	shaderFragmentNameSpriteBatch  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
 	shaderVertexNameSpriteBatch    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
@@ -439,19 +440,5 @@ bool RenderManager::AddCamera(RenderCamera* cam){
 
 void RenderManager::RemoveCamera(RenderCamera* cam){
 	mCameras.erase(cam);
-}
-
-void RenderManager::MoveCameraX(int x){
-	//mCurrentCamera->view.x+=x;
-}
-void RenderManager::MoveCameraY(int y){
-	//mCurrentCamera->view.y+=y;
-}
-
-void RenderManager::MoveCameraXAbs(int x){
-	//mCurrentCamera->view.x=x;
-}
-void RenderManager::MoveCameraYAbs(int y){
-	//mCurrentCamera->view.y=y;
 }
 
