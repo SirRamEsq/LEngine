@@ -1,5 +1,5 @@
 #include "../catch.hpp"
-#include "../../Source/Kernel.h"
+#include "../../Engine/Kernel.h"
 
 TEST_CASE( "Can Load and Bind Texture", "[resources][texture]" ) {
     Kernel::Inst();

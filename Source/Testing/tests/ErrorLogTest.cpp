@@ -1,6 +1,6 @@
 #include "../catch.hpp"
-//#include "../../Source/IniHandler.h"
-#include "../../Source/Errorlog.h"
+//#include "../../Engine/IniHandler.h"
+#include "../../Engine/Errorlog.h"
 
 TEST_CASE( "ErrorLog can write to default file", "[errorlog]" ) {
     ErrorLog::noThrow = false;

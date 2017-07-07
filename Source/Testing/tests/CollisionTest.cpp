@@ -1,9 +1,9 @@
 #include "../catch.hpp"
-#include "../../Source/Components/CompCollision.h"
+#include "../../Engine/Components/CompCollision.h"
 #include "../mocks/RSC_MapMock.h"
-#include "../../Source/EntityManager.h"
-#include "../../Source/Event.h"
-#include "../../Source/Defines.h"
+#include "../../Engine/EntityManager.h"
+#include "../../Engine/Event.h"
+#include "../../Engine/Defines.h"
 
 TEST_CASE("Test RSC_Map Mock and Tile Layer", "[collision][rsc_map]"){
     RSC_MapMock testMap("TEST", 64, 64);
@@ -29,9 +29,10 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
     REQUIRE(0 == callbackValue);
 
     RSC_MapMock testMap("TEST", 64, 64);
-
+	int solidX = 2;
+	int solidY = 2;
     //set TILE to 1 at 2,2
-    testMap.layer.SetGID(2,2,1);
+    testMap.layer.SetGID(solidX,solidY,1);
     //set position to be collided with at tile 2,2
     Coord2df pos(2 * LENGINE_DEF_TILE_W, 2 * LENGINE_DEF_TILE_H);
 
@@ -44,8 +45,8 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
     ComponentCollisionManager   collisionManager(&eventDispatcher);
     ComponentPositionManager    positionManager(&eventDispatcher);
 
-    entityMan.RegisterComponentManager(&positionManager,         EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
-    entityMan.RegisterComponentManager(&collisionManager,        EntityManager::DEFAULT_UPDATE_ORDER::COLLISION);
+    entityMan.RegisterComponentManager(&positionManager, EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
+    entityMan.RegisterComponentManager(&collisionManager,EntityManager::DEFAULT_UPDATE_ORDER::COLLISION);
 
     EID entity = EID_MIN;
 
@@ -60,7 +61,9 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
     compPos->SetPositionLocal(pos);
     compCol->SetEventCallbackFunction(CallbackFunction);
 
-    CRect box(-1,-1, 1, 1);
+    int boxw = 1;
+    int boxh = 1;
+    CRect box(0,0, boxw, boxh);
     int boxID = 0;
     compCol->AddCollisionBox(box, boxID);
     compCol->CheckForTiles(boxID);
@@ -93,6 +96,78 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
         REQUIRE(0 == callbackValue);
     }
 
+    SECTION("Collision register boundaries"){
+		//////////////
+		//RIGHT_SIDE//
+		//////////////
+		//Should not register a collision, just outside area
+        pos.x = (solidX * 16) - boxw - 1;
+        pos.y = (solidY * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(0 == callbackValue);
+
+        //Should register a collision
+        pos.x = (solidX * 16) - boxw;
+        pos.y = (solidY * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(1 == callbackValue);
+
+		/////////////
+		//LEFT_SIDE//
+		/////////////
+		callbackValue=0;
+		//Should not register a collision, just outside area
+        pos.x = ((solidX+1) * 16);
+        pos.y = (solidY * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(0 == callbackValue);
+
+        //Should register a collision
+        pos.x = ((solidX+1) * 16) - 1;
+        pos.y = ((solidY) * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(1 == callbackValue);
+
+		////////////
+		//TOP_SIDE//
+		////////////
+		callbackValue=0;
+		//Should not register a collision, just outside area
+        pos.y = ((solidY+1) * 16);
+        pos.x = (solidX * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(0 == callbackValue);
+
+        //Should register a collision
+        pos.y = ((solidY+1) * 16) - 1;
+        pos.x = ((solidX) * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(1 == callbackValue);
+
+		///////////////
+		//BOTTOM_SIDE//
+		///////////////
+		callbackValue=0;
+		//Should not register a collision, just outside area
+        pos.y = (solidY * 16) - boxh - 1;
+        pos.x = (solidX * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(0 == callbackValue);
+
+        //Should register a collision
+        pos.y = (solidY * 16) - boxh;
+        pos.x = (solidX * 16);
+        compPos->SetPositionLocal(pos);
+        collisionManager.UpdateCheckTileCollision(&testMap);
+        REQUIRE(1 == callbackValue);
+    }
     callbackValue=0;
 }
 
