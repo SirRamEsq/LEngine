@@ -1,7 +1,7 @@
 #include "../catch.hpp"
 
-#include "../../Source/StateManager.h"
-#include "../../Source/Kernel.h"
+#include "../../Engine/StateManager.h"
+#include "../../Engine/Kernel.h"
 
 class _test_State : public GameState{
     public:

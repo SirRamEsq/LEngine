@@ -3,9 +3,10 @@ function newCollisionSystemMock()
 	mock.boxes={}
 	
 	function mock.GetBox(self, id)
+		if id == nil then error("ID is nil") end
 		local box = self.boxes[id]
 		if (box == nil)then
-			error("ID doesn't exist")
+			error("ID " .. id .. " doesn't exist")
 		end
 		return box
 	end

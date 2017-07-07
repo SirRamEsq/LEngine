@@ -73,11 +73,11 @@ describe("Tile Collision Basic Test", function()
 		local yspd = 5
 
 		--yspd is moving downward, t>herefore the box should be longer after updating
-		local previousBoxHeight = col:GetBox(tileCollision.boxID.BOX_TILE_DOWN_A).h
-		local previousBoxWidth = col:GetBox(tileCollision.boxID.BOX_TILE_LEFT).w
+		local previousBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
+		local previousBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		tileCollision:Update(xspd, yspd)
-		local newBoxHeight = col:GetBox(tileCollision.boxID.BOX_TILE_DOWN_A).h
-		local newBoxWidth = col:GetBox(tileCollision.boxID.BOX_TILE_LEFT).w
+		local newBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
+		local newBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		assert.is_true(newBoxHeight > previousBoxHeight)
 		assert.is_equal(newBoxWidth, previousBoxWidth)
 
@@ -87,11 +87,11 @@ describe("Tile Collision Basic Test", function()
 		--yspd is now zero, box should be shorter than previous frame
 		--xspd is moving right, left box should extend further to the right
 		--(therefore having a larget width)
-		previousBoxHeight = col:GetBox(tileCollision.boxID.BOX_TILE_DOWN_A).h
-		previousBoxWidth = col:GetBox(tileCollision.boxID.BOX_TILE_LEFT).w
+		previousBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
+		previousBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		tileCollision:Update(xspd, yspd)
-		newBoxHeight = col:GetBox(tileCollision.boxID.BOX_TILE_DOWN_A).h
-		newBoxWidth = col:GetBox(tileCollision.boxID.BOX_TILE_LEFT).w
+		newBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
+		newBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		assert.is_true(newBoxHeight < previousBoxHeight)
 		assert.is_true(newBoxWidth > previousBoxWidth)
 	end)
@@ -124,17 +124,29 @@ end)
 function callbackDummy()
 	local timesCalled = 0
 	local arguments = {}
+	local object = {}
+		
+	function object.Reset()
+		timesCalled=0
+		arguments={}
+	end
+
+	function object.GetStatus()
+		return timesCalled, arguments
+	end
+
 	return function(newPosition, angle)
 		arguments[timesCalled]=newPosition
 		timesCalled = timesCalled + 1
-
-		return timesCalled, arguments
-	end,
-	function()
-		return timesCalled, arguments
 	end
+	,
+	object
 end
 describe("Tile Collision detection", function()
+	--Responsibility of the tile collision modeul is to do two things
+	--Set appropriate sizes of collision boxes based on entity speed
+	--React to collision events with tile appropriately
+	--It is NOT the job of this module to determine when a collision has occured
 	setup(function()
 		globalTilePacket = nil
 		local result
@@ -164,25 +176,32 @@ describe("Tile Collision detection", function()
 
 		globalTilePacket.layer.tiles[tileX]={}
 		globalTilePacket.layer.tiles[tileX][tileY] = 20 --set tile x=5 y=5 to a non-zero value indicating it's solid
-		globalTilePacket.id = tileCollision.boxID.BOX_TILE_DOWN_B
-		local boxOffset = tileCollision.coordinates.BOX_GROUND_B_X_OFFSET
+		globalTilePacket.id = tileCollision.boxID.TILE_DOWN_L
+		local boxOffset = tileCollision.coordinates.GROUND_L_X_OFFSET
 		globalTilePacket.x = tileX
 		globalTilePacket.y = tileY
 		local absolutex = (tileX * tileW) + 15 - boxOffset
+
 		tileCollision:GetHeightMapValue(absolutex, globalTilePacket)
 	end)
 
 	it("Registers collisions when they should obviously work", function()
-		local xspd = 5 -- moving right, fairly quickly
-		local yspd = 0 -- no movement
+		--no movement, x,y is at the very top right corner of the specified tile
+		--the collision box should extend to the right and downward by its width and height respectively
+		--in this case, the collision box should overlap the tile and should register a collision
+
+		local xspd = 0 
+		local yspd = 0
 		local tileX = 5
 		local tileY = 5
 		local tileW = 16
 		local tileH = 16
+		local entityW = 16
+		local entityH = 16
 
-		globalTilePacket.layer.tiles[tileX]={}
-		globalTilePacket.layer.tiles[tileX][tileY] = 20 --set tile x=5 y=5 to a non-zero value indicating it's solid
-		globalTilePacket.id = tileCollision.boxID.BOX_TILE_DOWN_B
+		tileCollision:Init(entityW, entityH, CPP, col, eid)
+
+		globalTilePacket.id = tileCollision.boxID.TILE_DOWN_L
 		globalTilePacket.x = tileX
 		globalTilePacket.y = tileY
 		local tileDownCallback
@@ -190,11 +209,13 @@ describe("Tile Collision detection", function()
 		tileDownCallback, callbackStatus= callbackDummy()	
 		tileCollision.callbackFunctions.TileDown = tileDownCallback
 		tileCollision:Update(xspd, yspd)
-		tileCollision:OnTileCollision(globalTilePacket, xspd, yspd, (tileX * tileW) + 6, (tileY * tileH) - 6) 
+		tileCollision:OnTileCollision(globalTilePacket, xspd, yspd, (tileX * tileW), (tileY * tileH)) 
 
 		local args
 		local timesCalled
-		timesCalled, args = callbackStatus()
+		timesCalled, args = callbackStatus.GetStatus()
+
 		assert.is_equal(1, timesCalled)
+		callbackStatus.Reset()
 	end)
 end)

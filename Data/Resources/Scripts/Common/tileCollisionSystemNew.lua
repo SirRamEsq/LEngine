@@ -27,39 +27,39 @@ collision.cComp=nil;
 	collision.callbackFunctions.TileLeft	=nil; --Arguments are: newPosition (world)
 	collision.callbackFunctions.TileRight 	=nil; --Arguments are: newPosition (world)
 
-	collision.boxID.BOX_TILE_UP=5;
-	collision.boxID.BOX_TILE_LEFT=6;
-	collision.boxID.BOX_TILE_RIGHT=7;
-	collision.boxID.BOX_TILE_DOWN_A=8;
-	collision.boxID.BOX_TILE_DOWN_B=9;
+	collision.boxID.TILE_UP=5;
+	collision.boxID.TILE_LEFT=6;
+	collision.boxID.TILE_RIGHT=7;
+	collision.boxID.TILE_DOWN_R=8;
+	collision.boxID.TILE_DOWN_L=9;
 
 		--Where BOXs are relative to ground (Down) position
 		--Should check horizontal boxes first
-		collision.BOX_FEET_OFFSET=8;
+		collision.FEET_OFFSET=8;
 
-		collision.coordinates.BOX_GROUND_A_X_OFFSET =  -2 --right box
-		collision.coordinates.BOX_GROUND_B_X_OFFSET =  2 --left box
-		collision.coordinates.BOX_GROUND_Y_OFFSET	=  collision.BOX_FEET_OFFSET;
-		collision.coordinates.BOX_GROUND_H_OFFSET	=  1+collision.BOX_FEET_OFFSET;
-		collision.coordinates.BOX_GROUND_ORDER		=  5;
+		collision.coordinates.GROUND_R_X_OFFSET =  2
+		collision.coordinates.GROUND_L_X_OFFSET =  -2
+		collision.coordinates.GROUND_Y_OFFSET	=  collision.FEET_OFFSET;
+		collision.coordinates.GROUND_H_OFFSET	=  1+collision.FEET_OFFSET;
+		collision.coordinates.GROUND_ORDER		=  5;
 
-		collision.coordinates.BOX_RIGHT_X_OFFSET	=  0
-		collision.coordinates.BOX_RIGHT_Y_OFFSET	=  4
-		collision.coordinates.BOX_RIGHT_W_OFFSET	=  1
-		collision.coordinates.BOX_RIGHT_H_OFFSET	=  8;
-		collision.coordinates.BOX_RIGHT_ORDER		=  15;
+		collision.coordinates.RIGHT_X_OFFSET	=  0
+		collision.coordinates.RIGHT_Y_OFFSET	=  4
+		collision.coordinates.RIGHT_W_OFFSET	=  1
+		collision.coordinates.RIGHT_H_OFFSET	=  8;
+		collision.coordinates.RIGHT_ORDER		=  15;
 
-		collision.coordinates.BOX_LEFT_X_OFFSET		=  0;
-		collision.coordinates.BOX_LEFT_Y_OFFSET		=  4;
-		collision.coordinates.BOX_LEFT_W_OFFSET		=  -1;
-		collision.coordinates.BOX_LEFT_H_OFFSET		=  8;
-		collision.coordinates.BOX_LEFT_ORDER		=  15;
+		collision.coordinates.LEFT_X_OFFSET		=  0;
+		collision.coordinates.LEFT_Y_OFFSET		=  4;
+		collision.coordinates.LEFT_W_OFFSET		=  -1;
+		collision.coordinates.LEFT_H_OFFSET		=  8;
+		collision.coordinates.LEFT_ORDER		=  15;
 
-		collision.coordinates.BOX_UP_Y_OFFSET		=  0;
-		collision.coordinates.BOX_UP_H_OFFSET		=  -1;
-		collision.coordinates.BOX_UP_W_OFFSET		=  2;
-		collision.coordinates.BOX_UP_X_OFFSET		=  1;
-		collision.coordinates.BOX_UP_ORDER			=  10
+		collision.coordinates.UP_Y_OFFSET		=  0;
+		collision.coordinates.UP_H_OFFSET		=  -1;
+		collision.coordinates.UP_W_OFFSET		=  2;
+		collision.coordinates.UP_X_OFFSET		=  1;
+		collision.coordinates.UP_ORDER			=  10
 
 
 --Collision Boxes
@@ -93,27 +93,27 @@ function collision.Init(self, w, h, iface, component, eid)
 
 	local coords=self.coordinates;
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
-	self.boxTileRight= CPP.CRect(coords.BOX_RIGHT_X_OFFSET,	coords.BOX_RIGHT_Y_OFFSET,	coords.BOX_RIGHT_W_OFFSET,	coords.BOX_RIGHT_H_OFFSET);
-	self.boxTileLeft=	 CPP.CRect(coords.BOX_LEFT_X_OFFSET,	 coords.BOX_LEFT_Y_OFFSET,	 coords.BOX_LEFT_W_OFFSET,	coords.BOX_LEFT_H_OFFSET );
-	self.boxTileUp=		 CPP.CRect(coords.BOX_UP_X_OFFSET,		coords.BOX_UP_Y_OFFSET,			coords.BOX_UP_W_OFFSET,			coords.BOX_UP_H_OFFSET	 );
+	self.boxTileRight= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
+	self.boxTileLeft=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
+	self.boxTileUp=		 CPP.CRect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
 
-	self.boxTileDownA= CPP.CRect(coords.BOX_GROUND_A_X_OFFSET,	coords.BOX_GROUND_Y_OFFSET,		1,	coords.BOX_GROUND_H_OFFSET);
-	self.boxTileDownB= CPP.CRect(coords.BOX_GROUND_B_X_OFFSET,	coords.BOX_GROUND_Y_OFFSET,		1,	coords.BOX_GROUND_H_OFFSET);
+	self.boxTileDownR= CPP.CRect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
+	self.boxTileDownL= CPP.CRect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
 
-	self.cComp:AddCollisionBox(self.boxTileDownA, self.boxID.BOX_TILE_DOWN_A, coords.BOX_GROUND_ORDER);
-	self.cComp:CheckForTiles(self.boxID.BOX_TILE_DOWN_A);
+	self.cComp:AddCollisionBox(self.boxTileDownR, self.boxID.TILE_DOWN_R, coords.GROUND_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_DOWN_R);
 
-	self.cComp:AddCollisionBox(self.boxTileDownB, self.boxID.BOX_TILE_DOWN_B, coords.BOX_GROUND_ORDER);
-	self.cComp:CheckForTiles(self.boxID.BOX_TILE_DOWN_B);
+	self.cComp:AddCollisionBox(self.boxTileDownL, self.boxID.TILE_DOWN_L, coords.GROUND_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_DOWN_L);
 
-	self.cComp:AddCollisionBox(self.boxTileRight, self.boxID.BOX_TILE_RIGHT, coords.BOX_RIGHT_ORDER);
-	self.cComp:CheckForTiles(self.boxID.BOX_TILE_RIGHT);
+	self.cComp:AddCollisionBox(self.boxTileRight, self.boxID.TILE_RIGHT, coords.RIGHT_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_RIGHT);
 
-	self.cComp:AddCollisionBox(self.boxTileLeft, self.boxID.BOX_TILE_LEFT, coords.BOX_LEFT_ORDER);
-	self.cComp:CheckForTiles(self.boxID.BOX_TILE_LEFT);
+	self.cComp:AddCollisionBox(self.boxTileLeft, self.boxID.TILE_LEFT, coords.LEFT_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_LEFT);
 
-	self.cComp:AddCollisionBox(self.boxTileUp, self.boxID.BOX_TILE_UP, coords.BOX_UP_ORDER);
-	self.cComp:CheckForTiles(self.boxID.BOX_TILE_UP);
+	self.cComp:AddCollisionBox(self.boxTileUp, self.boxID.TILE_UP, coords.UP_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_UP);
 
 	self.groundTouch=false;
 end
@@ -121,11 +121,11 @@ end
 function collision.SetWidthHeight(self, w, h)
 	self.WIDTH=w;
 	self.HEIGHT=h;
-	self.coordinates.BOX_GROUND_A_X_OFFSET =  w-2
-	self.coordinates.BOX_GROUND_B_X_OFFSET =  2;
-	self.coordinates.BOX_GROUND_Y_OFFSET		=  h-self.BOX_FEET_OFFSET;
-	self.coordinates.BOX_GROUND_H_OFFSET		=  1+self.BOX_FEET_OFFSET;
-	self.coordinates.BOX_GROUND_ORDER			=  5;
+	self.coordinates.GROUND_R_X_OFFSET =  w-2
+	self.coordinates.GROUND_L_X_OFFSET =  2;
+	self.coordinates.GROUND_Y_OFFSET		=  h-self.FEET_OFFSET;
+	self.coordinates.GROUND_H_OFFSET		=  1+self.FEET_OFFSET;
+	self.coordinates.GROUND_ORDER			=  5;
 
 	--The left and right self boxes are closer to the top than the bottom
 	--this is to allow for covering rougher terrain without the left and right
@@ -134,23 +134,23 @@ function collision.SetWidthHeight(self, w, h)
 	--higher y coordinate (lower on the screen) than they would otherwise
 	--(when such a self would result in left or right firing instead of feet)
 
-	self.coordinates.BOX_RIGHT_X_OFFSET		=  w
-	self.coordinates.BOX_RIGHT_Y_OFFSET		=  6
-	self.coordinates.BOX_RIGHT_W_OFFSET		=  1
-	self.coordinates.BOX_RIGHT_H_OFFSET		=  h-14;
-	self.coordinates.BOX_RIGHT_ORDER				=  15;
+	self.coordinates.RIGHT_X_OFFSET		=  w
+	self.coordinates.RIGHT_Y_OFFSET		=  6
+	self.coordinates.RIGHT_W_OFFSET		=  1
+	self.coordinates.RIGHT_H_OFFSET		=  h-14;
+	self.coordinates.RIGHT_ORDER				=  15;
 
-	self.coordinates.BOX_LEFT_X_OFFSET			=  0;
-	self.coordinates.BOX_LEFT_Y_OFFSET			=  6
-	self.coordinates.BOX_LEFT_W_OFFSET			=  -1;
-	self.coordinates.BOX_LEFT_H_OFFSET			=  h-14;
-	self.coordinates.BOX_LEFT_ORDER				=  15;
+	self.coordinates.LEFT_X_OFFSET			=  0;
+	self.coordinates.LEFT_Y_OFFSET			=  6
+	self.coordinates.LEFT_W_OFFSET			=  -1;
+	self.coordinates.LEFT_H_OFFSET			=  h-14;
+	self.coordinates.LEFT_ORDER				=  15;
 
-	self.coordinates.BOX_UP_Y_OFFSET				=  0;
-	self.coordinates.BOX_UP_H_OFFSET				=  -1;
-	self.coordinates.BOX_UP_W_OFFSET				=  (w/2);
-	self.coordinates.BOX_UP_X_OFFSET				=  (w/4);
-	self.coordinates.BOX_UP_ORDER					=  10;
+	self.coordinates.UP_Y_OFFSET				=  0;
+	self.coordinates.UP_H_OFFSET				=  -1;
+	self.coordinates.UP_W_OFFSET				=  (w/2);
+	self.coordinates.UP_X_OFFSET				=  (w/4);
+	self.coordinates.UP_ORDER					=  10;
 end
 
 function collision.GetHeightMapValue(self, absoluteX, tileCollisionPacket)
@@ -162,10 +162,10 @@ function collision.GetHeightMapValue(self, absoluteX, tileCollisionPacket)
 	local tx=tileCollisionPacket:GetX();
 
 	--First, figure out the x-coordinate of the heightmap value (height map index value)
-	if(boxid==collision.boxID.BOX_TILE_DOWN_A) then
-		box_value = self.coordinates.BOX_GROUND_A_X_OFFSET;
-	elseif(boxid==collision.boxID.BOX_TILE_DOWN_B) then
-		box_value = self.coordinates.BOX_GROUND_B_X_OFFSET;
+	if(boxid==collision.boxID.TILE_DOWN_R) then
+		box_value = self.coordinates.GROUND_R_X_OFFSET;
+	elseif(boxid==collision.boxID.TILE_DOWN_L) then
+		box_value = self.coordinates.GROUND_L_X_OFFSET;
 	end
 
 	--Get the world x position of the collision box
@@ -184,16 +184,16 @@ end
 
 function collision.Update(self, xspd, yspd)
 	if(self.groundTouch==true)then
-		self.footHeightValue=math.floor(yspd+0.5+self.BOX_FEET_OFFSET+math.abs(xspd))+2
+		self.footHeightValue=math.floor(yspd+0.5+self.FEET_OFFSET+math.abs(xspd))+2
 	else
-		self.footHeightValue=math.floor(yspd + 0.5 + self.BOX_FEET_OFFSET)+1
+		self.footHeightValue=math.floor(yspd + 0.5 + self.FEET_OFFSET)+1
 	end
 
-	self.cComp:ChangeHeight(self.boxID.BOX_TILE_DOWN_A,  self.footHeightValue);
-	self.cComp:ChangeHeight(self.boxID.BOX_TILE_DOWN_B,  self.footHeightValue);
-	self.cComp:ChangeHeight(self.boxID.BOX_TILE_UP,		math.floor(yspd - 2.5));
-	self.cComp:ChangeWidth(self.boxID.BOX_TILE_LEFT,		math.floor(xspd - 0.5));
-	self.cComp:ChangeWidth(self.boxID.BOX_TILE_RIGHT,		math.floor(xspd + 0.5));
+	self.cComp:ChangeHeight(self.boxID.TILE_DOWN_R,  self.footHeightValue);
+	self.cComp:ChangeHeight(self.boxID.TILE_DOWN_L,  self.footHeightValue);
+	self.cComp:ChangeHeight(self.boxID.TILE_UP,		math.floor(yspd - 2.5));
+	self.cComp:ChangeWidth(self.boxID.TILE_LEFT,		math.floor(xspd - 0.5));
+	self.cComp:ChangeWidth(self.boxID.TILE_RIGHT,		math.floor(xspd + 0.5));
 
 	self.previous.tileLeft =false;
 	self.previous.tileRight=false;
@@ -233,13 +233,13 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--============================--
 	--If Ground Collision Occurred--
 	--============================--
-	if ( ((boxid==self.boxID.BOX_TILE_DOWN_A) or (boxid==self.boxID.BOX_TILE_DOWN_B))
+	if ( ((boxid==self.boxID.TILE_DOWN_R) or (boxid==self.boxID.TILE_DOWN_L))
 		 and(tx~=self.ignoreTileX)
 		 ) then
 
 		local thisAngle=hmap.angleH;
 		local thisAngleSigned= self.AngleToSignedAngle(thisAngle);
-		local maximumFootY=self.footHeightValue + exactY + self.coordinates.BOX_GROUND_Y_OFFSET;
+		local maximumFootY=self.footHeightValue + exactY + self.coordinates.GROUND_Y_OFFSET;
 		local HMAPheight= self:GetHeightMapValue(exactX, packet);
 
 		--Don't register a self if there isn't any height value
@@ -270,13 +270,13 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--===========================--
 	--If Right Collision Occurred--
 	--===========================--
-	elseif ( (boxid==self.boxID.BOX_TILE_RIGHT) ) then
+	elseif ( (boxid==self.boxID.TILE_RIGHT) ) then
 		if(usesHMaps)then
 			return;
 		end
 		if((hspd>=0) or ((self.groundTouch==false) and (hspd==0)))  then
 			--Add one because the first x pixel counts as part of the width
-			newPosition=CPP.Coord2df( (tx*self.TILEWIDTH)-self.coordinates.BOX_RIGHT_X_OFFSET-self.coordinates.BOX_RIGHT_W_OFFSET+1,																																																			yval);
+			newPosition=CPP.Coord2df( (tx*self.TILEWIDTH)-self.coordinates.RIGHT_X_OFFSET-self.coordinates.RIGHT_W_OFFSET+1,																																																			yval);
 
 			self.previous.tileRight=true;
 			--The top self box won't try to collide with this tile for the rest of the frame
@@ -290,7 +290,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--==========================--
 	--If Left Collision Occurred--
 	--==========================--
-	elseif ( (boxid==self.boxID.BOX_TILE_LEFT) ) then
+	elseif ( (boxid==self.boxID.TILE_LEFT) ) then
 		if(usesHMaps)then
 			return;
 		end
@@ -309,7 +309,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--=========================--
 	--If Top Collision Occurred--
 	--=========================--
-	elseif ( (boxid==self.boxID.BOX_TILE_UP) and(tx~=self.ignoreTileX))then
+	elseif ( (boxid==self.boxID.TILE_UP) and(tx~=self.ignoreTileX))then
 		--Subtract one because (ty+1) pushes one pixel past the actual tile colided with
 		if(usesHMaps)then
 			return;
