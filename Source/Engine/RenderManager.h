@@ -30,119 +30,119 @@ RenderManager owns only SpriteBatches, the rest are owned by whatever instantiat
 
 class ComponentCamera;
 class RenderCamera{
-    friend class RenderManager;
-    friend class ComponentCamera;
+	friend class RenderManager;
+	friend class ComponentCamera;
 
-    public:
-        RenderCamera();
-        ~RenderCamera();
+	public:
+		RenderCamera();
+		~RenderCamera();
 
-        void    SetScaling (double s)   {scale=s;        }
-        void    SetRotation(double r)   {rotation=r;     }
-        double  GetScaling ()           {return scale;   }
-        double  GetRotation()           {return rotation;}
+		void	SetScaling (double s)	{scale=s;		 }
+		void	SetRotation(double r)	{rotation=r;	 }
+		double	GetScaling ()			{return scale;	 }
+		double	GetRotation()			{return rotation;}
 
-        int            GetX       (){return view.x;}
-        int            GetY       (){return view.y;}
-        const CRect&   GetViewRect(){return view;  }
+		int			   GetX		  (){return view.x;}
+		int			   GetY		  (){return view.y;}
+		const CRect&   GetViewRect(){return view;  }
 
-        void          Bind             (const GLuint& GlobalCameraUBO);
+		void		  Bind			   (const GLuint& GlobalCameraUBO);
 
-        void UpdatePosition();
-        void RenderFrameBufferTextureFinal();
+		void UpdatePosition();
+		void RenderFrameBufferTextureFinal();
 
-    protected:
-        CRect view;
+	protected:
+		CRect view;
 
-        LTexture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
-        LTexture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
+		LTexture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
+		LTexture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
 
-    private:
-        Vec2 translation;
+	private:
+		Vec2 translation;
 
-        //Cameras can have different shaders!!!
+		//Cameras can have different shaders!!!
 
-        double rotation;
-        double scale;
+		double rotation;
+		double scale;
 
-        MAP_DEPTH nearClippingPlane;
-        MAP_DEPTH farClippingPlane;
+		MAP_DEPTH nearClippingPlane;
+		MAP_DEPTH farClippingPlane;
 
-        double normalizedViewportX; //between 0.0f and 1.0f
-        double normalizedViewportY; //determines where the FBO will be rendered to.
+		double normalizedViewportX; //between 0.0f and 1.0f
+		double normalizedViewportY; //determines where the FBO will be rendered to.
 
-        GLuint FBO; //frame buffer object id
+		GLuint FBO; //frame buffer object id
 
-        bool mActive;
+		bool mActive;
 
-        std::unique_ptr<LTexture>    frameBufferTextureDiffuse;
-        std::unique_ptr<LTexture>    frameBufferTextureFinal;
+		std::unique_ptr<LTexture>	 frameBufferTextureDiffuse;
+		std::unique_ptr<LTexture>	 frameBufferTextureFinal;
 };
 
 class RenderManager{
-    friend RenderableObjectScreen;
-    friend RenderableObjectWorld;
-    friend RenderCamera;
-    public:
-        RenderManager();
+	friend RenderableObjectScreen;
+	friend RenderableObjectWorld;
+	friend RenderCamera;
+	public:
+		RenderManager();
 
-        void Render();
+		void Render();
 
-        void OrderOBJs();
-        void MoveCameraX    (int x);
-        void MoveCameraY    (int y);
-        void MoveCameraXAbs (int x);
-        void MoveCameraYAbs (int y);
+		void OrderOBJs();
+		void MoveCameraX	(int x);
+		void MoveCameraY	(int y);
+		void MoveCameraXAbs (int x);
+		void MoveCameraYAbs (int y);
 
-        void AssignCameraUBO(L_GL_Program* program);
+		void AssignCameraUBO(L_GL_Program* program);
 
-        RenderSpriteBatch* GetSpriteBatch(const std::string& textureName, const MAP_DEPTH& depth, const int& numSprites); //returns sprite batch that supports 'textureName' and has room for at least numSprites more room
+		RenderSpriteBatch* GetSpriteBatch(const std::string& textureName, const MAP_DEPTH& depth, const int& numSprites); //returns sprite batch that supports 'textureName' and has room for at least numSprites more room
 
-        MAP_DEPTH nextTextID;
+		MAP_DEPTH nextTextID;
 
-    protected:
-        bool AddCamera(RenderCamera* cam);
-        void RemoveCamera(RenderCamera* cam);
+	protected:
+		bool AddCamera(RenderCamera* cam);
+		void RemoveCamera(RenderCamera* cam);
 
-        void AddObjectScreen    (RenderableObjectScreen* obj);
-        void RemoveObjectScreen (RenderableObjectScreen* obj);
+		void AddObjectScreen	(RenderableObjectScreen* obj);
+		void RemoveObjectScreen (RenderableObjectScreen* obj);
 
-        void AddObjectWorld     (RenderableObjectWorld* obj);
-        void RemoveObjectWorld  (RenderableObjectWorld* obj);
+		void AddObjectWorld		(RenderableObjectWorld* obj);
+		void RemoveObjectWorld	(RenderableObjectWorld* obj);
 
-    private:
-        bool                                listChange;
-        std::list<RenderableObjectWorld*>   objectsWorld;
-        std::list<RenderableObjectScreen*>  objectsScreen;
-        std::set<RenderCamera*>             mCameras;
+	private:
+		bool								listChange;
+		std::list<RenderableObjectWorld*>	objectsWorld;
+		std::list<RenderableObjectScreen*>	objectsScreen;
+		std::set<RenderCamera*>				mCameras;
 
-        std::string shaderFragmentNameSpriteBatch;
-        std::string shaderVertexNameSpriteBatch;
-        L_GL_Program shaderProgramSpriteBatch;
+		std::string shaderFragmentNameSpriteBatch;
+		std::string shaderVertexNameSpriteBatch;
+		L_GL_Program shaderProgramSpriteBatch;
 
-        std::string shaderFragmentNameTileLayer;
-        std::string shaderVertexNameTileLayer;
-        L_GL_Program shaderProgramTileLayer;
+		std::string shaderFragmentNameTileLayer;
+		std::string shaderVertexNameTileLayer;
+		L_GL_Program shaderProgramTileLayer;
 
-        std::string shaderFragmentNameImage;
-        std::string shaderVertexNameImage;
-        L_GL_Program shaderProgramImage;
+		std::string shaderFragmentNameImage;
+		std::string shaderVertexNameImage;
+		L_GL_Program shaderProgramImage;
 
-        std::string shaderFragmentNameLight;
-        std::string shaderVertexNameLight;
-        L_GL_Program shaderProgramLight;
+		std::string shaderFragmentNameLight;
+		std::string shaderVertexNameLight;
+		L_GL_Program shaderProgramLight;
 
-        static GLuint GlobalCameraUBO;
-        const GLuint CameraDataBindingIndex;
+		static GLuint GlobalCameraUBO;
+		const GLuint CameraDataBindingIndex;
 
-        static GLuint GlobalProgramUBO;
-        const GLuint ProgramDataBindingIndex;
+		static GLuint GlobalProgramUBO;
+		const GLuint ProgramDataBindingIndex;
 
-        int spriteBatchMaxSize;
-        std::map<MAP_DEPTH, std::map< std::string, std::vector < std::unique_ptr <RenderSpriteBatch> > > >  spriteBatchMap; //map each sprite batch to a texture name and depth value
+		int spriteBatchMaxSize;
+		std::map<MAP_DEPTH, std::map< std::string, std::vector < std::unique_ptr <RenderSpriteBatch> > > >	spriteBatchMap; //map each sprite batch to a texture name and depth value
 
-        //Time since creation of RenderManager
-        unsigned int timeElapsed=0;
+		//Time since creation of RenderManager
+		unsigned int timeElapsed=0;
 };
 
 #endif
