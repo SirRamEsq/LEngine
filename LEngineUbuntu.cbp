@@ -5,7 +5,7 @@
 		<Option title="LEngineUbuntu" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="Source/;Source/Components/;" />
+		<Option virtualFolders="Source\;Source\Components\;" />
 		<Option show_notes="0">
 			<notes>
 				<![CDATA[Style:
@@ -162,7 +162,6 @@ TODO:
 		<Unit filename="Source/Resources/ResourceLoading.h" />
 		<Unit filename="Source/SDLInit.cpp" />
 		<Unit filename="Source/SDLInit.h" />
-		<Unit filename="Source/SmartPtr.h" />
 		<Unit filename="Source/StateManager.cpp" />
 		<Unit filename="Source/StateManager.h" />
 		<Unit filename="Source/glslHelper.cpp" />
