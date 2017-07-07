@@ -89,15 +89,12 @@ class RenderManager{
 		void Render();
 
 		void OrderOBJs();
-		void MoveCameraX	(int x);
-		void MoveCameraY	(int y);
-		void MoveCameraXAbs (int x);
-		void MoveCameraYAbs (int y);
 
 		void AssignCameraUBO(L_GL_Program* program);
 
-		RenderSpriteBatch* GetSpriteBatch(const std::string& textureName, const MAP_DEPTH& depth, const int& numSprites); //returns sprite batch that supports 'textureName' and has room for at least numSprites more room
-
+		 //returns sprite batch that supports 'textureName' and has room for at least
+		 //numSprites more room
+		RenderSpriteBatch* GetSpriteBatch(const std::string& textureName, const MAP_DEPTH& depth, const int& numSprites);
 		MAP_DEPTH nextTextID;
 
 	protected:
