@@ -2,10 +2,10 @@
 CC			:= g++
 
 #The Target Binary Program
-TARGET					:= LEngine_TEST
+TARGET					:= LEngine
 
 #The Directories, Source, Includes, Objects, Binary and Resources
-SRCDIR		:= Source
+SRCDIR		:= Source/Engine
 INCDIR		:= -I./LinuxDependencies/rapidxml-1.13 -I./LinuxDependencies/LuaBridge-master/Source/LuaBridge
 BUILDDIR		:= obj
 TARGETDIR	:= bin
@@ -26,7 +26,7 @@ INCDEP		:= $(INCDIR)
 
 #Exclude main.cpp from the source directory
 SOURCES			:= $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-SOURCES			:= $(filter-out $(SRCDIR)/Engine/main.cpp, $(SOURCES))
+#SOURCES			:= $(filter-out $(SRCDIR)/Engine/main.cpp, $(SOURCES))
 
 OBJECTS			:= $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 

@@ -3,13 +3,12 @@
 
 using namespace luabridge;
 
-ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName){
+ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName), keyMapping(keys){
     mEntityID=id;
     myScript=script;
 }
 
 void ComponentInput::Update(){}
-
 
 void ComponentInput::HandleEvent(const Event* event){
     bool keyup;

@@ -79,6 +79,7 @@ void GameStateManager::PushState(std::unique_ptr<GameState> state){
     mGameStates.push_back( std::move(state) );
     mCurrentState=mGameStates.back().get();
     mCurrentState->input = input.SetEventDispatcher(&mCurrentState->eventDispatcher);
+	mCurrentState->comInputMan.SetDependency(mCurrentState->input);
     mCurrentState->Init();
 }
 

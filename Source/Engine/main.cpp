@@ -2,14 +2,16 @@
 #include "CommandLineArgs.h"
 
 int main(int argc, char *argv[]){
-    Kernel* k=Kernel::Instance();
-    k->Inst(argc, argv);
+//	Kernel* k=Kernel::Instance();
+//	k->Inst(argc, argv);
 
-    Kernel.stateMan.PushState(std::move( std::unique_ptr<GameStartState> (new GameStartState(&stateMan)) ));
-    Kernel.stateMan.UpdateCurrentState();
+	Kernel::Inst(argc, argv);
 
-    while(k->Run()){}
-    k->Close();
+	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
+	Kernel::stateMan.UpdateCurrentState();
 
-    return 0;
+	while(Kernel::Run()){}
+	Kernel::Close();
+
+	return 0;
 }

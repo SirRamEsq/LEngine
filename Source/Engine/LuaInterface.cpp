@@ -440,7 +440,9 @@ const LSprite* LuaInterface::LoadSprite(const std::string& sprPath){
 }
 
 void LuaInterface::ListenForInput (EID id, const std::string& inputName){
-	 ((ComponentInput*)(parentState->comInputMan.GetComponent(id)))->ListenForInput(inputName);
+	ComponentInput* comInput = ((ComponentInput*)(parentState->comInputMan.GetComponent(id)));
+	if(comInput == NULL){return;}
+	comInput->ListenForInput(inputName);
 }
 
 void LuaInterface::WriteError	  (EID id, const std::string& error){
