@@ -439,8 +439,12 @@ void ComponentCollisionManager::Update(){
     that was collided with is the reciever and the boxid is the extra data.
     */
 
+	GameStateManager* gs = &K_StateMan;
+	GameState* state = gs->GetCurrentState();
+	auto stateMap = state->GetCurrentMap();
+
     //update grid
-    UpdateBuckets(K_StateMan.GetCurrentState()->GetCurrentMap()->GetWidthPixels());
+    UpdateBuckets(stateMap->GetWidthPixels());
     UpdateCheckEntityCollision();
     UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
 }

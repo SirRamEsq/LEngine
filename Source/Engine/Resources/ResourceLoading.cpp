@@ -101,6 +101,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
         std::stringstream ss;
         ss << "Physfs Error in Generic File '" << fileName << "' Error: " << physfsError;
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+		throw LEngineFileException(ss.str(), fileName);
     }
 
     PHYSFS_close(file);

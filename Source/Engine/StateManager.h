@@ -117,6 +117,7 @@ class GameStateManager{
         bool IsEmpty(){
             return mGameStates.empty();
         }
+        void UpdateCurrentState();
 
     protected:
         void Init();
@@ -126,7 +127,6 @@ class GameStateManager{
         bool Update();
         void Draw();
 
-        void UpdateCurrentState();
 
         void DrawPreviousState(GameState* gs);
 

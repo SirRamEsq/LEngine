@@ -797,7 +797,7 @@ std::unique_ptr<I_RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
 
         try{
             auto tiledData = TiledData::LoadResourceFromTMX(fname, data.get()->GetData(), data.get()->length);
-            auto rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
+            rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
         catch(I_RSC_Map::Exception e){
             ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
