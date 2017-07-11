@@ -55,8 +55,7 @@ void GameState::UpdateComponentManagers(){
 
 
     //Render
-        //Each of these could be put on their own thread and run concurrently
-        comCameraMan.    Update(); //Update cameras
+        //Each of these could be put on their own thread and run concurrently comCameraMan.    Update(); //Update cameras
         comLightMan.     Update(); //Update lights and generate light map
         comSpriteMan.    Update(); //Update sprites
 
@@ -64,7 +63,7 @@ void GameState::UpdateComponentManagers(){
 }
 
 void GameStateManager::Init(){
-    mCurrentState=NULL;
+   	mCurrentState=NULL;
 }
 
 void GameStateManager::Close(){
@@ -72,15 +71,17 @@ void GameStateManager::Close(){
         mGameStates.back()->Close();
         mGameStates.pop_back();
     }
-    mCurrentState=NULL;
+ 	mCurrentState=NULL;
 }
 
 void GameStateManager::PushState(std::unique_ptr<GameState> state){
     mGameStates.push_back( std::move(state) );
     mCurrentState=mGameStates.back().get();
+	//set up dependencies
     mCurrentState->input = input.SetEventDispatcher(&mCurrentState->eventDispatcher);
 	mCurrentState->comInputMan.SetDependency(mCurrentState->input);
     mCurrentState->Init();
+	mCurrentState->eventDispatcher.SetDependencies(this, &mCurrentState->entityMan);
 }
 
 void GameStateManager::UpdateCurrentState(){
@@ -140,16 +141,15 @@ void GameStateManager::Draw(){
     if(mCurrentState!=NULL){mCurrentState->Draw();}
 }
 
-void GameState::SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLayerGeneric*>& layers){
+void GameState::SetMapHandleRenderableLayers(const std::map<MAP_DEPTH, TiledLayerGeneric*>& layers){
     for(auto i = layers.begin(); i != layers.end(); i++){
-
         if(i->second->layerType == LAYER_TILE){
-            auto layer=std::unique_ptr<RenderTileLayer> ( make_unique<RenderTileLayer> ((TiledTileLayer*)i->second) );
+            auto layer = make_unique<RenderTileLayer> ((TiledTileLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
 
         if(i->second->layerType == LAYER_IMAGE){
-            auto layer=std::unique_ptr<RenderImageLayer> ( make_unique<RenderImageLayer> ((TiledImageLayer*)i->second) );
+            auto layer = make_unique<RenderImageLayer> ((TiledImageLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
     }
@@ -321,8 +321,10 @@ bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
 
     //Unload all layers from last map
     mCurrentMapTileLayers.clear();
-    //ent man needs moved into stateman
+	//Clear all entites from current state
     entityMan.ClearAllEntities();
+	//Actually delete all entities
+	entityMan.Cleanup();
 
     //Copy map passed
     mCurrentMap.reset();
@@ -330,7 +332,6 @@ bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
 
     TiledData* td=(mCurrentMap->GetTiledData());
     SetMapHandleRenderableLayers(td->tiledRenderableLayers);
-
 
     const std::vector<std::unique_ptr<TiledObjectLayer> >& layers = td->tiledObjectLayers;
     auto tiledIDtoEntityID = SetMapCreateEntitiesFromLayers(layers);
