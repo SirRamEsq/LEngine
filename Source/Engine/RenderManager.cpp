@@ -150,7 +150,7 @@ RenderManager::RenderManager()
 	listChange=false;
 	nextTextID=0;
 
-	//TODO - RenderMan init code needs moved somewhere now that RenderManager isn't a singleton. maybe into it's own Generic Resource container attached to the Kernel?
+	//TODO - RenderMan shader init code needs moved somewhere now that RenderManager isn't a singleton. maybe into it's own Generic Resource container attached to the Kernel?
 
 	shaderFragmentNameSpriteBatch  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
 	shaderVertexNameSpriteBatch    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
@@ -318,7 +318,6 @@ void RenderManager::Render(){
 	values[2] = 0;
 	values[3] = 0;
 
-	//doesn't look like this is updating
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float)*4), &values);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 

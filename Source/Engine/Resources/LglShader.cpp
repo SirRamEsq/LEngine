@@ -198,7 +198,7 @@ GLuint L_GL_Program::GetUniformBlockHandle(const std::string& name){
         std::stringstream ss;
         ss << "[C++] L_GL_Program::GetUniformBlockHandle; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Block named " << name;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::INFO, ErrorLog::GenericLogFile);
         throw LEngineShaderProgramException(ss.str(), this);
     }
     return returnVal;
