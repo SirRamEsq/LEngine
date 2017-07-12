@@ -340,7 +340,9 @@ An entrance can only be used to enter the map
 An Exit can only be used to exit the map
 */
 
-//Encapsulates data from Tiled, TiledData owns sets, layers, and objects
+/**
+ * Encapsulates data from Tiled, TiledData owns sets, layers, and objects
+ */
 class TiledData{
     typedef std::map<int, MapEntrance> tEntrances;
     typedef std::map<int, MapExit> tExits; //leave string blank ("") to refer to previous map
@@ -420,6 +422,10 @@ class TiledData{
 
 class ComponentScript;
 
+/**
+ * Interface for the Resource "Map"
+ * Encapsulates a map used by the engine
+ */
 class I_RSC_Map{
     public:
         class Exception : public LEngineException{using LEngineException::LEngineException;};
@@ -439,6 +445,7 @@ class I_RSC_Map{
 
         virtual const TiledTileLayer* GetTileLayerCollision(int x,  int y, bool areTheseTileCoords) const = 0;
 
+		//TODO remove 'GetTiledData' from I_RSC_MAP Interface, the user of this class should not need to access the Tiled Data
         virtual TiledData* GetTiledData() = 0;
 };
 
@@ -472,7 +479,7 @@ class RSC_MapImpl : public I_RSC_Map{;;
     private:
         std::string mMapName;
 
-        //Increment every child's GID by this
+        //!Every child's GID is incremented by the first (lowest) gid allowed for the map 
         GID firstGID;
 };
 
