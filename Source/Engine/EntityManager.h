@@ -23,7 +23,11 @@ class EntityManager{
             LIGHT       = 80
         };
 
-        EntityManager(){entityNumber=EID_MIN;mFlagDeleteAll=false;}
+        EntityManager(){
+			entityNumber=EID_MIN;
+			mFlagDeleteAll=false;
+			entityCount = 0;
+		}
 
         //Can optionally pass in a name to associate with the EID
         EID NewEntity(const std::string& name=""); //return an EID that is not in use
@@ -38,11 +42,14 @@ class EntityManager{
 
         void RegisterComponentManager(BaseComponentManager* manager, int order);
 
+		unsigned int GetEntityCount();
+
     protected:
         void ClearNameMappings();
 
     private:
         EID entityNumber;
+		unsigned int entityCount;
         bool mFlagDeleteAll;
 
         std::vector<EID> deadEntities;

@@ -28,6 +28,10 @@ class _test_State : public GameState{
 		drawCount +=1;
 	}
 
+	EntityManager* GetEntityMan(){
+		return &entityMan;
+	}
+
 	~_test_State(){
 
 	}
@@ -77,18 +81,21 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	}
 
 	SECTION( "Load Map from File"){
+		//Assuming that the map has a width, height, and at least one entity
 		REQUIRE_NOTHROW([&](){
-		auto stateSmart = make_unique<_test_State>(&K_StateMan);
-		auto state = stateSmart.get();
-		K_StateMan.PushState(std::move(stateSmart));
+			auto stateSmart = make_unique<_test_State>(&K_StateMan);
+			auto state = stateSmart.get();
+			K_StateMan.PushState(std::move(stateSmart));
 
-		std::string mapName = "MAP1.tmx";
-		auto mapToLoad = RSC_MapImpl::LoadResource(mapName);
+			std::string mapName = "MAP1.tmx";
+			auto mapToLoad = RSC_MapImpl::LoadResource(mapName);
 
-		REQUIRE(mapToLoad.get() != NULL);
-		//REQUIRE(mapToLoad->GetWidthPixels() == 16 );
-		//REQUIRE(mapToLoad->GetHeightPixels() == 16 );
-		state->SetCurrentMap(mapToLoad.get(), 0);
+			REQUIRE(mapToLoad.get() != NULL);
+			REQUIRE(mapToLoad->GetWidthPixels() > 0 );
+			REQUIRE(mapToLoad->GetHeightPixels() > 0 );
+
+			state->SetCurrentMap(mapToLoad.get(), 0);
+			REQUIRE(state->GetEntityMan()->GetEntityCount() > 0);
 		}
 		());
 	}
