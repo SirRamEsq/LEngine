@@ -62,7 +62,6 @@ void Kernel::Inst(int argc, char *argv[]){
     rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
     rscMapMan       .SetLoadFunction(&RSC_MapImpl::LoadResource   );
 
-    stateMan.Init();
     commandLine.ParseArgs(argc, argv);
 
     gameLoops=0;

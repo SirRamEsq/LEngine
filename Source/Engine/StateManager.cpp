@@ -62,7 +62,7 @@ void GameState::UpdateComponentManagers(){
     //execution now jumps to rendermanager
 }
 
-void GameStateManager::Init(){
+GameStateManager::GameStateManager(){
    	mCurrentState=NULL;
 }
 
