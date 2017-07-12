@@ -20,6 +20,7 @@ class BaseComponent{
 
         BaseComponent(EID id, const std::string& logName) : logFileName(logName){
             mEntityID=id;
+			eventCallback = NULL;
         }
 
         virtual void Update()=0;
