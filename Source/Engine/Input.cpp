@@ -26,7 +26,9 @@ InputManager::InputManager(){
     eventDispatcher=NULL;
 }
 
-InputManager::~InputManager(){}
+InputManager::~InputManager(){
+
+}
 
 std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(EventDispatcher* e, std::shared_ptr<InputManager::KeyMapping>* mapping){
     //will set key mapping to one specified, or generate a new one if none is specified
@@ -52,9 +54,6 @@ void InputManager::HandleInput(){
     std::string keyStr;
     bool keyup;
     MESSAGE_TYPE msg= MSG_KEYDOWN;
-
-    //This eats up loads of unnecessary CPU
-    //if(SDL_WaitEvent(&event)){
 
     while(SDL_PollEvent(&event)) {
         if( (keyup = (event.type==SDL_KEYUP) ) or (event.type == SDL_KEYDOWN) ){
