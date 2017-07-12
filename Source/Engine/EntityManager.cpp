@@ -2,19 +2,14 @@
 
 void EntityManager::DeleteEntity(EID id){
     deadEntities.push_back(id);
+	entityCount -= 1;
+}
+
+unsigned int EntityManager::GetEntityCount(){
+	return entityCount;
 }
 
 void EntityManager::DispatchEvent(const Event* event){
-    /*GameState* state = Kernel::stateMan.GetCurrentState();
-    state->comParticleMan    .HandleEvent(event);
-    state->comCollisionMan   .HandleEvent(event);
-    state->comInputMan       .HandleEvent(event);
-    state->comPosMan         .HandleEvent(event);
-    state->comScriptMan      .HandleEvent(event);
-    state->comSpriteMan      .HandleEvent(event);
-    state->comCameraMan      .HandleEvent(event);
-    state->comLightMan       .HandleEvent(event);*/
-
     for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
         i->second->HandleEvent(event);
     }
@@ -23,15 +18,6 @@ void EntityManager::DispatchEvent(const Event* event){
 void EntityManager::Cleanup(){
     //GameState* state = Kernel::stateMan.GetCurrentState();
     if(mFlagDeleteAll){
-        /*state->comParticleMan    .DeleteAllComponents();
-        state->comCollisionMan   .DeleteAllComponents();
-        state->comInputMan       .DeleteAllComponents();
-        state->comPosMan         .DeleteAllComponents();
-        state->comScriptMan      .DeleteAllComponents();
-        state->comSpriteMan      .DeleteAllComponents();
-        state->comCameraMan      .DeleteAllComponents();
-        state->comLightMan       .DeleteAllComponents();*/
-
         for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
             i->second->DeleteAllComponents();
         }
@@ -48,14 +34,6 @@ void EntityManager::Cleanup(){
     EID id;
     for(; i!=deadEntities.end(); i++){
         id=*i;
-        /*state->comParticleMan    .DeleteComponent(id);
-        state->comCollisionMan   .DeleteComponent(id);
-        state->comInputMan       .DeleteComponent(id);
-        state->comPosMan         .DeleteComponent(id);
-        state->comScriptMan      .DeleteComponent(id);
-        state->comSpriteMan      .DeleteComponent(id);
-        state->comCameraMan      .DeleteComponent(id);
-        state->comLightMan       .DeleteComponent(id);*/
         for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
             i->second->DeleteComponent(id);
         }
@@ -87,6 +65,7 @@ EID EntityManager::NewEntity(const std::string& entityName){
             EIDToName[newEntityID] = entityName;
         }
     }
+	entityCount++;
     entityNumber++;
     return newEntityID;
 }
