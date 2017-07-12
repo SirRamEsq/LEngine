@@ -9,9 +9,17 @@
 #include <vector>
 #include <map>
 
+//TODO Add components into EntityManager; They're already added in and sorted by order. If you move them from StateManager to here, then that same order can be used to update the component Managers. Also adds a generic way to add more component managers should the need arise and adjust the order they update in
+
+/**
+ * Manages Entity IDs (EIDs), Component Managers, and ensures that deleted entities are fully deleted at the appropriate time
+ */
 class EntityManager{
     public:
         class Exception : public LEngineException{using LEngineException::LEngineException;};
+		/**
+		 * Defines an order to update the component managers in an order that should be acceptable to most GameStates
+		 */
         enum DEFAULT_UPDATE_ORDER{
             PARTICLE    = 10,
             COLLISION   = 20,
@@ -29,19 +37,45 @@ class EntityManager{
 			entityCount = 0;
 		}
 
-        //Can optionally pass in a name to associate with the EID
+        /**
+		 * Creates a New Entity
+		 * Can optionally pass in a name to associate with the EID
+		 * \return The new Entity ID value
+		 */
         EID NewEntity(const std::string& name=""); //return an EID that is not in use
+		/**
+		 * Can lookup an eid by a string name, if the entity was given one upon creation
+		 */
         EID GetEIDFromName(const std::string& name) const;
 
-        void DeleteEntity   (EID id); //Remove all components with EID id from their managers
+		/**
+		 * Schedules all components with the given entity to be deleted from their managers
+		 */
+        void DeleteEntity   (EID id); 
+		/**
+		 * Calls 'DeleteEntity' on all active eids
+		 * \see DeleteEntity(EID id)
+		 */
+        void ClearAllEntities();
+		
+		/**
+		 * Dispatches an Event to all registered Component Managers
+		 */
         void DispatchEvent  (const Event* event);
 
+		/**
+		 * Actually deletes all entities scheduled to be deleted.
+		 */
         void Cleanup();
 
-        void ClearAllEntities();
-
+		/**
+		 * Can Register a new Component Manager to recieve events, have entities added to/deleted from, etc...
+		 */
         void RegisterComponentManager(BaseComponentManager* manager, int order);
 
+		/**
+		 * Returns a count of currently active entities
+		 */
 		unsigned int GetEntityCount();
 
     protected:
