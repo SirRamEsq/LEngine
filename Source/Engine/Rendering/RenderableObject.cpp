@@ -15,7 +15,7 @@ RenderableObject::RenderableObject(TYPE t) : type(t){
 
 void RenderableObject::SetDepth(const int& i){
 	depth=i;
-	//TODO find a way to inject this dependency on RenderManager
+	/// \TODO find a way to inject this dependency on RenderManager
 	Kernel::stateMan.GetCurrentState()->renderMan.OrderOBJs();
 }
 

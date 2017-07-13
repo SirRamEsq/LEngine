@@ -445,7 +445,7 @@ class I_RSC_Map{
 
         virtual const TiledTileLayer* GetTileLayerCollision(int x,  int y, bool areTheseTileCoords) const = 0;
 
-		//TODO remove 'GetTiledData' from I_RSC_MAP Interface, the user of this class should not need to access the Tiled Data
+		/// \TODO remove 'GetTiledData' from I_RSC_MAP Interface, the user of this class should not need to access the Tiled Data
         virtual TiledData* GetTiledData() = 0;
 };
 

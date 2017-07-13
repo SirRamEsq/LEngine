@@ -9,7 +9,7 @@
 #include <vector>
 #include <map>
 
-//TODO Add components into EntityManager; They're already added in and sorted by order. If you move them from StateManager to here, then that same order can be used to update the component Managers. Also adds a generic way to add more component managers should the need arise and adjust the order they update in
+/// \TODO Add components into EntityManager; They're already added in and sorted by order. If you move them from StateManager to here, then that same order can be used to update the component Managers. Also adds a generic way to add more component managers should the need arise and adjust the order they update in
 
 /**
  * Manages Entity IDs (EIDs), Component Managers, and ensures that deleted entities are fully deleted at the appropriate time
