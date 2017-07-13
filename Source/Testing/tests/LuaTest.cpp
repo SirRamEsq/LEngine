@@ -14,6 +14,23 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	auto state = stateAuto.get();
 	stateManager->PushState(std::move(stateAuto));
 
+	auto scriptMan = state->GetComponentManagerScript();
+	auto posMan = state->GetComponentManagerPosition();
+	auto eid = 20;
+
+	//pos comp is prereq to having scipt comp
+	posMan->AddComponent(eid);
+	//script comp is prereq to luaInterface creating an entity instance
+	scriptMan->AddComponent(eid);
+
 	auto luaInterface = state->GetLuaInterface();
+	auto scriptName = "heor.lua";
+	auto script = LScript::LoadResource(scriptName);
+	auto mapDepth= 10;
+	auto parent = 0;
+	auto scriptType = "TEST";
+	luaInterface->RunScript(eid, script.get(), mapDepth, parent, scriptName, scriptType, NULL,NULL);
+
+	stateManager->UpdateCurrentState();
 }
 

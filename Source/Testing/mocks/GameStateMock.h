@@ -15,6 +15,8 @@ class GameStateMock : public GameState{
 		//Expose otherwise private members
 		EntityManager* GetEntityMan();
 		LuaInterface* GetLuaInterface();
+		ComponentScriptManager* GetComponentManagerScript();
+		ComponentPositionManager* GetComponentManagerPosition();
 
 		int drawCount;
 		int updateCount;

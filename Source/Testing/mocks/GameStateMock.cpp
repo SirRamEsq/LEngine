@@ -31,5 +31,13 @@ LuaInterface* GameStateMock::GetLuaInterface(){
 	return &luaInterface;
 }
 
+ComponentScriptManager* GameStateMock::GetComponentManagerScript(){
+	return &comScriptMan;
+}
+
+ComponentPositionManager* GameStateMock::GetComponentManagerPosition(){
+	return &comPosMan;
+}
+
 GameStateMock::~GameStateMock(){
 }
