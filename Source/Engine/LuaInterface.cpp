@@ -170,6 +170,7 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 	doStrings[3] = &LUA_52_INTERFACE_ENV_TABLE;
 	doStrings[4] = &lEngineLoad1;
 	doStrings[5] = &lEngineLoad2;
+	/// \TODO Assign instance of the interface to CPP.Interface
 
 	int error=0;
 	for(int i=0; i<=5; i++){
@@ -242,13 +243,14 @@ int LuaInterface::RunScriptLoadFromChunk(const LScript* script){
 		throw LEngineException(errorMsg.str());
 	}
 
-	lua_getglobal(lState, "L_ENGINE_ENV");	 //push environment onto stack
-	lua_setupvalue(lState, -2, 1);			 //pop environment and assign to upvalue#1 (the function environment)
+	lua_getglobal(lState, "L_ENGINE_ENV"); //push environment onto stack
+	lua_setupvalue(lState, -2, 1); //pop environment and assign to upvalue#1 (the func environment)
 
-	if(int error= lua_pcall (lState, 0, 1, 0)  != 0){//Calling pcall pops the function and its args [#args is arg 1] from the stack
-														//The result [# of returns is arg 2] is pushed on the stack
-														//should be a function that can create
-														//a table with "Update", "Init", etc... methods
+	if(int error= lua_pcall (lState, 0, 1, 0)  != 0){
+	//Calling pcall pops the function and its args [#args is arg 1] from the stack
+	//The result [# of returns is arg 2] is pushed on the stack
+	//should be a function that can create
+	//a table with "Update", "Init", etc... methods
 		std::stringstream errorMsg;
 		errorMsg << "Script [" << script->scriptName << "] could not be run from C++\n"
 		<< "   ...Error code "	<< error << "\n"
@@ -370,6 +372,8 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
 		//Create new Instance
 		LuaRef engineRef=getGlobal(lState,"NewLEngine");
 		LuaRef engineTableRef = engineRef();
+
+		/// \TODO remove 'this' ponter from script Initialzation function arguments
 		engineTableRef["Initialize"](id, name, type, this, depth, parent);
 
 			engineTableRef["RESOLUTION_X"]	= RESOLUTION_X;
