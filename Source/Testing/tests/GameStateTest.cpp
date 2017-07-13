@@ -1,46 +1,7 @@
 #include "../catch.hpp"
-
+#include "../mocks/GameStateMock.h"
 #include "../../Engine/StateManager.h"
 #include "../../Engine/Kernel.h"
-
-class _test_State : public GameState{
-	public:
-	_test_State(GameStateManager* gm)
-		:GameState(gm){
-		init=false;
-		close=false;
-		updateCount=0;
-		drawCount=0;
-	}
-	void Init(){
-		init = true;
-	}
-	void Close(){
-		close = true;
-	}
-	void HandleEvent(const Event*){
-	}
-	bool Update(){
-		updateCount+=1;
-		return true;
-	}
-	void Draw(){
-		drawCount +=1;
-	}
-
-	EntityManager* GetEntityMan(){
-		return &entityMan;
-	}
-
-	~_test_State(){
-
-	}
-
-	int drawCount;
-	int updateCount;
-	bool close;
-	bool init;
-};
 
 TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	Kernel::Inst();
@@ -49,7 +10,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 		auto stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 0);
 
-		K_StateMan.PushState(std::move(make_unique<_test_State>(&K_StateMan)));
+		K_StateMan.PushState(std::move(make_unique<GameStateMock>(&K_StateMan)));
 		stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 1);
 
@@ -63,7 +24,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	}
 
 	SECTION( "State Update and Draw Called Correctly" ) {
-		auto stateSmart = make_unique<_test_State>(&K_StateMan);
+		auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
 		auto state = stateSmart.get();
 		K_StateMan.PushState(std::move(stateSmart));
 
@@ -83,7 +44,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	SECTION( "Load Map from File"){
 		//Assuming that the map has a width, height, and at least one entity
 		REQUIRE_NOTHROW([&](){
-			auto stateSmart = make_unique<_test_State>(&K_StateMan);
+			auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
 			auto state = stateSmart.get();
 			K_StateMan.PushState(std::move(stateSmart));
 
