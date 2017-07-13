@@ -145,6 +145,44 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 	//Create 'CPP' table referenced by LUA_52_INTERFACE_ENV_TABLE
 	ExposeCPP();
 
+	LuaRef cppTable = getGlobal(lState, "CPP");
+	if (cppTable.isNil()) {
+		ErrorLog::WriteToFile("CPP is nil", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+	}
+	if (!cppTable.isTable()) {
+		ErrorLog::WriteToFile("CPP is not table", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+	}
+
+	push(lState, this);
+	lua_setglobal(lState, "CPP.interface");
+
+	LuaRef interfaceInstance = getGlobal(lState, "CPP.interface");
+	if (interfaceInstance.isNil()){
+		ErrorLog::WriteToFile("interface instance is nil", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+	}
+	if (interfaceInstance["RESOLUTION_X"].isNil()){
+		ErrorLog::WriteToFile("interface instance cannot be read from", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+	}
+/*
+	//Assign 'this' to CPP.Interface
+	std::string interfaceFunctionName = "SET_INTERFACE";
+	std::string setInterfaceFunction = "function "+interfaceFunctionName+"(i) \n"
+		"CPP.interface = i\n"
+		"end\n";
+
+	int error = luaL_dostring(lState, setInterfaceFunction.c_str());
+	if(error!=0){
+		std::stringstream ss;
+		ss << "Lua String could not be run " << setInterfaceFunction 
+		<< " | Error code is: " << error << " "
+		<< "   ...Error Message is " << lua_tostring(lState,-1);
+		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
+		lua_pop(lState, -1); //pop error message
+		return;
+	}
+	LuaRef interfaceFunctionRef = getGlobal(lState, interfaceFunctionName.c_str()); 
+	interfaceFunctionRef(this);
+*/
 	/*
 	Could probably remove the dependency on LuaFileSystem entirely if I just pass the current directory from the engine
 	*/
@@ -172,7 +210,7 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 	doStrings[5] = &lEngineLoad2;
 	/// \TODO Assign instance of the interface to CPP.Interface
 
-	int error=0;
+	auto error=0;
 	for(int i=0; i<=5; i++){
 		error = luaL_dostring(lState, doStrings[i]->c_str());
 		if(error!=0){
@@ -180,7 +218,7 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 			ss << "Lua String could not be run " << *doStrings[i]
 			<< " | Error code is: " << error << " "
 			<< "   ...Error Message is " << lua_tostring(lState,-1);
-			ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
+			ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 			lua_pop(lState, -1); //pop error message
 			//GetErrorInfo(lState);
 			return;
@@ -189,10 +227,10 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 
 	LuaRef engineFunction = getGlobal(lState, "NewLEngine");
 	if (engineFunction.isNil()) {
-		ErrorLog::WriteToFile("NewLEngine is nil", DEBUG_LOG);
+		ErrorLog::WriteToFile("NewLEngine is nil", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 	}
 	if (!engineFunction.isFunction()) {
-		ErrorLog::WriteToFile("NewLEngine is not function", DEBUG_LOG);
+		ErrorLog::WriteToFile("NewLEngine is not function", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 	}
 
 	//GetBaseEntity Creator
@@ -469,47 +507,32 @@ void LuaInterface::PlaySound	  (const std::string& sndName					  ){
 //////////////
 ComponentPosition*	LuaInterface::GetPositionComponent (const EID& id){
 	if(parentState->comPosMan.HasComponent(id)==false){
-		//if(create){
-			parentState->comPosMan.AddComponent(id);
-		//}
-		//else{return NULL;}
+		parentState->comPosMan.AddComponent(id);
 	}
 	return (ComponentPosition*)(parentState->comPosMan.GetComponent(id));
 }
 ComponentSprite*	LuaInterface::GetSpriteComponent   (const EID& id){
 	if(parentState->comSpriteMan.HasComponent(id)==false){
-		//if(create){
-			parentState->comSpriteMan.AddComponent(id);
-		//}
-		//else{return NULL;}
+		parentState->comSpriteMan.AddComponent(id);
 	}
 	return (ComponentSprite*)(parentState->comSpriteMan.GetComponent(id));
 }
 ComponentCollision* LuaInterface::GetCollisionComponent(const EID& id){
 	if(parentState->comCollisionMan.HasComponent(id)==false){
-		//if(create){
-			parentState->comCollisionMan.AddComponent(id);
-		//}
-		//else{return NULL;}
+		parentState->comCollisionMan.AddComponent(id);
 	}
 	return (ComponentCollision*)(parentState->comCollisionMan.GetComponent(id));
 }
 ComponentParticle*	LuaInterface::GetParticleComponent (const EID& id){
 	if(parentState->comParticleMan.HasComponent(id)==false){
-		//if(create){
-			parentState->comParticleMan.AddComponent(id);
-		//}
-		//else{return NULL;}
+		parentState->comParticleMan.AddComponent(id);
 	}
 	return (ComponentParticle*)parentState->comParticleMan.GetComponent(id);
 }
 
 ComponentCamera*  LuaInterface::GetCameraComponent (const EID& id){
 	if(parentState->comCameraMan.HasComponent(id)==false){
-		//if(create){
-			parentState->comCameraMan.AddComponent(id);
-		//}
-		//else{return NULL;}
+		parentState->comCameraMan.AddComponent(id);
 	}
 	return (ComponentCamera*)(parentState->comCameraMan.GetComponent(id));
 }
@@ -893,6 +916,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetHeightPixels",		  &I_RSC_Map::GetHeightPixels)
 			.endClass()
 
+//			.addVariable("interface", this)
 		.endNamespace()
 	;
 }
