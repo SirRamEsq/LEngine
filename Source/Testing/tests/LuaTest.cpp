@@ -6,6 +6,13 @@
 #include "../mocks/GameStateMock.h"
 #include "../mocks/RSC_MapMock.h"
 
+std::string lastError = "";
+EID lastErrorID = 0;
+void luaErrorCallback (EID id, const std::string& error){
+	lastErrorID = id;
+	lastError = error;
+}
+
 TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	Kernel::Inst();
 
@@ -24,7 +31,8 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	scriptMan->AddComponent(eid);
 
 	auto luaInterface = state->GetLuaInterface();
-	auto scriptName = "heor.lua";
+	luaInterface->SetErrorCallbackFunction(luaErrorCallback);
+	auto scriptName = "Testing/LuaInterfaceTest.lua";
 	auto script = LScript::LoadResource(scriptName);
 	auto mapDepth= 10;
 	auto parent = 0;
@@ -32,5 +40,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	luaInterface->RunScript(eid, script.get(), mapDepth, parent, scriptName, scriptType, NULL,NULL);
 
 	stateManager->UpdateCurrentState();
+
+	REQUIRE(lastError == "Good");
 }
 
