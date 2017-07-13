@@ -133,6 +133,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE=
 LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY)
 						: parentState(state), RESOLUTION_X(resX), RESOLUTION_Y(resY), VIEWPORT_X(viewX), VIEWPORT_Y(viewY){
 	lState = luaL_newstate();
+	errorCallbackFunction = NULL;
 
 	if(lState==NULL){
 		std::stringstream ss;
@@ -153,36 +154,12 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 		ErrorLog::WriteToFile("CPP is not table", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 	}
 
-	push(lState, this);
-	lua_setglobal(lState, "CPP.interface");
+	cppTable["interface"]=this;
 
 	LuaRef interfaceInstance = getGlobal(lState, "CPP.interface");
 	if (interfaceInstance.isNil()){
 		ErrorLog::WriteToFile("interface instance is nil", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 	}
-	if (interfaceInstance["RESOLUTION_X"].isNil()){
-		ErrorLog::WriteToFile("interface instance cannot be read from", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
-	}
-/*
-	//Assign 'this' to CPP.Interface
-	std::string interfaceFunctionName = "SET_INTERFACE";
-	std::string setInterfaceFunction = "function "+interfaceFunctionName+"(i) \n"
-		"CPP.interface = i\n"
-		"end\n";
-
-	int error = luaL_dostring(lState, setInterfaceFunction.c_str());
-	if(error!=0){
-		std::stringstream ss;
-		ss << "Lua String could not be run " << setInterfaceFunction 
-		<< " | Error code is: " << error << " "
-		<< "   ...Error Message is " << lua_tostring(lState,-1);
-		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
-		lua_pop(lState, -1); //pop error message
-		return;
-	}
-	LuaRef interfaceFunctionRef = getGlobal(lState, interfaceFunctionName.c_str()); 
-	interfaceFunctionRef(this);
-*/
 	/*
 	Could probably remove the dependency on LuaFileSystem entirely if I just pass the current directory from the engine
 	*/
@@ -493,6 +470,9 @@ void LuaInterface::WriteError	  (EID id, const std::string& error){
 	ss << "[ LUA" << " | " << name << " | EID: " << id << " ]	" << error;
 
 	ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
+	if(errorCallbackFunction!=NULL){
+		errorCallbackFunction(id, error);
+	}
 }
 
 void LuaInterface::PlaySound	  (const std::string& sndName					  ){
@@ -919,4 +899,8 @@ void LuaInterface::ExposeCPP(){
 //			.addVariable("interface", this)
 		.endNamespace()
 	;
+}
+
+void LuaInterface::SetErrorCallbackFunction(ErrorCallback func){
+	errorCallbackFunction = func;
 }

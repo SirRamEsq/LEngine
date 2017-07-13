@@ -30,6 +30,8 @@ class ComponentParticle;
 class LuaInterface{
 	friend GameState;
 	public:
+		typedef void (*ErrorCallback)(EID id, const std::string& errorMessage);
+
 		//Initializes and exposes the C++ functionality to the luaState
 		LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY);
 		~LuaInterface();
@@ -90,6 +92,10 @@ class LuaInterface{
 		///////////
 			I_RSC_Map* GetMap();
 
+		///////////
+		//Testing//
+		///////////
+			void SetErrorCallbackFunction(ErrorCallback func);
 
 		static const std::string LUA_52_INTERFACE_ENV_TABLE;
 		static const std::string DEBUG_LOG;
@@ -105,6 +111,7 @@ class LuaInterface{
 		lua_State* GetState() {return lState;}
 
 	private:
+		ErrorCallback errorCallbackFunction;
 		//All entities derive from this
 		const LScript* baseScript;
 		int baseLuaClass;

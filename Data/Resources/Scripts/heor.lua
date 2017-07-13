@@ -199,8 +199,10 @@ function heor.Initialize()
 
 	heor.depth        = heor.LEngineData.depth;
 	heor.parent       = heor.LEngineData.parent;
-	heor.CPPInterface = heor.LEngineData.interface;
+	heor.CPPInterface = CPP.interface; 
 	heor.EID          = heor.LEngineData.entityID;
+
+	if(heor.CPPInterface == nil) then heor.LEngineData.interface:WriteError(heor.EID, "CPPInterface is NIL!") end
 
   local EID = heor.EID
 	heor.CPPInterface:ListenForInput(EID, "up"   );
