@@ -48,7 +48,7 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 
 	//down directions is negative y; up direction is positive y
 	//y gets flipped twice, once here, and once when applying the framebuffer
-	float rightSide   = CAMERA_W;;// - 1.0f;
+	float rightSide   = CAMERA_W;// - 1.0f;
 	float leftSide	  = 0;
 	float bottomSide  = 0;
 	float topSide	  = CAMERA_H;// - 1.0f;
@@ -66,9 +66,9 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	proj_mat.m[ 5] = normalizedDeviceSpaceY;
 	proj_mat.m[10] = normalizedDeviceSpaceZ;
 	proj_mat.m[12] = -(rightSide+leftSide)/(rightSide-leftSide);
-	proj_mat.m[13] =  -(topSide+bottomSide)/(topSide-bottomSide);
-	proj_mat.m[14] =  (zNear+zFar)/(zNear-zFar);
-	proj_mat.m[15] =  1.0f;
+	proj_mat.m[13] = -(topSide+bottomSide)/(topSide-bottomSide);
+	proj_mat.m[14] = (zNear+zFar)/(zNear-zFar);
+	proj_mat.m[15] = 1.0f;
 
 	/*proj_mat.m[ 0] =	normalizedDeviceSpaceX;
 	proj_mat.m[ 5] =  normalizedDeviceSpaceY;
@@ -311,6 +311,7 @@ void RenderManager::OrderOBJs(){
 
 void RenderManager::Render(){
 	timeElapsed += 1;
+
 	glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
 	float values [4];
 	values[0] = timeElapsed;

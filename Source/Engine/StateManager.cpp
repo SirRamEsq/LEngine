@@ -19,9 +19,7 @@ GameState::GameState(GameStateManager* gsm)
 }
 
 void GameState::SetDependencies(){
-    //set up dependencies
-    comCollisionMan.dependencyPosition = &comPosMan;
-    comInputMan.SetDependency(input);
+    input = gameStateManager->input.SetEventDispatcher(&eventDispatcher);
 
     entityMan.RegisterComponentManager(&comPosMan,          EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
     entityMan.RegisterComponentManager(&comInputMan,        EntityManager::DEFAULT_UPDATE_ORDER::INPUT);
@@ -31,6 +29,11 @@ void GameState::SetDependencies(){
     entityMan.RegisterComponentManager(&comParticleMan,     EntityManager::DEFAULT_UPDATE_ORDER::PARTICLE);
     entityMan.RegisterComponentManager(&comCameraMan,       EntityManager::DEFAULT_UPDATE_ORDER::CAMERA);
     entityMan.RegisterComponentManager(&comLightMan,        EntityManager::DEFAULT_UPDATE_ORDER::LIGHT);
+	comInputMan.SetDependency(input);
+	eventDispatcher.SetDependencies(gameStateManager, &entityMan);
+    comCollisionMan.SetDependencies(&comPosMan);
+	comCameraMan.SetDependencies(&comPosMan);
+    comInputMan.SetDependency(input);
 }
 
 void GameState::DrawPreviousState(){
@@ -77,11 +80,7 @@ void GameStateManager::Close(){
 void GameStateManager::PushState(std::unique_ptr<GameState> state){
     mGameStates.push_back( std::move(state) );
     mCurrentState=mGameStates.back().get();
-	//set up dependencies
-    mCurrentState->input = input.SetEventDispatcher(&mCurrentState->eventDispatcher);
-	mCurrentState->comInputMan.SetDependency(mCurrentState->input);
     mCurrentState->Init();
-	mCurrentState->eventDispatcher.SetDependencies(this, &mCurrentState->entityMan);
 }
 
 void GameStateManager::UpdateCurrentState(){
@@ -258,7 +257,6 @@ void GameState::SetMapLinkEntities(
 
 
             //Event Linking
-            //I think i need to increment the listeners ids with the global GID
             //Can move into scriptManager
             for(auto eventSource=objectIt->second.eventSources.begin(); eventSource!=objectIt->second.eventSources.end(); eventSource++){
                 entityID    = tiledIDtoEntityID.find((*eventSource))->second;
@@ -338,7 +336,6 @@ bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
     auto objectsUsingEntrance = SetMapGetEntitiesUsingEntrances(layers);
 
     SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
-
 
     //Try to run this map's script
     /*if(mCurrentMap->GetGlobalScriptName()!=""){

@@ -32,6 +32,9 @@ class ComponentCameraManager : public BaseComponentManager{
         void Update();
         void AddComponent(EID id);
         void HandleEvent(const Event* event){}
+		void SetDependencies(ComponentPositionManager* pos);
+
+		ComponentPositionManager* dependencyPosition;
 };
 
 #endif // L_ENGINE_COMP_CAMERA
