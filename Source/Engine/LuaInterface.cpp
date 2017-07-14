@@ -185,7 +185,6 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 	doStrings[3] = &LUA_52_INTERFACE_ENV_TABLE;
 	doStrings[4] = &lEngineLoad1;
 	doStrings[5] = &lEngineLoad2;
-	/// \TODO Assign instance of the interface to CPP.Interface
 
 	auto error=0;
 	for(int i=0; i<=5; i++){
@@ -388,8 +387,7 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
 		LuaRef engineRef=getGlobal(lState,"NewLEngine");
 		LuaRef engineTableRef = engineRef();
 
-		/// \TODO remove 'this' ponter from script Initialzation function arguments
-		engineTableRef["Initialize"](id, name, type, this, depth, parent);
+		engineTableRef["Initialize"](id, name, type, depth, parent);
 
 			engineTableRef["RESOLUTION_X"]	= RESOLUTION_X;
 			engineTableRef["RESOLUTION_Y"]	= RESOLUTION_Y;
