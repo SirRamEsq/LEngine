@@ -12,9 +12,10 @@
 //RenderCamera//
 ////////////////
 
-RenderCamera::RenderCamera()
+RenderCamera::RenderCamera(RenderManager* rm)
 	: frameBufferTextureDiffuse(std::unique_ptr<LTexture>(new LTexture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
-	, frameBufferTextureFinal  (std::unique_ptr<LTexture>(new LTexture(SCREEN_W, SCREEN_H, 4, GL_RGBA))){
+	, frameBufferTextureFinal  (std::unique_ptr<LTexture>(new LTexture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
+	, dependencyRenderManager(rm){
 	scale=1;
 	rotation=0;
 	view.x=0;
@@ -24,8 +25,7 @@ RenderCamera::RenderCamera()
 
 	glGenFramebuffers(1, &FBO);
 
-	/// \TODO - RenderCamera, remove reliance on Kernel to satisfy RenderMan dependency
-	Kernel::stateMan.GetCurrentState()->renderMan.AddCamera( this);
+	dependencyRenderManager->AddCamera( this);
 }
 void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	//For the purpose of scaling and rotating the viewport, I may want to replace this vec4 with a projection matrix;

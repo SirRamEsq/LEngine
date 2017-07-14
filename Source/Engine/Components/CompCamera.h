@@ -8,7 +8,7 @@
 
 class ComponentCamera : public BaseComponent{
     public:
-        ComponentCamera(EID id, ComponentPosition* pos, const std::string& logFile);
+        ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile);
         ~ComponentCamera();
 
         void Update();
@@ -32,9 +32,10 @@ class ComponentCameraManager : public BaseComponentManager{
         void Update();
         void AddComponent(EID id);
         void HandleEvent(const Event* event){}
-		void SetDependencies(ComponentPositionManager* pos);
+		void SetDependencies(ComponentPositionManager* pos, RenderManager* rm);
 
 		ComponentPositionManager* dependencyPosition;
+		RenderManager* dependencyRenderManager;
 };
 
 #endif // L_ENGINE_COMP_CAMERA
