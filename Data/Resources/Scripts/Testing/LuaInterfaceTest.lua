@@ -11,7 +11,7 @@ function NEWTESTCLASS(baseclass)
 		test.CPPInterface = CPP.interface; 
 		test.EID          = test.LEngineData.entityID;
 
-		if(test.CPPInterface ~= nil) then test.LEngineData.interface:WriteError(test.EID, "Good") end
+		if(test.CPPInterface ~= nil) then CPP.interface:WriteError(test.EID, "Good") end
 	end
 	
 	return test

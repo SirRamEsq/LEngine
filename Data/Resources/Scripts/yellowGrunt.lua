@@ -60,7 +60,7 @@ function yellowGrunt.Initialize()
 
 	yellowGrunt.depth        = yellowGrunt.LEngineData.depth;
 	yellowGrunt.parent       = yellowGrunt.LEngineData.parent;
-	yellowGrunt.CPPInterface = yellowGrunt.LEngineData.interface;
+	yellowGrunt.CPPInterface = CPP.interface
 	yellowGrunt.EID          = yellowGrunt.LEngineData.entityID;
 
 	yellowGrunt.mySpriteComp   = yellowGrunt.CPPInterface:GetSpriteComponent    (yellowGrunt.EID);

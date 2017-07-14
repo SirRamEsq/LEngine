@@ -2,9 +2,8 @@
 local NewLEngine = function ()
   --Initialize Container
   local LEngine = {
-    _VERSION      = "v0.8",
+    _VERSION      = "v0.9",
     _DESCRIPTION  = "Module for interfacing with LEngine",
-    interface     = nil,
 
     depth         = 0,
     parent        = nil,
@@ -16,9 +15,8 @@ local NewLEngine = function ()
   }
 
   --This function is run before anything else is run in the script
-  LEngine.Initialize= function (id, name, objType, interface, depth, parent)
+  LEngine.Initialize= function (id, name, objType, depth, parent)
     LEngine.parent     =parent;
-    LEngine.interface  =interface;
     LEngine.depth      =depth;
     LEngine.entityID   =id;
     LEngine.objType    =objType;

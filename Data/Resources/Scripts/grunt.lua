@@ -44,7 +44,7 @@ function grunt.Initialize()
 
 	grunt.depth          = grunt.LEngineData.depth;
 	grunt.parent         = grunt.LEngineData.parent;
-	grunt.CPPInterface   = grunt.LEngineData.interface;
+	grunt.CPPInterface   = CPP.interface
 	grunt.EID            = grunt.LEngineData.entityID;
     local EID = grunt.EID
 

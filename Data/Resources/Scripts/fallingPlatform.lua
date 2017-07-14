@@ -47,7 +47,7 @@ function NewFallingPlatform(baseclass)
 
         platform.depth        = platform.LEngineData.depth;
         platform.parent       = platform.LEngineData.parent;
-        platform.CPPInterface = platform.LEngineData.interface;
+        platform.CPPInterface = CPP.interface
         platform.EID          = platform.LEngineData.entityID;
 
         platform.CompSprite     = platform.CPPInterface:GetSpriteComponent    (platform.EID);
