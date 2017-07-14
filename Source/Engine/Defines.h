@@ -214,8 +214,6 @@ class CRect{
         inline int  GetY()                  const   {return y;  }
         inline void SetY(const int& yy)             {y=yy;      }
 
-        //Height truncation means these functions will subtract one when adding a width or height,
-        //because the initial x/y value counts as part of the width/height
         int GetTop     ()  const;
         int GetBottom  ()  const;
         int GetLeft    ()  const;

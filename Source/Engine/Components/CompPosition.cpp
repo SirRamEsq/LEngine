@@ -153,7 +153,6 @@ void ComponentPosition::RoundPosition(){
 }
 
 //The problem with just setting the position, is that you can't also update the world position
-//I think that's what's making characters sink into the terrain
 void ComponentPosition::SetPositionLocal	(Coord2df pos){
 	mNode->mPositionLocal	 = pos;
 	MapNode* root= mNode->GetRootNode();

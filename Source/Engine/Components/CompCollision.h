@@ -137,9 +137,9 @@ class ComponentCollisionManager : public BaseComponentManager{
         void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
         void UpdateCheckTileCollision   (const I_RSC_Map* currentMap);
+		void SetDependencies(ComponentPositionManager* pos);
 
         CollisionGrid grid;
-
         ComponentPositionManager* dependencyPosition;
 
     private:

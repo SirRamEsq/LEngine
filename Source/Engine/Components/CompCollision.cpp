@@ -57,6 +57,10 @@ ComponentCollision::~ComponentCollision(){
 
 void ComponentCollision::Update(){}
 
+void ComponentCollisionManager::SetDependencies(ComponentPositionManager* pos){
+	dependencyPosition = pos;
+}
+
 ComponentCollision::ColBox::ColBox(CRect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH d) : myPos(pos){
     if(r.w==0){r.w=1;}
     if(r.h==0){r.h=1;}

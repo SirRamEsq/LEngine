@@ -46,7 +46,10 @@ ComponentCameraManager::~ComponentCameraManager(){
 void ComponentCameraManager::AddComponent(EID id){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
+    ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)dependencyPosition->GetComponent(id), logFileName);
     componentList[id]=cam;
 }
 
+void ComponentCameraManager::SetDependencies(ComponentPositionManager* pos){
+	dependencyPosition = pos;
+}
