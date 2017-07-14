@@ -1,3 +1,4 @@
+
 #include "RenderPrimitives.h"
 #include "../Resources/LTexture.h"
 
@@ -5,7 +6,7 @@
 //RenderText//
 //////////////
 
-RenderText::RenderText(int xv, int yv, std::string t, bool abso) : RenderableObjectScreen(){
+RenderText::RenderText(RenderManager* rm, int xv, int yv, std::string t, bool abso) : RenderableObjectScreen(rm){
     x=xv;
     y=yv;
     VBOID=0;
@@ -118,13 +119,6 @@ void RenderText::Render(L_GL_Program* program){
         //glDisableClientState( GL_TEXTURE_COORD_ARRAY );
         //glDisableClientState( GL_VERTEX_ARRAY );
 
-        /*glBegin(GL_QUADS);
-		glTexCoord2f(0,0);		glVertex3i(0,0,0);
-		glTexCoord2f(1,0);	glVertex3i(w,0,0);
-		glTexCoord2f(1,1);	glVertex3i(w,h,0);
-		glTexCoord2f(0,1);	glVertex3i(0,h,0);
-		glEnd();*/
-
     glPopMatrix();
 }
 
@@ -141,7 +135,7 @@ RenderText::~RenderText(){
 //RenderLine//
 //////////////
 
-RenderLine::RenderLine(int x1, int y1, int x2, int y2, bool absolute) : RenderableObjectScreen(){
+RenderLine::RenderLine(RenderManager* rm, int x1, int y1, int x2, int y2, bool absolute) : RenderableObjectScreen(rm){
     mX1=x1;
     mY1=y1;
     mX2=x2;
@@ -177,7 +171,8 @@ RenderLine::~RenderLine(){
 //RenderBox//
 /////////////
 
-RenderBox::RenderBox(int x1, int y1, int x2, int y2, bool absolute){
+RenderBox::RenderBox(RenderManager* rm, int x1, int y1, int x2, int y2, bool absolute)
+ : RenderableObjectScreen(rm){
     mX1=x1;
     mY1=y1;
     mX2=x2;
@@ -208,3 +203,4 @@ void RenderBox::Render(L_GL_Program* program){
             glVertex2f(mX1, mY2);
         glEnd();
 }
+

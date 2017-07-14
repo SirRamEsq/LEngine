@@ -121,7 +121,7 @@ class RenderSpriteBatch : public RenderableObjectWorld{
         bool    CanAddSprites  (const int& numSprites);
 
     protected:
-        RenderSpriteBatch(const std::string& tex, const unsigned int& maxSize);
+        RenderSpriteBatch(RenderManager* rm, const std::string& tex, const unsigned int& maxSize);
 
     private:
         VAOWrapperSprite vao;

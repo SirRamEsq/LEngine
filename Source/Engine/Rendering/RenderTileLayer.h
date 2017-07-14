@@ -61,7 +61,7 @@ class VAOWrapperTile{
 
 class RenderTileLayer : public RenderableObjectWorld{
     public:
-        RenderTileLayer(const TiledTileLayer* l);
+        RenderTileLayer(RenderManager* rm, const TiledTileLayer* l);
         ~RenderTileLayer();
 
         void BuildVAO();

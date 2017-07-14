@@ -25,7 +25,7 @@ class RenderableObject{
 			Image		= 5
 		};
 
-		RenderableObject(TYPE t = TYPE::Generic);
+		RenderableObject(RenderManager* rm, TYPE t = TYPE::Generic);
 
 		//Virtual destructor; enables derived classes to be fully deleted from a base RenderableObject pointer
 		virtual ~RenderableObject(){}
@@ -70,6 +70,7 @@ class RenderableObject{
 
 	protected:
 		virtual void AddToRenderManager() = 0;
+		RenderManager* renderManager;
 
 	private:
 		MAP_DEPTH	depth;
@@ -81,7 +82,7 @@ class RenderableObject{
 
 class RenderableObjectScreen : public RenderableObject{
 	public:
-		RenderableObjectScreen(TYPE t = TYPE::Screen);
+		RenderableObjectScreen(RenderManager* rm, TYPE t = TYPE::Screen);
 		virtual ~RenderableObjectScreen();
 
 		virtual void AddToRenderManager();
@@ -89,7 +90,7 @@ class RenderableObjectScreen : public RenderableObject{
 
 class RenderableObjectWorld : public RenderableObject{
 	public:
-		RenderableObjectWorld(TYPE t = TYPE::World);
+		RenderableObjectWorld(RenderManager* rm, TYPE t = TYPE::World);
 		virtual ~RenderableObjectWorld();
 
 		virtual void AddToRenderManager();

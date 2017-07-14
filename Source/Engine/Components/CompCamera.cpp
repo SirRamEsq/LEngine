@@ -2,6 +2,9 @@
 #include "../Kernel.h"
 #include "math.h"
 
+///////////////////
+//ComponentCamera//
+///////////////////
 ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, const std::string& logFile) : BaseComponent(id, logFile){
     mPosition= pos;
 }
@@ -29,18 +32,20 @@ const CRect& ComponentCamera::GetViewport(){
 }
 
 
+//////////////////////////
+//ComponentCameraManager//
+//////////////////////////
+ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_CAMERA", e){
+}
+
+ComponentCameraManager::~ComponentCameraManager(){
+}
 
 void ComponentCameraManager::Update(){
     compMapIt i=componentList.begin();
     for(; i!=componentList.end(); i++){
         i->second->Update();
     }
-}
-
-ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_CAMERA", e){
-}
-
-ComponentCameraManager::~ComponentCameraManager(){
 }
 
 void ComponentCameraManager::AddComponent(EID id){
