@@ -105,8 +105,7 @@ RenderTileLayer::RenderTileLayer(RenderManager* rm, const TiledTileLayer *l)
     //Get Texture and TiledSet to be used
     const GIDManager* gid = layer->GIDM;
 
-	/// \TODO Need to remove this dependency on the Kernel
-    tiledSet = K_StateMan.GetCurrentState()->GetCurrentMap()->GetTiledData()->tiledSets[layer->GetTiledSet()];
+    tiledSet = layer->GetTiledSet();
     BuildVAO();
 
     AddToRenderManager();

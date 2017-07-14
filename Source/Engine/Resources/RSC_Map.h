@@ -253,13 +253,13 @@ class TiledTileLayer : public TiledLayerGeneric{
 
         unsigned int GetAnimationRate () const {return animatedRefreshRate;  }
 
-        std::string GetTiledSet() const {return tileSet;}
+        TiledSet* GetTiledSet() const {return tileSet;}
 
         mutable std::vector<CRect> updatedAreas;
 
     protected:
         //Each tiled Layer is allowed one tiled set
-        std::string   tileSet;
+		TiledSet* tileSet;
 
         float   friction;
         unsigned int animatedRefreshRate;

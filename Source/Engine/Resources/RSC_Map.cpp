@@ -1075,11 +1075,11 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     //Want to figure out what tileset this layer uses
     //All tilesets should be loaded by this point
     //This function will simply select the first tile set that it sees.
-    tileLayer->tileSet="";
+    tileLayer->tileSet=NULL;
     for(unsigned int i=0; i<data.size(); i++){
-        if(tileLayer->tileSet==""){
+        if(tileLayer->tileSet==NULL){
             if(data[i]!=0){
-                tileLayer->tileSet = ((TiledSet*)gidManager.GetItem(data[i]))->name;
+                tileLayer->tileSet = ((TiledSet*)gidManager.GetItem(data[i]));
             }
         }
         tileLayer->data2D[x][y]=data[i];
