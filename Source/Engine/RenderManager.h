@@ -34,7 +34,7 @@ class RenderCamera{
 	friend class ComponentCamera;
 
 	public:
-		RenderCamera();
+		RenderCamera(RenderManager* rm);
 		~RenderCamera();
 
 		void	SetScaling (double s)	{scale=s;		 }
@@ -77,6 +77,8 @@ class RenderCamera{
 
 		std::unique_ptr<LTexture>	 frameBufferTextureDiffuse;
 		std::unique_ptr<LTexture>	 frameBufferTextureFinal;
+
+		RenderManager* dependencyRenderManager;
 };
 
 class RenderManager{

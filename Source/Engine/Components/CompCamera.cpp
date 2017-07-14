@@ -5,7 +5,7 @@
 ///////////////////
 //ComponentCamera//
 ///////////////////
-ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, const std::string& logFile) : BaseComponent(id, logFile){
+ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile) : BaseComponent(id, logFile), mCamera(rm){
     mPosition= pos;
 }
 ComponentCamera::~ComponentCamera(){
@@ -51,10 +51,11 @@ void ComponentCameraManager::Update(){
 void ComponentCameraManager::AddComponent(EID id){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)dependencyPosition->GetComponent(id), logFileName);
+    ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
     componentList[id]=cam;
 }
 
-void ComponentCameraManager::SetDependencies(ComponentPositionManager* pos){
+void ComponentCameraManager::SetDependencies(ComponentPositionManager* pos, RenderManager* rm){
+	dependencyRenderManager = rm;
 	dependencyPosition = pos;
 }

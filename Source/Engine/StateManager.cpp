@@ -33,7 +33,7 @@ void GameState::SetDependencies(){
 	comInputMan.SetDependency(input);
 	eventDispatcher.SetDependencies(gameStateManager, &entityMan);
     comCollisionMan.SetDependencies(&comPosMan);
-	comCameraMan.SetDependencies(&comPosMan);
+	comCameraMan.SetDependencies(&comPosMan, &renderMan);
     comInputMan.SetDependency(input);
 	comScriptMan.SetDependencies(&renderMan);
 	comParticleMan.SetDependencies(&renderMan, &comPosMan);
