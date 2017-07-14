@@ -1,5 +1,6 @@
 #include "RenderSpriteBatch.h"
 #include "../Kernel.h"
+
 ////////////////////
 //RenderableSprite//
 ////////////////////
@@ -37,10 +38,11 @@ RenderSpriteBatch::Sprite::~Sprite(){
 //RenderSpriteBatch//
 /////////////////////
 
-RenderSpriteBatch::RenderSpriteBatch(const std::string& tex, const unsigned int& maxSize)
-    : RenderableObjectWorld(RenderableObject::TYPE::SpriteBatch), maxSprites(maxSize), textureName(tex), vao(maxSize){
+RenderSpriteBatch::RenderSpriteBatch(RenderManager* rm, const std::string& tex, const unsigned int& maxSize)
+    : RenderableObjectWorld(rm, RenderableObject::TYPE::SpriteBatch), maxSprites(maxSize), textureName(tex), vao(maxSize){
 
     currentSize=0;
+	//this dependency on the Kernel is ok, this is just to grab a resource
 	texture=K_TextureMan.GetItem(textureName);
 	if(texture==NULL){ErrorLog::WriteToFile("ERROR: RenderSpriteBatch; Couldn't find texture named: ", textureName);}
 	AddToRenderManager();

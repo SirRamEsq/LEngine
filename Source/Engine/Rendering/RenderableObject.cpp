@@ -4,19 +4,20 @@
 ////////////////////
 //RenderableObject//
 ////////////////////
-RenderableObject::RenderableObject(TYPE t) : type(t){
+RenderableObject::RenderableObject(RenderManager* rm, TYPE t) : type(t){
 	depth=0;
 	scaleX=1.0f;
 	scaleY=1.0f;
 	rotation=0.0f;
 	render=true;
 	shaderProgram=NULL;
+	renderManager=rm;
 }
 
 void RenderableObject::SetDepth(const int& i){
 	depth=i;
 	/// \TODO find a way to inject this dependency on RenderManager
-	Kernel::stateMan.GetCurrentState()->renderMan.OrderOBJs();
+	renderManager->OrderOBJs();
 }
 
 int RenderableObject::GetDepth(){return depth;}
@@ -24,28 +25,28 @@ int RenderableObject::GetDepth(){return depth;}
 //////////////////////////
 //RenderableObjectScreen//
 //////////////////////////
-RenderableObjectScreen::RenderableObjectScreen(TYPE t) :  RenderableObject(t){
+RenderableObjectScreen::RenderableObjectScreen(RenderManager* rm, TYPE t) : RenderableObject(rm, t){
 
 }
 
 void RenderableObjectScreen::AddToRenderManager(){
-	Kernel::stateMan.GetCurrentState()->renderMan.AddObjectScreen(this);
+	renderManager->AddObjectScreen(this);
 }
 
 RenderableObjectScreen::~RenderableObjectScreen(){
-	Kernel::stateMan.GetCurrentState()->renderMan.RemoveObjectScreen(this);
+	renderManager->RemoveObjectScreen(this);
 }
 
 /////////////////////////
 //RenderableObjectWorld//
 /////////////////////////
-RenderableObjectWorld::RenderableObjectWorld(TYPE t) : RenderableObject(t){
+RenderableObjectWorld::RenderableObjectWorld(RenderManager* rm, TYPE t) : RenderableObject(rm, t){
 }
 
 void RenderableObjectWorld::AddToRenderManager(){
-	Kernel::stateMan.GetCurrentState()->renderMan.AddObjectWorld(this);
+	renderManager->AddObjectWorld(this);
 }
 
 RenderableObjectWorld::~RenderableObjectWorld(){
-	Kernel::stateMan.GetCurrentState()->renderMan.RemoveObjectWorld(this);
+	renderManager->RemoveObjectWorld(this);
 }

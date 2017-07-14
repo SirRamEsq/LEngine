@@ -9,10 +9,11 @@ GameState::GameState(GameStateManager* gsm)
     comCameraMan(&eventDispatcher),
     comSpriteMan(&eventDispatcher),
     comInputMan(&eventDispatcher),
-    comLightMan(&eventDispatcher),
+
     comCollisionMan(&eventDispatcher),
     comParticleMan(&eventDispatcher),
-    comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher){
+    comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher),
+	comLightMan(&eventDispatcher){
 
     mCurrentMap=NULL;
     SetDependencies();
@@ -34,6 +35,8 @@ void GameState::SetDependencies(){
     comCollisionMan.SetDependencies(&comPosMan);
 	comCameraMan.SetDependencies(&comPosMan);
     comInputMan.SetDependency(input);
+	comScriptMan.SetDependencies(&renderMan);
+	comParticleMan.SetDependencies(&renderMan, &comPosMan);
 }
 
 void GameState::DrawPreviousState(){
@@ -143,12 +146,12 @@ void GameStateManager::Draw(){
 void GameState::SetMapHandleRenderableLayers(const std::map<MAP_DEPTH, TiledLayerGeneric*>& layers){
     for(auto i = layers.begin(); i != layers.end(); i++){
         if(i->second->layerType == LAYER_TILE){
-            auto layer = make_unique<RenderTileLayer> ((TiledTileLayer*)i->second);
+            auto layer = make_unique<RenderTileLayer> (&renderMan, (TiledTileLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
 
         if(i->second->layerType == LAYER_IMAGE){
-            auto layer = make_unique<RenderImageLayer> ((TiledImageLayer*)i->second);
+            auto layer = make_unique<RenderImageLayer> (&renderMan, (TiledImageLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
     }

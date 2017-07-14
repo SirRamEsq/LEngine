@@ -383,7 +383,7 @@ RenderSpriteBatch* RenderManager::GetSpriteBatch(const std::string& textureName,
 	//If there isn't a spritebatch of appropriate size, create one and assign batch to it
 	if(batch==NULL){
 		//Max size 256
-		spriteBatchVectorIt->second.push_back( std::unique_ptr<RenderSpriteBatch>(new RenderSpriteBatch(textureName, 256)));
+		spriteBatchVectorIt->second.push_back( std::unique_ptr<RenderSpriteBatch>(new RenderSpriteBatch(this, textureName, 256)));
 		batch=(spriteBatchVectorIt->second.back()).get();
 		batch->SetDepth(depth);
 	}

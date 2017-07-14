@@ -10,8 +10,8 @@ void RunInit(){
     //Push function on the stack
 }
 
-ComponentScript::ComponentScript(EID id, lua_State* state, LuaInterface* interface, const std::string& logName)
-: BaseComponent(id, logName), lState(state), lInterface(interface), scriptPointer(state)
+ComponentScript::ComponentScript(EID id, lua_State* state, LuaInterface* interface, RenderManager* rm, const std::string& logName)
+: BaseComponent(id, logName), lState(state), lInterface(interface), scriptPointer(state), dependencyRenderManager(rm)
 {
 
 }
@@ -47,13 +47,13 @@ void ComponentScript::EventLuaRemoveObserver (EID id){
 }
 
 RenderText* ComponentScript::RenderObjectText(int x, int y, const std::string& text, bool abss){
-    RenderText* rt= new RenderText(x,y,text, abss);
+    RenderText* rt= new RenderText(dependencyRenderManager, x,y,text, abss);
     mRenderableObjects.insert(rt);
     return rt;
 }
 
 RenderLine* ComponentScript::RenderObjectLine(int x, int y, int xx, int yy){
-    RenderLine* rl=new RenderLine(x,y,xx, yy);
+    RenderLine* rl=new RenderLine(dependencyRenderManager, x,y,xx, yy);
     mRenderableObjects.insert(rl);
     return rl;
 }
@@ -260,7 +260,10 @@ ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* i
 void ComponentScriptManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentScript* script=new ComponentScript(id, lState, lInterface, logFileName);
+    ComponentScript* script=new ComponentScript(id, lState, lInterface, dependencyRenderManager, logFileName);
     componentList[id]=script;
 }
 
+void ComponentScriptManager::SetDependencies(RenderManager* rm){
+	dependencyRenderManager = rm;
+}

@@ -42,7 +42,7 @@ void GameStartState::Init(){
 
     SetCurrentMap(K_MapMan.GetItem(mapName), 2);
 
-    t= new RenderText(0,0,"FR", false);
+    t= new RenderText(&renderMan, 0,0,"FR", false);
     t->SetColorI(0,100,50);
     t->SetDepth(-1000);
 

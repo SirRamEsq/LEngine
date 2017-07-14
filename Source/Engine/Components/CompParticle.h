@@ -44,7 +44,7 @@ class ComponentParticle;
 class ParticleCreator : public RenderableObjectWorld{
     friend ComponentParticle;
     public:
-        ParticleCreator (const unsigned int& particleLife, const bool& useSprite, const std::string& logFile);
+        ParticleCreator (RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile);
         ~ParticleCreator();
 
         void Render(L_GL_Program* program);
@@ -143,11 +143,13 @@ class ParticleCreator : public RenderableObjectWorld{
 
         //For Error Log
         const std::string logFileName;
+
+		RenderManager* 	dependencyRenderManager;
 };
 
 class ComponentParticle : public BaseComponent{
     public:
-         ComponentParticle(EID id,  ComponentPosition* pos, const std::string& logFile);
+         ComponentParticle(EID id,  ComponentPosition* pos, RenderManager* rm,  const std::string& logFile);
         ~ComponentParticle();
 
         void Update     ();
@@ -160,6 +162,7 @@ class ComponentParticle : public BaseComponent{
         std::vector< std::unique_ptr<ParticleCreator> > mParticleCreators;
 
         ComponentPosition* myPos;
+		RenderManager* dependencyRenderManager;
 };
 
 class ComponentParticleManager : public BaseComponentManager{
@@ -171,8 +174,11 @@ class ComponentParticleManager : public BaseComponentManager{
         void AddComponent(EID id);
         void HandleEvent(const Event* event){}
 
-    private:
+		void SetDependencies(RenderManager* rm, ComponentPositionManager* pos);
 
+    private:
+		RenderManager* dependencyRenderManager;
+		ComponentPositionManager* dependencyPosition;
 };
 
 extern const std::string PARTICLE_SHADER_VERTEX_DECLARATIONS;

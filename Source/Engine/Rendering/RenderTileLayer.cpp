@@ -1,5 +1,4 @@
 #include "RenderTileLayer.h"
-
 #include "../Kernel.h"
 
 //////////////
@@ -91,8 +90,8 @@ VAOWrapperTile::~VAOWrapperTile(){
 //RenderTileLayer//
 ////////////////////////
 
-RenderTileLayer::RenderTileLayer(const TiledTileLayer *l)
-    : RenderableObjectWorld(RenderableObject::TYPE::TileLayer), vao(l->tileWidth * l->tileHeight){
+RenderTileLayer::RenderTileLayer(RenderManager* rm, const TiledTileLayer *l)
+    : RenderableObjectWorld(rm, RenderableObject::TYPE::TileLayer), vao(l->tileWidth * l->tileHeight){
 
     SetDepth(l->GetDepth());
     layer=l;
@@ -105,6 +104,8 @@ RenderTileLayer::RenderTileLayer(const TiledTileLayer *l)
 
     //Get Texture and TiledSet to be used
     const GIDManager* gid = layer->GIDM;
+
+	/// \TODO Need to remove this dependency on the Kernel
     tiledSet = K_StateMan.GetCurrentState()->GetCurrentMap()->GetTiledData()->tiledSets[layer->GetTiledSet()];
     BuildVAO();
 

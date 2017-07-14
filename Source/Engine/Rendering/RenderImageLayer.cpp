@@ -76,8 +76,8 @@ VAOWrapper::~VAOWrapper(){
 ///////////////////
 //TiledImageLayer//
 ///////////////////
-RenderImageLayer::RenderImageLayer(TiledImageLayer* l)
-    : RenderableObjectWorld(RenderableObject::TYPE::Image), layer(l), vao(1){
+RenderImageLayer::RenderImageLayer(RenderManager* rm, TiledImageLayer* l)
+    : RenderableObjectWorld(rm, RenderableObject::TYPE::Image), layer(l), vao(1){
     SetDepth(l->GetDepth() + 50);
     render=true;
     AddToRenderManager();

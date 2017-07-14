@@ -71,7 +71,7 @@ class RenderImageLayer : public RenderableObjectWorld{
             Vec4 color;
         };
 
-        RenderImageLayer(TiledImageLayer* l);
+        RenderImageLayer(RenderManager* rm, TiledImageLayer* l);
         ~RenderImageLayer();
 
         void BuildVAO();

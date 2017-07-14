@@ -40,7 +40,7 @@ class ComponentScript : public BaseComponent{
     friend class GameState;
 
     public:
-        ComponentScript(EID id, lua_State* state, LuaInterface* interface, const std::string& logFile);
+        ComponentScript(EID id, lua_State* state, LuaInterface* interface, RenderManager* rm, const std::string& logFile);
         ~ComponentScript();
 
         void HandleEvent(const Event* event);
@@ -83,6 +83,7 @@ class ComponentScript : public BaseComponent{
         std::map<EID, ComponentScript*> mEventLuaObservers;
         //The renderable objects that this script is responsible for deleting
         std::set<RenderableObject*> mRenderableObjects;
+		RenderManager* dependencyRenderManager;
 };
 
 class TiledObject;
@@ -91,10 +92,12 @@ class ComponentScriptManager : public BaseComponentManager{
         ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
 
         void AddComponent(EID id);
+		void SetDependencies(RenderManager* rm);
 
     private:
         lua_State* lState;
         LuaInterface* lInterface;
+		RenderManager* dependencyRenderManager;
 };
 
 #endif

@@ -7,7 +7,7 @@
 class LTexture;
 class RenderText : public RenderableObjectScreen{
     public:
-        RenderText(int xv, int yv, std::string t, bool abso=true);
+        RenderText(RenderManager* rm, int xv, int yv, std::string t, bool abso=true);
         ~RenderText();
 
         void SetColorI(int r, int g, int b){
@@ -57,7 +57,7 @@ class RenderText : public RenderableObjectScreen{
 
 class RenderLine : public RenderableObjectScreen{
     public:
-        RenderLine(int x1, int y1, int x2, int y2, bool absolute=true);
+        RenderLine(RenderManager* rm, int x1, int y1, int x2, int y2, bool absolute=true);
         ~RenderLine();
 
         void SetColorI(int r, int g, int b){
@@ -97,7 +97,7 @@ class RenderLine : public RenderableObjectScreen{
 
 class RenderBox : public RenderableObjectScreen{
     public:
-        RenderBox(int x1, int y1, int x2, int y2, bool absolute=true);
+        RenderBox(RenderManager* rm, int x1, int y1, int x2, int y2, bool absolute=true);
         ~RenderBox();
 
         void SetColorI(int r, int g, int b){

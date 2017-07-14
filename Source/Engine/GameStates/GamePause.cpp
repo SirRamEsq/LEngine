@@ -13,19 +13,19 @@ int ttid4=0;
 void GamePauseState::Init(){
     exit=false;
 
-    tt= new RenderText(100,100,"| Tha Game is Paused, Dawg |", false);
+    tt= new RenderText(&renderMan, 100,100,"| Tha Game is Paused, Dawg |", false);
     tt->SetColorI(255,250,250);
 
-    tt1= new RenderText(99,100,"| Tha Game is Paused, Dawg |", false);
+    tt1= new RenderText(&renderMan, 99,100,"| Tha Game is Paused, Dawg |", false);
     tt1->SetColorI(0,0,0);
 
-    tt2= new RenderText(101,100,"| Tha Game is Paused, Dawg |", false);
+    tt2= new RenderText(&renderMan, 101,100,"| Tha Game is Paused, Dawg |", false);
     tt2->SetColorI(0,0,0);
 
-    tt3= new RenderText(100,99,"| Tha Game is Paused, Dawg |", false);
+    tt3= new RenderText(&renderMan, 100,99,"| Tha Game is Paused, Dawg |", false);
     tt3->SetColorI(0,0,0);
 
-    tt4= new RenderText(100,101,"| Tha Game is Paused, Dawg |", false);
+    tt4= new RenderText(&renderMan, 100,101,"| Tha Game is Paused, Dawg |", false);
     tt4->SetColorI(0,0,0);
 
     tt1->SetDepth(-1000);

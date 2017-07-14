@@ -1,7 +1,5 @@
 #include "CompParticle.h"
 #include <math.h>
-#include "../Kernel.h"
-
 
 /*
 The CPU will determine how many Particles to render based on its state (STARTING, STOPPING, SUSTAINING, etc...)
@@ -14,8 +12,8 @@ Each Particle Creator will have two draw calls, one for the head of the buffer a
 //Particle Creator//
 ////////////////////
 
-ParticleCreator::ParticleCreator(const unsigned int& particleLife, const bool& useSprite, const std::string& logFile)
-    : RenderableObjectWorld(), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
+ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile)
+    : dependencyRenderManager(rm), RenderableObjectWorld(dependencyRenderManager), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
 
     mScriptShaderCodeVertex="";
     mScriptShaderCodeFragment="";
@@ -119,7 +117,7 @@ void ParticleCreator::Start(){
 	glEnableVertexAttribArray (6);
 
 	//Set up Camera UBO
-	Kernel::stateMan.GetCurrentState()->renderMan.AssignCameraUBO(mShaderProgram.get());
+	dependencyRenderManager->AssignCameraUBO(mShaderProgram.get());
 
     //The particle creator will begin generating particles, but this state indicates that
     //it hasn't hit the maximum number of particles yet
@@ -468,8 +466,8 @@ void ParticleCreator::Render(L_GL_Program* program){
 //Component Particle//
 //////////////////////
 
-ComponentParticle::ComponentParticle(EID id, ComponentPosition* pos, const std::string& logName)
-    : BaseComponent(id, logName){
+ComponentParticle::ComponentParticle(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logName)
+    : BaseComponent(id, logName), dependencyRenderManager(rm){
      myPos = pos;
 }
 
@@ -501,7 +499,7 @@ void ComponentParticle::HandleEvent(const Event* event){
 
 
 ParticleCreator* ComponentParticle::AddParticleCreator    (const unsigned int& creatorLife, const unsigned int& particleLife){
-    mParticleCreators.push_back(std::unique_ptr<ParticleCreator> (new ParticleCreator (particleLife, false, logFileName)));
+    mParticleCreators.push_back(std::unique_ptr<ParticleCreator> (new ParticleCreator (dependencyRenderManager, particleLife, false, logFileName)));
     ParticleCreator* pc=mParticleCreators[mParticleCreators.size()-1].get();
     pc->mLifeSpan=creatorLife;
     pc->myPos=myPos;
@@ -530,6 +528,11 @@ ComponentParticleManager::~ComponentParticleManager(){
 void ComponentParticleManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentParticle* par=new ComponentParticle(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
+    ComponentParticle* par=new ComponentParticle(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
     componentList[id]=par;
+}
+
+void ComponentParticleManager::SetDependencies(RenderManager* rm, ComponentPositionManager* pos){
+	dependencyRenderManager = rm;
+	dependencyPosition = pos;
 }
