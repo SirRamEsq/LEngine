@@ -59,7 +59,8 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	float normalizedDeviceSpaceY =	2.0f / (topSide    - bottomSide);
 	float normalizedDeviceSpaceZ =	2.0f / (zFar	   - zNear);
 
-	Matrix4 view_mat = T * R * S;
+	//view_mat is not currentl used, but could be; keep this commented out for now until you know what to do with it
+	//Matrix4 view_mat = T * R * S;
 	Matrix4 proj_mat = Matrix4::IdentityMatrix();
 
 	proj_mat.m[ 0] = normalizedDeviceSpaceX;
@@ -113,7 +114,7 @@ RenderCamera::~RenderCamera(){
 void RenderCamera::RenderFrameBufferTextureFinal(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	L_GL_Program::BindNULL();
-	glBindVertexArray (NULL);
+	glBindVertexArray (0);
 
 	//Back to initial viewport
 	glPopAttrib();
@@ -346,7 +347,7 @@ void RenderManager::Render(){
 	//Screen objects are rendered after others, but do not use the camera's matrix
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	L_GL_Program::BindNULL();
-	glBindVertexArray (NULL);
+	glBindVertexArray (0);
 
 	for(auto i=objectsScreen.begin(); i!=objectsScreen.end(); i++){
 		if((*i)->render){(*i)->Render();}

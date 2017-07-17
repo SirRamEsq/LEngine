@@ -2,9 +2,10 @@
 #define L_GL_GLSLHELPER
 
 #include "Errorlog.h"
+#include "math.h"
 
 // const used to convert degrees into radians
-#define M_PI 3.14
+//is defined in math.h #define M_PI 3.14
 #define TAU 2.0 * M_PI
 #define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0 // 0.017444444
 #define ONE_RAD_IN_DEG 360.0 / (2.0 * M_PI) //57.2957795

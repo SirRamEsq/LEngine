@@ -5,7 +5,10 @@
 #define MASK_G 0
 #define MASK_B 255
 
-#define GLEW_STATIC
+//deifne glew static linkage if it isn't already defined
+#ifndef GLEW_STATIC
+	#define GLEW_STATIC
+#endif
 
 #include <string>
 
