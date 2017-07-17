@@ -39,5 +39,9 @@ ComponentPositionManager* GameStateMock::GetComponentManagerPosition(){
 	return &comPosMan;
 }
 
+EventDispatcher* GameStateMock::GetEventDispatcher(){
+	return &eventDispatcher;
+}
+
 GameStateMock::~GameStateMock(){
 }

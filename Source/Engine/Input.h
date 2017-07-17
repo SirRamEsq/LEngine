@@ -27,10 +27,18 @@ class InputManager{
         ~InputManager();
 
 		/**
+		 * When this function is run, all states and scripts will be notified of input
 		 * Process all events from SDL, sends events specified by the key mapping to the dispatcher.
 		 * StateManager is notified first of input, then each registered entity
 		 */
         void HandleInput();
+
+		/**
+		 * Enter the name of a key, and all entities listening for the given key
+		 * will be sent an event as if the key was actually pressed
+		 */
+		void SimulateKeyPress(const std::string& keyName);
+		void SimulateKeyRelease(const std::string& keyName);
 
 		/**
 		 * Send key presses defined by the keymapping to the event dispatcher
@@ -40,6 +48,9 @@ class InputManager{
         std::shared_ptr<KeyMapping> SetEventDispatcher(EventDispatcher* e, std::shared_ptr<KeyMapping>* mapping=NULL);
 
     private:
+		void SendEvent(MESSAGE_TYPE message, std::string keyName);
+		void KeyPress(const std::string& keyName);
+		void KeyRelease(const std::string& keyName);
         asciiMap    ascii;
         asciiMapREV asciiREV;
 

@@ -94,7 +94,6 @@ void RenderImageLayer::BuildVAO(){
     Vec2 bottomRightVertex  (tWidth, tHeight);
     Vec2 bottomLeftVertex   ( 0.0f,  tHeight);
 
-    float topTex, rightTex, leftTex, bottomTex;
     unsigned int vertexIndex=0;
 
     Vec4 color;

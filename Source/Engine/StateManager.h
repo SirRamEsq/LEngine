@@ -127,6 +127,7 @@ class GameStateManager{
 			return mGameStates.empty();
 		}
 		void UpdateCurrentState();
+		InputManager input;
 
 	protected:
 		void Close();
@@ -146,7 +147,6 @@ class GameStateManager{
 		 * Input Manager which is used to pass key mappings to each individual state
 		 * Handles Input and uses the current state's key mapping to send events
 		 */
-		InputManager input;
 };
 
 #endif

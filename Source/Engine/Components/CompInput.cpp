@@ -3,25 +3,13 @@
 
 using namespace luabridge;
 
-ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logName) : BaseComponent(id, logName), keyMapping(keys){
+ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logName) : BaseComponent(id, logName), keyMapping(keys){
     mEntityID=id;
-    myScript=script;
 }
 
 void ComponentInput::Update(){}
 
 void ComponentInput::HandleEvent(const Event* event){
-    bool keyup;
-    std::string function;
-    if( (keyup = (event->message==MSG_KEYUP) ) or (event->message == MSG_KEYDOWN) ){
-        if(myScript==NULL){return;}
-        if(keyup){function="KeyUp";}
-        else{function="KeyDown";}
-
-        //luabind::call_function<int>(myScript->lState, function.c_str(), ((std::string*)event->extradata)->c_str());
-        LuaRef fKeyPress = getGlobal(myScript->lState, function.c_str());
-        fKeyPress( ( (std::string*)event->extradata )->c_str() );
-    }
 }
 
 void ComponentInput::ListenForInput(std::string keyName){
@@ -31,7 +19,7 @@ void ComponentInput::ListenForInput(std::string keyName){
 void ComponentInputManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentInput* input=new ComponentInput(keyMapping.get(), id, (ComponentScript*)Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id), logFileName);
+    ComponentInput* input=new ComponentInput(keyMapping.get(), id, logFileName);
     componentList[id]=input;
 }
 

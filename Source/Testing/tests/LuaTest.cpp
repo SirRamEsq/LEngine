@@ -32,7 +32,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 
 	auto luaInterface = state->GetLuaInterface();
 	luaInterface->SetErrorCallbackFunction(luaErrorCallback);
-	auto scriptName = "Testing/LuaInterfaceTest.lua";
+	auto scriptName = "Testing/cppLuaInterfaceTest.lua";
 	auto script = LScript::LoadResource(scriptName);
 	auto mapDepth= 10;
 	auto parent = 0;
@@ -42,5 +42,16 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	stateManager->UpdateCurrentState();
 
 	REQUIRE(lastError == "Good");
-}
 
+	SECTION("Ensure Input events are properly handled"){
+		//script should register to listen for 'up'
+		auto keyPressed = "up";
+		//auto event = make_unique<Event>(EID_SYSTEM, eid, MSG_KEYDOWN, &keyPressed);
+		stateManager->input.SimulateKeyPress(keyPressed);	
+
+		//state->GetEventDispatcher()->DispatchEvent(std::move(event));
+		REQUIRE(lastError == "Correct Input");
+	}
+
+	Kernel::Close();
+}
