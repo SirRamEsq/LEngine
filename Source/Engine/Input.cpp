@@ -78,6 +78,8 @@ void InputManager::HandleInput(){
 }
 
 void InputManager::SendEvent(MESSAGE_TYPE message, std::string keyName){
+	//TODO change this so that a single event is made and passed around instead of many on the heap
+	
 	//Stateman is informed first of the event
 	eventDispatcher->DispatchEvent(make_unique<Event>(EID_SYSTEM, EID_STATEMAN, message, &keyName));
 
