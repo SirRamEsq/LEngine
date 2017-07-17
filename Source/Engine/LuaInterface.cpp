@@ -156,7 +156,7 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 
 	cppTable["interface"]=this;
 
-	LuaRef interfaceInstance = getGlobal(lState, "CPP.interface");
+	LuaRef interfaceInstance = cppTable["interface"];
 	if (interfaceInstance.isNil()){
 		ErrorLog::WriteToFile("interface instance is nil", ErrorLog::SEVERITY::FATAL, DEBUG_LOG);
 	}
@@ -458,7 +458,16 @@ const LSprite* LuaInterface::LoadSprite(const std::string& sprPath){
 
 void LuaInterface::ListenForInput (EID id, const std::string& inputName){
 	ComponentInput* comInput = ((ComponentInput*)(parentState->comInputMan.GetComponent(id)));
-	if(comInput == NULL){return;}
+	if(comInput == NULL){
+		parentState->comInputMan.AddComponent(id);
+		comInput = ((ComponentInput*)(parentState->comInputMan.GetComponent(id)));
+		if(comInput == NULL){
+			std::stringstream ss;
+			ss << "Couldn't listen for input for script with eid " << id << " no input component";
+			ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::WARN, DEBUG_LOG);
+			return;
+		}
+	}
 	comInput->ListenForInput(inputName);
 }
 

@@ -5,17 +5,19 @@
 #include "../Input.h"
 #include <string>
 
+/**
+ * This component is used to register the keys to listen to for a given entity
+ * it does not decide what to do with the input, it is only responsible for getting the input
+ */
 class ComponentInput : public BaseComponent{
     public:
-        ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentScript* script, const std::string& logFile);
+        ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logFile);
 
         void Update();
         void HandleEvent(const Event* event);
         void ListenForInput(std::string keyName);
 
     private:
-        ComponentScript* myScript;
-
         InputManager::KeyMapping* keyMapping;
 };
 

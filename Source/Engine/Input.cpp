@@ -30,6 +30,14 @@ InputManager::~InputManager(){
 
 }
 
+void InputManager::SimulateKeyPress(const std::string& keyName){
+	KeyPress(keyName);	
+}
+
+void InputManager::SimulateKeyRelease(const std::string& keyName){
+	KeyRelease(keyName);
+}
+
 std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(EventDispatcher* e, std::shared_ptr<InputManager::KeyMapping>* mapping){
     //will set key mapping to one specified, or generate a new one if none is specified
     eventDispatcher = e;
@@ -53,31 +61,40 @@ void InputManager::HandleInput(){
 
     std::string keyStr;
     bool keyup;
-    MESSAGE_TYPE msg= MSG_KEYDOWN;
 
     while(SDL_PollEvent(&event)) {
         if( (keyup = (event.type==SDL_KEYUP) ) or (event.type == SDL_KEYDOWN) ){
             //NOT USING UNICODE!!!
             int asciiValue=event.key.keysym.sym;
 
-            if(keyup)   {msg=MSG_KEYUP;}
-            else        {msg=MSG_KEYDOWN;}
             keyi=asciiREV.find(asciiValue);
 
             if(keyi!=asciiREV.end()){
-                keyStr=keyi->second;
-                //Stateman is informed first of the event
-                eventDispatcher->DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, EID_STATEMAN, msg, &keyStr)) );
-
-                //send event to all the entities listening
-                keyMI=keyListeners->find(keyStr);
-                if(keyMI==keyListeners->end()){continue;}
-                auto vec=&keyMI->second;
-
-                for(auto veci = vec->begin(); veci!=vec->end(); veci++){
-                    eventDispatcher->DispatchEvent( std::unique_ptr<Event>(new Event(EID_SYSTEM, *veci, msg, &keyStr)) );
-                }
+				if(keyup)   {KeyPress(keyi->second);}
+				else        {KeyRelease(keyi->second);}
             }
         }
     }
+}
+
+void InputManager::SendEvent(MESSAGE_TYPE message, std::string keyName){
+	//Stateman is informed first of the event
+	eventDispatcher->DispatchEvent(make_unique<Event>(EID_SYSTEM, EID_STATEMAN, message, &keyName));
+
+	//send event to all the entities listening
+	auto keyIterator=keyListeners->find(keyName);
+	if(keyIterator==keyListeners->end()){return;}
+	auto listeners=&keyIterator->second;
+
+	for(auto listener = listeners->begin(); listener!=listeners->end(); listener++){
+		eventDispatcher->DispatchEvent(make_unique<Event>(EID_SYSTEM, *listener, message, &keyName));
+	}
+}
+
+void InputManager::KeyPress(const std::string& keyName){
+	SendEvent(MSG_KEYDOWN, keyName);
+}
+
+void InputManager::KeyRelease(const std::string& keyName){
+	SendEvent(MSG_KEYUP, keyName);
 }

@@ -17,6 +17,7 @@ class GameStateMock : public GameState{
 		LuaInterface* GetLuaInterface();
 		ComponentScriptManager* GetComponentManagerScript();
 		ComponentPositionManager* GetComponentManagerPosition();
+		EventDispatcher* GetEventDispatcher();
 
 		int drawCount;
 		int updateCount;
