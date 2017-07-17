@@ -20,7 +20,7 @@ function NewCamera(baseclass)
 	camera.localDefault.x = -200
 	camera.localDefault.y = -200
 
-	camera.blockFollow = true;
+	camera.blockFollow = false;
 
 	function camera.Initialize()
 		-----------------------

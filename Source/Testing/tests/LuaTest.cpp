@@ -41,15 +41,26 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 
 	stateManager->UpdateCurrentState();
 
-	REQUIRE(lastError == "Good");
+	REQUIRE(lastError == "Interface Working");
 
 	SECTION("Ensure Input events are properly handled"){
-		//script should register to listen for 'up'
+		//script should register to listen for 'up' and 'down'
+		//correct key is 'up'
+		//incorrect key is 'down'
+		//all else will be ignored
 		auto keyPressed = "up";
-		//auto event = make_unique<Event>(EID_SYSTEM, eid, MSG_KEYDOWN, &keyPressed);
-		stateManager->input.SimulateKeyPress(keyPressed);	
+		auto incorrectKey = "down";
+		auto ignoredKey = "blarg"; 
 
-		//state->GetEventDispatcher()->DispatchEvent(std::move(event));
+		//This should not trigger any new error messages; lastError should not change by pressing a key
+		auto previousErrorMessage = lastError;
+		stateManager->input.SimulateKeyPress(ignoredKey);	
+		REQUIRE(lastError == previousErrorMessage);
+
+		stateManager->input.SimulateKeyPress(incorrectKey);	
+		REQUIRE(lastError == "Incorrect Input");
+
+		stateManager->input.SimulateKeyPress(keyPressed);	
 		REQUIRE(lastError == "Correct Input");
 	}
 
