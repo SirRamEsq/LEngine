@@ -3,7 +3,7 @@ local NewLEngine = function ()
   --Initialize Container
   local LEngine = {
     _VERSION      = "v0.9",
-    _DESCRIPTION  = "Module for interfacing with LEngine",
+    _DESCRIPTION  = "Module that the LEngine populates with data and sends to each instance of a script component",
 
     depth         = 0,
     parent        = nil,
@@ -23,7 +23,6 @@ local NewLEngine = function ()
     LEngine.name       =name;
   end
 
-  --return container
   return LEngine
 end
 

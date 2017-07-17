@@ -26,11 +26,11 @@ function NewCamera(baseclass)
 		-----------------------
 		--C++ Interface setup--
 		-----------------------
-		camera.depth				= camera.LEngineData.depth;
-		camera.parent				= camera.LEngineData.parent;
-		camera.CPPInterface = camera.LEngineData.interface;
-		camera.EID					= camera.LEngineData.entityID;
-		camera.pos					= CPP.Coord2df(camera.localDefault.x,camera.localDefault.y);
+		camera.depth		= camera.LEngineData.depth;
+		camera.parent		= camera.LEngineData.parent;
+		camera.CPPInterface = CPP.interface
+		camera.EID			= camera.LEngineData.entityID;
+		camera.pos			= CPP.Coord2df(camera.localDefault.x,camera.localDefault.y);
 
 		camera.myPositionComp=camera.CPPInterface:GetPositionComponent(camera.EID);
 
