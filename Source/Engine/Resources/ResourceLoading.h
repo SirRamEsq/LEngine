@@ -29,7 +29,7 @@ class FileData{
         char* data;
 
         //Cannot use copy assignment constructor
-        FileData& operator= (const FileData& other){}
+        FileData& operator= (const FileData& other) = delete;
 };
 
 class Kernel;//Forward Declare
