@@ -76,11 +76,18 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	}
 
 	SECTION("Ensure Lua events can be sent, recieved, and interpeted"){
-		Event event(31337, eid, MSG_LUA_EVENT);
-		event.eventDescription = "TEST1";
+		EID newEID = 31337;
+		scriptMan->AddComponent(newEID);
+
+		std::string eventDescription = "TEST1";
 
 		auto scriptComponent = (ComponentScript*) scriptMan->GetComponent(eid);
-		scriptComponent->HandleEvent(&event);
+		auto otherScriptComponent = (ComponentScript*) scriptMan->GetComponent(newEID);
+
+		scriptComponent->RunFunction("Observe31337");
+		REQUIRE(lastError == "Observing 31337");
+
+		otherScriptComponent->EventLuaBroadcastEvent(eventDescription);
 		REQUIRE(lastError == "EVENT: TEST1");
 	}
 
