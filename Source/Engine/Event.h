@@ -33,6 +33,7 @@ struct EntityEvent : public Event{
     EID         senderID;
 };
 
+// \TODO instead of passing a unique ptr to an event, simply pass an Event by value
 class EventDispatcher{
     public:
         EventDispatcher();

@@ -6,17 +6,24 @@
 
 using namespace luabridge;
 
+const std::string ComponentScript::entityDeletedDescription = "[ENTITY_DELETED]";
+
 void RunInit(){
     //Push function on the stack
 }
 
-ComponentScript::ComponentScript(EID id, lua_State* state, LuaInterface* interface, RenderManager* rm, const std::string& logName)
-: BaseComponent(id, logName), lState(state), lInterface(interface), scriptPointer(state), dependencyRenderManager(rm)
+ComponentScript::ComponentScript(EID id, lua_State* state, EventDispatcher* ed, LuaInterface* interface, RenderManager* rm, const std::string& logName)
+: BaseComponent(id, logName), lState(state), lInterface(interface), scriptPointer(state), dependencyRenderManager(rm), dependencyEventDispatcher(ed)
 {
 
 }
 
 ComponentScript::~ComponentScript(){
+	//Let all observers know that this entity has been deleted
+	EventLuaSendToObservers(entityDeletedDescription);
+
+	//remove this entity from all observer lists
+	dependencyEventDispatcher->BroadcastEvent(make_unique<Event>(eid, 0, MSG_ENTITY_DELETED));
 }
 
 void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
@@ -28,22 +35,33 @@ void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
     scriptPointer = lp;
 }
 
-void ComponentScript::EventLuaBroadcastEvent (const std::string& event){
+void ComponentScript::EventLuaBroadcastEvent(const std::string& event){
+	auto event = make_unique<Event>(eid, 0, MSG_LUA_EVENT);
+	event->eventDescription = event;
+	dependencyEventDispatcher->BroadcastEvent(event);
+}
+
+void ComponentScript::EventLuaSendToObservers(const std::string& event){
     for(auto it=mEventLuaObservers.begin(); it!=mEventLuaObservers.end(); it++){
         Event e(GetEID(), it->first, MSG_LUA_EVENT);
         e.eventDescription=event;
         it->second->HandleEvent(&e);
     }
 }
-void ComponentScript::EventLuaAddObserver    (ComponentScript* script){
+
+bool ComponentScript::EventLuaAddObserver    (ComponentScript* script){
     if(mEventLuaObservers.find(script->GetEID())==mEventLuaObservers.end()){
         mEventLuaObservers[script->GetEID()]=script;
+		return true;
     }
+	return false;
 }
-void ComponentScript::EventLuaRemoveObserver (EID id){
+bool  ComponentScript::EventLuaRemoveObserver (EID id){
     if(mEventLuaObservers.find(id)!=mEventLuaObservers.end()){
         mEventLuaObservers.erase(id);
+		return true;
     }
+	return false;
 }
 
 RenderText* ComponentScript::RenderObjectText(int x, int y, const std::string& text, bool abss){
@@ -203,10 +221,6 @@ void ComponentScript::HandleEvent(const Event* event){
             }
 
             fTC(event->sender,event->eventDescription); //pass other entity's id and description
-
-            if(event->eventDescription=="[ENTITY_DELETED]"){
-                EventLuaRemoveObserver(event->sender);
-            }
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -214,6 +228,9 @@ void ComponentScript::HandleEvent(const Event* event){
             ErrorLog::WriteToFile(ss.str(), logFileName);
         }
     }
+    else if(event->message==MSG_ENTITY_DELETED){
+        EventLuaRemoveObserver(event->sender);
+	}
 }
 
 void ComponentScript::Update(){
@@ -260,7 +277,7 @@ ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* i
 void ComponentScriptManager::AddComponent(EID id){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentScript* script=new ComponentScript(id, lState, lInterface, dependencyRenderManager, logFileName);
+    ComponentScript* script=new ComponentScript(id, lState, eventDispatcher, lInterface, dependencyRenderManager, logFileName);
     componentList[id]=script;
 }
 
