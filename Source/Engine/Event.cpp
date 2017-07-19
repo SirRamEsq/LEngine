@@ -33,4 +33,8 @@ void EventDispatcher::DispatchImmediateEvent(std::unique_ptr<Event> event){
     else                     {gameStateEntityManager->DispatchEvent (event.get());}
 }
 
+void EventDispatcher::BroadcastEvent(std::unique_prt<Event> event){
+
+}
+
 #endif

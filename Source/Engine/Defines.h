@@ -97,7 +97,8 @@ enum MESSAGE_TYPE{
     MSG_MAP_PUSH,
     MSG_MAP_POP,
     MSG_MAP_CHANGE,
-    MSG_LUA_EVENT
+    MSG_LUA_EVENT,
+	MSG_ENTITY_DELETED
 };
 
 typedef unsigned long int EID; //EID stands for "Entity ID"

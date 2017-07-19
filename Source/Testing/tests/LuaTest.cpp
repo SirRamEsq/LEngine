@@ -87,8 +87,22 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		scriptComponent->RunFunction("Observe31337");
 		REQUIRE(lastError == "Observing 31337");
 
-		otherScriptComponent->EventLuaBroadcastEvent(eventDescription);
-		REQUIRE(lastError == "EVENT: TEST1");
+		auto luaInterface = state->GetLuaInterface();
+		luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
+		std::stringstream ss1;
+		ss1 << "EVENT: " << eventDescription;
+		REQUIRE(lastError == ss1.str());
+
+		//Tell newScript that the first was has been deleted, this will cause the newScript to no longer broadcast events the the first script
+		//This should be the final event that scriptcomponent recieves from 31337
+		luaInterface->EventLuaBroadcastEvent(newEID, ComponentScript::entityDeletedDescription);
+		std::stringstream ss2;
+		ss2 <<  "EVENT: " << ComponentScript::entityDeletedDescription;
+		REQUIRE(lastError == ss2.str());
+
+		//scriptComponent should NOT recieve this event
+		luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
+		REQUIRE(lastError != ss1.str());
 	}
 
 	Kernel::Close();

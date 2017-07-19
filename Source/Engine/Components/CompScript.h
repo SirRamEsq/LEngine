@@ -40,7 +40,7 @@ class ComponentScript : public BaseComponent{
     friend class GameState;
 
     public:
-        ComponentScript(EID id, lua_State* state, LuaInterface* interface, RenderManager* rm, const std::string& logFile);
+        ComponentScript(EID id, lua_State* state, EventDispatcher* ed, LuaInterface* interface, RenderManager* rm, const std::string& logFile);
         ~ComponentScript();
 
         void HandleEvent(const Event* event);
@@ -58,15 +58,31 @@ class ComponentScript : public BaseComponent{
         void ExposeProperties (std::map<std::string, double     >& table);
         void ExposeProperties (std::map<std::string, std::string>& table);
 
+		/**
+		 * Sends an event to all lua scrips
+		 */
         void EventLuaBroadcastEvent (const std::string& event);
-        void EventLuaAddObserver    (ComponentScript* script);
-        void EventLuaRemoveObserver (EID id);
+		/**
+		 * Sends an event to all observers of this script
+		 */
+		void EventLuaSendToObservers(const std::string& event);
+		/**
+		 * Adds an observer
+		 * \returns TRUE if the observer was added and was NOT previously an observer
+		 */
+        bool EventLuaAddObserver    (ComponentScript* script);
+		/**
+		 * Removes an observer
+		 * \returns TRUE if the observer was removed and WAS previously an observer
+		 */
+        bool EventLuaRemoveObserver (EID id);
 
         RenderText* RenderObjectText    (int x, int y, const std::string& text, bool abss=true);
         RenderLine* RenderObjectLine    (int x, int y, int xx, int yy);
         void        RenderObjectDelete  (RenderableObject* obj);
 
         std::string scriptName;
+		static const std::string entityDeletedDescription;
 
         //Throws if script is already assigned
         void SetScriptPointerOnce(luabridge::LuaRef lp);
@@ -75,6 +91,7 @@ class ComponentScript : public BaseComponent{
     protected:
         lua_State* lState;
         LuaInterface* lInterface;
+		EventDispatcher dependencyEventDispatcher;
         //pointer to this script's location in the lua state
         luabridge::LuaRef scriptPointer;
 
