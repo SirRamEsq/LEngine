@@ -15,6 +15,12 @@ void EntityManager::DispatchEvent(const Event* event){
     }
 }
 
+void EntityManager::BroadcastEvent(const Event* event){
+    for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
+        i->second->BroadcastEvent(event);
+    }
+}
+
 void EntityManager::Cleanup(){
     //GameState* state = Kernel::stateMan.GetCurrentState();
     if(mFlagDeleteAll){

@@ -23,7 +23,7 @@ ComponentScript::~ComponentScript(){
 	EventLuaSendToObservers(entityDeletedDescription);
 
 	//remove this entity from all observer lists
-	dependencyEventDispatcher->BroadcastEvent(make_unique<Event>(eid, 0, MSG_ENTITY_DELETED));
+	dependencyEventDispatcher->BroadcastEvent(make_unique<Event>(GetEID(), 0, MSG_ENTITY_DELETED));
 }
 
 void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
@@ -36,9 +36,9 @@ void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
 }
 
 void ComponentScript::EventLuaBroadcastEvent(const std::string& event){
-	auto event = make_unique<Event>(eid, 0, MSG_LUA_EVENT);
-	event->eventDescription = event;
-	dependencyEventDispatcher->BroadcastEvent(event);
+	auto eventStructure = make_unique<Event>(GetEID(), 0, MSG_LUA_EVENT);
+	eventStructure->eventDescription = event;
+	dependencyEventDispatcher->BroadcastEvent(std::move(eventStructure));
 }
 
 void ComponentScript::EventLuaSendToObservers(const std::string& event){
