@@ -36,6 +36,11 @@ function cppTEST.NEWTESTCLASS(baseclass)
 	function test.OnLuaEvent(senderEID, eventString)
 		test.CPPInterface:WriteError(test.EID, "EVENT: " .. eventString)
 	end
+
+	function test.Observe31337()
+		test.CPPInterface:EventLuaObserveEntity(test.EID, 31337)
+		test.CPPInterface:WriteError(test.EID, "Observing 31337")
+	end
 	
 	return test
 end
