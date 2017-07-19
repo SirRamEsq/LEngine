@@ -19,14 +19,22 @@ function cppTEST.NEWTESTCLASS(baseclass)
 
 	function test.OnKeyDown(keyname)
 		if (keyname == test.correctKeyPress)then
-			test.CPPInterface:WriteError(test.EID, "Correct Input")
+			test.CPPInterface:WriteError(test.EID, "KeyPress: Correct Input")
 		else
-			test.CPPInterface:WriteError(test.EID, "Incorrect Input")
+			test.CPPInterface:WriteError(test.EID, "KeyPress: Incorrect Input")
 		end
 	end
 
 	function test.OnKeyUp(keyname)
+		if (keyname == test.correctKeyPress)then
+			test.CPPInterface:WriteError(test.EID, "KeyRelease: Correct Input")
+		else
+			test.CPPInterface:WriteError(test.EID, "KeyRelease: Incorrect Input")
+		end
+	end
 
+	function test.OnLuaEvent(senderEID, eventString)
+		test.CPPInterface:WriteError(test.EID, "EVENT: " .. eventString)
 	end
 	
 	return test

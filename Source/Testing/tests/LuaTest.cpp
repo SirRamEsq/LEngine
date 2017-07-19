@@ -58,10 +58,30 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		REQUIRE(lastError == previousErrorMessage);
 
 		stateManager->input.SimulateKeyPress(incorrectKey);	
-		REQUIRE(lastError == "Incorrect Input");
+		REQUIRE(lastError == "KeyPress: Incorrect Input");
 
 		stateManager->input.SimulateKeyPress(keyPressed);	
-		REQUIRE(lastError == "Correct Input");
+		REQUIRE(lastError == "KeyPress: Correct Input");
+
+
+		previousErrorMessage = lastError;
+		stateManager->input.SimulateKeyRelease(ignoredKey);	
+		REQUIRE(lastError == previousErrorMessage);
+
+		stateManager->input.SimulateKeyRelease(incorrectKey);	
+		REQUIRE(lastError == "KeyRelease: Incorrect Input");
+
+		stateManager->input.SimulateKeyRelease(keyPressed);	
+		REQUIRE(lastError == "KeyRelease: Correct Input");
+	}
+
+	SECTION("Ensure Lua events can be sent, recieved, and interpeted"){
+		Event event(31337, eid, MSG_LUA_EVENT);
+		event.eventDescription = "TEST1";
+
+		auto scriptComponent = (ComponentScript*) scriptMan->GetComponent(eid);
+		scriptComponent->HandleEvent(&event);
+		REQUIRE(lastError == "EVENT: TEST1");
 	}
 
 	Kernel::Close();
