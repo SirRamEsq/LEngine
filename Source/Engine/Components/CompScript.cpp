@@ -180,7 +180,7 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnTileCollision not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-            fTC((TColPacket*)event->extradata); //pass other entity's id and boxid
+            fTC((TColPacket*)event->extradata);
         }
         catch (LuaException const& e){
             std::stringstream ss;
