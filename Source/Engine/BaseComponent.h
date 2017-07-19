@@ -59,6 +59,7 @@ class BaseComponentManager{
 
         virtual void Update();
         virtual void HandleEvent(const Event* event);
+        virtual void BroadcastEvent(const Event* event);
 
         const std::string logFileName;
 

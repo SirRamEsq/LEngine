@@ -34,6 +34,9 @@ struct EntityEvent : public Event{
 };
 
 // \TODO instead of passing a unique ptr to an event, simply pass an Event by value
+/**
+ * Creates and Dispatches Events in the correct order and in the most efficent way possible
+ */
 class EventDispatcher{
     public:
         EventDispatcher();

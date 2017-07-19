@@ -56,6 +56,12 @@ void BaseComponentManager::HandleEvent(const Event* event){
     comp->HandleEvent(event);
 }
 
+void BaseComponentManager::BroadcastEvent(const Event* event){
+    for(auto i = componentList.begin(); i != componentList.end(); i++){
+		i->second->HandleEvent(event);
+	}
+}
+
 BaseComponent* BaseComponentManager::GetComponent(EID id){
     compMap::iterator i=componentList.find(id);
     if(i!=componentList.end()){

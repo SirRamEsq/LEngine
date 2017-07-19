@@ -64,6 +64,11 @@ class EntityManager{
         void DispatchEvent  (const Event* event);
 
 		/**
+		 * Broadcasts an event to all registered Component Managers
+		 */
+		void BroadcastEvent (const Event* event);
+
+		/**
 		 * Actually deletes all entities scheduled to be deleted.
 		 */
         void Cleanup();

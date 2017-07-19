@@ -91,7 +91,7 @@ class ComponentScript : public BaseComponent{
     protected:
         lua_State* lState;
         LuaInterface* lInterface;
-		EventDispatcher dependencyEventDispatcher;
+		EventDispatcher* dependencyEventDispatcher;
         //pointer to this script's location in the lua state
         luabridge::LuaRef scriptPointer;
 
