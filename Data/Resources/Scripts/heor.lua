@@ -76,28 +76,28 @@ function NewHeor(baseclass)
 
 --Variables
 	--General Movement Variables
-				heor.health=heor.c.MAXHEALTH;
-				heor.coinCount=0;
-				heor.coinText=nil;
+		heor.health=heor.c.MAXHEALTH;
+		heor.coinCount=0;
+		heor.coinText=nil;
 		heor.xspd=0;
 		heor.yspd=0;
 		heor.groundSpeed=0;
-				heor.prevGroundSpeed=0; -- Ground speed of previous frame
+		heor.prevGroundSpeed=0; -- Ground speed of previous frame
 		heor.tileFriction=0.046875;
 		heor.inputLock=false;
 		heor.lockTimer=0;
 
-				heor.attackLock=false --character locked from being hit
+		heor.attackLock=false --character locked from being hit
 		heor.angle=0;
-				heor.angleSigned=0;
-				heor.facingDir=heor.c.FACING_RIGHT;
+		heor.angleSigned=0;
+		heor.facingDir=heor.c.FACING_RIGHT;
 
-				heor.ropeSwing=nil;
+		heor.ropeSwing=nil;
 
-				heor.externalUseWhip=false;
-				heor.externalUseWhipInterrupt=false;
+		heor.externalUseWhip=false;
+		heor.externalUseWhipInterrupt=false;
 
-				heor.currentState= heor.c.STATE_NORMAL;
+		heor.currentState= heor.c.STATE_NORMAL;
 
 	--CLIMBING
 		heor.climb = {}

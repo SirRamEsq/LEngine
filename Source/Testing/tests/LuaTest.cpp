@@ -97,7 +97,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		std::string eventDescription2 = "Test2";
 		std::stringstream ss2;
 		ss2 <<  "EVENT: " << eventDescription2;
-		luaInterface->EventLuaBroadcastEvent(newEID, eventDescription2);
+		luaInterface->EventLuaSendToObservers(newEID, eventDescription2);
 		REQUIRE(lastError == ss2.str());
 
 		//Tell newScript that the first was has been deleted, this will cause the newScript to no longer broadcast events the the first script
@@ -107,6 +107,14 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		//scriptComponent should NOT recieve this event
 		luaInterface->EventLuaSendToObservers(newEID, eventDescription);
 		REQUIRE(lastError != ss1.str());
+
+		//This broadcast should still reach scriptComponent though
+		luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
+		REQUIRE(lastError == ss1.str());
+
+		//This direct event should also still reach scriptComponent
+		luaInterface->EventLuaSendEvent(newEID, eid, eventDescription2);
+		REQUIRE(lastError == ss2.str());
 	}
 
 	Kernel::Close();

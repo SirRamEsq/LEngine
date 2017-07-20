@@ -51,8 +51,6 @@ class Event{
 
 };
 
-// \TODO instead of passing a unique ptr to an event, simply pass an Event by value
-// \TODO should be able to pass a list of entities to send events to
 /**
  * Dispatches Events in the correct order and in the most efficent way possible
  */
