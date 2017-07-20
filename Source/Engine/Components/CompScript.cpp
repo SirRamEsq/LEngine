@@ -125,6 +125,7 @@ void ComponentScript::ExposeProperties (std::map<std::string, std::string>& tabl
 
 void ComponentScript::HandleEvent(const Event* event){
     if(event->message== Event::MSG::KEYDOWN){
+		if(scriptPointer.isNil()){return;}
         try{
             LuaRef fKDown = scriptPointer["OnKeyDown"];
             if (fKDown.isNil()) {
@@ -145,6 +146,7 @@ void ComponentScript::HandleEvent(const Event* event){
     }
 
     else if(event->message== Event::MSG::KEYUP){
+		if(scriptPointer.isNil()){return;}
         try{
             LuaRef fKUp = scriptPointer["OnKeyUp"];
             if (fKUp.isNil()) {
@@ -166,6 +168,7 @@ void ComponentScript::HandleEvent(const Event* event){
     }
 
     else if(event->message== Event::MSG::COLLISION_ENTITY){
+		if(scriptPointer.isNil()){return;}
         try{
             LuaRef fEC = scriptPointer["OnEntityCollision"];
             if (fEC.isNil()) {
@@ -186,6 +189,7 @@ void ComponentScript::HandleEvent(const Event* event){
     }
 
     else if(event->message== Event::MSG::COLLISION_TILE){
+		if(scriptPointer.isNil()){return;}
         try{
             LuaRef fTC = scriptPointer["OnTileCollision"];
             if (fTC.isNil()) {
@@ -207,6 +211,7 @@ void ComponentScript::HandleEvent(const Event* event){
         }
     }
     else if(event->message== Event::MSG::LUA_EVENT){
+		if(scriptPointer.isNil()){return;}
         try{
             LuaRef fTC =  scriptPointer["OnLuaEvent"];
             std::stringstream ss;

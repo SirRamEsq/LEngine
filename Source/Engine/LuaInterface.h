@@ -85,6 +85,7 @@ class LuaInterface{
 			//Listen to all events from a certain entity
 			void EventLuaObserveEntity	(EID listenerID, EID senderID);
 			void EventLuaBroadcastEvent (EID senderID, const std::string& event);
+			void EventLuaSendToObservers(EID senderID, const std::string& event);
 			void EventLuaSendEvent		(EID senderID, EID recieverID, const std::string& event);
 
 		///////////
