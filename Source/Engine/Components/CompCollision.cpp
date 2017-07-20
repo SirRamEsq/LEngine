@@ -226,13 +226,15 @@ void ComponentCollisionManager::AddComponent(EID id){
     componentList[id]=cbox;
 }
 
-void ComponentCollisionManager::SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, MESSAGE_TYPE mes){
+void ComponentCollisionManager::SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, Event::MSG mes){
     EColPacket ePacket;
     ePacket.name      = sender.name;
     ePacket.objType   = sender.objType;
     ePacket.box       = recieverBoxID;
 
-    eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(sender.GetEID(), reciever.GetEID(), mes, &ePacket)));
+	EColPacket::ExtraDataDefinition extraData(&ePacket);
+	Event event(sender.GetEID(), reciever.GetEID(), mes, "ENTITY_COLLISION", &extraData);
+    eventDispatcher->DispatchEvent(event);
 }
 
 void ComponentCollisionManager::UpdateCheckEntityCollision(){
@@ -290,14 +292,14 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
                                 //Each entity will only be sent one collision event per collision box max
                                 if(alreadyRegisteredBox1.find(boxIt1->id)==alreadyRegisteredBox1.end()){
                                     //                      Sender                                      Reciever                       Reciever BoxID
-                                    SendCollisionEvent(*comp2, *comp1 ,boxIt1->id, MSG_ENT_COLLISION);
+                                    SendCollisionEvent(*comp2, *comp1 ,boxIt1->id, Event::MSG::COLLISION_ENTITY);
                                     //Register box to make sure an event isn't sent here again
                                     alreadyRegisteredBox1.insert(boxIt1->id);
                                 }
 
                                 if(alreadyRegisteredBox2.find(boxIt2->id)==alreadyRegisteredBox2.end()){
                                     //                      Sender                                      Reciever                       Reciever BoxID
-                                    SendCollisionEvent(*comp1, *comp2 ,boxIt2->id, MSG_ENT_COLLISION);
+                                    SendCollisionEvent(*comp1, *comp2 ,boxIt2->id, Event::MSG::COLLISION_ENTITY);
                                     //Register box to make sure an event isn't sent here again
                                     alreadyRegisteredBox2.insert(boxIt2->id);
                                 }
@@ -351,7 +353,10 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* curren
                 packet.x=txx1;
                 packet.y=tyy2;
                 packet.box=boxIt1->id;
-                eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first,  MSG_TILE_COLLISION, &packet)));
+
+				TColPacket::ExtraDataDefinition extraData(&packet);
+				Event event(EID_SYSTEM, compIt1->first, Event::MSG::COLLISION_TILE, "TILE", &extraData);
+                eventDispatcher->DispatchEvent(event);
 
                 continue;
             }
@@ -377,7 +382,11 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* curren
                         packet.y=ty;
                         packet.box=boxIt1->id;
                         packet.tl=tLayer;
-                        eventDispatcher->DispatchEvent(std::unique_ptr<Event>(new Event(EID_SYSTEM, compIt1->first, MSG_TILE_COLLISION, &packet)));
+
+						TColPacket::ExtraDataDefinition extraData(&packet);
+						Event event(EID_SYSTEM, compIt1->first, Event::MSG::COLLISION_TILE, "TILE", &extraData);
+						eventDispatcher->DispatchEvent(event);
+
                         breakOut=true;
                     }
                     if(!negativeH)  {ty+=1;}
@@ -451,4 +460,34 @@ void ComponentCollisionManager::Update(){
     UpdateBuckets(stateMap->GetWidthPixels());
     UpdateCheckEntityCollision();
     UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
+}
+
+//////////////
+//EColPcaket//
+//////////////
+EColPacket::ExtraDataDefinition::ExtraDataDefinition(const EColPacket* p)
+	: packet(p){
+}
+
+void EColPacket::ExtraDataDefinition::SetExtraData(Event* event){
+	event->extradata = &packet;
+}
+
+const EColPacket* EColPacket::ExtraDataDefinition::GetExtraData(const Event* event){
+	return ((const EColPacket*)(event->extradata));
+}
+
+//////////////
+//TColPcaket//
+//////////////
+TColPacket::ExtraDataDefinition::ExtraDataDefinition(const TColPacket* p)
+	: packet(p){
+}
+
+void TColPacket::ExtraDataDefinition::SetExtraData(Event* event){
+	event->extradata = &packet;
+}
+
+const TColPacket* TColPacket::ExtraDataDefinition::GetExtraData(const Event* event){
+	return ((const TColPacket*)(event->extradata));
 }

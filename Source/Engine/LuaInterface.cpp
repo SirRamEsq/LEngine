@@ -637,8 +637,7 @@ void LuaInterface::EventLuaBroadcastEvent (EID senderID, const std::string& even
 }
 
 void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std::string& event){
-	Event e(senderID, recieverID, MSG_LUA_EVENT);
-	e.eventDescription=event;
+	Event e(senderID, recieverID, Event::MSG::LUA_EVENT, event);
 
 	ComponentScript* script=(ComponentScript*)parentState->comScriptMan.GetComponent(recieverID);
 	if(script==NULL){return;}

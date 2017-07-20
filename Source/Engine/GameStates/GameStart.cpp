@@ -55,21 +55,23 @@ void GameStartState::Close(){
 }
 
 void GameStartState::HandleEvent(const Event* event){
-    if(event->message==MSG_KEYDOWN){
-        if     ( *((std::string*)event->extradata) == "use")    {countdown=-1;}
-        else if( *((std::string*)event->extradata) == "pause")  {gameStateManager->PushState(std::unique_ptr<GamePauseState> (new GamePauseState(gameStateManager)));}
+	std::string inputKey (*InputManager::ExtraDataDefinitionInput::GetExtraData(event));
 
-        else if( *((std::string*)event->extradata) == "up")      {u=true;}
-        else if( *((std::string*)event->extradata) == "down")    {d=true;}
-        else if( *((std::string*)event->extradata) == "left")    {l=true;}
-        else if( *((std::string*)event->extradata) == "right")   {r=true;}
+    if(event->message == Event::MSG::KEYDOWN){
+        if     ( inputKey == "use")    {countdown=-1;}
+        else if( inputKey == "pause")  {gameStateManager->PushState(make_unique<GamePauseState> (gameStateManager));}
+
+        else if( inputKey == "up")      {u=true;}
+        else if( inputKey == "down")    {d=true;}
+        else if( inputKey == "left")    {l=true;}
+        else if( inputKey == "right")   {r=true;}
     }
 
-    if(event->message==MSG_KEYUP){
-        if     ( *((std::string*)event->extradata) == "up")      {u=false;}
-        else if( *((std::string*)event->extradata) == "down")    {d=false;}
-        else if( *((std::string*)event->extradata) == "left")    {l=false;}
-        else if( *((std::string*)event->extradata) == "right")   {r=false;}
+    if(event->message == Event::MSG::KEYUP){
+        if     ( inputKey == "up")      {u=false;}
+        else if( inputKey == "down")    {d=false;}
+        else if( inputKey == "left")    {l=false;}
+        else if( inputKey == "right")   {r=false;}
     }
 
     /*if(event->message==MSG_MAP_CHANGE){

@@ -80,34 +80,7 @@ enum LOrigin {
     L_ORIGIN_BOTTOM_RIGHT
 };
 typedef int MAP_DEPTH;
-
-//Event Handling Messages
-enum MESSAGE_TYPE{
-    MSG_DAMAGE=0,
-    MSG_MOVE,
-
-    MSG_ENT_COLLISION,
-    MSG_TILE_COLLISION,
-
-    MSG_KEYDOWN,
-    MSG_KEYUP,
-
-    MSG_LISTEN_TO_KEY,
-
-    MSG_MAP_PUSH,
-    MSG_MAP_POP,
-    MSG_MAP_CHANGE,
-    MSG_LUA_EVENT,
-	MSG_ENTITY_DELETED
-};
-
 typedef unsigned long int EID; //EID stands for "Entity ID"
-
-#define EID_SYSTEM      0 //EID that refers to the system
-#define EID_STATEMAN    1 //EID that refers to the statemanager
-#define EID_MAPSCRIPT   2 //EID for the script belonging to the whole map
-#define EID_ALLOBJS     3 //EID that broadcasts to all components
-#define EID_MIN         10 //First EID that can be used by components
 
 //Endian related functions
 bool GET_ENDIAN();

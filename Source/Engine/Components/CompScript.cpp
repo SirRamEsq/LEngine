@@ -22,8 +22,9 @@ ComponentScript::~ComponentScript(){
 	//Let all observers know that this entity has been deleted
 	EventLuaSendToObservers(entityDeletedDescription);
 
-	//remove this entity from all observer lists
-	dependencyEventDispatcher->BroadcastEvent(make_unique<Event>(GetEID(), 0, MSG_ENTITY_DELETED));
+	//remove this entity from all observer lists by sending an event to all entities
+	Event event (GetEID(), EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "DELETED");
+	dependencyEventDispatcher->DispatchEvent(event);
 }
 
 void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
@@ -36,15 +37,14 @@ void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){
 }
 
 void ComponentScript::EventLuaBroadcastEvent(const std::string& event){
-	auto eventStructure = make_unique<Event>(GetEID(), 0, MSG_LUA_EVENT);
-	eventStructure->eventDescription = event;
-	dependencyEventDispatcher->BroadcastEvent(std::move(eventStructure));
+	Event eventStructure (GetEID(), EID_ALLOBJS, Event::MSG::LUA_EVENT, event);
+	dependencyEventDispatcher->DispatchEvent(eventStructure);
 }
 
 void ComponentScript::EventLuaSendToObservers(const std::string& event){
     for(auto it=mEventLuaObservers.begin(); it!=mEventLuaObservers.end(); it++){
-        Event e(GetEID(), it->first, MSG_LUA_EVENT);
-        e.eventDescription=event;
+		// \TODO remove this for loop and pass the list of observers to the eventDispatcher
+		Event e (GetEID(), it->first, Event::MSG::LUA_EVENT, event);
         it->second->HandleEvent(&e);
     }
 }
@@ -124,7 +124,7 @@ void ComponentScript::ExposeProperties (std::map<std::string, std::string>& tabl
 }
 
 void ComponentScript::HandleEvent(const Event* event){
-    if(event->message==MSG_KEYDOWN){
+    if(event->message== Event::MSG::KEYDOWN){
         try{
             LuaRef fKDown = scriptPointer["OnKeyDown"];
             if (fKDown.isNil()) {
@@ -144,7 +144,7 @@ void ComponentScript::HandleEvent(const Event* event){
         }
     }
 
-    else if(event->message==MSG_KEYUP){
+    else if(event->message== Event::MSG::KEYUP){
         try{
             LuaRef fKUp = scriptPointer["OnKeyUp"];
             if (fKUp.isNil()) {
@@ -165,7 +165,7 @@ void ComponentScript::HandleEvent(const Event* event){
         }
     }
 
-    else if(event->message==MSG_ENT_COLLISION){
+    else if(event->message== Event::MSG::COLLISION_ENTITY){
         try{
             LuaRef fEC = scriptPointer["OnEntityCollision"];
             if (fEC.isNil()) {
@@ -185,7 +185,7 @@ void ComponentScript::HandleEvent(const Event* event){
         }
     }
 
-    else if(event->message==MSG_TILE_COLLISION){
+    else if(event->message== Event::MSG::COLLISION_TILE){
         try{
             LuaRef fTC = scriptPointer["OnTileCollision"];
             if (fTC.isNil()) {
@@ -206,7 +206,7 @@ void ComponentScript::HandleEvent(const Event* event){
             ErrorLog::WriteToFile(ss.str(), logFileName);
         }
     }
-    else if(event->message==MSG_LUA_EVENT){
+    else if(event->message== Event::MSG::LUA_EVENT){
         try{
             LuaRef fTC =  scriptPointer["OnLuaEvent"];
             std::stringstream ss;
@@ -220,7 +220,7 @@ void ComponentScript::HandleEvent(const Event* event){
                 return;
             }
 
-            fTC(event->sender,event->eventDescription); //pass other entity's id and description
+            fTC(event->sender, event->description); //pass other entity's id and description
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -228,7 +228,7 @@ void ComponentScript::HandleEvent(const Event* event){
             ErrorLog::WriteToFile(ss.str(), logFileName);
         }
     }
-    else if(event->message==MSG_ENTITY_DELETED){
+    else if(event->message== Event::MSG::ENTITY_DELETED){
         EventLuaRemoveObserver(event->sender);
 	}
 }
