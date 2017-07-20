@@ -136,7 +136,8 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnKeyDown not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-            fKDown((*((std::string*)event->extradata)).c_str() );
+			auto key = InputManager::ExtraDataDefinition::GetExtraData(event);
+            fKDown(*key);
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -157,7 +158,8 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnKeyUp not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-            fKUp((*((std::string*)event->extradata)).c_str() );
+			auto key = InputManager::ExtraDataDefinition::GetExtraData(event);
+            fKUp(*key);
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -178,8 +180,9 @@ void ComponentScript::HandleEvent(const Event* event){
             if (!fEC.isFunction()) {
                 ErrorLog::WriteToFile("OnEntityCollision not found in script with EID " + (mEntityID), logFileName);
                 return;
-            }
-            fEC(event->sender, (EColPacket*)event->extradata ); //pass other entity's id and the collision packet
+            } 
+			auto packet = EColPacket::ExtraDataDefinition::GetExtraData(event);
+            fEC(event->sender, *packet); //pass other entity's id and the collision packet
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -202,7 +205,8 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnTileCollision not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-            fTC((TColPacket*)event->extradata);
+			auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
+            fTC(*packet);
         }
         catch (LuaException const& e){
             std::stringstream ss;
