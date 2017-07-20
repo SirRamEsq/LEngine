@@ -78,8 +78,6 @@ void InputManager::HandleInput(){
 }
 
 void InputManager::SendEvent(Event::MSG message, std::string keyName){
-	//TODO change this so that a single event is made and passed around instead of many on the heap
-	
 	InputManager::ExtraDataDefinition extraData(&keyName);
 	Event event(EID_SYSTEM, EID_STATEMAN, message, "INPUT", &extraData);
 
@@ -91,7 +89,7 @@ void InputManager::SendEvent(Event::MSG message, std::string keyName){
 	if(keyIterator==keyListeners->end()){return;}
 	auto listeners=&keyIterator->second;
 
-	// \TODO remove for loop, pass list of listeners to event dispatchers
+	/// \TODO remove for loop, pass list of listeners to event dispatchers
 	for(auto listener = listeners->begin(); listener!=listeners->end(); listener++){
 		ExtraDataDefinition extraData(&keyName);
 		Event event(EID_SYSTEM, *listener, message, "INPUT", &extraData);

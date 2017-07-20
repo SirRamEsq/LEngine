@@ -23,7 +23,7 @@ ComponentScript::~ComponentScript(){
 	EventLuaSendToObservers(entityDeletedDescription);
 
 	//remove this entity from all observer lists by sending an event to all entities
-	Event event (GetEID(), EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "DELETED");
+	Event event (GetEID(), EID_ALLOBJS, Event::MSG::ENTITY_DELETED, entityDeletedDescription);
 	dependencyEventDispatcher->DispatchEvent(event);
 }
 
@@ -43,7 +43,7 @@ void ComponentScript::EventLuaBroadcastEvent(const std::string& event){
 
 void ComponentScript::EventLuaSendToObservers(const std::string& event){
     for(auto it=mEventLuaObservers.begin(); it!=mEventLuaObservers.end(); it++){
-		// \TODO remove this for loop and pass the list of observers to the eventDispatcher
+		/// \TODO remove this for loop and pass the list of observers to the eventDispatcher
 		Event e (GetEID(), it->first, Event::MSG::LUA_EVENT, event);
         it->second->HandleEvent(&e);
     }
