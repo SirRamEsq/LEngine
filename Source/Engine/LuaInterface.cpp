@@ -636,6 +636,12 @@ void LuaInterface::EventLuaBroadcastEvent (EID senderID, const std::string& even
 	script->EventLuaBroadcastEvent(event);
 }
 
+void LuaInterface::EventLuaSendToObservers (EID senderID, const std::string& event){
+	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(senderID)));
+
+	script->EventLuaSendToObservers(event);
+}
+
 void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std::string& event){
 	Event e(senderID, recieverID, Event::MSG::LUA_EVENT, event);
 
@@ -682,6 +688,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("EventLuaObserveEntity", &LuaInterface::EventLuaObserveEntity)
 				.addFunction("EventLuaSendEvent",	  &LuaInterface::EventLuaSendEvent)
 				.addFunction("EventLuaBroadcastEvent",&LuaInterface::EventLuaBroadcastEvent)
+				.addFunction("EventLuaSendToObservers",&LuaInterface::EventLuaSendToObservers)
 
 				.addFunction("GetMap",		&LuaInterface::GetMap)
 

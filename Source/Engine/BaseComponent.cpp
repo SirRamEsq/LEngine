@@ -58,7 +58,9 @@ void BaseComponentManager::HandleEvent(const Event* event){
 
 void BaseComponentManager::BroadcastEvent(const Event* event){
     for(auto i = componentList.begin(); i != componentList.end(); i++){
-		i->second->HandleEvent(event);
+		if(i->second->GetEID() != event->sender){
+			i->second->HandleEvent(event);
+		}
 	}
 }
 
