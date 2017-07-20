@@ -80,7 +80,7 @@ void InputManager::HandleInput(){
 void InputManager::SendEvent(Event::MSG message, std::string keyName){
 	//TODO change this so that a single event is made and passed around instead of many on the heap
 	
-	InputManager::ExtraDataDefinitionInput extraData(keyName);
+	InputManager::ExtraDataDefinition extraData(&keyName);
 	Event event(EID_SYSTEM, EID_STATEMAN, message, "INPUT", &extraData);
 
 	//Stateman is informed first of the event
@@ -93,7 +93,7 @@ void InputManager::SendEvent(Event::MSG message, std::string keyName){
 
 	// \TODO remove for loop, pass list of listeners to event dispatchers
 	for(auto listener = listeners->begin(); listener!=listeners->end(); listener++){
-		ExtraDataDefinitionInput extraData(keyName);
+		ExtraDataDefinition extraData(&keyName);
 		Event event(EID_SYSTEM, *listener, message, "INPUT", &extraData);
 
 		eventDispatcher->DispatchEvent(event);
@@ -108,14 +108,14 @@ void InputManager::KeyRelease(const std::string& keyName){
 	SendEvent(Event::MSG::KEYUP, keyName);
 }
 
-InputManager::ExtraDataDefinitionInput::ExtraDataDefinitionInput(const std::string& key)
+InputManager::ExtraDataDefinition::ExtraDataDefinition(const std::string* key)
 	: inputKey(key){
 }
 
-void InputManager::ExtraDataDefinitionInput::SetExtraData(Event* event){
-	event->extradata = &inputKey;
+void InputManager::ExtraDataDefinition::SetExtraData(Event* event){
+	event->extradata = inputKey;
 }
 
-const std::string* InputManager::ExtraDataDefinitionInput::GetExtraData(const Event* event){
+const std::string* InputManager::ExtraDataDefinition::GetExtraData(const Event* event){
 	return ((const std::string*)(event->extradata));
 }

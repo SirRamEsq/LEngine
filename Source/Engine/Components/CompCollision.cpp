@@ -470,7 +470,7 @@ EColPacket::ExtraDataDefinition::ExtraDataDefinition(const EColPacket* p)
 }
 
 void EColPacket::ExtraDataDefinition::SetExtraData(Event* event){
-	event->extradata = &packet;
+	event->extradata = packet;
 }
 
 const EColPacket* EColPacket::ExtraDataDefinition::GetExtraData(const Event* event){
@@ -485,7 +485,7 @@ TColPacket::ExtraDataDefinition::ExtraDataDefinition(const TColPacket* p)
 }
 
 void TColPacket::ExtraDataDefinition::SetExtraData(Event* event){
-	event->extradata = &packet;
+	event->extradata = packet;
 }
 
 const TColPacket* TColPacket::ExtraDataDefinition::GetExtraData(const Event* event){

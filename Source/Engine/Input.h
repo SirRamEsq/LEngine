@@ -23,14 +23,14 @@ class InputManager{
 		/**
 		 * Handles setting an std::string keyInput to and from event->extradata
 		 */
-		class ExtraDataDefinitionInput : public Event::ExtraDataDefinition{
+		class ExtraDataDefinition : public Event::ExtraDataDefinition{
 			public:
-				ExtraDataDefinitionInput(const std::string& key);
+				ExtraDataDefinition(const std::string* key);
 				void SetExtraData(Event* event);
 				static const std::string* GetExtraData(const Event* event);	
 
 			private:
-				const std::string inputKey;
+				const std::string* inputKey;
 		};
 
         typedef std::set<EID> EntitySet;
