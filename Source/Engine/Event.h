@@ -6,49 +6,67 @@
 #include <memory>
 #include <vector>
 
-//EventManager MUST be instantiated after EntityManager and StateManager
-
 class GameStateManager;
 class EntityManager;
+class EventDispatcher;
 
-struct Event{
-    const EID sender;
-    const EID reciever;
-    const MESSAGE_TYPE message;
-    std::string eventDescription;
-    //this should probably be changed to a smart pointer, to ensure the data is still valid when the event is read
-    const void* extradata;
+class Event{
+	friend EventDispatcher;
 
-    Event(EID send, EID rec, MESSAGE_TYPE mes, const void* dat=NULL)
-        :sender(send), reciever(rec), message(mes), extradata(dat){
+	public:
+		//using the visitor pattern to set and get the void pointer
+		class ExtraDataDefinition{
+			public:
+				//To dervice from this class correctly...
+				//write a constructor that grabs the data structure you want to set to extradata
+				//store the datastructure in a member variable
+				//assign the member variable to the event->extradata in the SetExtraData function
+				virtual void SetExtraData(Event* event)=0;
+				//Should write a static getter to convert the void pointer to the desired type
+		};
 
-        eventDescription="event";
-    }
-};
+		enum MSG{
+			COLLISION_ENTITY = 0,
+			COLLISION_TILE,
 
-//This struct will automatically be populated by and attactched to an event by the engine when a lua entity sends an event
-struct EntityEvent : public Event{
-    std::string name;
-    std::string type;
-    EID         senderID;
+			KEYDOWN,
+			KEYUP,
+			LISTEN_TO_KEY,
+
+			MAP_PUSH,
+			MAP_POP,
+			MAP_CHANGE,
+			LUA_EVENT,
+			ENTITY_DELETED
+		};
+
+		Event(EID send, EID rec, MSG mes, const std::string& desc, ExtraDataDefinition* ed = NULL);
+		
+		const EID sender;
+		mutable EID reciever;
+		const MSG message;
+		const std::string description;
+
+    	const void* extradata;
+
 };
 
 // \TODO instead of passing a unique ptr to an event, simply pass an Event by value
+// \TODO should be able to pass a list of entities to send events to
 /**
- * Creates and Dispatches Events in the correct order and in the most efficent way possible
+ * Dispatches Events in the correct order and in the most efficent way possible
  */
 class EventDispatcher{
     public:
         EventDispatcher();
         void SetDependencies(GameStateManager* gs, EntityManager* em);
-        void DispatchEvent(std::unique_ptr<Event> event);
-        //Immediate Events typcially slower but are good if you need a response from another object
-        void DispatchImmediateEvent(std::unique_ptr<Event> event);
-
-        //Send to all entities listening for this specific event
-        void BroadcastEvent (std::unique_ptr<Event> event);
+        void DispatchEvent(const Event& event, const std::vector<EID>* entities = NULL);
 
     private:
+        //Send to all entities listening for this specific event
+        void BroadcastEvent (const Event& event);
+		void SendEventToMutlipleEntities (const Event& event, const std::vector<EID>& entities);
+
         GameStateManager* gameStateManager;
         EntityManager*    gameStateEntityManager;
 };

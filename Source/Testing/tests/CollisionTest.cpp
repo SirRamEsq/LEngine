@@ -17,10 +17,10 @@ int callbackValue = 0;
 int callbackValueEntity = 0;
 
 void CallbackFunction(const Event* event){
-    if(event->message==MSG_TILE_COLLISION){
+    if(event->message== Event::MSG::COLLISION_TILE){
         callbackValue++;
     }
-    if(event->message==MSG_ENT_COLLISION){
+    if(event->message== Event::MSG::COLLISION_ENTITY){
         callbackValueEntity++;
     }
 }

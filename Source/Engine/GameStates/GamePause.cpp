@@ -44,8 +44,10 @@ void GamePauseState::Close(){
 }
 
 void GamePauseState::HandleEvent(const Event* event){
-    if(event->message==MSG_KEYDOWN){
-        if( *((std::string*)event->extradata) == "pause")  {exit=1;}
+	std::string inputKey (*InputManager::ExtraDataDefinitionInput::GetExtraData(event));
+
+    if(event->message == Event::MSG::KEYDOWN){
+        if( inputKey == "pause")  {exit=1;}
     }
 }
 

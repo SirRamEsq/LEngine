@@ -3,8 +3,12 @@
 #include "StateManager.h"
 #include "EntityManager.h"
 
-#ifndef TEST_Event_MOCK
-
+Event::Event(EID send, EID rec, MSG mes, const std::string& desc, ExtraDataDefinition* ed)
+	:sender(send), reciever(rec), message(mes), description(desc){
+	if(ed != NULL){
+		ed->SetExtraData(this);
+	}
+}
 
 EventDispatcher::EventDispatcher(){
     gameStateManager        = NULL;
@@ -19,23 +23,32 @@ void EventDispatcher::SetDependencies(GameStateManager* gs, EntityManager* em){
     if(gameStateEntityManager==NULL){ErrorLog::WriteToFile("EntityManager is NULL in the EventDispatcher", ErrorLog::GenericLogFile);}
 };
 
-void EventDispatcher::DispatchEvent(std::unique_ptr<Event> event){
-    EID id=event->reciever;
-    if     (id==EID_STATEMAN){gameStateManager      ->HandleEvent   (event.get());}
-    //else if(id==EID_ALLOBJS) {gameStateEntityManager->BroadcastEvent(event);}
-    else                     {gameStateEntityManager->DispatchEvent (event.get());}
+void EventDispatcher::DispatchEvent(const Event& event, const std::vector<EID>* entities){
+    EID id=event.reciever;
+	//If 'entities' are passed, ignore the event's recipient
+	if (entities!=NULL){
+		SendEventToMutlipleEntities(event, *entities);
+	}
+	//if the event recipient is everything, broadcast the event
+	else if (id == EID_ALLOBJS){
+		BroadcastEvent(event);
+	}
+    else if (id==EID_STATEMAN){
+		gameStateManager->HandleEvent(&event);
+	}
+    else {
+		gameStateEntityManager->DispatchEvent(&event);
+	}
 }
 
-void EventDispatcher::DispatchImmediateEvent(std::unique_ptr<Event> event){
-    EID id=event->reciever;
-    if     (id==EID_STATEMAN){gameStateManager      ->HandleEvent   (event.get());}
-    //else if(id==EID_ALLOBJS) {gameStateEntityManager->BroadcastEvent(event);}
-    else                     {gameStateEntityManager->DispatchEvent (event.get());}
+void EventDispatcher::SendEventToMutlipleEntities (const Event& event, const std::vector<EID>& entities){
+	for(auto i = entities.begin(); i != entities.end(); i++){
+		event.reciever = (*i);
+		DispatchEvent(event);
+	}
 }
 
-void EventDispatcher::BroadcastEvent(std::unique_ptr<Event> event){
-	gameStateManager->HandleEvent(event.get());
-	gameStateEntityManager->BroadcastEvent(event.get());
+void EventDispatcher::BroadcastEvent(const Event& event){
+	gameStateManager->HandleEvent(&event);
+	gameStateEntityManager->BroadcastEvent(&event);
 }
-
-#endif

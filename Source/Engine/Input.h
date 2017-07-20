@@ -20,6 +20,19 @@ class InputManager{
     typedef std::map<int, std::string>  asciiMapREV;
 
     public:
+		/**
+		 * Handles setting an std::string keyInput to and from event->extradata
+		 */
+		class ExtraDataDefinitionInput : public Event::ExtraDataDefinition{
+			public:
+				ExtraDataDefinitionInput(const std::string& key);
+				void SetExtraData(Event* event);
+				static const std::string* GetExtraData(const Event* event);	
+
+			private:
+				const std::string inputKey;
+		};
+
         typedef std::set<EID> EntitySet;
         typedef std::map<std::string, EntitySet> KeyMapping;
 
@@ -48,7 +61,7 @@ class InputManager{
         std::shared_ptr<KeyMapping> SetEventDispatcher(EventDispatcher* e, std::shared_ptr<KeyMapping>* mapping=NULL);
 
     private:
-		void SendEvent(MESSAGE_TYPE message, std::string keyName);
+		void SendEvent(Event::MSG message, std::string keyName);
 		void KeyPress(const std::string& keyName);
 		void KeyRelease(const std::string& keyName);
         asciiMap    ascii;

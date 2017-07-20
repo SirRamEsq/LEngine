@@ -43,6 +43,19 @@ struct TColPacket{
     LTDF* tdf;//tdf collided with*/
     const TiledTileLayer* GetLayer();
     const TiledTileLayer* tl;
+	
+		/**
+		 * Handles setting an EColPacket and from event->extradata
+		 */
+		class ExtraDataDefinition : public Event::ExtraDataDefinition{
+			public:
+				ExtraDataDefinition(const TColPacket* p);
+				void SetExtraData(Event* event);
+				static const TColPacket* GetExtraData(const Event* event);	
+
+			private:
+				const TColPacket* packet;
+		};
 };
 
 struct EColPacket{
@@ -53,6 +66,20 @@ struct EColPacket{
     int GetID(){return box;}
     std::string GetName(){return name;}
     std::string GetType(){return objType;}
+
+	
+		/**
+		 * Handles setting an EColPacket and from event->extradata
+		 */
+		class ExtraDataDefinition : public Event::ExtraDataDefinition{
+			public:
+				ExtraDataDefinition(const EColPacket* p);
+				void SetExtraData(Event* event);
+				static const EColPacket* GetExtraData(const Event* event);	
+
+			private:
+				const EColPacket* packet;
+		};
 };
 
 
@@ -143,7 +170,7 @@ class ComponentCollisionManager : public BaseComponentManager{
         ComponentPositionManager* dependencyPosition;
 
     private:
-        void SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, MESSAGE_TYPE mes);
+        void SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, Event::MSG mes);
 };
 
 #endif
