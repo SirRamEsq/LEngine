@@ -246,7 +246,7 @@ void GameState::SetMapLinkEntities(
             std::string& scriptName = objectIt->second.script;
 
             if(scriptName!=""){
-                const LScript* script=K_ScriptMan.GetItem(scriptName);
+                const RSC_Script* script=K_ScriptMan.GetItem(scriptName);
                 if(script==NULL){
                     K_ScriptMan.LoadItem(scriptName,scriptName);
                     script=K_ScriptMan.GetItem(scriptName);
@@ -316,7 +316,7 @@ void GameState::SetMapLinkEntities(
 }
 
 
-bool GameState::SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID){
+bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     if(m==NULL){
         ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
         return false;

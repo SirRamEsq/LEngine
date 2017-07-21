@@ -13,8 +13,8 @@
 ////////////////
 
 RenderCamera::RenderCamera(RenderManager* rm)
-	: frameBufferTextureDiffuse(std::unique_ptr<LTexture>(new LTexture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
-	, frameBufferTextureFinal  (std::unique_ptr<LTexture>(new LTexture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
+	: frameBufferTextureDiffuse(std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
+	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
 	rotation=0;
@@ -113,7 +113,7 @@ RenderCamera::~RenderCamera(){
 
 void RenderCamera::RenderFrameBufferTextureFinal(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	L_GL_Program::BindNULL();
+	RSC_GLProgram::BindNULL();
 	glBindVertexArray (0);
 
 	//Back to initial viewport
@@ -156,8 +156,8 @@ RenderManager::RenderManager()
 	shaderFragmentNameSpriteBatch  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
 	shaderVertexNameSpriteBatch    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
 
-	std::unique_ptr<const L_GL_Shader> shaderFragmentSpriteBatch (new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderFragmentNameSpriteBatch), SHADER_FRAGMENT));
-	std::unique_ptr<const L_GL_Shader> shaderVertexSpriteBatch	 (new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderVertexNameSpriteBatch),   SHADER_VERTEX ));
+	std::unique_ptr<const RSC_GLShader> shaderFragmentSpriteBatch (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameSpriteBatch), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> shaderVertexSpriteBatch	 (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameSpriteBatch),   SHADER_VERTEX ));
 
 	if(shaderFragmentSpriteBatch->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameSpriteBatch, shaderFragmentSpriteBatch);}
 	if(shaderVertexSpriteBatch->GetShaderID()!=0)	{K_ShaderMan.LoadItem(shaderVertexNameSpriteBatch, shaderVertexSpriteBatch);}
@@ -172,8 +172,8 @@ RenderManager::RenderManager()
 	shaderFragmentNameTileLayer  = "Data/Resources/Shaders/fragmentTileMain.glsl";
 	shaderVertexNameTileLayer	 = "Data/Resources/Shaders/vertexTileMain.glsl";
 
-	std::unique_ptr<const L_GL_Shader> shaderFragmentTileLayer(new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderFragmentNameTileLayer), SHADER_FRAGMENT));
-	std::unique_ptr<const L_GL_Shader> shaderVertexTileLayer  (new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderVertexNameTileLayer),	 SHADER_VERTEX ));
+	std::unique_ptr<const RSC_GLShader> shaderFragmentTileLayer(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameTileLayer), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> shaderVertexTileLayer  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameTileLayer),	 SHADER_VERTEX ));
 
 	if(shaderFragmentTileLayer->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameTileLayer, shaderFragmentTileLayer);}
 	if(shaderVertexTileLayer->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameTileLayer, shaderVertexTileLayer);}
@@ -187,8 +187,8 @@ RenderManager::RenderManager()
 	shaderFragmentNameImage  = "Data/Resources/Shaders/fragmentImage.glsl";
 	shaderVertexNameImage	 = "Data/Resources/Shaders/vertexImage.glsl";
 
-	std::unique_ptr<const L_GL_Shader> shaderFragmentImage(new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderFragmentNameImage), SHADER_FRAGMENT));
-	std::unique_ptr<const L_GL_Shader> shaderVertexImage  (new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderVertexNameImage),	 SHADER_VERTEX ));
+	std::unique_ptr<const RSC_GLShader> shaderFragmentImage(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameImage), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> shaderVertexImage  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameImage),	 SHADER_VERTEX ));
 
 	if(shaderFragmentImage->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameImage, shaderFragmentImage);}
 	if(shaderVertexImage->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameImage, shaderVertexImage);}
@@ -203,8 +203,8 @@ RenderManager::RenderManager()
 	shaderFragmentNameLight  = "Data/Resources/Shaders/fragmentLightMain.glsl";
 	shaderVertexNameLight	 = "Data/Resources/Shaders/vertexLightMain.glsl";
 
-	std::unique_ptr<const L_GL_Shader> shaderFragmentLight(new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderFragmentNameLight), SHADER_FRAGMENT));
-	std::unique_ptr<const L_GL_Shader> shaderVertexLight  (new L_GL_Shader(L_GL_Shader::LoadShaderFromFile(shaderVertexNameLight),	 SHADER_VERTEX ));
+	std::unique_ptr<const RSC_GLShader> shaderFragmentLight(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameLight), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> shaderVertexLight  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameLight),	 SHADER_VERTEX ));
 
 	if(shaderFragmentLight->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameLight, shaderFragmentLight);}
 	if(shaderVertexLight->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameLight, shaderVertexLight);}
@@ -346,7 +346,7 @@ void RenderManager::Render(){
 
 	//Screen objects are rendered after others, but do not use the camera's matrix
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	L_GL_Program::BindNULL();
+	RSC_GLProgram::BindNULL();
 	glBindVertexArray (0);
 
 	for(auto i=objectsScreen.begin(); i!=objectsScreen.end(); i++){
@@ -354,7 +354,7 @@ void RenderManager::Render(){
 	}
 }
 
-void RenderManager::AssignCameraUBO(L_GL_Program* program){
+void RenderManager::AssignCameraUBO(RSC_GLProgram* program){
 	//Get program and uniform buffer handles
 	GLuint programHandle			= program->GetHandle();
 	GLuint programUniformBlockHandle= program->GetUniformBlockHandle("CameraData");

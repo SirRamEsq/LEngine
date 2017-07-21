@@ -194,7 +194,7 @@ void RenderTileLayer::BuildVAOArea(CRect area){
     //must call vao.UpdateGPU() when done!
 }
 
-void RenderTileLayer::Render(L_GL_Program* program){
+void RenderTileLayer::Render(RSC_GLProgram* program){
 
     if(layer->updatedAreas.size()>0){
         for(auto i = layer->updatedAreas.begin(); i != layer->updatedAreas.end(); i++){

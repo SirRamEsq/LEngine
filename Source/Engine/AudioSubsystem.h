@@ -3,15 +3,17 @@
 
 #include <queue>
 
-#include "Resources/LSound.h"
+#include "Resources/RSC_Sound.h"
+
+//SDL Audio is already multithreaded
 
 struct SoundEvent{
     SoundEvent(const std::string& soundName, unsigned short int vol);
-    SoundEvent(const LSound* snd, unsigned short int vol);
+    SoundEvent(const RSC_Sound* snd, unsigned short int vol);
 
     void SetVolume(unsigned short int vol);
 
-    const LSound* sound;
+    const RSC_Sound* sound;
     unsigned short int volume;
 };
 

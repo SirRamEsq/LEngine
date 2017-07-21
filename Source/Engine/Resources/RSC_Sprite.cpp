@@ -1,4 +1,4 @@
-#include "LSprite.h"
+#include "RSC_Sprite.h"
 
 #include "ResourceLoading.h"
 #include "../Defines.h"
@@ -43,21 +43,21 @@ const CRect& LAnimation::GetCRectAtIndex(const int& imageIndex)const {
 }
 
 ///////////
-//LSprite//
+//RSC_Sprite//
 ///////////
 
-LSprite::LSprite(const std::string& sname) : spriteName(sname){
+RSC_Sprite::RSC_Sprite(const std::string& sname) : spriteName(sname){
     origin=L_ORIGIN_CENTER;
 }
 
-LSprite::~LSprite(){
+RSC_Sprite::~RSC_Sprite(){
 }
 
-void LSprite::SetColorKey(const std::string& aniName, unsigned int image, unsigned int r, unsigned int g, unsigned int b){
+void RSC_Sprite::SetColorKey(const std::string& aniName, unsigned int image, unsigned int r, unsigned int g, unsigned int b){
     animations.find(aniName)->second.SetColorKey(image, r,g,b);
 }
 
-const LAnimation* LSprite::GetAnimation(const std::string& aniName) const {
+const LAnimation* RSC_Sprite::GetAnimation(const std::string& aniName) const {
     auto i=animations.find(aniName);
     if(i==animations.end()){
         return NULL;
@@ -66,11 +66,11 @@ const LAnimation* LSprite::GetAnimation(const std::string& aniName) const {
 }
 
 
-void LSprite::SetOrigin(LOrigin o){
+void RSC_Sprite::SetOrigin(LOrigin o){
     origin=o;
 }
 
-bool LSprite::LoadFromXML(const char* dat, unsigned int fsize){
+bool RSC_Sprite::LoadFromXML(const char* dat, unsigned int fsize){
     std::string XML=std::string(dat,fsize);
 
     using namespace rapidxml;
@@ -147,7 +147,7 @@ bool LSprite::LoadFromXML(const char* dat, unsigned int fsize){
         }
         else{
             std::stringstream ss;
-            ss << "[C++] LSprite::LoadFromXML, couldn't load xml tag named " << animationNode->name() << " For sprite " << spriteName;
+            ss << "[C++] RSC_Sprite::LoadFromXML, couldn't load xml tag named " << animationNode->name() << " For sprite " << spriteName;
             ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
             continue;
         }
@@ -155,7 +155,7 @@ bool LSprite::LoadFromXML(const char* dat, unsigned int fsize){
     return true;
 }
 
-void LSprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
+void RSC_Sprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
     using namespace rapidxml;
 
     LAnimation* animation;
@@ -187,7 +187,7 @@ void LSprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
         animation->AppendImage(rect);
     }
 }
-void LSprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
+void RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
     using namespace rapidxml;
 
     LAnimation* animation;
@@ -227,15 +227,15 @@ void LSprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
     }
 }
 
-std::unique_ptr<LSprite> LSprite::LoadResource(const std::string& fname){
-    std::unique_ptr<LSprite> sprite = NULL;
+std::unique_ptr<RSC_Sprite> RSC_Sprite::LoadResource(const std::string& fname){
+    std::unique_ptr<RSC_Sprite> sprite = NULL;
     try{
         std::string fullPath = "Resources/Sprites/"+fname;
         auto data=LoadGenericFile(fullPath);
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        sprite = make_unique<LSprite>(fname);
+        sprite = make_unique<RSC_Sprite>(fname);
         if(sprite->LoadFromXML(data.get()->GetData(), data.get()->length)==false){
             ErrorLog::WriteToFile("Couldn't parse XML Sprite Data for sprite " + fname, ErrorLog::GenericLogFile);
             return NULL;

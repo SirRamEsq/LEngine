@@ -59,7 +59,7 @@ void ParticleCreator::Start(){
 
 
     //Generate and set shader program
-    mShaderProgram.reset(new L_GL_Program);
+    mShaderProgram.reset(new RSC_GLProgram);
 
     mShaderProgram->AddShader( GenerateVertexShader() );
     mShaderProgram->AddShader( GenerateFragmentShader() );
@@ -145,7 +145,7 @@ void ParticleCreator::SetEffect(const PARTICLE_EFFECT& effect){
     mEffect=effect;
 }
 
-L_GL_Shader* ParticleCreator::GenerateFragmentShader(){
+RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
     //Particle Shape
     //default is square
     std::string particleShape=PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_SHAPE_SQUARE;
@@ -182,7 +182,7 @@ L_GL_Shader* ParticleCreator::GenerateFragmentShader(){
     << PARTICLE_SHADER_FRAGMENT_MAIN_END
     ;
 
-    std::unique_ptr<L_GL_Shader> shader (new L_GL_Shader(ss.str(), SHADER_FRAGMENT));
+    std::unique_ptr<RSC_GLShader> shader (new RSC_GLShader(ss.str(), SHADER_FRAGMENT));
 
     ss << "\n\n\n";
     ErrorLog::WriteToFile(ss.str(), logFileName);
@@ -190,7 +190,7 @@ L_GL_Shader* ParticleCreator::GenerateFragmentShader(){
     return shader.release();
 }
 
-L_GL_Shader* ParticleCreator::GenerateVertexShader(){
+RSC_GLShader* ParticleCreator::GenerateVertexShader(){
     std::stringstream ss;
     ss
     << PARTICLE_SHADER_VERTEX_DECLARATIONS
@@ -201,7 +201,7 @@ L_GL_Shader* ParticleCreator::GenerateVertexShader(){
     << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_END
     << PARTICLE_SHADER_VERTEX_MAIN_END
     ;
-    std::unique_ptr<L_GL_Shader> shader (new L_GL_Shader(ss.str(), SHADER_VERTEX));
+    std::unique_ptr<RSC_GLShader> shader (new RSC_GLShader(ss.str(), SHADER_VERTEX));
 
     ss << "\n\n\n";
     ErrorLog::WriteToFile(ss.str(), logFileName);
@@ -231,7 +231,7 @@ void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float
     mShape=shape;
 }
 
-void ParticleCreator::SetSprite(LSprite* spr){
+void ParticleCreator::SetSprite(RSC_Sprite* spr){
     mSprite=NULL;
 }
 */
@@ -428,7 +428,7 @@ void ParticleCreator::Update(){
     }
 }
 
-void ParticleCreator::Render(L_GL_Program* program){
+void ParticleCreator::Render(RSC_GLProgram* program){
     if(mState==PARTICLE_CREATOR_STOPPED){return;}
 
     program->Bind();

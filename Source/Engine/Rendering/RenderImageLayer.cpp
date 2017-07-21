@@ -85,7 +85,7 @@ RenderImageLayer::RenderImageLayer(RenderManager* rm, TiledImageLayer* l)
 }
 
 void RenderImageLayer::BuildVAO(){
-    const LTexture* tex = layer->GetTexture();
+    const RSC_Texture* tex = layer->GetTexture();
     int tWidth = tex->GetWidth();
     int tHeight = tex->GetHeight();
 
@@ -147,9 +147,9 @@ RenderImageLayer::~RenderImageLayer(){
 
 }
 
-void RenderImageLayer::Render(L_GL_Program* program){
+void RenderImageLayer::Render(RSC_GLProgram* program){
     //program->Bind();
-    /*const LTexture* tex = layer->GetTexture();
+    /*const RSC_Texture* tex = layer->GetTexture();
     int tWidth = tex->GetWidth();
     int tHeight = tex->GetHeight();
     CRect area(0,0,tWidth,tHeight);

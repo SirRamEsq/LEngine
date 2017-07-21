@@ -242,7 +242,7 @@ LuaInterface::~LuaInterface(){
 
 }
 
-int LuaInterface::RunScriptLoadFromChunk(const LScript* script){
+int LuaInterface::RunScriptLoadFromChunk(const RSC_Script* script){
 	//////////////
 	//Load Chunk//
 	//////////////
@@ -290,7 +290,7 @@ int LuaInterface::RunScriptLoadFromChunk(const LScript* script){
 	return luaL_ref(lState, LUA_REGISTRYINDEX);
 }
 
-int LuaInterface::RunScriptGetChunk(const LScript* script){
+int LuaInterface::RunScriptGetChunk(const RSC_Script* script){
 	int functionReference = 0;
 	auto classDefinition = classes.find(script);
 	if(classDefinition!=classes.end()){
@@ -317,7 +317,7 @@ int LuaInterface::RunScriptGetChunk(const LScript* script){
 //General//
 ///////////
 //Clears stack
-bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
+bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
 							 const TiledObject* obj, LuaRef* initTable){
 
 	//check if entity has script component
@@ -444,8 +444,8 @@ bool LuaInterface::RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID
 	return true;
 }
 
-const LSprite* LuaInterface::LoadSprite(const std::string& sprPath){
-	const LSprite* sprite=K_SpriteMan.GetItem(sprPath);
+const RSC_Sprite* LuaInterface::LoadSprite(const std::string& sprPath){
+	const RSC_Sprite* sprite=K_SpriteMan.GetItem(sprPath);
 	if(sprite==NULL){
 		if(K_SpriteMan.LoadItem(sprPath,sprPath)==false){
 			ErrorLog::WriteToFile("LuaInterface::LoadSprite; Couldn't Load Sprite Named: " + sprPath, DEBUG_LOG);
@@ -570,7 +570,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
 	((ComponentPosition*)(parentState->comPosMan.GetComponent(ent)) )->SetPositionLocal( Coord2df(x,y) );
 
 	//Get script Data
-	const LScript* scriptData=K_ScriptMan.GetItem(scriptName);
+	const RSC_Script* scriptData=K_ScriptMan.GetItem(scriptName);
 	if(scriptData==NULL){
 		K_ScriptMan.LoadItem(scriptName,scriptName);
 		scriptData=K_ScriptMan.GetItem(scriptName);
@@ -650,7 +650,7 @@ void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std:
 	script->HandleEvent(&e);
 }
 
-I_RSC_Map* LuaInterface::GetMap(){
+RSC_Map* LuaInterface::GetMap(){
 	return parentState->GetCurrentMap();
 }
 
@@ -704,11 +704,11 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("UpdateRenderArea",	&TiledTileLayer::UpdateRenderArea)
 			.endClass()
 
-			.beginClass<LSprite>("LSprite") //define class object
-				.addFunction("GetOrigin", &LSprite::GetOrigin)
-				.addFunction("SetOrigin", &LSprite::SetOrigin)
-				.addFunction("SetColorKey", &LSprite::SetColorKey)
-				.addFunction("GetName", &LSprite::GetName)
+			.beginClass<RSC_Sprite>("RSC_Sprite") //define class object
+				.addFunction("GetOrigin", &RSC_Sprite::GetOrigin)
+				.addFunction("SetOrigin", &RSC_Sprite::SetOrigin)
+				.addFunction("SetColorKey", &RSC_Sprite::SetColorKey)
+				.addFunction("GetName", &RSC_Sprite::GetName)
 			.endClass()
 
 			.beginClass<TColPacket>("TColPacket")
@@ -797,12 +797,12 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("DeleteParticleCreators",		&ComponentParticle::DeleteParticleCreators)
 			.endClass()
 
-			.beginClass<LHeightmap>("LHeightmap")
-				.addFunction("GetHeightMapH", &LHeightmap::GetHeightMapH)
-				.addFunction("GetHeightMapV", &LHeightmap::GetHeightMapV)
+			.beginClass<RSC_Heightmap>("RSC_Heightmap")
+				.addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
+				.addFunction("GetHeightMapV", &RSC_Heightmap::GetHeightMapV)
 
-				.addData("angleH", &LHeightmap::angleH)
-				.addData("angleV", &LHeightmap::angleV)
+				.addData("angleH", &RSC_Heightmap::angleH)
+				.addData("angleV", &RSC_Heightmap::angleV)
 			.endClass()
 
 
@@ -900,13 +900,13 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetY2",			&RenderLine::GetY2)
 			.endClass()
 
-			.beginClass<I_RSC_Map>("I_RSC_Map")
-				.addFunction("GetTileLayer",	&I_RSC_Map::GetTileLayer)
-				.addFunction("GetProperty",		&I_RSC_Map::GetProperty)
-				.addFunction("GetWidthTiles",		 &I_RSC_Map::GetWidthTiles)
-				.addFunction("GetHeightTiles",		 &I_RSC_Map::GetHeightTiles)
-				.addFunction("GetWidthPixels",		  &I_RSC_Map::GetWidthPixels)
-				.addFunction("GetHeightPixels",		  &I_RSC_Map::GetHeightPixels)
+			.beginClass<RSC_Map>("RSC_Map")
+				.addFunction("GetTileLayer",	&RSC_Map::GetTileLayer)
+				.addFunction("GetProperty",		&RSC_Map::GetProperty)
+				.addFunction("GetWidthTiles",		 &RSC_Map::GetWidthTiles)
+				.addFunction("GetHeightTiles",		 &RSC_Map::GetHeightTiles)
+				.addFunction("GetWidthPixels",		  &RSC_Map::GetWidthPixels)
+				.addFunction("GetHeightPixels",		  &RSC_Map::GetHeightPixels)
 			.endClass()
 
 //			.addVariable("interface", this)

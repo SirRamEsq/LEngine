@@ -10,7 +10,7 @@
 #include "SDLInit.h"
 #include "glslHelper.h"
 
-#include "Resources/LglShader.h"
+#include "Resources/RSC_GLShader.h"
 #include "Rendering/RenderPrimitives.h"
 #include "Rendering/RenderableObject.h"
 #include "Rendering/RenderSpriteBatch.h"
@@ -54,8 +54,8 @@ class RenderCamera{
 	protected:
 		CRect view;
 
-		LTexture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
-		LTexture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
+		RSC_Texture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
+		RSC_Texture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
 
 	private:
 		Vec2 translation;
@@ -75,8 +75,8 @@ class RenderCamera{
 
 		bool mActive;
 
-		std::unique_ptr<LTexture>	 frameBufferTextureDiffuse;
-		std::unique_ptr<LTexture>	 frameBufferTextureFinal;
+		std::unique_ptr<RSC_Texture>	 frameBufferTextureDiffuse;
+		std::unique_ptr<RSC_Texture>	 frameBufferTextureFinal;
 
 		RenderManager* dependencyRenderManager;
 };
@@ -92,7 +92,7 @@ class RenderManager{
 
 		void OrderOBJs();
 
-		void AssignCameraUBO(L_GL_Program* program);
+		void AssignCameraUBO(RSC_GLProgram* program);
 
 		 //returns sprite batch that supports 'textureName' and has room for at least
 		 //numSprites more room
@@ -117,19 +117,19 @@ class RenderManager{
 
 		std::string shaderFragmentNameSpriteBatch;
 		std::string shaderVertexNameSpriteBatch;
-		L_GL_Program shaderProgramSpriteBatch;
+		RSC_GLProgram shaderProgramSpriteBatch;
 
 		std::string shaderFragmentNameTileLayer;
 		std::string shaderVertexNameTileLayer;
-		L_GL_Program shaderProgramTileLayer;
+		RSC_GLProgram shaderProgramTileLayer;
 
 		std::string shaderFragmentNameImage;
 		std::string shaderVertexNameImage;
-		L_GL_Program shaderProgramImage;
+		RSC_GLProgram shaderProgramImage;
 
 		std::string shaderFragmentNameLight;
 		std::string shaderVertexNameLight;
-		L_GL_Program shaderProgramLight;
+		RSC_GLProgram shaderProgramLight;
 
 		static GLuint GlobalCameraUBO;
 		const GLuint CameraDataBindingIndex;

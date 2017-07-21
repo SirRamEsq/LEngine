@@ -32,7 +32,7 @@ bool ComponentLight::LightExists(const int& id){
 void ComponentLight::Update(){}
 /*
 void ComponentLight::Render(const CRect& drawArea){
-    LTexture* texture=K_TextureMan.GetItem("SpotLight.png");
+    RSC_Texture* texture=K_TextureMan.GetItem("SpotLight.png");
     if(texture==NULL){ErrorLog::WriteToFile("CARP"); return;}
     //texture->BlitArea(CRect(32,0,texture->GetWidth(),texture->GetHeight()), L_ORIGIN_CENTER);
     texture->Bind();
@@ -103,10 +103,10 @@ void ComponentLightManager::Update(){
     BuildVAO();
 }
 
-void ComponentLightManager::Render(LTexture* textureDiffuse, LTexture* textureDestination, const Coord2d& topLeftCorner, L_GL_Program* shaderProgram){
+void ComponentLightManager::Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, RSC_GLProgram* shaderProgram){
     //Set framebuffer to clear destination Texture
-    L_GL_Program::BindNULL();
-    LTexture::BindNull();
+    RSC_GLProgram::BindNULL();
+    RSC_Texture::BindNull();
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureDestination->GetOpenGLID(), 0);
     //Clear
@@ -155,18 +155,18 @@ void ComponentLightManager::Render(LTexture* textureDiffuse, LTexture* textureDe
     //Unbind everything
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindVertexArray (NULL);
-    L_GL_Program::BindNULL();
+    RSC_GLProgram::BindNULL();
 
     //Back to initial viewport
     glPopAttrib();
 
     //Unbind Textures
     glActiveTexture(GL_TEXTURE2);
-    LTexture::BindNull();
+    RSC_Texture::BindNull();
     glActiveTexture(GL_TEXTURE1);
-    LTexture::BindNull();
+    RSC_Texture::BindNull();
     glActiveTexture(GL_TEXTURE0);
-    LTexture::BindNull();
+    RSC_Texture::BindNull();
 }
 
 void ComponentLightManager::BuildVAOFirst(){

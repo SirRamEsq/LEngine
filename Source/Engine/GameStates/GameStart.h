@@ -2,8 +2,8 @@
 #define L_STATE_START_GAME
 
 #include "../StateManager.h"
-#include "../Resources/LTexture.h"
-#include "../Resources/LSprite.h"
+#include "../Resources/RSC_Texture.h"
+#include "../Resources/RSC_Sprite.h"
 #include "../EntityManager.h"
 
 #include "GamePause.h"

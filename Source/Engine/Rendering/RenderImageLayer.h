@@ -76,7 +76,7 @@ class RenderImageLayer : public RenderableObjectWorld{
 
         void BuildVAO();
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
         const TiledImageLayer* layer;
 
     private:

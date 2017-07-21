@@ -2,8 +2,8 @@
 #define L_STATE_PAUSE_GAME
 
 #include "../StateManager.h"
-#include "../Resources/LTexture.h"
-#include "../Resources/LSprite.h"
+#include "../Resources/RSC_Texture.h"
+#include "../Resources/RSC_Sprite.h"
 #include "../EntityManager.h"
 #include <GL/gl.h>
 #include <GL/glu.h>

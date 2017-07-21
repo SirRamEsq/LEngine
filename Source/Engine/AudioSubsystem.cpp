@@ -6,7 +6,7 @@
 //////////////
 //SoundEvent//
 //////////////
-SoundEvent::SoundEvent(const LSound* snd, unsigned short int vol)
+SoundEvent::SoundEvent(const RSC_Sound* snd, unsigned short int vol)
                         : sound(snd){
     SetVolume(vol);
 }
@@ -14,7 +14,7 @@ SoundEvent::SoundEvent(const LSound* snd, unsigned short int vol)
 SoundEvent::SoundEvent(const std::string& soundName, unsigned short int vol){
     SetVolume(vol);
 
-    const LSound* snd = K_SoundMan.GetItem(soundName);
+    const RSC_Sound* snd = K_SoundMan.GetItem(soundName);
     if(snd==NULL){
         K_SoundMan.LoadItem(soundName, soundName);
         snd = K_SoundMan.GetItem(soundName);

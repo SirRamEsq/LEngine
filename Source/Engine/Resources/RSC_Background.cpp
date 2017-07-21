@@ -1,9 +1,9 @@
-#include "LBackground.h"
+#include "RSC_Background.h"
 #include "../Defines.h"
-#include "LSprite.h"
+#include "RSC_Sprite.h"
 #include "../Kernel.h"
 
-LBackground::LBackground(std::string spr, std::string ani, int xx, int yy, bool xrpt, bool yrpt){
+RSC_Background::RSC_Background(std::string spr, std::string ani, int xx, int yy, bool xrpt, bool yrpt){
     x=xx;
     y=yy;
     spriteName=spr;
@@ -15,14 +15,14 @@ LBackground::LBackground(std::string spr, std::string ani, int xx, int yy, bool 
     if(xrpt){flags=(flags|BG_REPEATX);}
     if(yrpt){flags=(flags|BG_REPEATY);}
 
-    const LSprite* sprite=K_SpriteMan.GetItem(spr);
+    const RSC_Sprite* sprite=K_SpriteMan.GetItem(spr);
     if(sprite!=NULL){
         //width=sprite->GetWidth();
         //height=sprite->GetHeight();
     }
 }
 
-LBackground::LBackground(std::string spr, std::string ani, int xx, int yy, int f, double paralax, double speed){
+RSC_Background::RSC_Background(std::string spr, std::string ani, int xx, int yy, int f, double paralax, double speed){
     x=xx;
     y=yy;
     spriteName=spr;
@@ -31,7 +31,7 @@ LBackground::LBackground(std::string spr, std::string ani, int xx, int yy, int f
     paralaxSpeed=paralax;
     flags=f;
 
-    const LSprite* sprite=K_SpriteMan.GetItem(spr);
+    const RSC_Sprite* sprite=K_SpriteMan.GetItem(spr);
     if(sprite!=NULL){
         ErrorLog::WriteToFile(spr, ani);
         //width=sprite->GetWidth();
@@ -39,7 +39,7 @@ LBackground::LBackground(std::string spr, std::string ani, int xx, int yy, int f
     }
 }
 
-LBackground::LBackground(){
+RSC_Background::RSC_Background(){
     x=0;
     y=0;
     spriteName=BLANK_SPRITE_NAME;
@@ -51,7 +51,7 @@ LBackground::LBackground(){
     height=0;
 }
 
-LBackground& LBackground::operator =(LBackground& bg){
+RSC_Background& RSC_Background::operator =(RSC_Background& bg){
     if (this==&bg) {return *this;}
 
     x=bg.x;

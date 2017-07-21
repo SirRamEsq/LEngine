@@ -9,7 +9,7 @@
 #include "Components/CompCollision.h"
 #include "Components/CompParticle.h"
 
-#include "Resources/LScript.h"
+#include "Resources/RSC_Script.h"
 #include "Resources/RSC_Map.h"
 
 //Lua headers
@@ -36,7 +36,7 @@ class LuaInterface{
 		LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY);
 		~LuaInterface();
 
-		bool RunScript(EID id, const LScript* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
+		bool RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
 		   /*optional args*/	const TiledObject* obj, luabridge::LuaRef* initTable);
 
 		///////////
@@ -46,7 +46,7 @@ class LuaInterface{
 			void WriteError		(EID id, const std::string& error	  );
 			//sends event to audio subsystem
 			void PlaySound		(const std::string& sndName);
-			const LSprite* LoadSprite(const std::string& sprPath);
+			const RSC_Sprite* LoadSprite(const std::string& sprPath);
 
 		//////////////
 		//Components//
@@ -91,7 +91,7 @@ class LuaInterface{
 		///////////
 		//Handles//
 		///////////
-			I_RSC_Map* GetMap();
+			RSC_Map* GetMap();
 
 		///////////
 		//Testing//
@@ -114,12 +114,12 @@ class LuaInterface{
 	private:
 		ErrorCallback errorCallbackFunction;
 		//All entities derive from this
-		const LScript* baseScript;
+		const RSC_Script* baseScript;
 		int baseLuaClass;
 
 		//RunScript Helper Functions
-		int RunScriptLoadFromChunk(const LScript* script);
-		int RunScriptGetChunk(const LScript* script);
+		int RunScriptLoadFromChunk(const RSC_Script* script);
+		int RunScriptGetChunk(const RSC_Script* script);
 
 		//Creates 'CPP' table in the global table
 		void ExposeCPP();
@@ -131,7 +131,7 @@ class LuaInterface{
 		lua_State* lState;
 
 		//Map of scripts to (a reference of) their lua functions that return a new instance.
-		std::map<const LScript*, int> classes;
+		std::map<const RSC_Script*, int> classes;
 };
 
 #endif //L_ENGINE_LUAINTERFACE

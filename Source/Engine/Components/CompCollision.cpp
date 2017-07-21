@@ -7,9 +7,9 @@ const TiledTileLayer* TColPacket::GetLayer(){
     return tl;
 }
 
-LHeightmap TColPacket::GetHmap(){
+RSC_Heightmap TColPacket::GetHmap(){
     if(tl->UsesHMaps()==false){
-        LHeightmap l;
+        RSC_Heightmap l;
         return l;
     }
     GID id = tl->GetGID(x,y);
@@ -312,7 +312,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
     }
 }
 
-void ComponentCollisionManager::UpdateCheckTileCollision(const I_RSC_Map* currentMap){
+void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentMap){
     //Put event into smart pointer so that the same event can be reused (not multiple events allocated and deallocated on the stack)
     //May want to change this behaviour at some point, as recievers of the event may expect that they can hold on to it
     std::vector<ComponentCollision::ColBox>::iterator boxIt1;
