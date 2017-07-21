@@ -85,15 +85,12 @@ void InputManager::SendEvent(Event::MSG message, std::string keyName){
 
 	//send event to all the entities listening
 	auto keyIterator=keyListeners->find(keyName);
-	if(keyIterator==keyListeners->end()){return;}
-	auto listeners=&keyIterator->second;
-
-	/// \TODO remove for loop, pass list of listeners to event dispatchers
-	for(auto listener = listeners->begin(); listener!=listeners->end(); listener++){
-		Event event(EID_SYSTEM, *listener, message, keyName);
-
-		eventDispatcher->DispatchEvent(event);
+	if(keyIterator==keyListeners->end()){
+		return;
 	}
+
+	auto listeners=&keyIterator->second;
+	eventDispatcher->DispatchEvent(event, listeners);
 }
 
 void InputManager::KeyPress(const std::string& keyName){

@@ -42,10 +42,11 @@ void ComponentScript::EventLuaBroadcastEvent(const std::string& event){
 }
 
 void ComponentScript::EventLuaSendToObservers(const std::string& event){
+	Event e(GetEID(), 0, Event::MSG::LUA_EVENT, event);
     for(auto it=mEventLuaObservers.begin(); it!=mEventLuaObservers.end(); it++){
-		/// \TODO remove this for loop and pass the list of observers to the eventDispatcher
-		Event e (GetEID(), it->first, Event::MSG::LUA_EVENT, event);
-        it->second->HandleEvent(&e);
+		e.reciever = it->first;
+		//Formerly: it->second->HandleEvent(e);
+		dependencyEventDispatcher->DispatchEvent(e);
     }
 }
 
