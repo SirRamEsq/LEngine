@@ -1,7 +1,7 @@
 #ifndef L_SPRITE
 #define L_SPRITE
 
-#include "LTexture.h"
+#include "RSC_Texture.h"
 #include "../GenericContainer.h"
 
 #include "rapidxml.hpp"
@@ -20,7 +20,7 @@
 class LImage{
     public:
         LImage(const std::string& fileName, const CRect& coord, LOrigin origin=L_ORIGIN_CENTER);
-        LImage(LTexture* texture, const CRect& coord, LOrigin origin=L_ORIGIN_CENTER);
+        LImage(RSC_Texture* texture, const CRect& coord, LOrigin origin=L_ORIGIN_CENTER);
         LImage();
         ~LImage();
 
@@ -29,7 +29,7 @@ class LImage{
 
         void Blit(int x, int y, double scalingx, double scalingy, double rotation, L_COLOR color,
                                                                                     LOrigin origin=L_ORIGIN_CENTER);
-        void Blit(int x, int y, double scalingx, double scalingy, double rotation, L_COLOR color, LTexture* destination,
+        void Blit(int x, int y, double scalingx, double scalingy, double rotation, L_COLOR color, RSC_Texture* destination,
                                                                                     LOrigin origin=L_ORIGIN_CENTER);
 
         GLuint GetVBOID(){return mVBOID;}
@@ -43,7 +43,7 @@ class LImage{
 
         LImage& operator =(const LImage& img);
 
-        LTexture* GetTexture(){return mTexture;}
+        RSC_Texture* GetTexture(){return mTexture;}
         CRect GetCoords(){return mRectCoord;}
         LOrigin GetOrigin(){return mOldOrigin;}
 
@@ -51,7 +51,7 @@ class LImage{
         //Pre condition is that mTexture, mRectCoord, and mOldOrigin be set
         void Initialize();
 
-        LTexture*   mTexture;
+        RSC_Texture*   mTexture;
         CRect  mRectCoord;
         LVertexData2D mVData[ 4 ];
 
@@ -113,13 +113,13 @@ class LAnimation{
         double defaultSpeed;
 };
 
-class LSprite{
+class RSC_Sprite{
     typedef std::map<std::string, LAnimation> aniMap;
 	typedef aniMap::iterator aniMapIt;
 
     public:
-        LSprite(const std::string& sname);
-        ~LSprite();
+        RSC_Sprite(const std::string& sname);
+        ~RSC_Sprite();
 
         std::string GetName(){return spriteName;}
 
@@ -146,7 +146,7 @@ class LSprite{
         int GetTransparentColorGreen () const {return transparentColorGreen;}
         int GetTransparentColorBlue  () const {return transparentColorBlue; }
 
-        static std::unique_ptr<LSprite> LoadResource(const std::string& fname);
+        static std::unique_ptr<RSC_Sprite> LoadResource(const std::string& fname);
 
     protected:
         void DeleteAnimations();

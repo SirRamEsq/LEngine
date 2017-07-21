@@ -6,7 +6,7 @@
 
 #include <set>
 
-class LTexture;
+class RSC_Texture;
 
 class VAOWrapperSprite{
     public:
@@ -114,7 +114,7 @@ class RenderSpriteBatch : public RenderableObjectWorld{
             RenderSpriteBatch*  spriteBatch;
         };
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
 
         void    AddSprite      (Sprite* sprite);
         void    DeleteSprite   (Sprite* sprite);
@@ -129,7 +129,7 @@ class RenderSpriteBatch : public RenderableObjectWorld{
               unsigned int currentSize;
 
         const std::string textureName;
-        const LTexture*   texture;
+        const RSC_Texture*   texture;
 
         std::set<Sprite*> sprites;
 };

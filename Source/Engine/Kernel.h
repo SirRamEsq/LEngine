@@ -13,14 +13,14 @@
 #include "GameStates/GameStart.h"
 
 #include "Resources/ResourceLoading.h"
-#include "Resources/LTexture.h"
-#include "Resources/LSprite.h"
-#include "Resources/LSound.h"
-#include "Resources/LScript.h"
-#include "Resources/LHeightmap.h"
-#include "Resources/LBackground.h"
+#include "Resources/RSC_Texture.h"
+#include "Resources/RSC_Sprite.h"
+#include "Resources/RSC_Sound.h"
+#include "Resources/RSC_Script.h"
+#include "Resources/RSC_Heightmap.h"
+#include "Resources/RSC_Background.h"
 #include "Resources/RSC_Map.h"
-#include "Resources/LglShader.h"
+#include "Resources/RSC_GLShader.h"
 
 #include "AudioSubsystem.h"
 #include "CommandLineArgs.h"
@@ -41,13 +41,13 @@ class Kernel{
         static InputManager                 inputMan;
         static CommandLineArgs              commandLine;
 
-        static GenericContainer<LSprite>       rscSpriteMan;
-        static GenericContainer<LSound>        rscSoundMan;
-        static GenericContainer<LMusic>        rscMusicMan;
-        static GenericContainer<LScript>       rscScriptMan;
-        static GenericContainer<LTexture>      rscTexMan;
-        static GenericContainer<I_RSC_Map>     rscMapMan;
-        static GenericContainer<L_GL_Shader>   rscShaderMan;
+        static GenericContainer<RSC_Sprite>       rscSpriteMan;
+        static GenericContainer<RSC_Sound>        rscSoundMan;
+        static GenericContainer<RSC_Music>        rscMusicMan;
+        static GenericContainer<RSC_Script>       rscScriptMan;
+        static GenericContainer<RSC_Texture>      rscTexMan;
+        static GenericContainer<RSC_Map>     rscMapMan;
+        static GenericContainer<RSC_GLShader>   rscShaderMan;
 
     private:
         Kernel();

@@ -1,4 +1,4 @@
-#include "LHeightmap.h"
+#include "RSC_Heightmap.h"
 #include "../Defines.h"
 #include "math.h"
 #include "../Errorlog.h"
@@ -19,17 +19,17 @@ int ConvertInt(double val){
     return floor(val+0.5f);
 }
 
-void LHeightmap::SetHeightmapH (int8_t hHMap [16]){
+void RSC_Heightmap::SetHeightmapH (int8_t hHMap [16]){
     std::copy(hHMap, hHMap+16, heightMapH);
 }
-void LHeightmap::SetHeightmapV (int8_t vHMap [16]){
+void RSC_Heightmap::SetHeightmapV (int8_t vHMap [16]){
     std::copy(vHMap, vHMap+16, heightMapV);
 }
 
-void LHeightmap::SetAngleH (int a){angleH=a;}
-void LHeightmap::SetAngleV (int a){angleV=a;}
+void RSC_Heightmap::SetAngleH (int a){angleH=a;}
+void RSC_Heightmap::SetAngleV (int a){angleV=a;}
 
-int LHeightmap::DetermineHAngle(){
+int RSC_Heightmap::DetermineHAngle(){
     /*int newAngle=0;
     int heightDiff=heightMapH[15]-heightMapH[0]; //Get the difference in between the last and first height values
                                                         //(where up is positive y)
@@ -99,7 +99,7 @@ int LHeightmap::DetermineHAngle(){
     return newAngle;
 }
 /*
-int LHeightmap::DetermineHAngle(){
+int RSC_Heightmap::DetermineHAngle(){
     double newAngle=0;
     int highest=0;
     int highestX=0;
@@ -158,7 +158,7 @@ int LHeightmap::DetermineHAngle(){
     return newAngle;
 }*/
 
-int LHeightmap::DetermineVAngle(){
+int RSC_Heightmap::DetermineVAngle(){
     /*int newAngle=0;
     int heightDiff=heightMapV[15]-heightMapV[0]; //Get the difference in between the last and first height values
                                                 //(where up is positive y)
@@ -223,7 +223,7 @@ int LHeightmap::DetermineVAngle(){
     return newAngle;
 }
 
-LHeightmap::LHeightmap(){
+RSC_Heightmap::RSC_Heightmap(){
     int8_t hm[16];
     int8_t vm[16];
 
@@ -238,24 +238,24 @@ LHeightmap::LHeightmap(){
     SetAngleV(DetermineVAngle());
 }
 
-LHeightmap::LHeightmap(int8_t hmHparam[16], int8_t hmVparam[16]){
+RSC_Heightmap::RSC_Heightmap(int8_t hmHparam[16], int8_t hmVparam[16]){
     SetHeightmapH(hmHparam);
     SetHeightmapV(hmVparam);
     SetAngleH(DetermineHAngle());
     SetAngleV(DetermineVAngle());
 }
 
-LHeightmap::LHeightmap(int8_t hmHparam[16], int8_t hmVparam[16], int angleHparam, int angleVparam){
+RSC_Heightmap::RSC_Heightmap(int8_t hmHparam[16], int8_t hmVparam[16], int angleHparam, int angleVparam){
     SetHeightmapH(hmHparam);
     SetHeightmapV(hmVparam);
     SetAngleH(angleHparam);
     SetAngleV(angleVparam);
 }
 
-int LHeightmap::GetHeightMapH (int index){
+int RSC_Heightmap::GetHeightMapH (int index){
     return heightMapH[index];
 }
 
-int LHeightmap::GetHeightMapV (int index){
+int RSC_Heightmap::GetHeightMapV (int index){
     return heightMapV[index];
 }

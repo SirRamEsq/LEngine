@@ -45,11 +45,11 @@ class GameState{
 		virtual ~GameState(){
 		}
 
-		I_RSC_Map* GetCurrentMap(){return mCurrentMap.get();}
+		RSC_Map* GetCurrentMap(){return mCurrentMap.get();}
 
 
 		RenderManager				renderMan;
-		bool SetCurrentMap(const I_RSC_Map* m, unsigned int entranceID);
+		bool SetCurrentMap(const RSC_Map* m, unsigned int entranceID);
 
 	protected:
 		virtual void Init()=0;
@@ -93,7 +93,7 @@ class GameState{
 
 
 		//is copy of what is stored in resource manager
-		std::unique_ptr<I_RSC_Map> mCurrentMap;
+		std::unique_ptr<RSC_Map> mCurrentMap;
 		std::vector<std::unique_ptr<RenderableObjectWorld> > mCurrentMapTileLayers;
 };
 

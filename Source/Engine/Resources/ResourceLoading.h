@@ -5,12 +5,12 @@
 #include "../Defines.h"
 
 #include "../physfs.h"
-#include "LTexture.h"
-#include "LSprite.h"
-#include "LSound.h"
-#include "LScript.h"
-#include "LHeightmap.h"
-#include "LBackground.h"
+#include "RSC_Texture.h"
+#include "RSC_Sprite.h"
+#include "RSC_Sound.h"
+#include "RSC_Script.h"
+#include "RSC_Heightmap.h"
+#include "RSC_Background.h"
 #include "RSC_Map.h"
 #include "../Exceptions.h"
 

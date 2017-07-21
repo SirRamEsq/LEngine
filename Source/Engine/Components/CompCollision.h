@@ -38,7 +38,7 @@ struct TColPacket{
     int GetX(){return x;}
     int GetY(){return y;}
     int GetID(){return box;}
-    LHeightmap GetHmap();
+    RSC_Heightmap GetHmap();
     /*LTDF* GetTDF(){return tdf;}
     LTDF* tdf;//tdf collided with*/
     const TiledTileLayer* GetLayer();
@@ -163,7 +163,7 @@ class ComponentCollisionManager : public BaseComponentManager{
         void Update();
         void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
-        void UpdateCheckTileCollision   (const I_RSC_Map* currentMap);
+        void UpdateCheckTileCollision   (const RSC_Map* currentMap);
 		void SetDependencies(ComponentPositionManager* pos);
 
         CollisionGrid grid;

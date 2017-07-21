@@ -12,13 +12,13 @@ int          Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int          Kernel::returnValue;
 
-GenericContainer<LSprite>      Kernel::rscSpriteMan;
-GenericContainer<LTexture>     Kernel::rscTexMan;
-GenericContainer<LSound>       Kernel::rscSoundMan;
-GenericContainer<LMusic>       Kernel::rscMusicMan;
-GenericContainer<LScript>      Kernel::rscScriptMan;
-GenericContainer<I_RSC_Map>    Kernel::rscMapMan;
-GenericContainer<L_GL_Shader>  Kernel::rscShaderMan;
+GenericContainer<RSC_Sprite>      Kernel::rscSpriteMan;
+GenericContainer<RSC_Texture>     Kernel::rscTexMan;
+GenericContainer<RSC_Sound>       Kernel::rscSoundMan;
+GenericContainer<RSC_Music>       Kernel::rscMusicMan;
+GenericContainer<RSC_Script>      Kernel::rscScriptMan;
+GenericContainer<RSC_Map>    Kernel::rscMapMan;
+GenericContainer<RSC_GLShader>  Kernel::rscShaderMan;
 
 Kernel::Kernel(){}
 Kernel::~Kernel(){}
@@ -55,11 +55,11 @@ void Kernel::Inst(int argc, char *argv[]){
     SDLMan->InitSDL();
     SDLMan->InitOpenGL();
 
-    rscTexMan       .SetLoadFunction(&LTexture::LoadResource   );
-    rscSpriteMan    .SetLoadFunction(&LSprite::LoadResource   );
-    rscMusicMan     .SetLoadFunction(&LMusic::LoadResource   );
-    rscSoundMan     .SetLoadFunction(&LSound::LoadResource   );
-    rscScriptMan    .SetLoadFunction(&LScript::LoadResource);
+    rscTexMan       .SetLoadFunction(&RSC_Texture::LoadResource   );
+    rscSpriteMan    .SetLoadFunction(&RSC_Sprite::LoadResource   );
+    rscMusicMan     .SetLoadFunction(&RSC_Music::LoadResource   );
+    rscSoundMan     .SetLoadFunction(&RSC_Sound::LoadResource   );
+    rscScriptMan    .SetLoadFunction(&RSC_Script::LoadResource);
     rscMapMan       .SetLoadFunction(&RSC_MapImpl::LoadResource   );
 
     commandLine.ParseArgs(argc, argv);

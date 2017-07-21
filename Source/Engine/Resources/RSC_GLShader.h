@@ -13,21 +13,21 @@
 
 //forward Declare
 
-class L_GL_Shader;
-class L_GL_Program;
+class RSC_GLShader;
+class RSC_GLProgram;
 
 class LEngineShaderException : public LEngineException {
     public:
-        LEngineShaderException(const std::string& w, const L_GL_Shader* shad);
+        LEngineShaderException(const std::string& w, const RSC_GLShader* shad);
 
-        const L_GL_Shader* shader;
+        const RSC_GLShader* shader;
 };
 
 class LEngineShaderProgramException : public LEngineException {
     public:
-        LEngineShaderProgramException(const std::string& w, const L_GL_Program* prog);
+        LEngineShaderProgramException(const std::string& w, const RSC_GLProgram* prog);
 
-        const L_GL_Program* program;
+        const RSC_GLProgram* program;
 };
 
 bool CheckShaderCompileErrors(GLuint shader, std::string type);
@@ -39,10 +39,10 @@ enum L_GL_SHADER_TYPE{
 };
 
 //Will automatically allocate, compile, and free opengl Shader memory
-class L_GL_Shader{
+class RSC_GLShader{
     public:
-        L_GL_Shader(std::string filepath, L_GL_SHADER_TYPE type);
-        ~L_GL_Shader();
+        RSC_GLShader(std::string filepath, L_GL_SHADER_TYPE type);
+        ~RSC_GLShader();
 
         L_GL_SHADER_TYPE    GetShaderType   () const {return mShaderType;  }
         GLuint              GetShaderID     () const {return mHandleID;    }
@@ -57,12 +57,12 @@ class L_GL_Shader{
 };
 
 //This class owns nothing
-class L_GL_Program{
+class RSC_GLProgram{
     public:
-        L_GL_Program();
-        ~L_GL_Program();
+        RSC_GLProgram();
+        ~RSC_GLProgram();
 
-        bool AddShader(const L_GL_Shader* shader);
+        bool AddShader(const RSC_GLShader* shader);
         bool LinkProgram();
 
         GLuint GetHandle(){return mHandleID;}
@@ -81,9 +81,9 @@ class L_GL_Program{
         static GLuint GetBoundProgram();
 
     private:
-        const L_GL_Shader* mShaderFragment;
-        const L_GL_Shader* mShaderVertex;
-        const L_GL_Shader* mShaderGeometry;
+        const RSC_GLShader* mShaderFragment;
+        const RSC_GLShader* mShaderVertex;
+        const RSC_GLShader* mShaderGeometry;
 
         GLuint mHandleID;
         static GLuint currentlyBoundProgram;

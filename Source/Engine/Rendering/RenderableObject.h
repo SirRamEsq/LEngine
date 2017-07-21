@@ -2,7 +2,7 @@
 #define L_ENGINE_RENDERABLE_OBJECT
 
 #include "../Defines.h"
-#include "../Resources/LglShader.h"
+#include "../Resources/RSC_GLShader.h"
 
 #include <string>
 
@@ -31,7 +31,7 @@ class RenderableObject{
 		virtual ~RenderableObject(){}
 
 		//All renderable objects will render using their own shader program if one is not passed to them
-		virtual void Render(L_GL_Program* program) = 0;
+		virtual void Render(RSC_GLProgram* program) = 0;
 				void Render(					 ) {Render(shaderProgram);}
 
 		void		SetDepth(const MAP_DEPTH& d);
@@ -58,8 +58,8 @@ class RenderableObject{
 		L_COLOR		GetColor()						{return color;}
 		void		SetColor(L_COLOR c)				{color=c;}
 
-		void		   SetShaderProgram(L_GL_Program* p){shaderProgram=p;}
-		L_GL_Program*  GetShaderProgram()				{return shaderProgram;}
+		void		   SetShaderProgram(RSC_GLProgram* p){shaderProgram=p;}
+		RSC_GLProgram*  GetShaderProgram()				{return shaderProgram;}
 
 		//void UpdateShaderProgram();
 
@@ -77,7 +77,7 @@ class RenderableObject{
 		double		scaleX, scaleY, rotation;
 		Coord2df	position;
 
-		L_GL_Program* shaderProgram;
+		RSC_GLProgram* shaderProgram;
 };
 
 class RenderableObjectScreen : public RenderableObject{

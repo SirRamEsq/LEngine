@@ -5,7 +5,7 @@
 
 #include "../BaseComponent.h"
 #include "../Defines.h"
-#include "../Resources/LSprite.h"
+#include "../Resources/RSC_Sprite.h"
 #include "../RenderManager.h"
 #include "../Random.h"
 
@@ -47,9 +47,9 @@ class ParticleCreator : public RenderableObjectWorld{
         ParticleCreator (RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile);
         ~ParticleCreator();
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
 
-        //void SetSprite  (LSprite* spr);
+        //void SetSprite  (RSC_Sprite* spr);
 
         void SetVelocity        (const Coord2df& velocityMin,  const Coord2df& velocityMax);
         void SetAcceleration    (const Coord2df& accelMin,     const Coord2df& accelMax   );
@@ -86,16 +86,16 @@ class ParticleCreator : public RenderableObjectWorld{
         PARTICLE_SHAPE         mShape;
         PARTICLE_EFFECT        mEffect;
 
-        L_GL_Shader* GenerateVertexShader  ();
-        L_GL_Shader* GenerateFragmentShader();
+        RSC_GLShader* GenerateVertexShader  ();
+        RSC_GLShader* GenerateFragmentShader();
 
-        std::unique_ptr<L_GL_Program> mShaderProgram;
+        std::unique_ptr<RSC_GLProgram> mShaderProgram;
         RandomGenerator mRandom;
 
         unsigned int mParticleLifeSpan; //Time until particles end
         unsigned int mLifeSpan;         //Time until particle Creator end
 
-        LSprite* mSprite;
+        RSC_Sprite* mSprite;
         bool     mSpriteUsage;
 
         L_COLOR mDefaultColorMin;

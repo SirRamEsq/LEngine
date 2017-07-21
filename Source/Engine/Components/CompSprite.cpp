@@ -58,7 +58,7 @@ ComponentSprite::~ComponentSprite(){
 void ComponentSprite::Update(){
     AnimationData*                  animation    = NULL;
     RenderSpriteBatch::Sprite*      renderSprite = NULL;
-    const LSprite*                  spriteData   = NULL;
+    const RSC_Sprite*                  spriteData   = NULL;
 
     Coord2df pos=myPos->GetPositionWorld();
 
@@ -236,11 +236,11 @@ void ComponentSprite::SetOffset(int index, float x, float y){
     mRenderableSprites[index]->offset.y = y;
 }
 
-int ComponentSprite::AddSprite(const LSprite* sprite, const MAP_DEPTH& depth, float x, float y){
+int ComponentSprite::AddSprite(const RSC_Sprite* sprite, const MAP_DEPTH& depth, float x, float y){
     Vec2 offset(x,y);
     AnimationData data(sprite->GetAnimationMapPointer());
     auto textureName = sprite->GetTextureName();
-    const LTexture* texture=K_TextureMan.GetLoadItem(textureName, textureName);
+    const RSC_Texture* texture=K_TextureMan.GetLoadItem(textureName, textureName);
     if(texture==NULL){
         std::stringstream ss;
         ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named " << sprite->GetTextureName();

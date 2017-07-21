@@ -4,7 +4,7 @@
 #include "RenderableObject.h"
 #include "../SDLInit.h"
 
-class LTexture;
+class RSC_Texture;
 class RenderText : public RenderableObjectScreen{
     public:
         RenderText(RenderManager* rm, int xv, int yv, std::string t, bool abso=true);
@@ -41,7 +41,7 @@ class RenderText : public RenderableObjectScreen{
         int GetW(){return w;}
         int GetH(){return h;}
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
 
         void DeleteTexture();
 
@@ -50,7 +50,7 @@ class RenderText : public RenderableObjectScreen{
         int x, y, w, h;
         bool absolute, del;
         SDL_Color color;
-        LTexture* mTexture;
+        RSC_Texture* mTexture;
         GLuint VBOID;
         GLuint IBOID;
 };
@@ -87,7 +87,7 @@ class RenderLine : public RenderableObjectScreen{
         int GetX2(){return mX2;}
         int GetY2(){return mY2;}
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
 
     private:
         int mX1, mY1, mX2, mY2;
@@ -127,7 +127,7 @@ class RenderBox : public RenderableObjectScreen{
         int GetX2(){return mX2;}
         int GetY2(){return mY2;}
 
-        void Render(L_GL_Program* program);
+        void Render(RSC_GLProgram* program);
 
     private:
         int mX1, mY1, mX2, mY2;

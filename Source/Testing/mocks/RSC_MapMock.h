@@ -3,7 +3,7 @@
 
 #include "../../Engine/Resources/RSC_Map.h"
 
-class RSC_MapMock : public I_RSC_Map{
+class RSC_MapMock : public RSC_Map{
     public:
         RSC_MapMock(const std::string& mName, int w, int h);
         ~RSC_MapMock();

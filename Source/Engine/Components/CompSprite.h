@@ -7,7 +7,7 @@
 #include "../Event.h"
 #include "CompPosition.h"
 #include "../RenderManager.h"
-#include "../Resources/LSprite.h"
+#include "../Resources/RSC_Sprite.h"
 
 class ComponentSpriteManager;
 
@@ -44,7 +44,7 @@ class ComponentSprite : public BaseComponent{
         void    HandleEvent(const Event* event);
 
         //returns sprite index
-        int     AddSprite   (const LSprite* sprite, const MAP_DEPTH& depth, float x=0.0f, float y=0.0f);
+        int     AddSprite   (const RSC_Sprite* sprite, const MAP_DEPTH& depth, float x=0.0f, float y=0.0f);
 
         void    SetAnimation        (int index, const std::string& animationName);
         void    SetAnimationSpeed   (int index, float speed);
@@ -79,7 +79,7 @@ class ComponentSprite : public BaseComponent{
         */
 
         std::vector<AnimationData>      mAnimationData;     //Used to determine what part of the sprite to use
-        std::vector<const LSprite*>           mSprites;
+        std::vector<const RSC_Sprite*>           mSprites;
         std::vector< std::unique_ptr<RenderSpriteBatch::Sprite> >   mRenderableSprites; //class owns renderableSprites, which auto adds and deletes itself to the appropriate sprite batch when instantiated and deleted
 };
 

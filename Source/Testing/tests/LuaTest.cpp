@@ -33,7 +33,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	auto luaInterface = state->GetLuaInterface();
 	luaInterface->SetErrorCallbackFunction(luaErrorCallback);
 	auto scriptName = "Testing/cppLuaInterfaceTest.lua";
-	auto script = LScript::LoadResource(scriptName);
+	auto script = RSC_Script::LoadResource(scriptName);
 	auto mapDepth= 10;
 	auto parent = 0;
 	auto scriptType = "TEST";

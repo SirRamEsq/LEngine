@@ -9,9 +9,9 @@
 #include "../Event.h"
 #include "../LuaInterface.h"
 
-#include "../Resources/LScript.h"
-#include "../Resources/LSprite.h"
-#include "../Resources/LSound.h"
+#include "../Resources/RSC_Script.h"
+#include "../Resources/RSC_Sprite.h"
+#include "../Resources/RSC_Sound.h"
 
 #include <set>
 

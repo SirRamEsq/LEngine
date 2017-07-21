@@ -7,8 +7,8 @@
 #include <vector>
 #include <memory>
 
-#include "LSprite.h"
-#include "LHeightmap.h"
+#include "RSC_Sprite.h"
+#include "RSC_Heightmap.h"
 //#include "../RenderManager.h"
 
 //These Types are used as helpers in the TMX loading functions
@@ -126,7 +126,7 @@ class GIDManager{
         //GIDEnabled items can be lookedup by Range
         std::map<Range,         GIDEnabled*> GIDItems;
 };
-//No more Global GID manager. Each I_RSC_Map will contain its own set of data to create a map
+//No more Global GID manager. Each RSC_Map will contain its own set of data to create a map
 //The only reason they were shared before, was in order to share the same spriets
 //Now that these classes don't create sprites, it no longer serves a purpose
 
@@ -149,12 +149,12 @@ class TiledSet : public GIDEnabled{
         const LAnimation* GetAnimationDataFromGID       (GID id) const;
         CRect       GetTextureRectFromGID         (GID id) const;
 
-        LHeightmap        GetHeightMap  (GID id) const {return tileHMAPs.find(id)->second; }
+        RSC_Heightmap        GetHeightMap  (GID id) const {return tileHMAPs.find(id)->second; }
         int               GetTilesWide  ()       const {return tilesWide;     }
         int               GetTilesHigh  ()       const {return tilesHigh;     }
         int               GetTilesTotal ()       const {return tilesTotal;    }
         std::string       GetTextureName()       const {return textureName;   }
-        const LTexture*   GetTexture    ()       const {return texture;       }
+        const RSC_Texture*   GetTexture    ()       const {return texture;       }
 
         std::string transparentColor;
 
@@ -165,7 +165,7 @@ class TiledSet : public GIDEnabled{
         const std::string textureName;
 
     protected:
-        std::map<GID, const LAnimation*> tileAnimations; //This can be directly accessed by I_RSC_Map (for the purpose of loading the animations in from a file)
+        std::map<GID, const LAnimation*> tileAnimations; //This can be directly accessed by RSC_Map (for the purpose of loading the animations in from a file)
 
     private:
         bool initializationOK;
@@ -176,10 +176,10 @@ class TiledSet : public GIDEnabled{
 
         std::map<GID, PropertyMap > tileProperties;
 
-        const LTexture* texture;
+        const RSC_Texture* texture;
 
         //Only used if HMAP flags are set
-        std::map<GID, LHeightmap> tileHMAPs;
+        std::map<GID, RSC_Heightmap> tileHMAPs;
 };
 
 //A TiledTileLayer defines the make up of a layer of terrain from the TiledSet that it makes use of
@@ -205,7 +205,7 @@ class TiledLayerGeneric{
         const L_TILED_LAYER_TYPE layerType;
         const std::string layerName;
 
-        //GID Manager for the I_RSC_Map that this layer is a part of
+        //GID Manager for the RSC_Map that this layer is a part of
         const GIDManager*  GIDM;
 
         float       GetAlpha  () const {return layerOpacity;}
@@ -272,19 +272,19 @@ class TiledTileLayer : public TiledLayerGeneric{
 
 class TiledImageLayer : public TiledLayerGeneric{
     public:
-        TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const LTexture* tex);
+        TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex);
         TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g);
 
         void SetTexture     (const std::string& textureName);
         void SetOffset      (const Coord2d& off);
         void SetParalax     (const Coord2d& para);
 
-        const LTexture* GetTexture() const{return texture;}
+        const RSC_Texture* GetTexture() const{return texture;}
 
     private:
         Coord2d     offset;
         Coord2df    paralax;
-        const LTexture*   texture;
+        const RSC_Texture*   texture;
 };
 
 //A Tiled Object is simply a bag of data that is used to instantiate an entity when the map is loaded
@@ -426,12 +426,12 @@ class ComponentScript;
  * Interface for the Resource "Map"
  * Encapsulates a map used by the engine
  */
-class I_RSC_Map{
+class RSC_Map{
     public:
         class Exception : public LEngineException{using LEngineException::LEngineException;};
 
-        I_RSC_Map();
-        virtual ~I_RSC_Map();
+        RSC_Map();
+        virtual ~RSC_Map();
         virtual int GetWidthTiles() const   = 0;
         virtual int GetHeightTiles() const  = 0;
         virtual int GetWidthPixels() const  = 0;
@@ -445,11 +445,11 @@ class I_RSC_Map{
 
         virtual const TiledTileLayer* GetTileLayerCollision(int x,  int y, bool areTheseTileCoords) const = 0;
 
-		/// \TODO remove 'GetTiledData' from I_RSC_MAP Interface, the user of this class should not need to access the Tiled Data
+		/// \TODO remove 'GetTiledData' from RSC_MAP Interface, the user of this class should not need to access the Tiled Data
         virtual TiledData* GetTiledData() = 0;
 };
 
-class RSC_MapImpl : public I_RSC_Map{;;
+class RSC_MapImpl : public RSC_Map{;;
     friend GameState;
 
     public:
@@ -460,7 +460,7 @@ class RSC_MapImpl : public I_RSC_Map{;;
         //Data
         std::unique_ptr<TiledData> tiledData;
 
-        static std::unique_ptr<I_RSC_Map> LoadResource(const std::string& fname);
+        static std::unique_ptr<RSC_Map> LoadResource(const std::string& fname);
 
         int GetWidthTiles() const;
         int GetHeightTiles() const;

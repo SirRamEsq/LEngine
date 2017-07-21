@@ -1,18 +1,18 @@
-#include "LglShader.h"
+#include "RSC_GLShader.h"
 #include <math.h>
 #include <memory>
 
-LEngineShaderException::LEngineShaderException(const std::string& w, const L_GL_Shader* shad)
+LEngineShaderException::LEngineShaderException(const std::string& w, const RSC_GLShader* shad)
     : LEngineException(w), shader(shad){
 
 }
 
-LEngineShaderProgramException::LEngineShaderProgramException(const std::string& w, const L_GL_Program* prog)
+LEngineShaderProgramException::LEngineShaderProgramException(const std::string& w, const RSC_GLProgram* prog)
     : LEngineException(w), program(prog){
 
 }
 
-std::string L_GL_Shader::LoadShaderFromFile(const std::string& filepath){
+std::string RSC_GLShader::LoadShaderFromFile(const std::string& filepath){
     std::string   filePath;
     std::string   fileString;
 
@@ -40,7 +40,7 @@ std::string L_GL_Shader::LoadShaderFromFile(const std::string& filepath){
     return fileString;
 }
 
-L_GL_Shader::L_GL_Shader(std::string glslCode, L_GL_SHADER_TYPE type){
+RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
     mUsable=false;
 
     //New shader ID
@@ -58,7 +58,7 @@ L_GL_Shader::L_GL_Shader(std::string glslCode, L_GL_SHADER_TYPE type){
     //Check if Usable
     mUsable=CheckShaderCompileErrors(mHandleID, "SHADER");
 }
-L_GL_Shader::~L_GL_Shader(){
+RSC_GLShader::~RSC_GLShader(){
     //Free up the shader from openGl
     glDeleteShader(mHandleID);
     mHandleID=0;
@@ -99,22 +99,22 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
 }
 
 
-GLuint L_GL_Program::currentlyBoundProgram=0;
+GLuint RSC_GLProgram::currentlyBoundProgram=0;
 
-L_GL_Program::L_GL_Program(){
+RSC_GLProgram::RSC_GLProgram(){
     mHandleID=glCreateProgram();
     mShaderFragment=NULL;
     mShaderGeometry=NULL;
     mShaderVertex=NULL;
 }
-L_GL_Program::~L_GL_Program(){
+RSC_GLProgram::~RSC_GLProgram(){
     glDeleteProgram(mHandleID);
     mHandleID=0;
 }
 
-bool L_GL_Program::AddShader(const L_GL_Shader* shader){
+bool RSC_GLProgram::AddShader(const RSC_GLShader* shader){
     if(shader->GetShaderID()==0){
-        ErrorLog::WriteToFile("ERROR: L_GL_Program: Shader passed has invalid handle of 0", ErrorLog::GenericLogFile);
+        ErrorLog::WriteToFile("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0", ErrorLog::GenericLogFile);
         return false;
     }
     switch (shader->GetShaderType()){
@@ -139,7 +139,7 @@ bool L_GL_Program::AddShader(const L_GL_Shader* shader){
 }
 
 
-void L_GL_Program::DeleteShaders(){
+void RSC_GLProgram::DeleteShaders(){
     if(mShaderFragment!=NULL){
         glDetachShader(mHandleID, mShaderFragment->GetShaderID());
         mShaderFragment=NULL;
@@ -156,8 +156,8 @@ void L_GL_Program::DeleteShaders(){
     }
 }
 
-bool L_GL_Program::LinkProgram(){
-    const L_GL_Shader* shader;
+bool RSC_GLProgram::LinkProgram(){
+    const RSC_GLShader* shader;
     for(int i=0; i<3; i++){
         if     (i==0){shader=mShaderVertex;}
         else if(i==1){shader=mShaderFragment;}
@@ -185,18 +185,18 @@ bool L_GL_Program::LinkProgram(){
     return CheckShaderCompileErrors(mHandleID, "PROGRAM");
 }
 
-void L_GL_Program::Bind(){
+void RSC_GLProgram::Bind(){
     if(currentlyBoundProgram!=mHandleID){
         glUseProgram(mHandleID);
         currentlyBoundProgram=mHandleID;
     }
 }
 
-GLuint L_GL_Program::GetUniformBlockHandle(const std::string& name){
+GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name){
     GLuint returnVal=glGetUniformBlockIndex(mHandleID, name.c_str());
     if(returnVal==GL_INVALID_INDEX){
         std::stringstream ss;
-        ss << "[C++] L_GL_Program::GetUniformBlockHandle; shader program with ID " << mHandleID
+        ss << "[C++] RSC_GLProgram::GetUniformBlockHandle; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Block named " << name;
         ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::INFO, ErrorLog::GenericLogFile);
         throw LEngineShaderProgramException(ss.str(), this);
@@ -204,11 +204,11 @@ GLuint L_GL_Program::GetUniformBlockHandle(const std::string& name){
     return returnVal;
 }
 
-GLint L_GL_Program::GetUniformLocation(const std::string& name){
+GLint RSC_GLProgram::GetUniformLocation(const std::string& name){
     GLint returnVal=glGetUniformLocation(mHandleID, name.c_str());
     if(returnVal==-1){
         std::stringstream ss;
-        ss << "[C++] L_GL_Program::GetUniformLocation; shader program with ID " << mHandleID
+        ss << "[C++] RSC_GLProgram::GetUniformLocation; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Location named '" << name << "'";
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
         throw LEngineShaderProgramException(ss.str(), this);
@@ -216,10 +216,10 @@ GLint L_GL_Program::GetUniformLocation(const std::string& name){
     return returnVal;
 }
 
-void L_GL_Program::BindNULL(){
+void RSC_GLProgram::BindNULL(){
     glUseProgram(NULL);
     currentlyBoundProgram=0;
 }
-GLuint L_GL_Program::GetBoundProgram(){
+GLuint RSC_GLProgram::GetBoundProgram(){
     return currentlyBoundProgram;
 }

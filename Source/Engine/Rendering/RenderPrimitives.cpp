@@ -1,6 +1,6 @@
 
 #include "RenderPrimitives.h"
-#include "../Resources/LTexture.h"
+#include "../Resources/RSC_Texture.h"
 
 //////////////
 //RenderText//
@@ -29,8 +29,8 @@ void RenderText::DeleteTexture(){
     }
 }
 
-void RenderText::Render(L_GL_Program* program){
-    L_GL_Program::BindNULL();
+void RenderText::Render(RSC_GLProgram* program){
+    RSC_GLProgram::BindNULL();
     if(del){
         DeleteTexture();
         del=false;
@@ -46,7 +46,7 @@ void RenderText::Render(L_GL_Program* program){
         w=surface->w;
         h=surface->h;
 
-		mTexture=new LTexture(*surface);
+		mTexture=new RSC_Texture(*surface);
 
         SDL_FreeSurface(surface);
     }
@@ -148,7 +148,7 @@ RenderLine::RenderLine(RenderManager* rm, int x1, int y1, int x2, int y2, bool a
     AddToRenderManager();
 }
 
-void RenderLine::Render(L_GL_Program* program){
+void RenderLine::Render(RSC_GLProgram* program){
     glBindTexture(GL_TEXTURE_2D, 0);
 
     double R, G, B;
@@ -186,7 +186,7 @@ RenderBox::RenderBox(RenderManager* rm, int x1, int y1, int x2, int y2, bool abs
 }
 RenderBox::~RenderBox(){}
 
-void RenderBox::Render(L_GL_Program* program){
+void RenderBox::Render(RSC_GLProgram* program){
     glBindTexture(GL_TEXTURE_2D, 0);
 
     double R, G, B;

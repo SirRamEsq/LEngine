@@ -3,10 +3,10 @@
 
 #include <memory>
 
-#include "../Resources/LglShader.h"
+#include "../Resources/RSC_GLShader.h"
 #include "../glslHelper.h"
 #include "../BaseComponent.h"
-#include "../Resources/LTexture.h"
+#include "../Resources/RSC_Texture.h"
 #include "../RenderManager.h"
 #include "CompPosition.h"
 
@@ -64,7 +64,7 @@ class ComponentLightManager : public BaseComponentManager{
         void HandleEvent(const Event* event);
         void Update();
 
-        void Render(LTexture* textureDiffuse, LTexture* textureDestination, const Coord2d& topLeftCorner, L_GL_Program* shaderProgram);
+        void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, RSC_GLProgram* shaderProgram);
 
         void BuildVAO();
 
@@ -73,7 +73,7 @@ class ComponentLightManager : public BaseComponentManager{
 
     private:
         GLuint   FBO; //frame buffer object id
-        const LTexture* lightTexture;
+        const RSC_Texture* lightTexture;
         VAOWrapper vao;
 
         unsigned int numberOfLights;

@@ -156,7 +156,7 @@ void TiledSet::LoadHeightMaps(GID id){
     int8_t vHMap [16] = {0};
 
     if((coord.w!=16)or(coord.h!=16)){
-        LHeightmap hmap(hHMap,vHMap);
+        RSC_Heightmap hmap(hHMap,vHMap);
         tileHMAPs[id]=hmap;
             return;
     }
@@ -279,7 +279,7 @@ void TiledSet::LoadHeightMaps(GID id){
         }
     }
 
-    LHeightmap hmap(hHMap,vHMap);
+    RSC_Heightmap hmap(hHMap,vHMap);
     tileHMAPs[id]=hmap;
 }
 
@@ -436,7 +436,7 @@ float TiledTileLayer::GetFriction() const {
 //TiledImageLayer//
 ///////////////////
 
-TiledImageLayer::TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const LTexture* tex)
+TiledImageLayer::TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex)
     : TiledLayerGeneric(pixelW/16, pixelH/16, name, depth, g, LAYER_IMAGE), texture(tex){
 
 }
@@ -545,10 +545,10 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer){
 }
 
 
-I_RSC_Map::I_RSC_Map(){
+RSC_Map::RSC_Map(){
 
 }
-I_RSC_Map::~I_RSC_Map(){
+RSC_Map::~RSC_Map(){
 
 }
 ////////
@@ -786,7 +786,7 @@ TiledTileLayer* TiledData::GetTileLayer(const std::string& name){
     return NULL;
 }
 
-std::unique_ptr<I_RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
+std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
     std::unique_ptr<RSC_MapImpl> rscMap = NULL;
     try{
         std::string fullPath= "Resources/Maps/"+fname;
@@ -799,7 +799,7 @@ std::unique_ptr<I_RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
             auto tiledData = TiledData::LoadResourceFromTMX(fname, data.get()->GetData(), data.get()->length);
             rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
-        catch(I_RSC_Map::Exception e){
+        catch(RSC_Map::Exception e){
             ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
             throw e;
         }
@@ -1258,7 +1258,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
     rapidxml::xml_node<>* subNodeProperties=subNodeImage->next_sibling();
     int depth=0;
 
-    const LTexture* texture= K_TextureMan.GetItem(texturePath);
+    const RSC_Texture* texture= K_TextureMan.GetItem(texturePath);
     if(texture==NULL){
         K_TextureMan.LoadItem(texturePath, texturePath);
         texture=K_TextureMan.GetItem(texturePath);
@@ -1368,7 +1368,7 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(rapidxml::xml_node<>* tiled
         TMXLoadAttributesFromProperties(&properties, attributes);
 
         if(spriteName != ""){
-            const LSprite* spr = K_SpriteMan.GetLoadItem(spriteName, spriteName);
+            const RSC_Sprite* spr = K_SpriteMan.GetLoadItem(spriteName, spriteName);
             if(spr != NULL){
                 const LAnimation* animation = spr->GetAnimation(animationName);
                 if(animation != NULL){

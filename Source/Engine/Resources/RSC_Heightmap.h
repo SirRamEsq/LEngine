@@ -4,11 +4,11 @@
 #include <inttypes.h>
 #include <algorithm>
 
-class LHeightmap{
+class RSC_Heightmap{
     public:
-        LHeightmap();
-        LHeightmap(int8_t hmHparam[16], int8_t hmVparam[16]);
-        LHeightmap(int8_t hmHparam[16], int8_t hmVparam[16], int angleHparam, int angleVparam);
+        RSC_Heightmap();
+        RSC_Heightmap(int8_t hmHparam[16], int8_t hmVparam[16]);
+        RSC_Heightmap(int8_t hmHparam[16], int8_t hmVparam[16], int angleHparam, int angleVparam);
 
         void SetHeightmapH (int8_t hHMap [16]);
         void SetHeightmapV (int8_t vHMap [16]);

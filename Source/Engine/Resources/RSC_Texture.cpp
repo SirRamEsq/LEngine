@@ -1,14 +1,14 @@
-#include "LTexture.h"
+#include "RSC_Texture.h"
 
 #include "ResourceLoading.h"
 #include "../Defines.h"
 #include <cstring>
 #include <string>
 
-GLuint LTexture::GLBoundTexture=0;
+GLuint RSC_Texture::GLBoundTexture=0;
 
 //This function copies the data passed to it
-LTexture::LTexture(const unsigned char* data, unsigned int dsize, const std::string& fname){
+RSC_Texture::RSC_Texture(const unsigned char* data, unsigned int dsize, const std::string& fname){
     mFileName=fname;
     mGLID=0;
 
@@ -22,7 +22,7 @@ LTexture::LTexture(const unsigned char* data, unsigned int dsize, const std::str
     mTextureFormat=GL_RGBA;
 }
 
-LTexture::LTexture(unsigned int width, unsigned int height, int BPP, int format){
+RSC_Texture::RSC_Texture(unsigned int width, unsigned int height, int BPP, int format){
     mFileName="";
     mGLID=0;
     int texSize=width*height*BPP;
@@ -34,7 +34,7 @@ LTexture::LTexture(unsigned int width, unsigned int height, int BPP, int format)
     mTextureFormat=format;
 }
 
-LTexture::LTexture(const SDL_Surface& source){
+RSC_Texture::RSC_Texture(const SDL_Surface& source){
     mFileName="";
     mGLID=0;
 
@@ -71,26 +71,26 @@ LTexture::LTexture(const SDL_Surface& source){
     mBytesPerPixel=bpp;
 }
 
-LTexture::LTexture(const std::string& fName){
+RSC_Texture::RSC_Texture(const std::string& fName){
     mFileName=fName;
     mTexData.height = mTexData.width = 0;
 	mTexData.data.reset(NULL);
     LoadFile(fName);
 }
 
-void LTexture::DeleteGLTexture(){
+void RSC_Texture::DeleteGRSC_Texture(){
     if(mGLID!=0){
         glDeleteTextures(1, &mGLID);
         mGLID = 0;
     }
 }
 
-void LTexture::UpdateDataFromGL(){
+void RSC_Texture::UpdateDataFromGL(){
     Bind();
     glGetTexImage(GL_TEXTURE_2D,0,mTextureFormat,GL_UNSIGNED_BYTE, mTexData.data.get());
 }
 
-bool LTexture::ExportTexture(const char* path) const {
+bool RSC_Texture::ExportTexture(const char* path) const {
     //UpdateDataFromGL();
     if(SOIL_save_image(path,SOIL_SAVE_TYPE_BMP,mTexData.width,mTexData.height,mBytesPerPixel,mTexData.data.get())==0){
         std::string pathString (path);
@@ -100,11 +100,11 @@ bool LTexture::ExportTexture(const char* path) const {
     }
 }
 
-LTexture::~LTexture(){
-    DeleteGLTexture();
+RSC_Texture::~RSC_Texture(){
+    DeleteGRSC_Texture();
 }
 
-void LTexture::LoadFile(const std::string& fName){
+void RSC_Texture::LoadFile(const std::string& fName){
 	// Generate a new image Id and bind it with the
 	// current image.
 
@@ -117,7 +117,7 @@ void LTexture::LoadFile(const std::string& fName){
     mTextureFormat=GL_RGBA;
 }
 
-void LTexture::Bind() const {
+void RSC_Texture::Bind() const {
     if(mGLID==0){
 		// Generate one new texture Id.
 		glGenTextures(1,&mGLID);
@@ -151,18 +151,18 @@ void LTexture::Bind() const {
 
         //Once the data is passed off to opengl, the current mTexData.data is just a copy
     }
-    if(mGLID!=LTexture::GLBoundTexture){
+    if(mGLID!=RSC_Texture::GLBoundTexture){
         glBindTexture(GL_TEXTURE_2D,mGLID);
-        LTexture::GLBoundTexture=mGLID;
+        RSC_Texture::GLBoundTexture=mGLID;
     }
 }
 
-void LTexture::BindNull(){
+void RSC_Texture::BindNull(){
     glBindTexture(GL_TEXTURE_2D,0);
-    LTexture::GLBoundTexture=0;
+    RSC_Texture::GLBoundTexture=0;
 }
 
-void LTexture::SetColorKey(unsigned char Red, unsigned char Green, unsigned char Blue, bool useCurrentAlpha){
+void RSC_Texture::SetColorKey(unsigned char Red, unsigned char Green, unsigned char Blue, bool useCurrentAlpha){
 	// Delete the old texture if one exists
 	if( (mTexData.data.get()[3]==0) and (useCurrentAlpha) ){return;}//Exit if it already has an alpha value
 	if (mGLID!=0){
@@ -183,10 +183,10 @@ void LTexture::SetColorKey(unsigned char Red, unsigned char Green, unsigned char
 	}
 }
 
-uint8_t LTexture::GetPixelAlpha(const int& x, const int& y) const{
+uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
     if(x>=mTexData.width){
         std::stringstream ss;
-        ss << "[C++] LTexture:GetPixelAlpha; Texture X index out of bounds" <<
+        ss << "[C++] RSC_Texture:GetPixelAlpha; Texture X index out of bounds" <<
                 "\n    X is: " << x <<
                 "\n    W is: " << mTexData.width;
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
@@ -194,7 +194,7 @@ uint8_t LTexture::GetPixelAlpha(const int& x, const int& y) const{
     }
     else if(y>=mTexData.height){
         std::stringstream ss;
-        ss << "[C++] LTexture:GetPixelAlpha; Texture Y index out of bounds" <<
+        ss << "[C++] RSC_Texture:GetPixelAlpha; Texture Y index out of bounds" <<
                 "\n    Y is: " << y <<
                 "\n    H is: " << mTexData.height;
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
@@ -207,7 +207,7 @@ uint8_t LTexture::GetPixelAlpha(const int& x, const int& y) const{
     return 0;
 }
 
-int LTexture::RenderToTexture(const CRect& area, LTexture* otherTexture, LOrigin origin)const {
+int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, LOrigin origin)const {
     //Use GLtranslate before calling this function to set the x/y values
 
     //Create FBO
@@ -249,7 +249,7 @@ int LTexture::RenderToTexture(const CRect& area, LTexture* otherTexture, LOrigin
     return true;
 }
 
-void LTexture::BlitArea(const CRect& are, LOrigin origin) const{
+void RSC_Texture::BlitArea(const CRect& are, LOrigin origin) const{
     Bind();
     CRect area=are;
     float Left=     (float)area.GetLeft()   / (float)mTexData.width;
@@ -265,14 +265,14 @@ void LTexture::BlitArea(const CRect& are, LOrigin origin) const{
     glEnd();
 }
 
-void LTexture::Clear(){
+void RSC_Texture::Clear(){
     Bind();
     glClearColor( 1.0f, 0.0f, 1.0f, 1.0f );
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
-    std::unique_ptr<LTexture> texture = NULL;
+std::unique_ptr<RSC_Texture> RSC_Texture::LoadResource(const std::string& fname){
+    std::unique_ptr<RSC_Texture> texture = NULL;
     try{
         std::string fullPath = "Resources/Images/" + fname;
         auto data=LoadGenericFile(fullPath);
@@ -282,7 +282,7 @@ std::unique_ptr<LTexture> LTexture::LoadResource(const std::string& fname){
             ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
             return NULL;
         }
-        texture = make_unique<LTexture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
+        texture = make_unique<RSC_Texture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
         texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
     }
     catch(LEngineFileException e){
