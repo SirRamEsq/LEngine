@@ -56,8 +56,7 @@ void GameStartState::Close(){
 
 void GameStartState::HandleEvent(const Event* event){
     if(event->message == Event::MSG::KEYDOWN){
-		const std::string* stringPointer = (InputManager::ExtraDataDefinition::GetExtraData(event));
-		std::string inputKey = *stringPointer;
+		std::string inputKey = event->description;
 
         if     ( inputKey == "use")    {countdown=-1;}
         else if( inputKey == "pause")  {gameStateManager->PushState(make_unique<GamePauseState> (gameStateManager));}
@@ -69,8 +68,7 @@ void GameStartState::HandleEvent(const Event* event){
     }
 
     if(event->message == Event::MSG::KEYUP){
-		const std::string* stringPointer = (InputManager::ExtraDataDefinition::GetExtraData(event));
-		std::string inputKey = *stringPointer;
+		std::string inputKey = event->description;
 
         if     ( inputKey == "up")      {u=false;}
         else if( inputKey == "down")    {d=false;}

@@ -136,8 +136,8 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnKeyDown not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-			auto key = InputManager::ExtraDataDefinition::GetExtraData(event);
-            fKDown(*key);
+			std::string key = event->description;
+            fKDown(key);
         }
         catch (LuaException const& e){
             std::stringstream ss;
@@ -158,8 +158,8 @@ void ComponentScript::HandleEvent(const Event* event){
                 ErrorLog::WriteToFile("OnKeyUp not found in script with EID " + (mEntityID), logFileName);
                 return;
             }
-			auto key = InputManager::ExtraDataDefinition::GetExtraData(event);
-            fKUp(*key);
+			std::string key = event->description;
+            fKUp(key);
         }
         catch (LuaException const& e){
             std::stringstream ss;
