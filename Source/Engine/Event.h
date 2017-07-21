@@ -5,6 +5,8 @@
 
 #include <memory>
 #include <vector>
+#include <set>
+#include <map>
 
 class GameStateManager;
 class EntityManager;
@@ -58,12 +60,13 @@ class EventDispatcher{
     public:
         EventDispatcher();
         void SetDependencies(GameStateManager* gs, EntityManager* em);
-        void DispatchEvent(const Event& event, const std::vector<EID>* entities = NULL);
+        void DispatchEvent(const Event& event);
+        void DispatchEvent(const Event& event, const std::vector<EID>* entities);
+        void DispatchEvent(const Event& event, const std::set<EID>* entities);
 
     private:
         //Send to all entities listening for this specific event
         void BroadcastEvent (const Event& event);
-		void SendEventToMutlipleEntities (const Event& event, const std::vector<EID>& entities);
 
         GameStateManager* gameStateManager;
         EntityManager*    gameStateEntityManager;

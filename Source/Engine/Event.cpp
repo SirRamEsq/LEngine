@@ -23,14 +23,10 @@ void EventDispatcher::SetDependencies(GameStateManager* gs, EntityManager* em){
     if(gameStateEntityManager==NULL){ErrorLog::WriteToFile("EntityManager is NULL in the EventDispatcher", ErrorLog::GenericLogFile);}
 };
 
-void EventDispatcher::DispatchEvent(const Event& event, const std::vector<EID>* entities){
+void EventDispatcher::DispatchEvent(const Event& event){
     EID id=event.reciever;
-	//If 'entities' are passed, ignore the event's recipient
-	if (entities!=NULL){
-		SendEventToMutlipleEntities(event, *entities);
-	}
-	//if the event recipient is everything, broadcast the event
-	else if (id == EID_ALLOBJS){
+
+	if (id == EID_ALLOBJS){
 		BroadcastEvent(event);
 	}
     else if (id==EID_STATEMAN){
@@ -41,8 +37,15 @@ void EventDispatcher::DispatchEvent(const Event& event, const std::vector<EID>* 
 	}
 }
 
-void EventDispatcher::SendEventToMutlipleEntities (const Event& event, const std::vector<EID>& entities){
-	for(auto i = entities.begin(); i != entities.end(); i++){
+void EventDispatcher::DispatchEvent(const Event& event, const std::vector<EID>* entities){
+	for(auto i = entities->begin(); i != entities->end(); i++){
+		event.reciever = (*i);
+		DispatchEvent(event);
+	}
+}
+
+void EventDispatcher::DispatchEvent(const Event& event, const std::set<EID>* entities){
+	for(auto i = entities->begin(); i != entities->end(); i++){
 		event.reciever = (*i);
 		DispatchEvent(event);
 	}
