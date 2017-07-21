@@ -78,8 +78,7 @@ void InputManager::HandleInput(){
 }
 
 void InputManager::SendEvent(Event::MSG message, std::string keyName){
-	InputManager::ExtraDataDefinition extraData(&keyName);
-	Event event(EID_SYSTEM, EID_STATEMAN, message, "INPUT", &extraData);
+	Event event(EID_SYSTEM, EID_STATEMAN, message, keyName);
 
 	//Stateman is informed first of the event
 	eventDispatcher->DispatchEvent(event);
@@ -91,8 +90,7 @@ void InputManager::SendEvent(Event::MSG message, std::string keyName){
 
 	/// \TODO remove for loop, pass list of listeners to event dispatchers
 	for(auto listener = listeners->begin(); listener!=listeners->end(); listener++){
-		ExtraDataDefinition extraData(&keyName);
-		Event event(EID_SYSTEM, *listener, message, "INPUT", &extraData);
+		Event event(EID_SYSTEM, *listener, message, keyName);
 
 		eventDispatcher->DispatchEvent(event);
 	}
@@ -104,16 +102,4 @@ void InputManager::KeyPress(const std::string& keyName){
 
 void InputManager::KeyRelease(const std::string& keyName){
 	SendEvent(Event::MSG::KEYUP, keyName);
-}
-
-InputManager::ExtraDataDefinition::ExtraDataDefinition(const std::string* key)
-	: inputKey(key){
-}
-
-void InputManager::ExtraDataDefinition::SetExtraData(Event* event){
-	event->extradata = inputKey;
-}
-
-const std::string* InputManager::ExtraDataDefinition::GetExtraData(const Event* event){
-	return ((const std::string*)(event->extradata));
 }
