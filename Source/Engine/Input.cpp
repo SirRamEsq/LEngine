@@ -70,7 +70,7 @@ void InputManager::HandleInput(){
             keyi=asciiREV.find(asciiValue);
 
             if(keyi!=asciiREV.end()){
-				if(keyup)   {KeyPress(keyi->second);}
+				if(!keyup)   {KeyPress(keyi->second);}
 				else        {KeyRelease(keyi->second);}
             }
         }
