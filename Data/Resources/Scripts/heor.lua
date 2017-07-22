@@ -199,7 +199,6 @@ function heor.Initialize()
 	heor.CPPInterface = CPP.interface; 
 	heor.EID					= heor.LEngineData.entityID;
 
-	if(heor.CPPInterface == nil) then heor.LEngineData.interface:WriteError(heor.EID, "CPPInterface is NIL!") end
 
 	local EID = heor.EID
 	heor.CPPInterface:ListenForInput(EID, "up"	 );
