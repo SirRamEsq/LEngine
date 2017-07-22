@@ -701,6 +701,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("UsesHMaps",		&TiledTileLayer::UsesHMaps)
 				.addFunction("GetTile",			&TiledTileLayer::GetTile)
 				.addFunction("SetTile",			&TiledTileLayer::SetTile)
+				.addFunction("HasTile",			&TiledTileLayer::HasTile)
 				.addFunction("UpdateRenderArea",	&TiledTileLayer::UpdateRenderArea)
 			.endClass()
 

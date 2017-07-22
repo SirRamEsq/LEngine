@@ -711,9 +711,10 @@ function heor.ChangeState(newState)
 end
 
 function heor.CanClimb()
+	if(heor.climb.LAYER == nil)then return end
 	local world = heor.CompPosition:GetPositionWorldInt()
 
-	return heor.climb.LAYER:HasTile(world.x + (heor.c.WIDTH/2), world.y + (heor.c.HEIGHT/2))
+	return heor.climb.LAYER:HasTile( (world.x + (heor.c.WIDTH/2))/16, (world.y + (heor.c.HEIGHT/2))/16 )
 end
 
 function heor.Update()

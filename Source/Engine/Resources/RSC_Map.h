@@ -234,8 +234,17 @@ class TiledTileLayer : public TiledLayerGeneric{
         TiledTileLayer(const unsigned int& w, const unsigned int& h, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g);
         TiledTileLayer(const TiledTileLayer& rhs, const GIDManager* g);
 
+		/**
+		 * Gets GID at Tile-Coordinate x,y
+		 */
         GID GetGID(unsigned int x, unsigned int y) const;
+		/**
+		 * Sets GID at Tile-Coordinate x,y
+		 */
         void SetGID(unsigned int x, unsigned int y, GID id);
+		/**
+		 * Checks if GID at Tile-Coordinate x,y is not 0
+		 */
         bool HasTile(unsigned int x, unsigned int y) const;
 
         //LuaInterface Functions
