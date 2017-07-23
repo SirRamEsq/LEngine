@@ -18,10 +18,7 @@ class BaseComponent{
     public:
         virtual ~BaseComponent();
 
-        BaseComponent(EID id, const std::string& logName) : logFileName(logName){
-            mEntityID=id;
-			eventCallback = NULL;
-        }
+        BaseComponent(EID id, const std::string& logName, BaseComponent* parent); 
 
         virtual void Update()=0;
         virtual void HandleEvent(const Event* event);
@@ -34,6 +31,12 @@ class BaseComponent{
     protected:
         EID mEntityID;
         BaseComponentManager* mManager;
+
+		//Pointer to component's parent, should be same type of component as derived class
+		BaseComponent* parent;
+
+		//Used by ComponentManager to determine if this component was already updated this frame
+		bool updatedThisFrame;
 
     private:
         EventFunction eventCallback;
@@ -49,7 +52,7 @@ class BaseComponentManager{
         typedef std::map<EID, BaseComponent*> compMap;
         typedef compMap::iterator compMapIt;
 
-        virtual void    AddComponent        (EID id)=0; //Create a new component with the specified ID
+        virtual void    AddComponent        (EID id, EID parent=0)=0; //Create a new component with the specified ID
         virtual void    AddComponent        (std::unique_ptr<BaseComponent> comp); //Add a loaded component (good for mocking)
         void            DeleteAllComponents ();
         void            DeleteComponent     (EID id);
@@ -60,10 +63,13 @@ class BaseComponentManager{
         virtual void Update();
         virtual void HandleEvent(const Event* event);
         virtual void BroadcastEvent(const Event* event);
+		virtual void SetParent(EID child, EID parent);
 
         const std::string logFileName;
 
     protected:
+		void UpdateComponent(BaseComponent* child);
+
         std::map<EID, BaseComponent*> componentList;
         EventDispatcher* eventDispatcher;
 };
