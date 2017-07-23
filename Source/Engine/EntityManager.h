@@ -45,9 +45,10 @@ class EntityManager{
         /**
 		 * Creates a New Entity
 		 * Can optionally pass in a name to associate with the EID
+		 * Can optionally pass in a parent
 		 * \return The new Entity ID value
 		 */
-        EID NewEntity(const std::string& name=""); //return an EID that is not in use
+        EID NewEntity(EID parent=0, const std::string& name=""); //return an EID that is not in use
 		/**
 		 * Can lookup an eid by a string name, if the entity was given one upon creation
 		 */

@@ -1,5 +1,10 @@
 #include "BaseComponent.h"
 
+BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* p)
+	: mEntityID(id), logFileName(logName), parent(p){
+		eventCallback = NULL;
+}
+
 BaseComponent::~BaseComponent(){
     //Event* event= new Event(mEntityID, mEntityID, MSG_COMP_DELETED, this);
     //K_EventMan.DispatchEvent(event);
@@ -43,11 +48,32 @@ bool BaseComponentManager::HasComponent(EID id){
     return false;
 }
 
+void BaseComponentManager::UpdateComponent(BaseComponent* child){
+	//Exit if already updated this frame
+	if(child->updatedThisFrame == true){return;}
+
+	//Update parent before child
+	if(child->parent != NULL){
+		auto parent = child->parent;
+		if(parent->updatedThisFrame == false){
+			UpdateComponent(parent);
+		}
+	}
+
+	//Update child
+	child->Update();
+	child->updatedThisFrame = true;
+}
+
 void BaseComponentManager::Update(){
-    compMapIt i=componentList.begin();
-    for(; i!=componentList.end(); i++){
-        i->second->Update();
+    for(i=componentList.begin(); i!=componentList.end(); i++){
+		UpdateComponent(i->second);
     }
+
+	for(auto i = componentList.begin(); i !+ componentList.end(); i++){
+		//Reset all 'updatedThisFrame' bits
+		i->second->updatedThisFrame = false;
+	}
 }
 
 void BaseComponentManager::HandleEvent(const Event* event){
@@ -77,4 +103,15 @@ void BaseComponentManager::AddComponent(std::unique_ptr<BaseComponent> comp){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
     componentList[id]=comp.release();
+}
+
+void BaseComponentManager::SetParent(EID child, EID parent){
+	if((child==0)or(parent==0)){return;}
+
+	auto childComponent = componentList.find(child);
+	auto parentComponent = componentList.find(parent);
+
+	if((childComponent == componentList.end())or(parentComponent == componentList.end())){return;}
+
+	childComponent->parent = parentComponent;
 }
