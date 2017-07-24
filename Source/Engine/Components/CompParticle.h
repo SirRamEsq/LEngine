@@ -171,8 +171,7 @@ class ComponentParticleManager : public BaseComponentManager{
         ~ComponentParticleManager();
 
         void Update();
-        void AddComponent(EID id);
-        void HandleEvent(const Event* event){}
+        void AddComponent(EID id, EID parent = 0);
 
 		void SetDependencies(RenderManager* rm, ComponentPositionManager* pos);
 

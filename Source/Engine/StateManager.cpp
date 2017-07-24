@@ -286,25 +286,10 @@ void GameState::SetMapLinkEntities(
 
                 //if entity has a script, it's up to the script to decide how to handle the parent, else it's assigned to all components
                 if(scriptComp==NULL){
-                    ((ComponentPosition*)  (comPosMan.GetComponent(child)))->ChangeParent(parentEID);
+					entityMan.SetParent(child, parentEID);
                 }
             }
         }
-        /*
-        //Link the map script as well
-        for(auto eventSource=mCurrentMap->mEventSources.begin(); eventSource!=mCurrentMap->mEventSources.begin(); eventSource++){
-            entityID = tiledIDtoEntityID.find((*eventSource))->second;
-
-            ComponentScript* listenerScript=((ComponentScript*)comScriptMan.GetComponent(listenerID));
-            if(listenerScript==NULL){
-                std::stringstream ss;
-                ss << "[Map Loader: " << mCurrentMap->GetMapName() << "]" << " Couldn't listen to event from TiledID ";
-                ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
-                continue;
-            }
-
-            mCurrentMap->mScriptComp->EventLuaAddObserver(listenerScript);
-        }*/
     }
 
     //Set all objects that use entrances to their proper entrance

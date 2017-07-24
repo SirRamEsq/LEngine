@@ -9,11 +9,6 @@
 #include <vector>
 #include <map>
 
-#define EID_SYSTEM      0 //EID that refers to the system
-#define EID_STATEMAN    1 //EID that refers to the statemanager
-#define EID_MAPSCRIPT   2 //EID for the script belonging to the whole map
-#define EID_ALLOBJS     3 //EID that broadcasts to all components
-#define EID_MIN         10 //First EID that can be used by components
 /// \TODO Add components into EntityManager; They're already added in and sorted by order. If you move them from StateManager to here, then that same order can be used to update the component Managers. Also adds a generic way to add more component managers should the need arise and adjust the order they update in
 
 /**
@@ -49,6 +44,8 @@ class EntityManager{
 		 * \return The new Entity ID value
 		 */
         EID NewEntity(EID parent=0, const std::string& name=""); //return an EID that is not in use
+		///Wrapper around other NewEntity function
+		EID NewEntity(const std::string& name);
 		/**
 		 * Can lookup an eid by a string name, if the entity was given one upon creation
 		 */
@@ -88,6 +85,11 @@ class EntityManager{
 		 * Returns a count of currently active entities
 		 */
 		unsigned int GetEntityCount();
+
+		/**
+		 * Sets the parent of each component of an entity
+		 */
+		void SetParent(EID child, EID parent);
 
     protected:
         void ClearNameMappings();

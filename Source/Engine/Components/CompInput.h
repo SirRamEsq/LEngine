@@ -25,8 +25,8 @@ class ComponentInputManager : public BaseComponentManager{
     public:
         ComponentInputManager(EventDispatcher* e);
         void SetDependency(std::shared_ptr<InputManager::KeyMapping> keys);
+        void AddComponent(EID id, EID parent=0);
 
-        void AddComponent(EID id);
     private:
         std::shared_ptr<InputManager::KeyMapping> keyMapping;
 };

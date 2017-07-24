@@ -525,7 +525,7 @@ ComponentParticleManager::ComponentParticleManager(EventDispatcher* e) : BaseCom
 ComponentParticleManager::~ComponentParticleManager(){
 }
 
-void ComponentParticleManager::AddComponent(EID id){
+void ComponentParticleManager::AddComponent(EID id, EID parent){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentParticle* par=new ComponentParticle(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);

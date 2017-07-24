@@ -269,16 +269,13 @@ ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseCompone
 
 }
 
-void ComponentSpriteManager::AddComponent(EID id){
+void ComponentSpriteManager::AddComponent(EID id, EID parent){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentSprite* sprite=new ComponentSprite(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
     componentList[id]=sprite;
 }
 
-void ComponentSpriteManager::HandleEvent(const Event* event){
-
-}
 
 void ComponentSpriteManager::Update(){
     for(auto i=componentList.begin(); i!=componentList.end(); i++){

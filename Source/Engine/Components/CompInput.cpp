@@ -16,7 +16,7 @@ void ComponentInput::ListenForInput(std::string keyName){
     (*keyMapping)[keyName].insert(mEntityID);
 }
 
-void ComponentInputManager::AddComponent(EID id){
+void ComponentInputManager::AddComponent(EID id, EID parent){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentInput* input=new ComponentInput(keyMapping.get(), id, logFileName);

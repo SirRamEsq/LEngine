@@ -821,7 +821,11 @@ void LuaInterface::ExposeCPP(){
 				.addData("y", &Coord2df::y)
 			.endClass()
 
-			.beginClass<ComponentPosition>("ComponentPosition")
+			.beginClass<BaseComponent>("BaseComponent")
+				.addFunction("SetParent",		  	&BaseComponent::SetParentEID)
+			.endClass()
+
+			.deriveClass<ComponentPosition, BaseComponent>("ComponentPosition")
 				.addFunction("GetPositionLocal",	  &ComponentPosition::GetPositionLocal)
 				.addFunction("GetPositionWorld",	  &ComponentPosition::GetPositionWorld)
 				.addFunction("GetMovement",			  &ComponentPosition::GetMovement)
@@ -842,10 +846,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetMaxSpeed",				&ComponentPosition::SetMaxSpeed)
 
 				.addFunction("IncrementPosition",	  &ComponentPosition::IncrementMovement)
-				.addFunction("IncrementMovement",	  &ComponentPosition::IncrementMovement) .addFunction("IncrementAcceleration", &ComponentPosition::IncrementAcceleration)
-
-				.addFunction("RoundPosition",		  &ComponentPosition::RoundPosition)
-				.addFunction("ChangeParent",		  &ComponentPosition::ChangeParent)
+				.addFunction("IncrementMovement",	  &ComponentPosition::IncrementMovement)
+			   	.addFunction("IncrementAcceleration", &ComponentPosition::IncrementAcceleration)
 
 				.addFunction("TranslateWorldToLocal", &ComponentPosition::TranslateWorldToLocal)
 				.addFunction("TranslateLocalToWorld", &ComponentPosition::TranslateLocalToWorld)

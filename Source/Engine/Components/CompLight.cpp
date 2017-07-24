@@ -61,10 +61,6 @@ void ComponentLight::Render(const CRect& drawArea){
     glEnd();
 }*/
 
-void ComponentLight::HandleEvent(const Event* event){
-
-}
-
 int ComponentLight::NewLightSource (const float& intensityStart, const float& intensityEnd, const float& rad, const float& noise, const Vec2& offset){
     LightSource light(intensityStart, intensityEnd, rad, noise, offset);
     lightSources.push_back(light);
@@ -84,16 +80,13 @@ ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponent
     BuildVAOFirst();
 }
 
-void ComponentLightManager::AddComponent(EID id){
+void ComponentLightManager::AddComponent(EID id, EID parent){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentLight* light=new ComponentLight(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
     componentList[id]=light;
 }
 
-void ComponentLightManager::HandleEvent(const Event* event){
-
-}
 
 void ComponentLightManager::Update(){
     for(auto i=componentList.begin(); i!=componentList.end(); i++){
