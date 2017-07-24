@@ -28,6 +28,12 @@
 #define LENGINE_DEF_SCREEN_BPP    32
 
 #define LENGINE_MAX_ENTITIES      32768 //2^15
+
+#define EID_SYSTEM      0 //EID that refers to the system
+#define EID_STATEMAN    1 //EID that refers to the statemanager
+#define EID_MAPSCRIPT   2 //EID for the script belonging to the whole map
+#define EID_ALLOBJS     3 //EID that broadcasts to all components
+#define EID_MIN         10 //First EID that can be used by components
 //#define SCREEN_W 1024
 //#define SCREEN_H 800
 

@@ -724,7 +724,7 @@ function heor.Update()
 		local returnVal=heor.ropeSwing();
 		heor.platformVelocityX=0;
 		heor.platformVelocityY=0;
-		heor.CompPosition:ChangeParent(0);
+		heor.CompPosition:SetParent(0);
 		if(returnVal~=nil)then
 			heor.CompPosition:SetMovement(returnVal);
 			heor.xspd=returnVal.x;
@@ -769,7 +769,7 @@ function heor.Update()
 		heor.groundSpeed=0;
 		heor.platformVelocityX=0;
 		heor.platformVelocityY=0;
-		heor.CompPosition:ChangeParent(0);
+		heor.CompPosition:SetParent(0);
 	end
 
 	if((heor.input.keyPress.inputWhip) and (not heor.inputLock))then
@@ -914,7 +914,7 @@ function heor.Update()
 	if(heor.tileCollision.groundTouch==false)then
 		heor.xspd = heor.xspd --+ heor.platformVelocityX;
 		heor.yspd = heor.yspd --+ heor.platformVelocityY;
-		heor.CompPosition:ChangeParent(heor.parent);
+		heor.CompPosition:SetParent(heor.parent);
 		platformVelocityX=0;
 		platformVelocityY=0;
 	end
@@ -1000,7 +1000,7 @@ function heor.OnEntityCollision(entityID, packet)
 				if((thisPos.y+heor.c.HEIGHT) <= (otherPos.y + leeway) )then
 					heor.tileCollision.groundTouch=true;
 					heor.LandOnGround(otherPos.y-heor.c.HEIGHT, 0);
-					heor.CompPosition:ChangeParent(entityID);
+					heor.CompPosition:SetParent(entityID);
 
 					local vecMove = heor.CPPInterface:EntityGetMovement(entityID);
 					heor.platformVelocityX=vecMove.x;
@@ -1033,7 +1033,7 @@ function heor.OnTileDown(newPosition, newAngle)
 	heor.angle=newAngle;
 	heor.debug_tcolx=tx;
 	heor.debug_tcoly=ty;
-	heor.CompPosition:ChangeParent(heor.parent);
+	heor.CompPosition:SetParent(heor.parent);
 	heor.platformVelocityX=0;
 	heor.platformVelocityY=0;
 end

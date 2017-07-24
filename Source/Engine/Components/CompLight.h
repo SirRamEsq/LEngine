@@ -46,7 +46,6 @@ class ComponentLight : public BaseComponent{
         bool LightExists(const int& id);
 
         void Update     ();
-        void HandleEvent(const Event* event);
 
         int  NewLightSource     (const float& intensityStart, const float& intensityEnd, const float& rad, const float& noise=0.5, const Vec2& offset=Vec2(0,0));
 
@@ -60,8 +59,7 @@ class ComponentLightManager : public BaseComponentManager{
     public:
         ComponentLightManager(EventDispatcher* e);
 
-        void AddComponent(EID id);
-        void HandleEvent(const Event* event);
+        void AddComponent(EID id, EID parent = 0);
         void Update();
 
         void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, RSC_GLProgram* shaderProgram);

@@ -48,7 +48,7 @@ void ComponentCameraManager::Update(){
     }
 }
 
-void ComponentCameraManager::AddComponent(EID id){
+void ComponentCameraManager::AddComponent(EID id, EID parent){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);

@@ -36,10 +36,10 @@ function NewCamera(baseclass)
 
 		--Decide how camera will follow its parent
 		if(camera.blockFollow) then
-			camera.myPositionComp:ChangeParent(0);
+			camera.myPositionComp:SetParent(0);
 		else
 			--Auto follow by setting the position comp parent
-			camera.myPositionComp:ChangeParent(camera.LEngineData.parent);
+			camera.myPositionComp:SetParent(camera.LEngineData.parent);
 			camera.myPositionComp:SetPositionLocal(camera.pos);
 		end
 

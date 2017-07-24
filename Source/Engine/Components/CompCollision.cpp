@@ -219,7 +219,7 @@ ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseC
 
 }
 
-void ComponentCollisionManager::AddComponent(EID id){
+void ComponentCollisionManager::AddComponent(EID id, EID parent){
     compMapIt i=componentList.find(id);
     if(i!=componentList.end()){return;}
     ComponentCollision* cbox=new ComponentCollision(id, (ComponentPosition*)dependencyPosition->GetComponent(id), logFileName);

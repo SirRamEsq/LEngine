@@ -108,7 +108,7 @@ class ComponentScriptManager : public BaseComponentManager{
     public:
         ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
 
-        void AddComponent(EID id);
+        void AddComponent(EID id, EID parent=0);
 		void SetDependencies(RenderManager* rm);
 
     private:

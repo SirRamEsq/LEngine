@@ -30,8 +30,7 @@ class ComponentCameraManager : public BaseComponentManager{
         ~ComponentCameraManager();
 
         void Update();
-        void AddComponent(EID id);
-        void HandleEvent(const Event* event){}
+        void AddComponent(EID id, EID parent = 0);
 		void SetDependencies(ComponentPositionManager* pos, RenderManager* rm);
 
 		ComponentPositionManager* dependencyPosition;

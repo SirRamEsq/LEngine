@@ -18,7 +18,7 @@ class BaseComponent{
     public:
         virtual ~BaseComponent();
 
-        BaseComponent(EID id, const std::string& logName, BaseComponent* parent); 
+        BaseComponent(EID id, const std::string& logName, BaseComponent* parent=NULL); 
 
         virtual void Update()=0;
         virtual void HandleEvent(const Event* event);
@@ -28,17 +28,21 @@ class BaseComponent{
         const std::string logFileName;
         void SetEventCallbackFunction(EventFunction f);
 
+		virtual void SetParent(BaseComponent* p);
+		///wrapper around 'SetParent', used mainly for scripting interface
+		void SetParentEID(EID p);
+		virtual BaseComponent* GetParent();
+
     protected:
         EID mEntityID;
         BaseComponentManager* mManager;
 
-		//Pointer to component's parent, should be same type of component as derived class
-		BaseComponent* parent;
-
 		//Used by ComponentManager to determine if this component was already updated this frame
 		bool updatedThisFrame;
+		BaseComponent* parent;
 
     private:
+		//Pointer to component's parent, should be same type of component as derived class BaseComponent* parent;
 		///Can be used to handle an event (optional)
         EventFunction eventCallback;
 };

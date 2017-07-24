@@ -3,36 +3,54 @@
 
 #include "../BaseComponent.h"
 #include <set>
+
+//Forward-Declare for MapNode
 class ComponentPosition;
-class MapNode{
+
+/**
+ * This struct represents the current position of an entity on the map relative to its parent
+ */
+struct MapNode{
     friend ComponentPosition;
-    typedef std::set<MapNode*> tNodeSet;
 
-    public:
-        MapNode (MapNode* parent);
-        ~MapNode();
+//Functions
+    MapNode ();
+	~MapNode();
 
-        void UpdateWorld(const Coord2df& worldCoordinates, bool dirty);
-        // The coordinates passed are transformed into either world or local
-        void TranslateLocalToWorld(Coord2df& worldCoordinates);
-        void TranslateWorldToLocal(Coord2df& worldCoordinates);
+	/**
+	 * Update World Position from local coordinates and parent's world coordinates
+	 */
+	void UpdateWorld();
 
-        void ChangeParent(MapNode* parent);
-        const Coord2df * GetWorldPositionReference(){return &mPositionWorld;}
+	/**
+	 * Transforms Coordinates relative to this node into World Coordinates
+	 * This function should be called by a child node
+	 * \param [localCoordinates] The Local Coordinates of the child node
+	 */
+	Coord2df TranslateLocalToWorld(const Coord2df& localCoordinates);
+	/**
+	 * Transforms World Coordinates into Coordinates relative to this position
+	 * This function should be called by a child node
+	 * \param [worldCoordinates] The World Coordinates of the child node
+	 */
+	Coord2df TranslateWorldToLocal(const Coord2df& worldCoordinates);
 
-        MapNode* mParent;
-        bool mDirty;
+	/**
+	 * Sets parent and sets Local Coordinates accordingly
+	 * without affecting World Coordinates
+	 */
+	void SetParent(MapNode* parent);
 
-        Coord2df mPositionLocal;
-        Coord2df mPositionWorld;
+	///Returns the node at the top of the heirarchy (the node without a parent)
+	MapNode* GetRootNode();
 
-        MapNode* GetRootNode();
-
-    protected:
-        bool RemoveChild(MapNode* child);
-        void AddChild   (MapNode* child);
-
-        tNodeSet mChildren;
+//Data
+	///Pointer to parent
+	MapNode* mParent;
+	///Local representation of position relative to parent
+	Coord2df positionLocal;
+	///Absolute representation of position
+	Coord2df positionWorld;
 };
 
 class ComponentPosition : public BaseComponent{
@@ -41,16 +59,21 @@ class ComponentPosition : public BaseComponent{
         ~ComponentPosition();
 
         void Update();
-        void HandleEvent(const Event* event);
+		/// Override 'SetParent', MapNode needs to know when the parent has changed
+		void SetParent(BaseComponent* p);
 
-        Coord2df GetPositionLocal() {return mNode->mPositionLocal;}
-        Coord2df GetPositionWorld() {return mNode->mPositionWorld;}
-        Coord2df GetMovement()      {return mMovement;}
-        Coord2df GetAcceleration()  {return mAcceleration;}
-        Coord2d  GetPositionWorldInt();
+		/// Get Position Relative to Parent
+        Coord2df GetPositionLocal();
+		/// Get Position Relative to Parent Rounded to an int
         Coord2d  GetPositionLocalInt();
-        const Coord2df * GetWorldPositionReference(){return mNode->GetWorldPositionReference();}
-
+		/// Get Absolute Position
+        Coord2df GetPositionWorld();
+		/// Get Absolute Position Rounded to an int
+        Coord2d  GetPositionWorldInt();
+		/// Get Movement Vector
+        Coord2df GetMovement();
+		/// Get Acceleration Vector
+        Coord2df GetAcceleration();
 
         void SetPositionLocal   (Coord2df pos);
         void SetPositionLocalInt(Coord2d  pos);
@@ -70,20 +93,17 @@ class ComponentPosition : public BaseComponent{
         void IncrementMovement      (Coord2df mov);
         void IncrementAcceleration  (Coord2df accel);
 
+        Coord2df TranslateWorldToLocal(const Coord2df& world);
+        Coord2df TranslateLocalToWorld(const Coord2df& local);
 
-        void RoundPosition();
-        void ChangeParent(EID id);
-        Coord2df TranslateWorldToLocal(Coord2df world);
-        Coord2df TranslateLocalToWorld(Coord2df local);
-
-        MapNode* GetMapNode(){return mNode;}
+        MapNode* GetMapNode();
 
     private:
         Coord2df mMovement;
         Coord2df mAcceleration;
         float maximumSpeed;
 
-        MapNode* mNode;
+        MapNode mNode;
 };
 
 class ComponentPositionManager : public BaseComponentManager{
@@ -93,15 +113,17 @@ class ComponentPositionManager : public BaseComponentManager{
 
         void Update();
         void AddComponent(EID id, EID parent=0);
-        void AddComponent(EID id, MapNode* parent);
-        void HandleEvent(const Event* event){}
 
-        MapNode* const GetRootNode(){return mRootNode;}
-
-        static const int collisionGridDimension;
+        MapNode* const GetRootNode();
 
     private:
-        MapNode* mRootNode;
+		/**
+		 * This node is used as the root for all other mapNodes
+		 * All Position Component nodes are guaranteed to have a parent
+		 * if a Position Component doesn't have a parent itself, then the
+		 * component's node will have this node as a parent
+		 */
+        MapNode mRootNode;
 };
 
 #endif

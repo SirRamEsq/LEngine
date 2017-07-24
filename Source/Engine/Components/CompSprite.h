@@ -87,8 +87,7 @@ class ComponentSpriteManager : public BaseComponentManager{
     public:
         ComponentSpriteManager(EventDispatcher* e);
 
-        void AddComponent(EID id);
-        void HandleEvent(const Event* event);
+        void AddComponent(EID id, EID parent = 0);
         void Update();
 };
 

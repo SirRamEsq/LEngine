@@ -65,6 +65,10 @@ void EntityManager::RegisterComponentManager(BaseComponentManager* manager, int 
     componentsRegistered[order] = manager;
 }
 
+EID EntityManager::NewEntity(const std::string& name){
+	NewEntity(0, name);
+}
+
 EID EntityManager::NewEntity(EID parent, const std::string& entityName){
     EID newEntityID = entityNumber + 1;
     if(entityName!=""){
@@ -99,4 +103,10 @@ EID EntityManager::GetEIDFromName(const std::string& name) const {
     if(i==nameToEID.end()){return 0;}
 
     return i->second;
+}
+
+void EntityManager::SetParent(EID child, EID parent){
+	for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
+		i->second->SetParent(child, parent);
+	}
 }

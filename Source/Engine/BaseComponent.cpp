@@ -1,4 +1,5 @@
 #include "BaseComponent.h"
+#include "Errorlog.h"
 
 BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* p)
 	: mEntityID(id), logFileName(logName), parent(p){
@@ -6,8 +7,6 @@ BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* 
 }
 
 BaseComponent::~BaseComponent(){
-    //Event* event= new Event(mEntityID, mEntityID, MSG_COMP_DELETED, this);
-    //K_EventMan.DispatchEvent(event);
 }
 
 void BaseComponent::SetEventCallbackFunction(EventFunction f){
@@ -20,6 +19,24 @@ void BaseComponent::HandleEvent(const Event* event){
     }
 }
 
+void BaseComponent::SetParent(BaseComponent* p){
+	parent = p;
+}
+
+void BaseComponent::SetParentEID(EID p){
+	if(mManager->HasComponent(p)==false){
+		std::stringstream ss;
+		ss << "Parent with eid " << p << " Doesn't Exist";
+		ErrorLog::WriteToFile(ss.str());
+		SetParent(NULL);
+		return;
+	}
+	SetParent(mManager->GetComponent(p));
+}
+
+BaseComponent* BaseComponent::GetParent(){
+	return parent;
+}
 
 int BaseComponentManager::GetComponentCount(){
     return componentList.size();
@@ -37,9 +54,9 @@ void BaseComponentManager::DeleteComponent(EID id){
     auto comp=componentList.find(id);
     if(comp!=componentList.end()){
 		Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
-		dependencyEventDispatcher->DispatchEvent(event);
+		BroadcastEvent(&event);
 
-        componentList.erase(id)
+        componentList.erase(id);
         delete comp->second;
     }
 }
@@ -56,8 +73,8 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 	if(child->updatedThisFrame == true){return;}
 
 	//Update parent before child
-	if(child->parent != NULL){
-		auto parent = child->parent;
+	auto parent = child->GetParent();
+	if(parent != NULL){
 		if(parent->updatedThisFrame == false){
 			UpdateComponent(parent);
 		}
@@ -70,12 +87,12 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 
 void BaseComponentManager::Update(){
 	//Update all entities
-    for(i=componentList.begin(); i!=componentList.end(); i++){
+    for(auto i=componentList.begin(); i!=componentList.end(); i++){
 		UpdateComponent(i->second);
     }
 
 	//Reset all 'updatedThisFrame' bits
-	for(auto i = componentList.begin(); i !+ componentList.end(); i++){
+	for(auto i = componentList.begin(); i != componentList.end(); i++){
 		i->second->updatedThisFrame = false;
 	}
 }
@@ -89,8 +106,9 @@ void BaseComponentManager::HandleEvent(const Event* event){
 
 	if(event->message == Event::MSG::ENTITY_DELETED){
 		//if component has a parent, it needs to be changed if the parent was deleted
-		if(comp->parent != NULL){
-			if(comp->parent->GetEID() == event->sender){
+		auto parent = comp->GetParent();
+		if(parent != NULL){
+			if(parent->GetEID() == event->sender){
 				//Set parent to NULL
 				SetParent(recieverEID, 0);
 			}
@@ -127,12 +145,12 @@ void BaseComponentManager::SetParent(EID child, EID parent){
 	auto childComponent = componentList.find(child);
 	if(childComponent == componentList.end()){return;}
 	if(parent==0){
-		childComponent->parent = NULL;
+		childComponent->second->SetParent(NULL);
 		return;
 	}
 
 	auto parentComponent = componentList.find(parent);
 	if(parentComponent == componentList.end()){return;}
 
-	childComponent->parent = parentComponent;
+	childComponent->second->SetParent(parentComponent->second);
 }
