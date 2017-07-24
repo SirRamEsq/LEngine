@@ -22,7 +22,6 @@ void EntityManager::BroadcastEvent(const Event* event){
 }
 
 void EntityManager::Cleanup(){
-    //GameState* state = Kernel::stateMan.GetCurrentState();
     if(mFlagDeleteAll){
         for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
             i->second->DeleteAllComponents();
@@ -36,11 +35,14 @@ void EntityManager::Cleanup(){
     }
     if(deadEntities.empty()){return;}
 
-    std::vector<EID>::iterator i = deadEntities.begin();
-    EID id;
-    for(; i!=deadEntities.end(); i++){
-        id=*i;
+    for(auto i = deadEntities.begin(); i!=deadEntities.end(); i++){
+        EID id=*i;
+
         for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
+			//Let all entities know that this entity is about to be deleted
+			Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
+			BroadcastEvent(&event);
+
             i->second->DeleteComponent(id);
         }
 

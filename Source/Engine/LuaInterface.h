@@ -81,11 +81,21 @@ class LuaInterface{
 		//////////
 		//Events//
 		//////////
-			//These functions send out events to lua scripts
-			//Listen to all events from a certain entity
+			/**
+			 * Listen to all events from a certain entity
+			 */
 			void EventLuaObserveEntity	(EID listenerID, EID senderID);
+			/**
+			 * Broadcast an event to all entities
+			 */
 			void EventLuaBroadcastEvent (EID senderID, const std::string& event);
+			/**
+			 * Send event to all observers
+			 */
 			void EventLuaSendToObservers(EID senderID, const std::string& event);
+			/**
+			 * Directly send event to specified EID
+			 */
 			void EventLuaSendEvent		(EID senderID, EID recieverID, const std::string& event);
 
 		///////////
