@@ -135,6 +135,8 @@ void ComponentPosition::Update(){
 
 	//Increment movement by acceleration
 	mMovement= mMovement + mAcceleration;
+
+	mNode.UpdateWorld();
 }
 
 void ComponentPosition::IncrementPosition(Coord2df pos){

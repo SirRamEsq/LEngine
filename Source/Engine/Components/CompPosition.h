@@ -65,10 +65,12 @@ class ComponentPosition : public BaseComponent{
 		/// Get Position Relative to Parent
         Coord2df GetPositionLocal();
 		/// Get Position Relative to Parent Rounded to an int
+		/// \TODO get rid of this function
         Coord2d  GetPositionLocalInt();
 		/// Get Absolute Position
         Coord2df GetPositionWorld();
 		/// Get Absolute Position Rounded to an int
+		/// \TODO get rid of this function
         Coord2d  GetPositionWorldInt();
 		/// Get Movement Vector
         Coord2df GetMovement();
@@ -76,17 +78,24 @@ class ComponentPosition : public BaseComponent{
         Coord2df GetAcceleration();
 
         void SetPositionLocal   (Coord2df pos);
+		/// \TODO get rid of this function
         void SetPositionLocalInt(Coord2d  pos);
         void SetMovement        (Coord2df mov);
         void SetAcceleration    (Coord2df acl);
         void SetMaxSpeed        (float speed ){maximumSpeed=speed;}
 
+		/// \TODO get rid of this function
         void SetPositionLocalX  (float x);
+		/// \TODO get rid of this function
         void SetMovementX       (float x);
+		/// \TODO get rid of this function
         void SetAccelerationX   (float x);
 
+		/// \TODO get rid of this function
         void SetPositionLocalY  (float y);
+		/// \TODO get rid of this function
         void SetMovementY       (float y);
+		/// \TODO get rid of this function
         void SetAccelerationY   (float y);
 
         void IncrementPosition      (Coord2df pos);
