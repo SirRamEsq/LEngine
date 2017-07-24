@@ -21,10 +21,6 @@ ComponentScript::ComponentScript(EID id, lua_State* state, EventDispatcher* ed, 
 ComponentScript::~ComponentScript(){
 	//Let all observers know that this entity has been deleted
 	EventLuaSendToObservers(entityDeletedDescription);
-
-	//remove this entity from all observer lists by sending an event to all entities
-	Event event (GetEID(), EID_ALLOBJS, Event::MSG::ENTITY_DELETED, entityDeletedDescription);
-	dependencyEventDispatcher->DispatchEvent(event);
 }
 
 void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp){

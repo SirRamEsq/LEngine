@@ -26,17 +26,20 @@ int BaseComponentManager::GetComponentCount(){
 }
 
 void BaseComponentManager::DeleteAllComponents(){
-    compMapIt comp=componentList.begin();
-    for(;comp!=componentList.end();comp++){
+    auto comp=componentList.begin();
+    for(auto comp = componentList.begin(); comp != componentList.end(); comp++){
         delete comp->second;
     }
     componentList.clear();
 }
 
 void BaseComponentManager::DeleteComponent(EID id){
-    compMapIt comp=componentList.find(id);
+    auto comp=componentList.find(id);
     if(comp!=componentList.end()){
-        componentList.erase(id);
+		Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
+		dependencyEventDispatcher->DispatchEvent(event);
+
+        componentList.erase(id)
         delete comp->second;
     }
 }
@@ -66,20 +69,33 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 }
 
 void BaseComponentManager::Update(){
+	//Update all entities
     for(i=componentList.begin(); i!=componentList.end(); i++){
 		UpdateComponent(i->second);
     }
 
+	//Reset all 'updatedThisFrame' bits
 	for(auto i = componentList.begin(); i !+ componentList.end(); i++){
-		//Reset all 'updatedThisFrame' bits
 		i->second->updatedThisFrame = false;
 	}
 }
 
 void BaseComponentManager::HandleEvent(const Event* event){
-    BaseComponent* comp=GetComponent(event->reciever);
+	EID recieverEID = event->reciever;
+    BaseComponent* comp=GetComponent(recieverEID);
     if(comp==NULL){return;}
+
     comp->HandleEvent(event);
+
+	if(event->message == Event::MSG::ENTITY_DELETED){
+		//if component has a parent, it needs to be changed if the parent was deleted
+		if(comp->parent != NULL){
+			if(comp->parent->GetEID() == event->sender){
+				//Set parent to NULL
+				SetParent(recieverEID, 0);
+			}
+		}
+	}
 }
 
 void BaseComponentManager::BroadcastEvent(const Event* event){
@@ -106,12 +122,17 @@ void BaseComponentManager::AddComponent(std::unique_ptr<BaseComponent> comp){
 }
 
 void BaseComponentManager::SetParent(EID child, EID parent){
-	if((child==0)or(parent==0)){return;}
+	if(child==0){return;}
 
 	auto childComponent = componentList.find(child);
-	auto parentComponent = componentList.find(parent);
+	if(childComponent == componentList.end()){return;}
+	if(parent==0){
+		childComponent->parent = NULL;
+		return;
+	}
 
-	if((childComponent == componentList.end())or(parentComponent == componentList.end())){return;}
+	auto parentComponent = componentList.find(parent);
+	if(parentComponent == componentList.end()){return;}
 
 	childComponent->parent = parentComponent;
 }

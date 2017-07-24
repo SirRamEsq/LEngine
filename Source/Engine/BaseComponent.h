@@ -39,6 +39,7 @@ class BaseComponent{
 		bool updatedThisFrame;
 
     private:
+		///Can be used to handle an event (optional)
         EventFunction eventCallback;
 };
 
@@ -47,28 +48,52 @@ class BaseComponentManager{
         BaseComponentManager(const std::string& logName, EventDispatcher* e)
             : logFileName(logName), eventDispatcher(e){}
 
-        //for better cache locality, may want to change this from a map of pointers to vector of basecomponents
-        //...and use smart pointers, as Valgrind reports a mem leak in the Delete component function
+        /// \TODO use smart pointers, Valgrind reports a mem leak in the Delete component function
         typedef std::map<EID, BaseComponent*> compMap;
         typedef compMap::iterator compMapIt;
 
-        virtual void    AddComponent        (EID id, EID parent=0)=0; //Create a new component with the specified ID
-        virtual void    AddComponent        (std::unique_ptr<BaseComponent> comp); //Add a loaded component (good for mocking)
-        void            DeleteAllComponents ();
+	   	///Create a new component with the specified ID
+        virtual void    AddComponent        (EID id, EID parent=0)=0;
+ 		///Add a loaded component (good for mocking)
+		virtual void    AddComponent        (std::unique_ptr<BaseComponent> comp);
+
+		void            DeleteAllComponents ();
         void            DeleteComponent     (EID id);
+
         bool            HasComponent        (EID id);
         BaseComponent*  GetComponent        (EID id);
         int             GetComponentCount   ();
 
-        virtual void Update();
+		/**
+		 * Updates all components once
+		 * Sets and unsets the component's 'updatedThisFrame' boolean
+		 **/
+        void Update();
+		/**
+		 * Handles recieved events
+		 * If an entity is deleted that acts as a parent for another entity
+		 * the componentManager should set that entity's parent to NULL
+		 * The component that has the deleted entity as a parent may also access the old parent
+		 * and change parents before the manager forces the parent to be null
+		 */
         virtual void HandleEvent(const Event* event);
         virtual void BroadcastEvent(const Event* event);
+		/**
+		 * Sets parent of a component
+		 * Both parent and child must exist as a component of this manager
+		 * if parent is 0, then parent of the child is set to NULL
+		 */
 		virtual void SetParent(EID child, EID parent);
 
         const std::string logFileName;
 
     protected:
-		void UpdateComponent(BaseComponent* child);
+		/**
+		 * Recursive function, updates parents before children
+		 * sets 'updatedThisFrame' on components after being updated
+		 * otherwise the entities are ordered and updated by EID
+		 */
+		virtual void UpdateComponent(BaseComponent* child);
 
         std::map<EID, BaseComponent*> componentList;
         EventDispatcher* eventDispatcher;

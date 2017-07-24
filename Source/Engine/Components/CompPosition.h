@@ -92,7 +92,7 @@ class ComponentPositionManager : public BaseComponentManager{
         ~ComponentPositionManager();
 
         void Update();
-        void AddComponent(EID id);
+        void AddComponent(EID id, EID parent=0);
         void AddComponent(EID id, MapNode* parent);
         void HandleEvent(const Event* event){}
 

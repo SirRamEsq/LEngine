@@ -104,12 +104,16 @@ Coord2d ComponentPosition::GetPositionLocalInt(){
 }
 
 void ComponentPosition::Update(){
+	//Clamp movement speed to maximum
 	if		(mMovement.x > maximumSpeed ){mMovement.x =  maximumSpeed;}
 	else if (mMovement.x < -maximumSpeed){mMovement.x = -maximumSpeed;}
 	if		(mMovement.y > maximumSpeed ){mMovement.y =  maximumSpeed;}
 	else if (mMovement.y < -maximumSpeed){mMovement.y = -maximumSpeed;}
 
+	//Increment local position by movement speed
 	mNode->mPositionLocal= mNode->mPositionLocal + mMovement;
+
+	//Increment movement by acceleration
 	mMovement= mMovement + mAcceleration;
 }
 
@@ -122,18 +126,6 @@ void ComponentPosition::ChangeParent(EID id){
 	else{node=pos->GetMapNode();}
 
 	mNode->ChangeParent(node);
-}
-
-void ComponentPositionManager::AddComponent(EID id){
-	AddComponent(id, mRootNode);
-}
-
-void ComponentPositionManager::AddComponent(EID id, MapNode* parent){
-	compMapIt i=componentList.find(id);
-	if(i!=componentList.end()){return;}
-	ComponentPosition* pos=new ComponentPosition(id, parent, logFileName);
-	pos->mManager=this;
-	componentList[id]=pos;
 }
 
 void ComponentPosition::IncrementPosition(Coord2df pos){
@@ -210,4 +202,15 @@ Coord2df ComponentPosition::TranslateLocalToWorld(Coord2df local){
 	return local;
 }
 
+void ComponentPositionManager::AddComponent(EID id){
+	AddComponent(id, mRootNode);
+}
+
+void ComponentPositionManager::AddComponent(EID id, MapNode* parent){
+	compMapIt i=componentList.find(id);
+	if(i!=componentList.end()){return;}
+	ComponentPosition* pos=new ComponentPosition(id, parent, logFileName);
+	pos->mManager=this;
+	componentList[id]=pos;
+}
 
