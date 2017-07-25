@@ -62,7 +62,7 @@ function NewCamera(baseclass)
 		else
 			local worldPos = camera.myPositionComp:GetPositionWorld():Round()
 			local localPos = camera.myPositionComp:GetPositionLocal():Round()
-			local newPos = CPP.Coord2d(camera.localDefault.x,camera.localDefault.y)
+			local newPos = CPP.Coord2df(camera.localDefault.x,camera.localDefault.y)
 
 			if (worldPos.x < 0) then
 				newPos.x = localPos.x - worldPos.x
@@ -101,7 +101,7 @@ function NewCamera(baseclass)
 				end
 			end
 
-			camera.myPositionComp:SetPositionLocal(newPos):Round()
+			camera.myPositionComp:SetPositionLocal(newPos)
 
 		end
 	end
