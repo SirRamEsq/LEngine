@@ -63,7 +63,6 @@ class LuaInterface{
 			EID				  EntityGetInterfaceByName	(const std::string& name);
 			luabridge::LuaRef EntityGetInterface		(const EID& id);
 			Coord2df		  EntityGetPositionWorld	(EID entity);
-			Coord2d			  EntityGetPositionWorldInt (EID entity);
 			Coord2df		  EntityGetMovement			(EID entity);
 
 			EID EntityNew	 (const std::string& scriptName, int x, int y, MAP_DEPTH depth, EID parent,

@@ -9,7 +9,6 @@
 #include <vector>
 #include <map>
 
-/// \TODO Add components into EntityManager; They're already added in and sorted by order. If you move them from StateManager to here, then that same order can be used to update the component Managers. Also adds a generic way to add more component managers should the need arise and adjust the order they update in
 
 /**
  * Manages Entity IDs (EIDs), Component Managers, and ensures that deleted entities are fully deleted at the appropriate time
@@ -40,12 +39,9 @@ class EntityManager{
         /**
 		 * Creates a New Entity
 		 * Can optionally pass in a name to associate with the EID
-		 * Can optionally pass in a parent
 		 * \return The new Entity ID value
 		 */
-        EID NewEntity(EID parent=0, const std::string& name=""); //return an EID that is not in use
-		///Wrapper around other NewEntity function
-		EID NewEntity(const std::string& name);
+		EID NewEntity(const std::string& name="");
 		/**
 		 * Can lookup an eid by a string name, if the entity was given one upon creation
 		 */

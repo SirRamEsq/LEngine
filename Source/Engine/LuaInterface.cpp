@@ -545,16 +545,7 @@ Coord2df LuaInterface::EntityGetPositionWorld(EID entity){
 	}
 	return pos->GetPositionWorld();
 }
-Coord2d LuaInterface::EntityGetPositionWorldInt(EID entity){
-	ComponentPosition* pos = ((ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity));
-	if(pos == NULL){
-		std::stringstream ss;
-		ss << "EntityGetPositionWorldInt was passed entity id " << entity << " Which does not exist";
-		ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
-		return Coord2d(0,0);
-	}
-	return pos->GetPositionWorldInt();
-}
+
 Coord2df LuaInterface::EntityGetMovement(EID entity){
 	return ((ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity))->GetMovement();
 }
@@ -682,7 +673,6 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("EntityDelete",			&LuaInterface::EntityDelete)
 				.addFunction("EntityGetInterfaceByName",&LuaInterface::EntityGetInterfaceByName)
 				.addFunction("EntityGetPositionWorld",	&LuaInterface::EntityGetPositionWorld)
-				.addFunction("EntityGetPositionWorldInt",  &LuaInterface::EntityGetPositionWorldInt)
 				.addFunction("EntityGetMovement",		&LuaInterface::EntityGetMovement)
 
 				.addFunction("EventLuaObserveEntity", &LuaInterface::EventLuaObserveEntity)
@@ -819,6 +809,7 @@ void LuaInterface::ExposeCPP(){
 				.addConstructor <void (*) (float, float)> ()//Constructor
 				.addData("x", &Coord2df::x)
 				.addData("y", &Coord2df::y)
+				.addFunction("Round", &Coord2df::Round)
 			.endClass()
 
 			.beginClass<BaseComponent>("BaseComponent")
@@ -830,19 +821,10 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetPositionWorld",	  &ComponentPosition::GetPositionWorld)
 				.addFunction("GetMovement",			  &ComponentPosition::GetMovement)
 				.addFunction("GetAcceleration",		  &ComponentPosition::GetAcceleration)
-				.addFunction("GetPositionWorldInt",   &ComponentPosition::GetPositionWorldInt)
-				.addFunction("GetPositionLocalInt",   &ComponentPosition::GetPositionLocalInt)
 
 				.addFunction("SetPositionLocal",	  &ComponentPosition::SetPositionLocal)
-				.addFunction("SetPositionLocalInt",		 &ComponentPosition::SetPositionLocalInt)
 				.addFunction("SetMovement",			  &ComponentPosition::SetMovement)
 				.addFunction("SetAcceleration",		  &ComponentPosition::SetAcceleration)
-				.addFunction("SetPositionLocalX",	  &ComponentPosition::SetPositionLocalX)
-				.addFunction("SetMovementX",		  &ComponentPosition::SetMovementX)
-				.addFunction("SetAccelerationX",	  &ComponentPosition::SetAccelerationX)
-				.addFunction("SetPositionLocalY",	  &ComponentPosition::SetPositionLocalY)
-				.addFunction("SetMovementY",		  &ComponentPosition::SetMovementY)
-				.addFunction("SetAccelerationY",	  &ComponentPosition::SetAccelerationY)
 				.addFunction("SetMaxSpeed",				&ComponentPosition::SetMaxSpeed)
 
 				.addFunction("IncrementPosition",	  &ComponentPosition::IncrementMovement)

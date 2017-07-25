@@ -224,7 +224,8 @@ void ComponentLightManager::BuildVAO(){
         auto lightSources=((ComponentLight*)(i->second))->lightSources;
         for(auto lightSource=lightSources.begin(); lightSource!=lightSources.end(); lightSource++){
             float radius = lightSource->radius;
-            Coord2d pos = ((ComponentLight*)(i->second))->myPos->GetPositionWorldInt();
+            auto pos = ((ComponentLight*)(i->second))->myPos->GetPositionWorld();
+			pos = pos.Round();
 
             //Will subtract camera translation in shader later on during rendering
 

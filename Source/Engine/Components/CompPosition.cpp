@@ -105,14 +105,9 @@ void ComponentPosition::SetParent(BaseComponent* p){
 Coord2df ComponentPosition::GetPositionWorld(){
 	return mNode.positionWorld;
 }
-Coord2d ComponentPosition::GetPositionWorldInt(){
-	return Coord2d( floor(mNode.positionWorld.x + 0.5f), floor(mNode.positionWorld.y + 0.5f) );
-}
+
 Coord2df ComponentPosition::GetPositionLocal(){
 	return mNode.positionLocal;
-}
-Coord2d ComponentPosition::GetPositionLocalInt(){
-	return Coord2d( floor(mNode.positionLocal.x + 0.5f), floor(mNode.positionLocal.y + 0.5f) );
 }
 
 Coord2df ComponentPosition::GetMovement(){
@@ -154,23 +149,9 @@ void ComponentPosition::SetPositionLocal	(Coord2df pos){
 	mNode.positionLocal	 = pos;
 	mNode.UpdateWorld();
 }
-void ComponentPosition::SetPositionLocalInt    (Coord2d pos){
-	SetPositionLocal(Coord2df(pos.x, pos.y));
-}
 void ComponentPosition::SetMovement			(Coord2df mov){mMovement=mov;}
 void ComponentPosition::SetAcceleration		(Coord2df acl){mAcceleration=acl;}
 
-void ComponentPosition::SetPositionLocalX	(float x){
-	SetPositionLocal(Coord2df(x, mNode.positionLocal.y));
-}
-void ComponentPosition::SetMovementX		(float x){mMovement.x=x;}
-void ComponentPosition::SetAccelerationX	(float x){mAcceleration.x=x;}
-
-void ComponentPosition::SetPositionLocalY	(float y){
-	SetPositionLocal(Coord2df(mNode.positionLocal.x, y));
-}
-void ComponentPosition::SetMovementY		(float y){mMovement.y=y;}
-void ComponentPosition::SetAccelerationY	(float y){mAcceleration.y=y;}
 
 Coord2df ComponentPosition::TranslateWorldToLocal(const Coord2df& world){
 	//Node is guarnteed to have a parent, if the component doesn't have a parent
