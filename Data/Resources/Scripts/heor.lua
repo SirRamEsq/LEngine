@@ -712,7 +712,7 @@ end
 
 function heor.CanClimb()
 	if(heor.climb.LAYER == nil)then return end
-	local world = heor.CompPosition:GetPositionWorldInt()
+	local world = heor.CompPosition:GetPositionWorld():Round()
 
 	return heor.climb.LAYER:HasTile( (world.x + (heor.c.WIDTH/2))/16, (world.y + (heor.c.HEIGHT/2))/16 )
 end
@@ -1017,7 +1017,7 @@ end
 
 
 function heor.OnTileCollision(packet)
-	local absoluteCoords=heor.CompPosition:GetPositionWorldInt();
+	local absoluteCoords=heor.CompPosition:GetPositionWorld():Round()
 	heor.tileCollision.OnTileCollision(packet, heor.xspd+heor.platformVelocityX, heor.yspd+heor.platformVelocityY, absoluteCoords.x, absoluteCoords.y);
 end
 

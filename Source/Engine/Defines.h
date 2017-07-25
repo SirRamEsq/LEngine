@@ -16,7 +16,7 @@
 #include <GL/glu.h>
 #include <GL/gl.h>
 
-
+#include "math.h"
 #include <memory>
 #include <sstream>
 
@@ -175,6 +175,9 @@ class Coord2df{
             newCoord.y = y - c.y;
             return newCoord;
         }
+		inline Coord2df Round() const{
+			return Coord2df( floor(x + 0.5f), floor(y + 0.5f) );
+		}
 };
 
 class CRect{

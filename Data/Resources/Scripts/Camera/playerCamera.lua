@@ -53,15 +53,15 @@ function NewCamera(baseclass)
 
 	function camera.Update()
 		if(camera.blockFollow) then
-			parentPos = camera.CPPInterface:EntityGetPositionWorldInt(camera.parent)
+			parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
 
 			parentPos.x = (math.floor(parentPos.x/camera.w) * camera.w)
 			parentPos.y = (math.floor(parentPos.y/camera.h) * camera.h)
 
-			camera.myPositionComp:SetPositionLocalInt(parentPos);
+			camera.myPositionComp:SetPositionLocal(parentPos):Round()
 		else
-			local worldPos = camera.myPositionComp:GetPositionWorldInt()
-			local localPos = camera.myPositionComp:GetPositionLocalInt()
+			local worldPos = camera.myPositionComp:GetPositionWorld():Round()
+			local localPos = camera.myPositionComp:GetPositionLocal():Round()
 			local newPos = CPP.Coord2d(camera.localDefault.x,camera.localDefault.y)
 
 			if (worldPos.x < 0) then
@@ -101,7 +101,7 @@ function NewCamera(baseclass)
 				end
 			end
 
-			camera.myPositionComp:SetPositionLocalInt(newPos)
+			camera.myPositionComp:SetPositionLocal(newPos):Round()
 
 		end
 	end

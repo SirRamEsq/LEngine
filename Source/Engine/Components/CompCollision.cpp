@@ -167,7 +167,9 @@ void ComponentCollision::OrderList(){
 }
 
 const CRect& ComponentCollision::ColBox::ToGameCoords(){
-    Coord2d pos=myPos->GetPositionWorldInt();
+	auto posFloat = myPos->GetPositionWorld().Round();
+
+    Coord2d pos (posFloat.x, posFloat.y);
     gameCoords.x = pos.x + rect.x;
     gameCoords.y = pos.y + rect.y;
     gameCoords.w = rect.w;
