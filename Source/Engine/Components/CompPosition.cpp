@@ -52,7 +52,6 @@ MapNode* MapNode::GetRootNode(){
 }
 
 Coord2df MapNode::TranslateLocalToWorld(const Coord2df& localCoordinates){
-	/// \TODO Setup unit test 
 	Coord2df worldCoordinates(localCoordinates);
 	if(mParent==NULL){return worldCoordinates;}
 
@@ -64,7 +63,6 @@ Coord2df MapNode::TranslateLocalToWorld(const Coord2df& localCoordinates){
 }
 
 Coord2df MapNode::TranslateWorldToLocal(const Coord2df& worldCoordinates){
-	/// \TODO Setup unit test
 	Coord2df localCoordinates(worldCoordinates);
 	if(mParent==NULL){return localCoordinates;}
 
@@ -149,8 +147,16 @@ void ComponentPosition::SetPositionLocal	(Coord2df pos){
 	mNode.positionLocal	 = pos;
 	mNode.UpdateWorld();
 }
-void ComponentPosition::SetMovement			(Coord2df mov){mMovement=mov;}
-void ComponentPosition::SetAcceleration		(Coord2df acl){mAcceleration=acl;}
+void ComponentPosition::SetPositionLocalX(float x){SetPositionLocal(Coord2df(x, mNode.positionLocal.y));}
+void ComponentPosition::SetPositionLocalY(float y){SetPositionLocal(Coord2df(mNode.positionLocal.x, y));}
+
+void ComponentPosition::SetMovement		(Coord2df mov){mMovement=mov;}
+void ComponentPosition::SetMovementX(float x){SetMovement(Coord2df(x,mMovement.y));}
+void ComponentPosition::SetMovementY(float y){SetMovement(Coord2df(mMovement.x, y));}
+
+void ComponentPosition::SetAcceleration	(Coord2df acl){mAcceleration=acl;}
+void ComponentPosition::SetAccelerationX(float x){SetAcceleration(Coord2df(x,mAcceleration.y));}
+void ComponentPosition::SetAccelerationY(float y){SetAcceleration(Coord2df(mAcceleration.x, y));}
 
 
 Coord2df ComponentPosition::TranslateWorldToLocal(const Coord2df& world){

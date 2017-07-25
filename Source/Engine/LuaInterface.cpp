@@ -823,8 +823,17 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetAcceleration",		  &ComponentPosition::GetAcceleration)
 
 				.addFunction("SetPositionLocal",	  &ComponentPosition::SetPositionLocal)
+				.addFunction("SetPositionLocalX",	  &ComponentPosition::SetPositionLocalX)
+				.addFunction("SetPositionLocalY",	  &ComponentPosition::SetPositionLocalY)
+
 				.addFunction("SetMovement",			  &ComponentPosition::SetMovement)
+				.addFunction("SetMovementX",			  &ComponentPosition::SetMovementX)
+				.addFunction("SetMovementY",			  &ComponentPosition::SetMovementY)
+
 				.addFunction("SetAcceleration",		  &ComponentPosition::SetAcceleration)
+				.addFunction("SetAccelerationX",		  &ComponentPosition::SetAccelerationX)
+				.addFunction("SetAccelerationY",		 &ComponentPosition::SetAccelerationY)
+
 				.addFunction("SetMaxSpeed",				&ComponentPosition::SetMaxSpeed)
 
 				.addFunction("IncrementPosition",	  &ComponentPosition::IncrementMovement)

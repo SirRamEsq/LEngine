@@ -71,9 +71,27 @@ class ComponentPosition : public BaseComponent{
 		/// Get Acceleration Vector
         Coord2df GetAcceleration();
 
+		///Sets local position
         void SetPositionLocal   (Coord2df pos);
+		///Wrapper around SetPositionLocal
+		void SetPositionLocalX  (float x);
+		///Wrapper around SetPositionLocal
+		void SetPositionLocalY (float y);
+
+		///Sets Movement Speed
         void SetMovement        (Coord2df mov);
+		///Wrapper around SetMovement
+		void SetMovementX		(float x);
+		///Wrapper around SetMovement
+		void SetMovementY		(float y);
+
+		///Sets Acceleration Speed
         void SetAcceleration    (Coord2df acl);
+		///Wrapper around SetAcceleration
+        void SetAccelerationX   (float x);
+		///Wrapper around SetAcceleration
+        void SetAccelerationY   (float y);
+
         void SetMaxSpeed        (float speed ){maximumSpeed=speed;}
 
         void IncrementPosition      (Coord2df pos);
