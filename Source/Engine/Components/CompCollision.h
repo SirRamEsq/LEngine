@@ -159,8 +159,8 @@ struct CollisionGrid{
 class ComponentCollisionManager : public BaseComponentManager{
     public:
         ComponentCollisionManager(EventDispatcher* e);
+		void Update();
         void AddComponent(EID id, EID parent=0);
-        void Update();
         void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
         void UpdateCheckTileCollision   (const RSC_Map* currentMap);

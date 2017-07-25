@@ -89,9 +89,15 @@ void ComponentLightManager::AddComponent(EID id, EID parent){
 
 
 void ComponentLightManager::Update(){
+	//Update all entities
     for(auto i=componentList.begin(); i!=componentList.end(); i++){
-        i->second->Update();
+		UpdateComponent(i->second);
     }
+
+	//Reset all 'updatedThisFrame' bits
+	for(auto i = componentList.begin(); i != componentList.end(); i++){
+		i->second->updatedThisFrame = false;
+	}
 
     BuildVAO();
 }

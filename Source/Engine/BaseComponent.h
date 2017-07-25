@@ -33,12 +33,12 @@ class BaseComponent{
 		void SetParentEID(EID p);
 		virtual BaseComponent* GetParent();
 
+		//Used by ComponentManager to determine if this component was already updated this frame
+		bool updatedThisFrame;
     protected:
         EID mEntityID;
         BaseComponentManager* mManager;
 
-		//Used by ComponentManager to determine if this component was already updated this frame
-		bool updatedThisFrame;
 		BaseComponent* parent;
 
     private:

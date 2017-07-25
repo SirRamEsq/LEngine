@@ -172,12 +172,6 @@ void ComponentPosition::SetPositionLocalY	(float y){
 void ComponentPosition::SetMovementY		(float y){mMovement.y=y;}
 void ComponentPosition::SetAccelerationY	(float y){mAcceleration.y=y;}
 
-void ComponentPositionManager::Update(){
-	for(auto i = componentList.begin(); i != componentList.end(); i++){
-		i->second->Update();
-	}
-}
-
 Coord2df ComponentPosition::TranslateWorldToLocal(const Coord2df& world){
 	//Node is guarnteed to have a parent, if the component doesn't have a parent
 	//then the node's parent is set to the rootNode owned by the Manager

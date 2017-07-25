@@ -41,13 +41,6 @@ ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseCompone
 ComponentCameraManager::~ComponentCameraManager(){
 }
 
-void ComponentCameraManager::Update(){
-    compMapIt i=componentList.begin();
-    for(; i!=componentList.end(); i++){
-        i->second->Update();
-    }
-}
-
 void ComponentCameraManager::AddComponent(EID id, EID parent){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}

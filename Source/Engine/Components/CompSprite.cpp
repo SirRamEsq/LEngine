@@ -276,10 +276,3 @@ void ComponentSpriteManager::AddComponent(EID id, EID parent){
     componentList[id]=sprite;
 }
 
-
-void ComponentSpriteManager::Update(){
-    for(auto i=componentList.begin(); i!=componentList.end(); i++){
-       i->second->Update();
-    }
-}
-
