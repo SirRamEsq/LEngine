@@ -124,7 +124,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	}
 
 	SECTION("Can Get Root Node"){
-		REQUIRE(child->GetMapNode()->GetRootNode() == posMan->GetRootNode());
+		REQUIRE(posComp->GetMapNode()->GetRootNode() == posMan->GetRootNode());
 	}
 
 	Kernel::Close();
