@@ -120,7 +120,6 @@ class ComponentPositionManager : public BaseComponentManager{
         ComponentPositionManager(EventDispatcher* e);
         ~ComponentPositionManager();
 
-        void Update();
         void AddComponent(EID id, EID parent=0);
 
         MapNode* const GetRootNode();

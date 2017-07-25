@@ -452,6 +452,7 @@ void ComponentCollisionManager::Update(){
     that was collided with is the reciever and the boxid is the extra data.
     */
 
+	/// \TODO make this manager respect the parent child relationship
 	GameStateManager* gs = &K_StateMan;
 	GameState* state = gs->GetCurrentState();
 	auto stateMap = state->GetCurrentMap();

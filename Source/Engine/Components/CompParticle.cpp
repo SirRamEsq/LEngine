@@ -512,13 +512,6 @@ void             ComponentParticle::DeleteParticleCreators(){
 //////////////////////////////
 //Component Particle Manager//
 //////////////////////////////
-void ComponentParticleManager::Update(){
-    compMapIt i=componentList.begin();
-    for(; i!=componentList.end(); i++){
-        i->second->Update();
-    }
-}
-
 ComponentParticleManager::ComponentParticleManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_PARTICLE", e){
 }
 

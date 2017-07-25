@@ -76,6 +76,7 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 	auto parent = child->GetParent();
 	if(parent != NULL){
 		if(parent->updatedThisFrame == false){
+			//Recurse update function with parent
 			UpdateComponent(parent);
 		}
 	}

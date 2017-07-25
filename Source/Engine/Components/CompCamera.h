@@ -29,7 +29,6 @@ class ComponentCameraManager : public BaseComponentManager{
         ComponentCameraManager(EventDispatcher* e);
         ~ComponentCameraManager();
 
-        void Update();
         void AddComponent(EID id, EID parent = 0);
 		void SetDependencies(ComponentPositionManager* pos, RenderManager* rm);
 
