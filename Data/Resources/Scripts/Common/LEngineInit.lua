@@ -21,6 +21,7 @@ local NewLEngine = function ()
     LEngine.entityID   =id;
     LEngine.objType    =objType;
     LEngine.name       =name;
+	if (CPP.interface == nil) then error("LEngine::Initialize - CPP.interface is nil") end
   end
 
   return LEngine

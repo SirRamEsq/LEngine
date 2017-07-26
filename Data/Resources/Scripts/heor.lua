@@ -199,7 +199,6 @@ function heor.Initialize()
 	heor.CPPInterface = CPP.interface; 
 	heor.EID					= heor.LEngineData.entityID;
 
-
 	local EID = heor.EID
 	heor.CPPInterface:ListenForInput(EID, "up"	 );
 	heor.CPPInterface:ListenForInput(EID, "down" );
@@ -274,6 +273,8 @@ function heor.Initialize()
 
 	heor.currentMap = heor.CPPInterface:GetMap()
 	heor.climb.LAYER = heor.currentMap:GetTileLayer(heor.climb.LAYER_NAME)
+
+	CPP.interface:WriteError(heor.EID, "Heor Initialized");
 end
 
 
