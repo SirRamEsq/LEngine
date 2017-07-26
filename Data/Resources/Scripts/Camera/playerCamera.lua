@@ -34,12 +34,20 @@ function NewCamera(baseclass)
 
 		camera.myPositionComp=camera.CPPInterface:GetPositionComponent(camera.EID);
 
+		--Set parent for All Component Managers (That have been added thus far: position and script)
+		--This will ensure that the parent script will be updated before this script
+		--Therefore, the entity the camera is following will move before the camera does
+		--This will ensure that the camera will always follow an up-to-date position and not lag behind
+		camera.CPPInterface:WriteError("Attempting to set Parent");
+		CPP.interface:SetParent(camera.EID, camera.parent)
+		camera.CPPInterface:WriteError("Parent set");
+
 		--Decide how camera will follow its parent
 		if(camera.blockFollow) then
+			--Remove parent from position component
 			camera.myPositionComp:SetParent(0);
 		else
-			--Auto follow by setting the position comp parent
-			camera.myPositionComp:SetParent(camera.LEngineData.parent);
+			--Keep position component parent
 			camera.myPositionComp:SetPositionLocal(camera.pos);
 		end
 
@@ -47,8 +55,12 @@ function NewCamera(baseclass)
 		camera.CPPInterface:EventLuaObserveEntity(camera.EID, camera.parent);
 
 		local map = camera.CPPInterface:GetMap()
+		if(map == nil)then 
+			camera.CPPInterface:WriteError("Tried to get map from CPPInterface, map is nil");
+		end
 		camera.mapWidth = map:GetWidthPixels()
 		camera.mapHeight = map:GetHeightPixels()
+		camera.CPPInterface:WriteError("Camera Initialized");
 	end
 
 	function camera.Update()

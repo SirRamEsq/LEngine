@@ -7,6 +7,8 @@ function cppTEST.NEWTESTCLASS(baseclass)
 		test.depth        = test.LEngineData.depth;
 		test.parent       = test.LEngineData.parent;
 		test.CPPInterface = CPP.interface; 
+		test.name=			test.LEngineData.name
+		test.objType=test.LEngineData.objType
 		test.EID          = test.LEngineData.entityID;
 		test.correctKeyPress = "up"
 		test.incorrectKeyPress = "down"
@@ -41,7 +43,23 @@ function cppTEST.NEWTESTCLASS(baseclass)
 		test.CPPInterface:EventLuaObserveEntity(test.EID, 31337)
 		test.CPPInterface:WriteError(test.EID, "Observing 31337")
 	end
-	
+
+	function test.PrintDepth()
+		CPP.interface:WriteError(test.EID, tostring(test.depth))
+	end
+	function test.PrintParent()
+		CPP.interface:WriteError(test.EID, tostring(test.parent))
+	end
+	function test.PrintEID()
+		CPP.interface:WriteError(test.EID, tostring(test.EID))
+	end
+	function test.PrintName()
+		CPP.interface:WriteError(test.EID, tostring(test.name))
+	end
+	function test.PrintType()
+		CPP.interface:WriteError(test.EID, tostring(test.objType))
+	end
+
 	return test
 end
 
