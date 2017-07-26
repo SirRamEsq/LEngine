@@ -75,6 +75,29 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		REQUIRE(lastError == "KeyRelease: Correct Input");
 	}
 
+	SECTION("Ensure that the LEngine module is correctly loaded"){
+		auto scriptComponent = (ComponentScript*) scriptMan->GetComponent(eid);
+
+		std::string mapDepthString = "10";
+		std::string parentString = "0";
+		std::string eidString = "20";
+
+		scriptComponent->RunFunction("PrintDepth");
+		REQUIRE(lastError == mapDepthString);
+
+		scriptComponent->RunFunction("PrintParent");
+		REQUIRE(lastError == parentString);
+
+		scriptComponent->RunFunction("PrintEID");
+		REQUIRE(lastError == eidString);
+
+		scriptComponent->RunFunction("PrintName");
+		REQUIRE(lastError == scriptName);
+
+		scriptComponent->RunFunction("PrintType");
+		REQUIRE(lastError == scriptType);
+	}
+
 	SECTION("Ensure Lua events can be sent, recieved, and interpeted"){
 		EID newEID = 31337;
 		scriptMan->AddComponent(newEID);

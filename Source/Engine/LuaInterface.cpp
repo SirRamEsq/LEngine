@@ -640,13 +640,19 @@ void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std:
 	if(script==NULL){return;}
 	script->HandleEvent(&e);
 }
-
+///////////
+//Handles//
+///////////
 RSC_Map* LuaInterface::GetMap(){
 	return parentState->GetCurrentMap();
 }
 
-
-
+/////////
+//Other//
+/////////
+void LuaInterface::SetParent(EID child, EID parent){
+	parentState->entityMan.SetParent(child, parent);
+}
 
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
@@ -681,6 +687,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("EventLuaSendToObservers",&LuaInterface::EventLuaSendToObservers)
 
 				.addFunction("GetMap",		&LuaInterface::GetMap)
+				.addFunction("SetParent",	&LuaInterface::SetParent)
 
 			.endClass()
 

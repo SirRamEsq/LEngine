@@ -107,6 +107,12 @@ class LuaInterface{
 		///////////
 			void SetErrorCallbackFunction(ErrorCallback func);
 
+		/////////
+		//OTHER//
+		/////////
+			///Set parent for all component managers defined in the EntityManager
+			void SetParent(EID child, EID parent);
+
 		static const std::string LUA_52_INTERFACE_ENV_TABLE;
 		static const std::string DEBUG_LOG;
 		static const std::string BASE_SCRIPT_NAME;
