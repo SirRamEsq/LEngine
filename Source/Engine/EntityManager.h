@@ -20,14 +20,14 @@ class EntityManager{
 		 * Defines an order to update the component managers in an order that should be acceptable to most GameStates
 		 */
         enum DEFAULT_UPDATE_ORDER{
-            PARTICLE    = 10,
-            COLLISION   = 20,
-            INPUT       = 30,
-            POSITION    = 40,
+            INPUT       = 10,
+            PARTICLE    = 20,
+            POSITION    = 30,
+            COLLISION   = 40,
             SCRIPT      = 50,
-            SPRITE      = 60,
-            CAMERA      = 70,
-            LIGHT       = 80
+            CAMERA      = 60,
+            LIGHT       = 70,
+            SPRITE      = 80
         };
 
         EntityManager(){
