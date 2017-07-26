@@ -55,8 +55,6 @@ void GameState::UpdateComponentManagers(){
 
         comPosMan.       Update(); //Use script from previous frame to update position+
         comCollisionMan. Update(); //Use newly generated position in collision (and change position if needed)
-		//Use new position to set camera values
-		comCameraMan.Update();
         comScriptMan.    Update(); //Use input to run script and set next frame coords
 
         //Could conceivably use concurrency here; generate all collision events using multiple threads, then process with a single thread
@@ -64,6 +62,8 @@ void GameState::UpdateComponentManagers(){
 
     //Render
         //Each of these could be put on their own thread and run concurrently comCameraMan.    Update(); //Update cameras
+		//Use new position to set camera values
+		comCameraMan.Update();
         comLightMan.     Update(); //Update lights and generate light map
         comSpriteMan.    Update(); //Update sprites
 

@@ -74,11 +74,12 @@ function NewCamera(baseclass)
 
 			camera.myPositionComp:SetPositionLocal(parentPos):Round()
 		else
-			local worldPos = camera.myPositionComp:GetPositionWorld():Round()
-			local localPos = camera.myPositionComp:GetPositionLocal():Round()
+			local worldPos = camera.myPositionComp:GetPositionWorld()--:Round()
+			local localPos = camera.myPositionComp:GetPositionLocal()--:Round()
 			local newPos = CPP.Coord2df(camera.localDefault.x,camera.localDefault.y)
 
 			if (worldPos.x < 0) then
+				--Move to the right by however many pixels the camera position would be offscreen by
 				newPos.x = localPos.x - worldPos.x
 			elseif ( (worldPos.x + camera.w) > camera.mapWidth) then
 				newPos.x = localPos.x - ((worldPos.x + camera.w) - camera.mapWidth)

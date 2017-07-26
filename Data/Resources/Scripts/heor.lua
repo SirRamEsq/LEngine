@@ -232,7 +232,7 @@ function heor.Initialize()
 	heor.mySpriteRoll  = heor.CPPInterface:LoadSprite("SpriteLouieRoll.xml");
 
 	if( heor.mySprite==nil ) then
-		heor.CPPInterface:WriteError("sprite is NIL");
+		heor.CPPInterface:WriteError(heor.EID, "sprite is NIL");
 	end
 
 	--Logical origin is as at the top left; (0,0) is top left
@@ -273,8 +273,6 @@ function heor.Initialize()
 
 	heor.currentMap = heor.CPPInterface:GetMap()
 	heor.climb.LAYER = heor.currentMap:GetTileLayer(heor.climb.LAYER_NAME)
-
-	CPP.interface:WriteError(heor.EID, "Heor Initialized");
 end
 
 
