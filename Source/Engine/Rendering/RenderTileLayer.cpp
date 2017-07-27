@@ -195,6 +195,7 @@ void RenderTileLayer::BuildVAOArea(CRect area){
 }
 
 void RenderTileLayer::Render(RSC_GLProgram* program){
+	/// \TODO divide tileMaps into chunks and render only visible chunks
 
     if(layer->updatedAreas.size()>0){
         for(auto i = layer->updatedAreas.begin(); i != layer->updatedAreas.end(); i++){
@@ -204,6 +205,7 @@ void RenderTileLayer::Render(RSC_GLProgram* program){
         layer->updatedAreas.clear();
         vao.UpdateGPU();
     }
+	
     program->Bind();
     glBindVertexArray (vao.GetVAOID());
     tiledSet->GetTexture()->Bind();
