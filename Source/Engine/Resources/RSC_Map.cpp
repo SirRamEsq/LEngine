@@ -381,24 +381,32 @@ TiledTileLayer::TiledTileLayer(const TiledTileLayer& rhs, const GIDManager* g)
     CopyPropertyMap(rhs.properties, properties);
 }
 
+bool TiledTileLayer::IsValidXY(unsigned int x, unsigned int y) const{
+    if( (x >= 0) && (y >= 0) && (x < tileWidth) && (y < tileHeight) ){
+		return true;
+	}
+	return false;
+}
+
 GID TiledTileLayer::GetGID(unsigned int x, unsigned int y) const {
-    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
+    if(IsValidXY(x,y)){
         return data2D[x][y];
     }
     return 0;
 }
 void TiledTileLayer::SetGID(unsigned int x, unsigned int y, GID id) {
-    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
+    if(IsValidXY(x,y)){
         data2D[x][y] = id;
     }
 }
 unsigned int TiledTileLayer::GetTile(unsigned int x, unsigned int y) const {
-    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
+    if(IsValidXY(x,y)){
         return data2D[x][y];
     }
+	return 0;
 }
 void TiledTileLayer::SetTile(unsigned int x, unsigned int y, unsigned int id) {
-    if((x > 0) && (y > 0) && (x < tileWidth) && (y < tileHeight)){
+    if(IsValidXY(x,y)){
         data2D[x][y] = id;
     }
 }

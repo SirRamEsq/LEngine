@@ -277,6 +277,7 @@ class TiledTileLayer : public TiledLayerGeneric{
         std::vector<std::vector<GID> > data2D;
 
         void InitializeMap();
+		bool inline IsValidXY(unsigned int x, unsigned int y) const;
 };
 
 class TiledImageLayer : public TiledLayerGeneric{
