@@ -78,9 +78,9 @@ function NewCamera(baseclass)
 
 			--Clamp to map borders
 			if(newPos.x < 0)then newPos.x = 0 end
-			if( (newPos.x + camera.w) > camera.mapWidth)then newPos.x = camera.mapWidth end
+			if( (newPos.x + camera.w) > camera.mapWidth)then newPos.x = camera.mapWidth - camera.w end
 			if(newPos.y < 0)then newPos.y = 0 end
-			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight end
+			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight - camera.h end
 
 			camera.CPPInterface:WriteError(camera.EID, "ParentX " .. parentPos.x);
 			camera.CPPInterface:WriteError(camera.EID, "ParentY " .. parentPos.y);
@@ -88,51 +88,6 @@ function NewCamera(baseclass)
 			camera.CPPInterface:WriteError(camera.EID, "CameraX " .. newPos.x);
 			camera.CPPInterface:WriteError(camera.EID, "CameraY " .. newPos.y);
 			camera.myPositionComp:SetPositionWorld(newPos)
-			--[[
-			local worldPos = camera.myPositionComp:GetPositionWorld()--:Round()
-			local localPos = camera.myPositionComp:GetPositionLocal()--:Round()
-			local newPos = CPP.Coord2df(camera.localDefault.x,camera.localDefault.y)
-
-			if (worldPos.x < 0) then
-				--Move to the right by however many pixels the camera position would be offscreen by
-				newPos.x = localPos.x - worldPos.x
-			elseif ( (worldPos.x + camera.w) > camera.mapWidth) then
-				newPos.x = localPos.x - ((worldPos.x + camera.w) - camera.mapWidth)
-			else
-				--push camera back to localx + distance to border
-				local differenceLeft = worldPos.x
-				local differenceRight = worldPos.x+camera.w
-				if(localPos.x < camera.localDefault.x)then
-					newPos.x =	localPos.x - ((worldPos.x + camera.w) - camera.mapWidth)
-					if(newPos.x>camera.localDefault.x)then newPos.x = camera.localDefault.x end
-				elseif(localPos.x > camera.localDefault.x)then
-					newPos.x = localPos.x - worldPos.x
-					if(newPos.x<camera.localDefault.x)then newPos.x = camera.localDefault.x end
-				else
-					newPos.x = camera.localDefault.x
-				end
-			end
-			if (worldPos.y < 0) then
-				newPos.y = localPos.y + worldPos.y
-			elseif ( (worldPos.y + camera.h) > camera.mapHeight) then
-				newPos.y = localPos.y - ((worldPos.y + camera.h) - camera.mapHeight)
-			else
-				--push camera back to localx + distance to border
-				local differenceLeft = worldPos.y
-				local differenceRight = worldPos.y+camera.h
-				if(localPos.y < camera.localDefault.y)then
-					newPos.y =	localPos.y - ((worldPos.y + camera.h) - camera.mapHeight)
-					if(newPos.y>camera.localDefault.y)then newPos.y = camera.localDefault.y end
-				elseif(localPos.y > camera.localDefault.y)then
-					newPos.y = localPos.y - worldPos.y
-					if(newPos.y<camera.localDefault.y)then newPos.y = camera.localDefault.y end
-				else
-					newPos.y = camera.localDefault.y
-				end
-			end
-
-			camera.myPositionComp:SetPositionLocal(newPos)
-			--]]
 		end
 	end
 
