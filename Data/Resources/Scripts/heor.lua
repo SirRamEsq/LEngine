@@ -1040,6 +1040,7 @@ end
 function heor.OnTileRight(newPosition)
 	newPosition= heor.CompPosition:TranslateWorldToLocal(newPosition);
 	heor.CompPosition:SetPositionLocalX(newPosition.x);
+
 	heor.xspd=0; --for when in the air
 	heor.groundSpeed=0;
 end
@@ -1047,6 +1048,7 @@ end
 function heor.OnTileLeft(newPosition)
 	newPosition= heor.CompPosition:TranslateWorldToLocal(newPosition);
 	heor.CompPosition:SetPositionLocalX(newPosition.x);
+
 	heor.xspd=0; --for when in the air
 	heor.groundSpeed=0;
 end

@@ -121,6 +121,18 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		REQUIRE(child->GetPositionLocal().x == Approx(translatedToLocal.x));
 		REQUIRE(child->GetPositionWorld().y == Approx(translatedToWorld.y));
 		REQUIRE(child->GetPositionLocal().y == Approx(translatedToLocal.y));
+
+		//Ensure that setting the WorldPosition Works properly
+		float childWorldX = 50.0f;
+		float childWorldY = 50.0f;
+
+		child->SetPositionWorld(Coord2df(childWorldX, childWorldY));
+		REQUIRE(child->GetPositionWorld().x == Approx(childWorldX));
+		REQUIRE(child->GetPositionWorld().y == Approx(childWorldY));
+		//The local position of the child should be the difference between
+		//its world position and its parent's world position
+		REQUIRE(child->GetPositionLocal().x == Approx(childWorldX - parent->GetPositionWorld().x));
+		REQUIRE(child->GetPositionLocal().y == Approx(childWorldY - parent->GetPositionWorld().y));
 	}
 
 	SECTION("Can Get Root Node"){

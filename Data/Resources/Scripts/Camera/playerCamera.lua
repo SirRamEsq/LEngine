@@ -44,14 +44,9 @@ function NewCamera(baseclass)
 		CPP.interface:SetParent(camera.EID, camera.parent)
 		camera.CPPInterface:WriteError(camera.EID, "Parent set");
 
-		--Decide how camera will follow its parent
-		if(camera.blockFollow) then
-			--Remove parent from position component
-			camera.myPositionComp:SetParent(0);
-		else
-			--Keep position component parent
-			camera.myPositionComp:SetPositionLocal(camera.pos);
-		end
+		--instead of the component managing the position, the camera will manage on its own
+		camera.myPositionComp:SetParent(0);
+		camera.myPositionComp:SetPositionLocal(camera.pos);
 
 		--recieve parent's events
 		camera.CPPInterface:EventLuaObserveEntity(camera.EID, camera.parent);
@@ -67,13 +62,33 @@ function NewCamera(baseclass)
 
 	function camera.Update()
 		if(camera.blockFollow) then
-			parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
+			local parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
+			local newPos = CPP.Coord2df(0,0);	
 
-			parentPos.x = (math.floor(parentPos.x/camera.w) * camera.w)
-			parentPos.y = (math.floor(parentPos.y/camera.h) * camera.h)
+			newPos.x = (math.floor(parentPos.x/camera.w) * camera.w)
+			newPos.y = (math.floor(parentPos.y/camera.h) * camera.h)
 
-			camera.myPositionComp:SetPositionLocal(parentPos):Round()
+			camera.myPositionComp:SetPositionLocal(newPos)
 		else
+			local parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
+			local newPos = CPP.Coord2df(0,0);	
+			--center camera on parent
+			newPos.x = parentPos.x + camera.localDefault.x
+			newPos.y = parentPos.y + camera.localDefault.y
+
+			--Clamp to map borders
+			if(newPos.x < 0)then newPos.x = 0 end
+			if( (newPos.x + camera.w) > camera.mapWidth)then newPos.x = camera.mapWidth end
+			if(newPos.y < 0)then newPos.y = 0 end
+			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight end
+
+			camera.CPPInterface:WriteError(camera.EID, "ParentX " .. parentPos.x);
+			camera.CPPInterface:WriteError(camera.EID, "ParentY " .. parentPos.y);
+
+			camera.CPPInterface:WriteError(camera.EID, "CameraX " .. newPos.x);
+			camera.CPPInterface:WriteError(camera.EID, "CameraY " .. newPos.y);
+			camera.myPositionComp:SetPositionWorld(newPos)
+			--[[
 			local worldPos = camera.myPositionComp:GetPositionWorld()--:Round()
 			local localPos = camera.myPositionComp:GetPositionLocal()--:Round()
 			local newPos = CPP.Coord2df(camera.localDefault.x,camera.localDefault.y)
@@ -117,7 +132,7 @@ function NewCamera(baseclass)
 			end
 
 			camera.myPositionComp:SetPositionLocal(newPos)
-
+			--]]
 		end
 	end
 

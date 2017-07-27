@@ -150,6 +150,21 @@ void ComponentPosition::SetPositionLocal	(Coord2df pos){
 void ComponentPosition::SetPositionLocalX(float x){SetPositionLocal(Coord2df(x, mNode.positionLocal.y));}
 void ComponentPosition::SetPositionLocalY(float y){SetPositionLocal(Coord2df(mNode.positionLocal.x, y));}
 
+
+void ComponentPosition::SetPositionWorld	(Coord2df pos){
+	if(mNode.mParent == NULL){
+		mNode.positionWorld = pos;
+		mNode.positionLocal = pos;
+		return;
+	}
+	
+	mNode.positionLocal = pos - mNode.mParent->positionWorld;
+
+	mNode.UpdateWorld();
+}
+void ComponentPosition::SetPositionWorldX(float x){SetPositionWorld(Coord2df(x, mNode.positionWorld.y));}
+void ComponentPosition::SetPositionWorldY(float y){SetPositionWorld(Coord2df(mNode.positionWorld.x, y));}
+
 void ComponentPosition::SetMovement		(Coord2df mov){mMovement=mov;}
 void ComponentPosition::SetMovementX(float x){SetMovement(Coord2df(x,mMovement.y));}
 void ComponentPosition::SetMovementY(float y){SetMovement(Coord2df(mMovement.x, y));}
