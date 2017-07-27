@@ -78,6 +78,13 @@ class ComponentPosition : public BaseComponent{
 		///Wrapper around SetPositionLocal
 		void SetPositionLocalY (float y);
 
+		///Sets absolute position
+        void SetPositionWorld   (Coord2df pos);
+		///Wrapper around SetPositionWorld
+		void SetPositionWorldX  (float x);
+		///Wrapper around SetPositionWorld
+		void SetPositionWorldY (float y);
+
 		///Sets Movement Speed
         void SetMovement        (Coord2df mov);
 		///Wrapper around SetMovement
