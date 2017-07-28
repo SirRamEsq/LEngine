@@ -100,42 +100,60 @@ class RenderManager{
 		MAP_DEPTH nextTextID;
 
 	protected:
+		/**
+		 * Will add camera to list of cameras to be rendered
+		 * is meant to be called by a newly created camera
+		 */
 		bool AddCamera(RenderCamera* cam);
+		/**
+		 * Will remove camera from list of cameras to be rendered
+		 * is meant to be called by a camera destructor
+		 */
 		void RemoveCamera(RenderCamera* cam);
 
+		/**
+		 * Will add object to list of object to be rendered
+		 * is meant to be called by a newly created object to screen coordinates
+		 */
 		void AddObjectScreen	(RenderableObjectScreen* obj);
 		void RemoveObjectScreen (RenderableObjectScreen* obj);
 
+		/**
+		 * Will add object to list of object to be rendered
+		 * is meant to be called by a newly created object to World coordinates
+		 */
 		void AddObjectWorld		(RenderableObjectWorld* obj);
 		void RemoveObjectWorld	(RenderableObjectWorld* obj);
 
 	private:
+		/**
+		 * Will Load default shaders for Tile, Light Sprite, Image
+		 * Also sets static 'loadedShaders' boolean to true after loading
+		 */
+		static void LoadDefaultShaders();
+		static bool loadedShaders;
+
 		bool								listChange;
+		/// \TODO decide if these should be lists or sets
 		std::list<RenderableObjectWorld*>	objectsWorld;
 		std::list<RenderableObjectScreen*>	objectsScreen;
 		std::set<RenderCamera*>				mCameras;
 
-		std::string shaderFragmentNameSpriteBatch;
-		std::string shaderVertexNameSpriteBatch;
-		RSC_GLProgram shaderProgramSpriteBatch;
+		static const std::string defaultProgramTileName;
+		static const std::string defaultProgramSpriteName;
+		static const std::string defaultProgramLightName;
+		static const std::string defaultProgramImageName;
 
-		std::string shaderFragmentNameTileLayer;
-		std::string shaderVertexNameTileLayer;
-		RSC_GLProgram shaderProgramTileLayer;
-
-		std::string shaderFragmentNameImage;
-		std::string shaderVertexNameImage;
-		RSC_GLProgram shaderProgramImage;
-
-		std::string shaderFragmentNameLight;
-		std::string shaderVertexNameLight;
-		RSC_GLProgram shaderProgramLight;
+		const RSC_GLProgram* defaultProgramTile;
+		const RSC_GLProgram* defaultProgramSprite;
+		const RSC_GLProgram* defaultProgramLight;
+		const RSC_GLProgram* defaultProgramImage;
 
 		static GLuint GlobalCameraUBO;
-		const GLuint CameraDataBindingIndex;
+		static const GLuint CameraDataBindingIndex;
 
 		static GLuint GlobalProgramUBO;
-		const GLuint ProgramDataBindingIndex;
+		static const GLuint ProgramDataBindingIndex;
 
 		int spriteBatchMaxSize;
 		std::map<MAP_DEPTH, std::map< std::string, std::vector < std::unique_ptr <RenderSpriteBatch> > > >	spriteBatchMap; //map each sprite batch to a texture name and depth value

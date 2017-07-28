@@ -47,7 +47,7 @@ class ParticleCreator : public RenderableObjectWorld{
         ParticleCreator (RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile);
         ~ParticleCreator();
 
-        void Render(RSC_GLProgram* program);
+        void Render(const RSC_GLProgram* program);
 
         //void SetSprite  (RSC_Sprite* spr);
 
