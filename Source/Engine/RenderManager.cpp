@@ -170,6 +170,10 @@ RenderManager::RenderManager()
 	defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
 	defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
 	defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
+	if( (defaultProgramTile == NULL) or (defaultProgramImage == NULL) or (defaultProgramLight == NULL) or (defaultProgramSprite == NULL) ){
+		ErrorLog::WriteToFile("RenderManager couldn't load all default shaders", ErrorLog::SEVERITY::FATAL);
+		throw LEngineException("RenderManagers Shaders couldn't be loaded");
+	}
 }
 
 void RenderManager::OrderOBJs(){
