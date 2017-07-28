@@ -1,0 +1,45 @@
+NOTES:
+	-Remove any hungarian notation. if you must specify that a member variable is indeed a member, do not use the notation
+	mSomething
+	instead, use the notation
+	this->something
+
+Event Managerment:
+	Currently, all events are processed as soon as they are recieved, maybe have an event queue to handle events async
+
+TODO:
+	INPUT:
+		Enable mouse support
+		Enable actions to be re-bound
+
+	GUI:
+		Implement buttons that support mouse/keyboard navigation
+		Implement basic dialog boxes
+		Input remapping gui	
+
+	BUGS:
+
+GUI Notes:
+	Have the kernel keep track of loaded shader programs
+	RenderMan will check to see if default shaders are loaded upon instantiation
+	will have separate function to load default shaders if they are not already loaded
+
+	Should be able to easily expose ImGui calls to Lua
+
+	GUI Plan - step by step
+	-1.	Make changes to RenderMan
+
+	0.	Git setup, new branch for gui development
+	1.	Handle setup in GameState / SDL Init
+	2.	Successfully render a window
+	3.	Hook SDL Input into the gui
+	4.	Expose Gui functionality to Lua
+	5.	Refine and Refactor
+
+Next Commit Notes
+Manage RSC_GLPrograms more effectively
+
+ShaderPrograms are now a resource managed by the kernel
+Made RenderManager and Renderable Objects use const pointers to shader programs
+RenderManager will load default shader programs through a static method if they have not yet been loaded
+Made functions in RSC_GLProgram const

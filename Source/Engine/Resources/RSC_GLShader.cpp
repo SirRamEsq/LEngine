@@ -185,14 +185,14 @@ bool RSC_GLProgram::LinkProgram(){
     return CheckShaderCompileErrors(mHandleID, "PROGRAM");
 }
 
-void RSC_GLProgram::Bind(){
+void RSC_GLProgram::Bind() const {
     if(currentlyBoundProgram!=mHandleID){
         glUseProgram(mHandleID);
         currentlyBoundProgram=mHandleID;
     }
 }
 
-GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name){
+GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name) const{
     GLuint returnVal=glGetUniformBlockIndex(mHandleID, name.c_str());
     if(returnVal==GL_INVALID_INDEX){
         std::stringstream ss;
@@ -204,7 +204,7 @@ GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name){
     return returnVal;
 }
 
-GLint RSC_GLProgram::GetUniformLocation(const std::string& name){
+GLint RSC_GLProgram::GetUniformLocation(const std::string& name) const {
     GLint returnVal=glGetUniformLocation(mHandleID, name.c_str());
     if(returnVal==-1){
         std::stringstream ss;

@@ -102,7 +102,7 @@ void ComponentLightManager::Update(){
     BuildVAO();
 }
 
-void ComponentLightManager::Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, RSC_GLProgram* shaderProgram){
+void ComponentLightManager::Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, const RSC_GLProgram* shaderProgram){
     //Set framebuffer to clear destination Texture
     RSC_GLProgram::BindNULL();
     RSC_Texture::BindNull();

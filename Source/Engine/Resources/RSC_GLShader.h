@@ -65,17 +65,17 @@ class RSC_GLProgram{
         bool AddShader(const RSC_GLShader* shader);
         bool LinkProgram();
 
-        GLuint GetHandle(){return mHandleID;}
+        GLuint GetHandle() const {return mHandleID;}
 
         //throws LEngineProgramException if name doesn't exist
-        GLuint GetUniformBlockHandle(const std::string& name);
+        GLuint GetUniformBlockHandle(const std::string& name) const;
 
         //throws LEngineProgramException if name doesn't exist
-        GLint GetUniformLocation(const std::string& name);
+        GLint GetUniformLocation(const std::string& name) const;
 
         void DeleteShaders();
 
-        void Bind();
+        void Bind() const;
 
         static void   BindNULL();
         static GLuint GetBoundProgram();

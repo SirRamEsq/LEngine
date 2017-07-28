@@ -23,11 +23,12 @@ class GenericContainer{
         const T*           GetItem      (const std::string& name);
         std::unique_ptr<T> GetItemCopy  (const std::string& name);
 
-        //Load item from pointer and store under 'name'
+        ///Load item from pointer and store under 'name'
+		/// \TODO change this function so it's clearer what passing the unique_ptr does
         bool LoadItem   (const std::string& name, std::unique_ptr<const T>& item);
-        //Load item from filesystem with 'fname' as path and store it under 'name'
+        ///Load item from filesystem with 'fname' as path and store it under 'name'
         bool LoadItem   (const std::string& name, const std::string& fname);
-        //Get Item if it exists, try loading if it doesn't
+        ///Get Item if it exists, try loading if it doesn't
         const T* GetLoadItem   (const std::string& name, const std::string& fname);
         void DeleteItem (const std::string& name);
 

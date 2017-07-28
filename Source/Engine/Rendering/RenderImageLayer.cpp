@@ -147,7 +147,7 @@ RenderImageLayer::~RenderImageLayer(){
 
 }
 
-void RenderImageLayer::Render(RSC_GLProgram* program){
+void RenderImageLayer::Render(const RSC_GLProgram* program){
     //program->Bind();
     /*const RSC_Texture* tex = layer->GetTexture();
     int tWidth = tex->GetWidth();
