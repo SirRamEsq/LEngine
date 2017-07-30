@@ -1,6 +1,6 @@
 #include "SDLInit.h"
-//int SCREENW=800;
-//int SCREENH=600;
+#include "gui/imgui.h"
+
 SDLInit* SDLInit::pointertoself=NULL;
 SDLInit::SDLInit(){}
 SDL_Window* SDLInit::mMainWindow = NULL;
@@ -22,6 +22,45 @@ void SDLInit::CloseSDL(){
     Mix_CloseAudio();
     Mix_Quit();
     SDL_Quit();
+}
+
+bool InitImgGui(SDL_Window* window){
+    ImGuiIO& io = ImGui::GetIO();
+    io.KeyMap[ImGuiKey_Tab] = SDLK_TAB;                     // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
+    io.KeyMap[ImGuiKey_LeftArrow] = SDL_SCANCODE_LEFT;
+    io.KeyMap[ImGuiKey_RightArrow] = SDL_SCANCODE_RIGHT;
+    io.KeyMap[ImGuiKey_UpArrow] = SDL_SCANCODE_UP;
+    io.KeyMap[ImGuiKey_DownArrow] = SDL_SCANCODE_DOWN;
+    io.KeyMap[ImGuiKey_PageUp] = SDL_SCANCODE_PAGEUP;
+    io.KeyMap[ImGuiKey_PageDown] = SDL_SCANCODE_PAGEDOWN;
+    io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
+    io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
+    io.KeyMap[ImGuiKey_Delete] = SDLK_DELETE;
+    io.KeyMap[ImGuiKey_Backspace] = SDLK_BACKSPACE;
+    io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
+    io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
+    io.KeyMap[ImGuiKey_A] = SDLK_a;
+    io.KeyMap[ImGuiKey_C] = SDLK_c;
+    io.KeyMap[ImGuiKey_V] = SDLK_v;
+    io.KeyMap[ImGuiKey_X] = SDLK_x;
+    io.KeyMap[ImGuiKey_Y] = SDLK_y;
+    io.KeyMap[ImGuiKey_Z] = SDLK_z;
+
+    //io.RenderDrawListsFn = ImGui_ImplSdlGL3_RenderDrawLists;   // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
+    //io.SetClipboardTextFn = ImGui_ImplSdlGL3_SetClipboardText;
+    //io.GetClipboardTextFn = ImGui_ImplSdlGL3_GetClipboardText;
+    //io.ClipboardUserData = NULL;
+
+#ifdef _WIN32
+    SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    SDL_GetWindowWMInfo(window, &wmInfo);
+    io.ImeWindowHandle = wmInfo.info.win.window;
+#else
+    (void)window;
+#endif
+
+    return true;
 }
 
 bool SDLInit::InitOpenGL(){
@@ -62,16 +101,8 @@ void SDLInit::InitSDL(){
 
     if(SDL_Init(SDL_INIT_EVERYTHING)==-1){ErrorLog::WriteToFile("Didn't init SDL properly", ErrorLog::GenericLogFile); return;}
 
-    /*SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-
-    if(SDL_SetVideoMode(SCREEN_W, SCREEN_H, SCREEN_BPP, SDL_OPENGL)==NULL){ErrorLog::WriteToFile("Didn't start window"); return;}
-    if(InitOpenGL()==0){ErrorLog::WriteToFile("Didn't Initialize OpenGL"); return;}
-
-    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);*/
-
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
     mMainWindow= SDL_CreateWindow(   "LEngine", //name
@@ -112,6 +143,10 @@ void SDLInit::InitSDL(){
         ss << "Error in GLEW INIT: " << glewGetErrorString(err);
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
     }
+
+	if(InitImgGui(mMainWindow)!=true){
+		ErrorLog::WriteToFile("Couldn't Initialize ImgGui", ErrorLog::GenericLogFile);
+	}
 
     SDL_GL_SetSwapInterval(1);
     //DO SOMETHING ABOUT UNICODE

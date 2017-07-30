@@ -29,6 +29,28 @@
 
 #include <vector>
 
+struct ImGuiState{
+	bool 	mousePressed[3] = { false, false, false };
+	float 	mouseWheel = 0.0f;
+
+	double 	time = 0.0f;
+	GLuint 	fontTexture = 0;
+
+	int 	shaderHandle = 0;
+	int 	vertHandle = 0;
+	int 	fragHandle = 0;
+
+	int 	attribLocationTex = 0;
+	int 	attribLocationProjMtx = 0;
+	int 	attribLocationPosition = 0;
+	int 	attribLocationUV = 0;
+	int 	attribLocationColor = 0;
+
+	unsigned int 	vboHandle = 0;
+	unsigned int	vaoHandle = 0;
+	unsigned int	elementsHandle = 0;
+};
+
 class Kernel{
 	public:
 		static void Inst(int argc, char *argv[]);
@@ -53,15 +75,24 @@ class Kernel{
 		static GenericContainer<RSC_GLShader>	rscShaderMan;
 		static GenericContainer<RSC_GLProgram>	rscShaderProgramMan;
 
+		static ImGuiState guiState;
 	private:
 		Kernel();
 		~Kernel();
+
+		///Is called at the start of every new frame for the sake of imgGui
+		static void ImGuiNewFrame(SDL_Window* window);
+		///Is called once per run to initialize imgui resources
+		static void ImGuiCreateDeviceObjects();
+		///Is called once per run to initialize imgui resources
+		static void ImGuiCreateFontsTexture();
 
 		static int gameLoops;
 		static unsigned int nextGameTick;
 
 		static int returnValue;
 		static SDLInit* SDLMan;
+
 };
 
 //for more laconic access

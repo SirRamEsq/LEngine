@@ -13,6 +13,7 @@
 #include "SDL2/SDL_mixer.h"
 #include "SDL2/SDL_ttf.h"
 
+
 extern TTF_Font *defaultFont;
 
 class SDLInit{
@@ -25,12 +26,14 @@ class SDLInit{
 
         static SDL_Window* GetWindow();
 
+		static bool InitImgGUI(SDL_Window* window);
+
+        static SDL_Window* mMainWindow;
     protected:
         SDLInit();
 
     private:
         static SDL_GLContext mMainContextGL;
-        static SDL_Window* mMainWindow;
 };
 
 #endif
