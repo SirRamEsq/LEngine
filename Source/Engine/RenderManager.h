@@ -17,6 +17,8 @@
 #include "Rendering/RenderTileLayer.h"
 #include "Rendering/RenderImageLayer.h"
 
+#include "gui/imgui.h"
+
 /*
 Centralized Rendering:
 The rendermanger will know of all renderable objects (sprites, backgrounds, tiles, and text)
@@ -132,6 +134,8 @@ class RenderManager{
 		 */
 		static void LoadDefaultShaders();
 		static bool loadedShaders;
+
+		void ImGuiRender(ImDrawData* drawData);
 
 		bool								listChange;
 		/// \TODO decide if these should be lists or sets
