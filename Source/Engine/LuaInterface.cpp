@@ -2,6 +2,7 @@
 #include "Exceptions.h"
 #include "StateManager.h"
 #include "Kernel.h"
+#include "gui/imgui_LEngine.h"
 
 #include <sstream>
 
@@ -914,7 +915,16 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetHeightPixels",		  &RSC_Map::GetHeightPixels)
 			.endClass()
 
-//			.addVariable("interface", this)
+			.beginNamespace("ImGui")
+				.addFunction("Begin", &ImGui::BeginWrapper)
+				.addFunction("End", &ImGui::End)
+				
+				.addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
+				.addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
+
+				.addFunction("Button", &ImGui::ButtonWrapper)
+			.endNamespace()
+
 		.endNamespace()
 	;
 }

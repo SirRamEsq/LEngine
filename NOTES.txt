@@ -9,6 +9,8 @@ Event Managerment:
 
 TODO:
 	Implement debug mode controlled by command line flag
+	Added debug boolean in LEngine.lua
+
 	INPUT:
 		Enable mouse support
 		Enable actions to be re-bound
