@@ -458,6 +458,7 @@ void ComponentCollisionManager::Update(){
 	GameStateManager* gs = &K_StateMan;
 	GameState* state = gs->GetCurrentState();
 	auto stateMap = state->GetCurrentMap();
+	if(stateMap == NULL){return;}
 
     //update grid
     UpdateBuckets(stateMap->GetWidthPixels());

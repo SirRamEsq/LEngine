@@ -1,5 +1,5 @@
-#ifndef L_STATE_START_GAME
-#define L_STATE_START_GAME
+#ifndef L_STATE_RUNNING
+#define L_STATE_RUNNING
 
 #include "../StateManager.h"
 #include "../Resources/RSC_Texture.h"
@@ -13,9 +13,9 @@
 
 class Kernel; //forward declare
 
-class GameStartState : public GameState{
+class GameRunningState : public GameState{
     public:
-        GameStartState(GameStateManager* gsm);
+        GameRunningState(GameStateManager* gsm);
 
         void Init();
         void Close();
@@ -25,6 +25,8 @@ class GameStartState : public GameState{
         void Draw();
 
     private:
+        bool pause;
+        int countdown;
         EID ent;
 };
 

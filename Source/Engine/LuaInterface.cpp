@@ -341,9 +341,12 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		if(int error= lua_pcall (lState, 0, 1, 0)  != 0){
 			std::stringstream ss;
 			ss << "Base class did not return a callable function\n" << "   ...Error code "	<< error << "\n";
+			ss << "Error String is '" << lua_tostring(lState, -1) << "'";
 			// completely clear the stack before return
 			lua_settop(lState, 0);
 			ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
+
+			throw LEngineException(ss.str());
 			return false;
 		}
 	}
@@ -473,7 +476,14 @@ void LuaInterface::ListenForInput (EID id, const std::string& inputName){
 }
 
 void LuaInterface::WriteError	  (EID id, const std::string& error){
-	const std::string& name=((ComponentScript*)parentState->comScriptMan.GetComponent(id))->scriptName;
+	ComponentScript* component = ((ComponentScript*)parentState->comScriptMan.GetComponent(id));
+	if(component == NULL){
+		std::stringstream ss;
+		ss << "[ LUA" << " | ??? | EID given: " << id << " ]	" << error;
+		ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
+		return;
+	}
+	const std::string& name=component->scriptName;
 	std::stringstream ss;
 	ss << "[ LUA" << " | " << name << " | EID: " << id << " ]	" << error;
 
@@ -914,17 +924,23 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetWidthPixels",		  &RSC_Map::GetWidthPixels)
 				.addFunction("GetHeightPixels",		  &RSC_Map::GetHeightPixels)
 			.endClass()
-
+/*
 			.beginNamespace("ImGui")
 				.addFunction("Begin", &ImGui::BeginWrapper)
 				.addFunction("End", &ImGui::End)
-				
-				.addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
-				.addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
 
+				.addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)
+				.addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
+				.addFunction("SetNextWindowSizeConstraints", &ImGui::SetNextWindowSizeConstraintsWrapper)
+				
+				//.addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
+				//.addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
+
+				.addFunction("Text", &ImGui::TextWrapper)
+				.addFunction("SliderFloat", &ImGui::SliderFloat)
 				.addFunction("Button", &ImGui::ButtonWrapper)
 			.endNamespace()
-
+*/
 		.endNamespace()
 	;
 }
