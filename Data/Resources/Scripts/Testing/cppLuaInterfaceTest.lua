@@ -1,7 +1,8 @@
-local cppTEST = {}
+local cppTest = {}
 
-function cppTEST.NEWTESTCLASS(baseclass)
+cppTest.create = function (baseclass)
 	local test = baseclass or {}
+	test = {}
 
 	function test.Initialize()
 		test.depth        = test.LEngineData.depth;
@@ -13,7 +14,11 @@ function cppTEST.NEWTESTCLASS(baseclass)
 		test.correctKeyPress = "up"
 		test.incorrectKeyPress = "down"
 
-		if(test.CPPInterface ~= nil) then CPP.interface:WriteError(test.EID, "Interface Working") end
+		if(test.CPPInterface ~= nil) then
+			CPP.interface:WriteError(test.EID, "Interface Working")
+		else
+			error ("CPP.interface is NIL!")
+		end
 
 		test.CPPInterface:ListenForInput(test.EID, test.correctKeyPress)
 		test.CPPInterface:ListenForInput(test.EID, test.incorrectKeyPress)
@@ -63,4 +68,4 @@ function cppTEST.NEWTESTCLASS(baseclass)
 	return test
 end
 
-return cppTEST.NEWTESTCLASS
+return cppTest.create

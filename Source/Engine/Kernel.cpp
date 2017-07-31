@@ -52,8 +52,17 @@ void Kernel::Inst(int argc, char *argv[]){
 	std::string searchPath="Data/";
 	PHYSFS_addToSearchPath(searchPath.c_str(), 0);
 
+    const char * physfsError = PHYSFS_getLastError();
+    if(physfsError!=NULL){
+        std::stringstream ss;
+        ss << "Physfs Error in Kernel Inst; Error: " << physfsError;
+        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+    }
+
+
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
+	/// \TODO remove this
 	SDLMan->InitOpenGL();
 
 	rscTexMan		.SetLoadFunction(&RSC_Texture::LoadResource   );
@@ -76,8 +85,9 @@ bool Kernel::Run(){
 	while(SDL_GetTicks()>nextGameTick) {
 		ImGuiNewFrame(SDLMan->mMainWindow);
 
-        //ImGui::SetNextWindowSize(ImVec2(200,100), ImGuiSetCond_FirstUseEver);
 		bool show_another_window = true;
+		ImGui::SetNextWindowPos(Coord2df(20,20));
+		ImGui::SetNextWindowSize(Coord2df(100,100));
         ImGui::Begin("Another Window", &show_another_window);
         ImGui::Text("Hello");
         ImGui::End();

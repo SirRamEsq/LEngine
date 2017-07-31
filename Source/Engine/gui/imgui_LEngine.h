@@ -5,12 +5,18 @@
 #include "imgui.h"
 
 namespace ImGui{
+	void BeginWrapper(std::string name);
+
 	//These wrappers are used primarily to replace ImVec2 with Coord2df for Lua's sake
     void SetWindowPosWrapper(const char* name, const Coord2df& pos, ImGuiSetCond cond = 0);
     void SetWindowSizeWrapper(const char* name, const Coord2df& size, ImGuiSetCond cond = 0);
-	bool ButtonWrapper(const char* label, const Coord2df& size = Coord2df(0,0));
 
-	void BeginWrapper(std::string name, bool isOpen = true);
+    void SetNextWindowSizeWrapper(const Coord2df& size, ImGuiSetCond cond = 0);
+    void SetNextWindowPosWrapper(const Coord2df& pos, ImGuiSetCond cond = 0);
+	void SetNextWindowSizeConstraintsWrapper(const Coord2df& size_min, const Coord2df& size_max);
+
+	void TextWrapper(const std::string& str);
+	bool ButtonWrapper(const char* label, const Coord2df& size = Coord2df(0,0));
 };
 
 #endif

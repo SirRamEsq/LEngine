@@ -1,5 +1,6 @@
+local container = {}
 --contains all the data that Lua scripts need from cpp
-local NewLEngine = function ()
+container.NewLEngine = function ()
   --Initialize Container
   local LEngine = {
     _VERSION      = "v0.9",
@@ -27,4 +28,4 @@ local NewLEngine = function ()
   return LEngine
 end
 
-return NewLEngine;
+return container.NewLEngine;
