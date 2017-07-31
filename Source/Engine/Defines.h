@@ -160,8 +160,8 @@ class Coord2d{
 class Coord2df{
     public:
         Coord2df()                     {x=0; y=0;  }
-        Coord2df(double xx, double yy) {x=xx; y=yy;}
-        double x, y;
+        Coord2df(float xx, float yy) {x=xx; y=yy;}
+        float x, y;
 
         inline Coord2df operator+ (const Coord2df& c) const{
             Coord2df newCoord;
@@ -178,6 +178,8 @@ class Coord2df{
 		inline Coord2df Round() const{
 			return Coord2df( floor(x + 0.5f), floor(y + 0.5f) );
 		}
+		//Conversino from this class to ImGuiVec2 is in imguiconfig.h
+		//in IM_VEC2_CLASS_EXTRA macro
 };
 
 class CRect{
