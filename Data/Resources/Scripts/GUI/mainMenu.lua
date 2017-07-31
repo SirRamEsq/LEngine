@@ -33,7 +33,6 @@ function container.NewGui(baseclass)
 	end
 
 	function gui.Update()
-	--[[	CPP.interface:WriteError(11, "TEST2");
 		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
 		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
 
@@ -46,8 +45,8 @@ function container.NewGui(baseclass)
 		CPP.ImGui.End()
 
 		if(buttonPress == true)then
-			CPP.WriteError(gui.EID, "Button Pressed!")
-		end--]]
+			CPP.interface:WriteError(gui.EID, "Button Pressed!")
+		end
 	end
 
 	return gui;

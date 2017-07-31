@@ -86,8 +86,8 @@ bool Kernel::Run(){
 		ImGuiNewFrame(SDLMan->mMainWindow);
 
 		bool show_another_window = true;
-		ImGui::SetNextWindowPos(Coord2df(20,20));
-		ImGui::SetNextWindowSize(Coord2df(100,100));
+		//ImGui::SetNextWindowPos(Coord2df(20,20));
+		//ImGui::SetNextWindowSize(Coord2df(100,100));
         ImGui::Begin("Another Window", &show_another_window);
         ImGui::Text("Hello");
         ImGui::End();

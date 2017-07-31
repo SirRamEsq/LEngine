@@ -924,7 +924,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetWidthPixels",		  &RSC_Map::GetWidthPixels)
 				.addFunction("GetHeightPixels",		  &RSC_Map::GetHeightPixels)
 			.endClass()
-/*
+
 			.beginNamespace("ImGui")
 				.addFunction("Begin", &ImGui::BeginWrapper)
 				.addFunction("End", &ImGui::End)
@@ -940,7 +940,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SliderFloat", &ImGui::SliderFloat)
 				.addFunction("Button", &ImGui::ButtonWrapper)
 			.endNamespace()
-*/
+
 		.endNamespace()
 	;
 }
