@@ -128,7 +128,8 @@ void Kernel::ImGuiCreateDeviceObjects(){
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
     const GLchar *vertex_shader =
-        "#version 330\n"
+        "#version 300 es\n"
+		"precision mediump float;\n"
         "uniform mat4 ProjMtx;\n"
         "in vec2 Position;\n"
         "in vec2 UV;\n"
@@ -143,7 +144,8 @@ void Kernel::ImGuiCreateDeviceObjects(){
         "}\n";
 
     const GLchar* fragment_shader =
-        "#version 330\n"
+        "#version 300 es\n"
+		"precision mediump float;\n"
         "uniform sampler2D Texture;\n"
         "in vec2 Frag_UV;\n"
         "in vec4 Frag_Color;\n"
@@ -157,11 +159,11 @@ void Kernel::ImGuiCreateDeviceObjects(){
 	guiState.fragHandle = make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
 	guiState.shaderHandle = make_unique<RSC_GLProgram>();
 
-	if(guiState.vertHandle == 0){
+	if(guiState.vertHandle->IsUsable() == false){
 		ErrorLog::WriteToFile("Couldn't load ImGui Vertex Shader", ErrorLog::GenericLogFile);
 		throw LEngineException("Imgui No Vertex Shader");
 	}
-	if(guiState.fragHandle == 0){
+	if(guiState.fragHandle->IsUsable() == false){
 		ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
 		throw LEngineException("Imgui No Fragment Shader");
 	}

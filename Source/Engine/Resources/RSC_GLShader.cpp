@@ -58,6 +58,11 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
     //Check if Usable
     mUsable=CheckShaderCompileErrors(mHandleID, "SHADER");
 }
+
+bool RSC_GLShader::IsUsable(){
+	return mUsable;
+}
+
 RSC_GLShader::~RSC_GLShader(){
     //Free up the shader from openGl
     glDeleteShader(mHandleID);

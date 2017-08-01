@@ -49,6 +49,8 @@ class RSC_GLShader{
 
         static std::string LoadShaderFromFile(const std::string& filepath);
 
+		bool IsUsable();
+
     private:
         L_GL_SHADER_TYPE mShaderType;
 
