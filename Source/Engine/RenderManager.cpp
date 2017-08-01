@@ -184,6 +184,9 @@ void RenderManager::OrderOBJs(){
 }
 
 void RenderManager::Render(){
+	
+    glClearColor(0,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT);
 	timeElapsed += 1;
 
 	glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
@@ -365,7 +368,7 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
         { 0.0f,                  0.0f,                  -1.0f, 0.0f },
         {-1.0f,                  1.0f,                   0.0f, 1.0f },
     };
-    glUseProgram(guiState->shaderHandle);
+    guiState->shaderHandle->Bind();
     glUniform1i(guiState->attribLocationTex, 0);
     glUniformMatrix4fv(guiState->attribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
     glBindVertexArray(guiState->vaoHandle);

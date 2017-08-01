@@ -33,8 +33,8 @@ function container.NewGui(baseclass)
 	end
 
 	function gui.Update()
-		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
-		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
+--		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
+--		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
 
 		CPP.ImGui.Begin("TEST")
 

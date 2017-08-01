@@ -36,9 +36,9 @@ struct ImGuiState{
 	double 	time = 0.0f;
 	GLuint 	fontTexture = 0;
 
-	int 	shaderHandle = 0;
-	int 	vertHandle = 0;
-	int 	fragHandle = 0;
+	std::unique_ptr<RSC_GLProgram> 	shaderHandle;
+	std::unique_ptr<RSC_GLShader> 	vertHandle;
+	std::unique_ptr<RSC_GLShader> 	fragHandle;
 
 	int 	attribLocationTex = 0;
 	int 	attribLocationProjMtx = 0;

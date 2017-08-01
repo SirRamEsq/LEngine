@@ -153,22 +153,42 @@ void Kernel::ImGuiCreateDeviceObjects(){
         "	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
         "}\n";
 
-    guiState.shaderHandle = glCreateProgram();
-    guiState.vertHandle = glCreateShader(GL_VERTEX_SHADER);
-    guiState.fragHandle = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(guiState.vertHandle, 1, &vertex_shader, 0);
-    glShaderSource(guiState.fragHandle, 1, &fragment_shader, 0);
-    glCompileShader(guiState.vertHandle);
-    glCompileShader(guiState.fragHandle);
-    glAttachShader(guiState.shaderHandle, guiState.vertHandle);
-    glAttachShader(guiState.shaderHandle, guiState.fragHandle);
-    glLinkProgram(guiState.shaderHandle);
+	guiState.vertHandle = make_unique<RSC_GLShader>(vertex_shader, SHADER_VERTEX);
+	guiState.fragHandle = make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
+	guiState.shaderHandle = make_unique<RSC_GLProgram>();
 
-    guiState.attribLocationTex = glGetUniformLocation(guiState.shaderHandle, "Texture");
-    guiState.attribLocationProjMtx = glGetUniformLocation(guiState.shaderHandle, "ProjMtx");
-    guiState.attribLocationPosition = glGetAttribLocation(guiState.shaderHandle, "Position");
-    guiState.attribLocationUV = glGetAttribLocation(guiState.shaderHandle, "UV");
-    guiState.attribLocationColor = glGetAttribLocation(guiState.shaderHandle, "Color");
+	if(guiState.vertHandle == 0){
+		ErrorLog::WriteToFile("Couldn't load ImGui Vertex Shader", ErrorLog::GenericLogFile);
+		throw LEngineException("Imgui No Vertex Shader");
+	}
+	if(guiState.fragHandle == 0){
+		ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
+		throw LEngineException("Imgui No Fragment Shader");
+	}
+
+    //guiState.shaderHandle = glCreateProgram();
+    //guiState.vertHandle = glCreateShader(GL_VERTEX_SHADER);
+    //guiState.fragHandle = glCreateShader(GL_FRAGMENT_SHADER);
+    //glShaderSource(guiState.vertHandle, 1, &vertex_shader, 0);
+    //glShaderSource(guiState.fragHandle, 1, &fragment_shader, 0);
+    //glCompileShader(guiState.vertHandle);
+    //glCompileShader(guiState.fragHandle);
+	
+	guiState.shaderHandle->AddShader(guiState.vertHandle.get());
+	guiState.shaderHandle->AddShader(guiState.fragHandle.get());
+	guiState.shaderHandle->LinkProgram();
+	guiState.shaderHandle->Bind();
+    //glAttachShader(guiState.shaderHandle, guiState.vertHandle);
+    //glAttachShader(guiState.shaderHandle, guiState.fragHandle);
+    //glLinkProgram(guiState.shaderHandle);
+	
+
+
+    guiState.attribLocationTex = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "Texture");
+    guiState.attribLocationProjMtx = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "ProjMtx");
+    guiState.attribLocationPosition = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Position");
+    guiState.attribLocationUV = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "UV");
+    guiState.attribLocationColor = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Color");
 
     glGenBuffers(1, &guiState.vboHandle);
     glGenBuffers(1, &guiState.elementsHandle);
