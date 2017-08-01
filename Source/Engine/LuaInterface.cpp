@@ -927,6 +927,7 @@ void LuaInterface::ExposeCPP(){
 
 			.beginNamespace("ImGui")
 				.addFunction("Begin", &ImGui::BeginWrapper)
+				.addFunction("BeginFlags", &ImGui::BeginFlags)
 				.addFunction("End", &ImGui::End)
 
 				.addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)

@@ -62,7 +62,7 @@ void Kernel::Inst(int argc, char *argv[]){
 
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
-	/// \TODO remove this
+	/// \TODO remove this, have InitSDL intialize everything
 	SDLMan->InitOpenGL();
 
 	rscTexMan		.SetLoadFunction(&RSC_Texture::LoadResource   );
@@ -84,13 +84,6 @@ bool Kernel::Run(){
 	//loop seems to be locked to 60fps no matter what?
 	while(SDL_GetTicks()>nextGameTick) {
 		ImGuiNewFrame(SDLMan->mMainWindow);
-
-		bool show_another_window = true;
-		//ImGui::SetNextWindowPos(Coord2df(20,20));
-		//ImGui::SetNextWindowSize(Coord2df(100,100));
-        ImGui::Begin("Another Window", &show_another_window);
-        ImGui::Text("Hello");
-        ImGui::End();
 
 		nextGameTick = SDL_GetTicks() + SKIP_TICKS;
 
@@ -167,24 +160,11 @@ void Kernel::ImGuiCreateDeviceObjects(){
 		ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
 		throw LEngineException("Imgui No Fragment Shader");
 	}
-
-    //guiState.shaderHandle = glCreateProgram();
-    //guiState.vertHandle = glCreateShader(GL_VERTEX_SHADER);
-    //guiState.fragHandle = glCreateShader(GL_FRAGMENT_SHADER);
-    //glShaderSource(guiState.vertHandle, 1, &vertex_shader, 0);
-    //glShaderSource(guiState.fragHandle, 1, &fragment_shader, 0);
-    //glCompileShader(guiState.vertHandle);
-    //glCompileShader(guiState.fragHandle);
 	
 	guiState.shaderHandle->AddShader(guiState.vertHandle.get());
 	guiState.shaderHandle->AddShader(guiState.fragHandle.get());
 	guiState.shaderHandle->LinkProgram();
 	guiState.shaderHandle->Bind();
-    //glAttachShader(guiState.shaderHandle, guiState.vertHandle);
-    //glAttachShader(guiState.shaderHandle, guiState.fragHandle);
-    //glLinkProgram(guiState.shaderHandle);
-	
-
 
     guiState.attribLocationTex = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "Texture");
     guiState.attribLocationProjMtx = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "ProjMtx");
