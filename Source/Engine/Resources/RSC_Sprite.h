@@ -93,7 +93,7 @@ class LAnimation{
         imageVec::iterator ItBegin() {return images.begin();}
         imageVec::iterator ItEnd() {return images.end();}
 
-        const CRect& GetCRectAtIndex(const int& index) const ;
+        const CRect& GetCRectAtIndex(int index) const ;
 
         int GetWidth    (int index) const ;
         int GetHeight   (int index) const ;
@@ -107,6 +107,7 @@ class LAnimation{
 
     protected:
         void DeleteImages();
+		bool ValidateIndex(int index) const;
         imageVec images;
         int currentImage;
 

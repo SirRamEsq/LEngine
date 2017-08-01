@@ -19,6 +19,7 @@ class RSC_Texture{
         int GetWidth()       const {return mTexData.width;}
         int GetHeight()      const {return mTexData.height;}
         GLuint GetOpenGLID() const {return mGLID;}
+        GLuint* GetOpenGLIDAddress() const {return &mGLID;}
 
         //Set as active texture in OpenGL
         void Bind() const;

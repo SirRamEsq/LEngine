@@ -18,8 +18,8 @@ function container.NewGui(baseclass)
 		gui.CPPInterface = CPP.interface
 		gui.EID			= gui.LEngineData.entityID;
 
-		local defaultWindowSizeW = 100
-		local defaultWindowSizeH = 100
+		local defaultWindowSizeW = 200
+		local defaultWindowSizeH = 200
 
 		local defaultWindowPosX = 20
 		local defaultWindowPosY = 20
@@ -30,20 +30,32 @@ function container.NewGui(baseclass)
 		gui.defaultWindowSize =	CPP.Coord2df(defaultWindowSizeW, defaultWindowSizeH)
 		gui.defaultWindowPos =	CPP.Coord2df(defaultWindowPosX, defaultWindowPosY)
 		gui.defaultButtonSize = CPP.Coord2df(defaultButtonSizeW, defaultButtonSizeH)
+	
+		gui.sprite1 = CPP.interface:LoadSprite("SpriteArrow.xml");
+		if(gui.sprite1 == nil)then
+			CPP.interface:WriteError(gui.EID, "Sprite is NIL!")
+		end
+		gui.maxFrames=3
+		gui.currentFrame=0
 	end
 
 	function gui.Update()
-		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
-		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
-		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
+		local windowFlags = 0--imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
+		--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
+		--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
 		CPP.ImGui.BeginFlags("TEST", windowFlags)
 			CPP.ImGui.Text("Testing!")
 			CPP.ImGui.Text("More Text")
 			local buttonPress = CPP.ImGui.Button("Press This")
+		CPP.ImGui.Sprite(gui.sprite1, "Fire", gui.currentFrame)
 		CPP.ImGui.End()
 
 		if(buttonPress == true)then
 			CPP.interface:WriteError(gui.EID, "Button Pressed!")
+		end
+		gui.currentFrame = gui.currentFrame + 1
+		if(gui.currentFrame > gui.maxFrames)then
+			gui.currentFrame = 0
 		end
 	end
 

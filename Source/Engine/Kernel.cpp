@@ -84,6 +84,7 @@ bool Kernel::Run(){
 	//loop seems to be locked to 60fps no matter what?
 	while(SDL_GetTicks()>nextGameTick) {
 		ImGuiNewFrame(SDLMan->mMainWindow);
+		ImGui::ShowMetricsWindow();
 
 		nextGameTick = SDL_GetTicks() + SKIP_TICKS;
 

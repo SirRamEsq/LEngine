@@ -290,5 +290,8 @@ std::unique_ptr<RSC_Texture> RSC_Texture::LoadResource(const std::string& fname)
         throw e;
     }
 
+	//ensures texture has an ID
+	texture->Bind();
+
     return texture;
 }

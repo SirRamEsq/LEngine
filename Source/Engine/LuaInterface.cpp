@@ -940,6 +940,12 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("Text", &ImGui::TextWrapper)
 				.addFunction("SliderFloat", &ImGui::SliderFloat)
 				.addFunction("Button", &ImGui::ButtonWrapper)
+
+				.addFunction("Sprite", &ImGui::Sprite)
+				.addFunction("SpriteButton", &ImGui::SpriteButton)
+
+				.addFunction("ProgressBar", &ImGui::ProgressBarWrapper)
+				.addFunction("ProgressBarText", &ImGui::ProgressBarText)
 			.endNamespace()
 
 		.endNamespace()

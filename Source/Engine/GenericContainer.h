@@ -70,7 +70,10 @@ const T* GenericContainer<T>::GetItem(const std::string& name){
     if(i!=items.end()){
        return (*i).second.get();
     }
-    return NULL;
+	std::stringstream ss;
+	ss << "Cannot get Item Named: " << name;
+	//throw LEngineException(ss.str());
+	return NULL;
 }
 
 template <class T>
@@ -79,7 +82,9 @@ std::unique_ptr<T> GenericContainer<T>::GetItemCopy(const std::string& name){
     if(i!=items.end()){
        return std::unique_ptr<T> ((*i).second.get());
     }
-    return NULL;
+	std::stringstream ss;
+	ss << "Cannot get Item Named: " << name;
+	throw LEngineException(ss.str());
 }
 
 template <class T>
@@ -139,8 +144,12 @@ const T* GenericContainer<T>::GetLoadItem   (const std::string& name, const std:
     const T* item=GetItem(name);
     if(item==NULL){
         if(LoadItem(name,fname)==false){
-            ErrorLog::WriteToFile("Could not get or load item named " + name + " At path " + fname, ErrorLog::GenericLogFile);
-            return NULL;
+			std::stringstream ss;
+			ss << "Could not get or load item named " << name << " At path " << fname;
+            ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+			
+			//throw LEngineException(ss.str());
+			return NULL;
         }
         item=GetItem(name);
     }
