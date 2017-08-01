@@ -8,16 +8,22 @@ void ImGui::SetWindowSizeWrapper(const char* name, const Coord2df& size, ImGuiSe
 	ImGui::SetWindowSize(name, size, cond);
 }
 
-bool ImGui::ButtonWrapper(const char* label, const Coord2df& size){
-	ImGui::Button(label, size);
+bool ImGui::ButtonWrapper(const char* label){
+	ImGui::Button(label);
 }
 
 void ImGui::TextWrapper(const std::string& str){
 	ImGui::Text(str.c_str());
 }
 
-void ImGui::BeginWrapper(std::string name){
-	ImGui::Begin(name.c_str(), NULL);
+void ImGui::BeginWrapper(const std::string& name){
+	ImGui::BeginFlags(name, 0);
+}
+
+void ImGui::BeginFlags(const std::string& name, int flags){
+	//Always disable saving windows
+	flags = flags | ImGuiWindowFlags_NoSavedSettings;
+	ImGui::Begin(name.c_str(), NULL, flags);
 }
 
 void ImGui::SetNextWindowSizeWrapper(const Coord2df& size, ImGuiSetCond cond){

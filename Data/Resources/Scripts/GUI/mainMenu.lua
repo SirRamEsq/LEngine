@@ -2,13 +2,15 @@
 -- Description goes here
 
 
+local result=0;
+result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV))
 
 local container = {}
 function container.NewGui(baseclass)
 	local gui = baseclass or {}
 
 	--Ignore baseclass
-	--gui = {}
+	gui = {}
 
 	function gui.Initialize()
 		gui.depth		= gui.LEngineData.depth;
@@ -16,15 +18,13 @@ function container.NewGui(baseclass)
 		gui.CPPInterface = CPP.interface
 		gui.EID			= gui.LEngineData.entityID;
 
-		CPP.interface:WriteError(gui.EID, "BeganInit");
-		
 		local defaultWindowSizeW = 100
 		local defaultWindowSizeH = 100
 
 		local defaultWindowPosX = 20
 		local defaultWindowPosY = 20
 
-		local defaultButtonSizeW = 64
+		local defaultButtonSizeW = 128
 		local defaultButtonSizeH = 32
 
 		gui.defaultWindowSize =	CPP.Coord2df(defaultWindowSizeW, defaultWindowSizeH)
@@ -33,15 +33,13 @@ function container.NewGui(baseclass)
 	end
 
 	function gui.Update()
---		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
---		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
-
-		CPP.ImGui.Begin("TEST")
-
-		CPP.ImGui.Text("Testing!")
-		local buttonPress = CPP.ImGui.Button("Press This", gui.defaultButtonSize)
-		CPP.ImGui.Text("More Text")
-
+		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
+		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
+		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
+		CPP.ImGui.BeginFlags("TEST", windowFlags)
+			CPP.ImGui.Text("Testing!")
+			CPP.ImGui.Text("More Text")
+			local buttonPress = CPP.ImGui.Button("Press This")
 		CPP.ImGui.End()
 
 		if(buttonPress == true)then
