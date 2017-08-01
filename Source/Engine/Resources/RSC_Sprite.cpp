@@ -9,6 +9,10 @@
 //LAnimation//
 //////////////
 
+bool LAnimation::ValidateIndex(int index) const {
+	return ((index>=0)and(index<images.size()));
+}
+
 void LAnimation::SetColorKey(int image, unsigned int r, unsigned int g, unsigned int b){
 //    images[image]->SetColorKey(r,g,b);
 }
@@ -18,11 +22,17 @@ void LAnimation::AppendImage(const CRect& img){
 }
 
 int LAnimation::GetWidth(int index)const {
-    return images[index].w;
+	if(ValidateIndex(index)){
+    	return images[index].w;	
+	}
+	return 0;
 }
 
 int LAnimation::GetHeight(int index)const {
-    return images[index].h;
+	if(ValidateIndex(index)){
+    	return images[index].h;
+	}
+	return 0;
 }
 
 LAnimation::~LAnimation(){
@@ -38,8 +48,11 @@ LAnimation::LAnimation(const double& spd, AnimationLoadTag t) : loadTag(t){
     currentImage=0;
 }
 
-const CRect& LAnimation::GetCRectAtIndex(const int& imageIndex)const {
-    return images[imageIndex];
+const CRect& LAnimation::GetCRectAtIndex(int imageIndex)const {
+	if(ValidateIndex(imageIndex)){
+    	return images[imageIndex];
+	}
+	throw LEngineException("Invalid index for animation");
 }
 
 ///////////
@@ -60,7 +73,9 @@ void RSC_Sprite::SetColorKey(const std::string& aniName, unsigned int image, uns
 const LAnimation* RSC_Sprite::GetAnimation(const std::string& aniName) const {
     auto i=animations.find(aniName);
     if(i==animations.end()){
-        return NULL;
+		std::stringstream ss;
+		ss << "Sprite '" << spriteName << "' Couldn't get animation ' " << aniName << "'";
+		throw LEngineException(ss.str());
     }
     return &(i->second);
 }

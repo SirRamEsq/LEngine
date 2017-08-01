@@ -18,8 +18,8 @@ TODO:
 
 	GUI:
 		Implement buttons that support mouse/keyboard navigation
-		Implement basic dialog boxes
 		Input remapping gui	
+		Implement Sprites and Sprite Buttons
 
 	BUGS:
 
@@ -33,12 +33,15 @@ GUI Notes:
 	2.	Successfully render a window
 	3.	Hook SDL Input into the gui
 	4.	Expose Gui functionality to Lua
-
 	5.	Full example in startup state
 
 	6.	Refine and Refactor
 
 Next Commit Notes
-GameStartState has been renamed to GameRunningState
-New GameStartState that makes use of imGui
-Added a script to display a main menu
+Added Progress Bar and Sprite Gui Functionality
+Improved error handling for
+	GenericContainer
+	RSC_Sprite
+	RSC_Animation
+	RSC_Texture
+These classes will now throw exceptions upon error

@@ -3,6 +3,7 @@
 
 #include "../Defines.h"
 #include "imgui.h"
+#include "../Resources/RSC_Sprite.h"
 
 namespace ImGui{
 	void BeginWrapper(const std::string& name);
@@ -18,6 +19,12 @@ namespace ImGui{
 
 	void TextWrapper(const std::string& str);
 	bool ButtonWrapper(const char* label);
+	
+	void CalculateUV(const RSC_Sprite* sprite, const std::string& animation,  int frame, ImTextureID& textureID, Coord2df& size, Coord2df& startUV, Coord2df& endUV);
+	void Sprite(const RSC_Sprite* sprite, const std::string& animation, int frame);
+	bool SpriteButton(const RSC_Sprite* sprite);
+	void ProgressBarWrapper(float fraction);
+	void ProgressBarText(float fraction, const std::string& text);
 };
 
 #endif

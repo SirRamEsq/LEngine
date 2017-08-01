@@ -43,20 +43,20 @@ class ComponentSprite : public BaseComponent{
         void    Update();
         void    HandleEvent(const Event* event);
 
-        //returns sprite index
+        ///returns sprite index
         int     AddSprite   (const RSC_Sprite* sprite, const MAP_DEPTH& depth, float x=0.0f, float y=0.0f);
 
         void    SetAnimation        (int index, const std::string& animationName);
         void    SetAnimationSpeed   (int index, float speed);
         void    SetImageIndex       (int index, int imageIndex);
 
-        //Set whether a given sprite is rendered
+        ///Set whether a given sprite is rendered
         bool    RenderSprite    (int index, bool render);
-        //Set whether a given sprite is animated
+        ///Set whether a given sprite is animated
         bool    AnimateSprite   (int index, bool animate);
-        //Set rotation of sprite
+        ///Set rotation of sprite
         void    SetRotation     (int index, float rotation);
-        //Set Scaling of Sprite
+        ///Set Scaling of Sprite
         void    SetScaling     (int index, float scalingX, float scalingY);
         void    SetScalingX    (int index, float scalingX);
         void    SetScalingY    (int index, float scalingY);
