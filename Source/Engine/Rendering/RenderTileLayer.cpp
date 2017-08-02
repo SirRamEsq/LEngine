@@ -96,7 +96,7 @@ RenderTileLayer::RenderTileLayer(RenderManager* rm, const TiledTileLayer *l)
     SetDepth(l->GetDepth());
     layer=l;
 
-    color.mA=l->GetAlpha();
+    color.a=l->GetAlpha();
     animatedRefreshRateTimer=l->GetAnimationRate();
 
     if(animatedRefreshRateTimer==0){animated = false;}

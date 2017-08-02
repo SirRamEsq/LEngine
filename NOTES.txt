@@ -17,31 +17,13 @@ TODO:
 		Enable actions to be re-bound
 
 	GUI:
+		Can use perspective matrix with gui... can be used to achieve interesting effects?
+			Either way, instead of generating the matrix every frame (when it's currently constant anyway)
+			Store it somewhere and read from it
 		Implement buttons that support mouse/keyboard navigation
 		Input remapping gui	
 		Implement Sprites and Sprite Buttons
 
 	BUGS:
 
-GUI Notes:
-	Should be able to easily expose ImGui calls to Lua
-
-	GUI Plan - step by step
-	-1.	Make changes to RenderMan 
-	0.	Git setup, new branch for gui development
-	1.	Handle setup in GameState / SDL Init
-	2.	Successfully render a window
-	3.	Hook SDL Input into the gui
-	4.	Expose Gui functionality to Lua
-	5.	Full example in startup state
-
-	6.	Refine and Refactor
-
 Next Commit Notes
-Added Progress Bar and Sprite Gui Functionality
-Improved error handling for
-	GenericContainer
-	RSC_Sprite
-	RSC_Animation
-	RSC_Texture
-These classes will now throw exceptions upon error

@@ -98,8 +98,8 @@ class ParticleCreator : public RenderableObjectWorld{
         RSC_Sprite* mSprite;
         bool     mSpriteUsage;
 
-        L_COLOR mDefaultColorMin;
-        L_COLOR mDefaultColorMax;
+        Color4f mDefaultColorMin;
+        Color4f mDefaultColorMax;
 
         Coord2df mDefaultVelocityMin;
         Coord2df mDefaultAccelerationMin;

@@ -39,6 +39,78 @@ void ImGui::SetNextWindowSizeConstraintsWrapper(const Coord2df& size_min, const 
 	SetNextWindowSizeConstraints(size_min, size_max);
 }
 
+void ImGui::Sprite(const RSC_Sprite* sprite, const std::string& animation, int frame){
+	Coord2df size(0,0);
+	Coord2df startUV(0,0);
+	Coord2df endUV(0,0);
+	ImTextureID textureID = 0; 
+
+	CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
+
+	ImGui::Image(textureID, size,startUV,endUV, ImColor(255,255,255,255));
+}
+
+bool ImGui::SpriteButton(const RSC_Sprite* sprite, const std::string& animation, int frame){
+	Coord2df size(0,0);
+	Coord2df startUV(0,0);
+	Coord2df endUV(0,0);
+	ImTextureID textureID = 0; 
+
+	CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
+
+	ImGui::ImageButton(textureID, size,startUV,endUV, 0, ImColor(255,255,255,125));
+}
+
+void ImGui::ProgressBarWrapper(float fraction, const Coord2df& screenSize){
+        ImGui::ProgressBar(fraction,screenSize);
+}
+
+void ImGui::SameLineWrapper(){
+		ImGui::SameLine();
+}
+
+////////////////////
+//Parameter Stacks//
+////////////////////
+void ImGui::PushStyleColorWindowBG(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorButton(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorButtonHovered(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorButtonActive(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorFrameBG(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorFrameBGActive(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorFrameBGHovered(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorPlotHistogram(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+void ImGui::PushStyleColorText(const Color4f& c){
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(c.r,c.g,c.b,c.a));
+}
+
+////////////
+//INTERNAL//
+////////////
 void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, int frame,  ImTextureID& textureID, Coord2df& size, Coord2df& startUV, Coord2df& endUV){
 	try{
 		auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(), sprite->GetTextureName());
@@ -62,34 +134,4 @@ void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, 
 		ss << "Error Occured in CalculateUV " << e.what();
 		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
 	}
-}
-
-void ImGui::Sprite(const RSC_Sprite* sprite, const std::string& animation, int frame){
-	Coord2df size(0,0);
-	Coord2df startUV(0,0);
-	Coord2df endUV(0,0);
-	ImTextureID textureID = 0; 
-
-	CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
-
-	std::stringstream ss;
-	ImGui::Text("%.0f x %.0f", size.x, size.y);
-	
-	ImGui::Text("StartUV %f x %f", startUV.x, startUV.y);
-
-	ImGui::Text("EndUV %f x %f", endUV.x, endUV.y);
-
-	ImGui::Image(textureID, size,startUV,endUV, ImColor(255,255,255,255), ImColor(255,255,255,255));
-}
-
-bool ImGui::SpriteButton(const RSC_Sprite* sprite){
-}
-
-void ImGui::ProgressBarWrapper(float fraction){
-        ImGui::ProgressBar(fraction, ImVec2(-1.0f,0.0f));
-}
-void ImGui::ProgressBarText(float fraction, const std::string& text){
-        ImGui::ProgressBar(fraction, ImVec2(-1.0f,0.0f));
-        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::Text(text.c_str());
 }

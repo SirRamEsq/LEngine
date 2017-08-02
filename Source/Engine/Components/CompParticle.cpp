@@ -27,7 +27,7 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
     mParticlesToRender=0;
     mRandom.SetSeed(mRandom.GenerateSeed());
 
-    L_COLOR c (1.0f,1.0f,1.0f,1.0f);
+    Color4f c (1.0f,1.0f,1.0f,1.0f);
     mDefaultColorMax=c;
     mDefaultColorMin=c;
     mState=PARTICLE_CREATOR_STOPPED;
@@ -220,8 +220,8 @@ void ParticleCreator::SetParticlesPerFrame(const float& particles){
 
 void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float& bMin, const float& aMin,
                                 const float& rMax, const float& gMax, const float& bMax, const float& aMax){
-    L_COLOR cMin(rMin,gMin,bMin,aMax);
-    L_COLOR cMax(rMax,gMax,bMax,aMax);
+    Color4f cMin(rMin,gMin,bMin,aMax);
+    Color4f cMax(rMax,gMax,bMax,aMax);
 
     mDefaultColorMin=cMin;
     mDefaultColorMax=cMax;
@@ -323,14 +323,14 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                         );
 
 
-        Vec4 color( mRandom.GenerateRandomFloatValue( mDefaultColorMin.mR,
-                                                    mDefaultColorMax.mR),
-                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.mG,
-                                                    mDefaultColorMax.mG),
-                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.mB,
-                                                    mDefaultColorMax.mB),
-                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.mA,
-                                                    mDefaultColorMax.mA)
+        Vec4 color( mRandom.GenerateRandomFloatValue( mDefaultColorMin.r,
+                                                    mDefaultColorMax.r),
+                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.g,
+                                                    mDefaultColorMax.g),
+                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.b,
+                                                    mDefaultColorMax.b),
+                    mRandom.GenerateRandomFloatValue( mDefaultColorMin.a,
+                                                    mDefaultColorMax.a)
                             );
 
         for(int vert=0; vert<4; vert++){

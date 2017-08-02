@@ -14,11 +14,11 @@ const char* global_TiledStrings[TILED_EVT_LAST]{
     "CAMERA"
 };
 
-L_COLOR L_COLOR_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-L_COLOR L_COLOR_RED  (1.0f, 0.0f, 0.0f, 1.0f);
-L_COLOR L_COLOR_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
-L_COLOR L_COLOR_BLUE (0.0f, 0.0f, 1.0f, 1.0f);
-L_COLOR L_COLOR_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+Color4f Color4f_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+Color4f Color4f_RED  (1.0f, 0.0f, 0.0f, 1.0f);
+Color4f Color4f_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+Color4f Color4f_BLUE (0.0f, 0.0f, 1.0f, 1.0f);
+Color4f Color4f_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
 //Vsync should keep the FPS at roughly 60
 const int TICKS_PER_SECOND  = 68;
