@@ -830,6 +830,15 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("Round", &Coord2df::Round)
 			.endClass()
 
+			.beginClass<Color4f>("Color4f")
+				.addConstructor <void (*) (void)> ()//Empty Constructor
+				.addConstructor <void (*) (float, float, float, float)> ()//Constructor
+				.addData("r", &Color4f::r)
+				.addData("g", &Color4f::g)
+				.addData("b", &Color4f::b)
+				.addData("a", &Color4f::a)
+			.endClass()
+
 			.beginClass<BaseComponent>("BaseComponent")
 				.addFunction("SetParent",		  	&BaseComponent::SetParentEID)
 			.endClass()
@@ -945,7 +954,21 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SpriteButton", &ImGui::SpriteButton)
 
 				.addFunction("ProgressBar", &ImGui::ProgressBarWrapper)
-				.addFunction("ProgressBarText", &ImGui::ProgressBarText)
+
+				.addFunction("Separator", &ImGui::Separator)
+				.addFunction("SameLine", &ImGui::SameLineWrapper)
+
+
+				.addFunction("PushStyleColorWindowBG", &ImGui::PushStyleColorWindowBG)
+				.addFunction("PushStyleColorButton", &ImGui::PushStyleColorButton)
+				.addFunction("PushStyleColorButtonHovered", &ImGui::PushStyleColorButtonHovered)
+				.addFunction("PushStyleColorButtonActive", &ImGui::PushStyleColorButtonActive)
+				.addFunction("PushStyleColorFrameBG", &ImGui::PushStyleColorFrameBG)
+				.addFunction("PushStyleColorFrameBGActive", &ImGui::PushStyleColorFrameBGActive)
+				.addFunction("PushStyleColorFrameBGHovered", &ImGui::PushStyleColorFrameBGHovered)
+				.addFunction("PushStyleColorText", &ImGui::PushStyleColorText)
+				.addFunction("PushStyleColorProgressBarFilled", &ImGui::PushStyleColorPlotHistogram)
+				.addFunction("PopStyleColor", &ImGui::PopStyleColor)
 			.endNamespace()
 
 		.endNamespace()

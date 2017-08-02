@@ -98,40 +98,40 @@ uint64_t INT64_MAKE_BIG_ENDIAN(uint64_t i);
 uint64_t INT64_MAKE_LITTLE_ENDIAN(uint64_t i);
 uint64_t INT64_REVERSE_BYTES(uint64_t i);
 
-class L_COLOR{
+class Color4f{
     public:
-        L_COLOR(){
-            mR=1.0f;
-            mG=1.0f;
-            mB=1.0f;
-            mA=1.0f;
+        Color4f(){
+            r=1.0f;
+            g=1.0f;
+            b=1.0f;
+            a=1.0f;
         }
-        L_COLOR(double r, double g, double b, double a){
-            mR=r;
-            mG=g;
-            mB=b;
-            mA=a;
+        Color4f(float rr, float gg, float bb, float aa){
+            r = rr;
+            g = gg;
+			b = bb;
+			a = aa;
         }
-        double mR;
-        double mG;
-        double mB;
-        double mA;
+        float r;
+        float g;
+        float b;
+        float a;
 
-        inline L_COLOR& operator =(L_COLOR& color){
-            mR=color.mR;
-            mG=color.mG;
-            mB=color.mB;
-            mA=color.mA;
+        inline Color4f& operator =(Color4f& color){
+            r=color.r;
+            g=color.g;
+            b=color.b;
+            a=color.a;
 
             return color;
         }
 };
 
-extern L_COLOR L_COLOR_WHITE;
-extern L_COLOR L_COLOR_RED  ;
-extern L_COLOR L_COLOR_GREEN;
-extern L_COLOR L_COLOR_BLUE ;
-extern L_COLOR L_COLOR_BLACK;
+extern Color4f Color4f_WHITE;
+extern Color4f Color4f_RED  ;
+extern Color4f Color4f_GREEN;
+extern Color4f Color4f_BLUE ;
+extern Color4f Color4f_BLACK;
 
 //coordinate to tile grid and vise versa
 inline void CoordToGrid(int &x, int &y){

@@ -55,8 +55,8 @@ class RenderableObject{
 		void		SetRender(const bool& s)		{render=s;}
 		bool		GetRender()						{return render;}
 
-		L_COLOR		GetColor()						{return color;}
-		void		SetColor(L_COLOR c)				{color=c;}
+		Color4f		GetColor()						{return color;}
+		void		SetColor(Color4f c)				{color=c;}
 
 		void		   SetShaderProgram(const RSC_GLProgram* p){shaderProgram=p;}
 		const RSC_GLProgram*  GetShaderProgram()				{return shaderProgram;}
@@ -64,7 +64,7 @@ class RenderableObject{
 		//void UpdateShaderProgram();
 
 		bool		render;
-		L_COLOR		color;
+		Color4f		color;
 
 		TYPE type;
 
