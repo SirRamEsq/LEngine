@@ -36,7 +36,9 @@ void GS_Script::HandleEvent(const Event* event){
     }
 
 	else if(event->message == Event::MSG::ENTITY_DELETED){
+		if(event->sender == EID_RESERVED_STATE_ENTITY){
 			quit = true;
+		}
 	}
 }
 

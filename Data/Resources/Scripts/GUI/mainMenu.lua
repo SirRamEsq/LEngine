@@ -97,6 +97,7 @@ function container.NewGui(baseclass)
 			CPP.ImGui.PopStyleColor(1)
 		end
 		if(gui.currentFrame==2)then
+			gui.currentFrame = 0
 			--CPP.interface:EntityDelete(gui.EID)
 			CPP.interface:PushState("States/mainState.lua")
 		end
