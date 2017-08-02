@@ -82,10 +82,10 @@ void GameStateManager::Close(){
  	mCurrentState=NULL;
 }
 
-void GameStateManager::PushState(std::unique_ptr<GameState> state){
+void GameStateManager::PushState(std::unique_ptr<GameState> state, const RSC_Script* script){
     mGameStates.push_back( std::move(state) );
     mCurrentState=mGameStates.back().get();
-    mCurrentState->Init();
+    mCurrentState->Init(script);
 }
 
 void GameStateManager::UpdateCurrentState(){

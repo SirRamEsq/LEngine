@@ -1,31 +1,31 @@
-#ifndef L_STATE_PAUSE_GAME
-#define L_STATE_PAUSE_GAME
+#ifndef L_STATE_SCRIPT
+#define L_STATE_SCRIPT
 
 #include "../StateManager.h"
 #include "../Resources/RSC_Texture.h"
 #include "../Resources/RSC_Sprite.h"
 #include "../EntityManager.h"
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 
 class Kernel; //forward declare
 
-class GamePauseState : public GameState{
+class GS_Script : public GameState{
     public:
-        GamePauseState(GameStateManager* gsm)
-            :GameState(gsm){
+       	GS_Script(GameStateManager* gsm);
 
-        }
-        void Init(const RSC_Script* stateScript = NULL);
+        void Init(const RSC_Script* stateScript);
         void Close();
 
+		///If the script entity wants to pop this state, it must delete itself
         void HandleEvent(const Event* event);
         bool Update();
         void Draw();
 
-    private:
-        bool exit;
-        EID ent;
+	private:
+		bool quit;
+		ComponentScript* entityScript;
 };
 
 #endif

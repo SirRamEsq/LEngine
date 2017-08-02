@@ -10,7 +10,7 @@ int ttid1=0;
 int ttid2=0;
 int ttid3=0;
 int ttid4=0;
-void GamePauseState::Init(){
+void GamePauseState::Init(const RSC_Script* stateScript){
     exit=false;
 
     tt= new RenderText(&renderMan, 100,100,"| Tha Game is Paused, Dawg |", false);

@@ -7,7 +7,7 @@ GameStateMock::GameStateMock(GameStateManager* gm)
 	updateCount=0;
 	drawCount=0;
 }
-void GameStateMock::Init(){
+void GameStateMock::Init(const RSC_Script* stateScript){
 	init = true;
 }
 void GameStateMock::Close(){

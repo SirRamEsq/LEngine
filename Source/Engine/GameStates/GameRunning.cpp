@@ -26,7 +26,7 @@ GameRunningState::GameRunningState(GameStateManager* gsm)
 
  }
 
-void GameRunningState::Init(){
+void GameRunningState::Init(const RSC_Script* stateScript){
     countdown=1;
     pause=false;
 
