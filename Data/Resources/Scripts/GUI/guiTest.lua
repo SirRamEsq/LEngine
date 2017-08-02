@@ -18,7 +18,7 @@ function container.NewGui(baseclass)
 		gui.CPPInterface = CPP.interface
 		gui.EID			= gui.LEngineData.entityID;
 
-		local defaultWindowSizeW = 220
+		local defaultWindowSizeW = 200
 		local defaultWindowSizeH = 200
 
 		local defaultWindowPosX = 20

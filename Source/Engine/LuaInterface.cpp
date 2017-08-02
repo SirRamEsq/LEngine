@@ -3,6 +3,7 @@
 #include "StateManager.h"
 #include "Kernel.h"
 #include "gui/imgui_LEngine.h"
+#include "GameStates/GS_Script.h"
 
 #include <sstream>
 
@@ -665,6 +666,11 @@ void LuaInterface::SetParent(EID child, EID parent){
 	parentState->entityMan.SetParent(child, parent);
 }
 
+void LuaInterface::PushState(const std::string& scriptPath){
+	const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
+	Kernel::stateMan.PushState(make_unique<GS_Script>(&Kernel::stateMan), script);
+}
+
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
@@ -699,6 +705,8 @@ void LuaInterface::ExposeCPP(){
 
 				.addFunction("GetMap",		&LuaInterface::GetMap)
 				.addFunction("SetParent",	&LuaInterface::SetParent)
+
+				.addFunction("PushState",	&LuaInterface::PushState)
 
 			.endClass()
 
@@ -942,9 +950,6 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)
 				.addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
 				.addFunction("SetNextWindowSizeConstraints", &ImGui::SetNextWindowSizeConstraintsWrapper)
-				
-				//.addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
-				//.addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
 
 				.addFunction("Text", &ImGui::TextWrapper)
 				.addFunction("SliderFloat", &ImGui::SliderFloat)

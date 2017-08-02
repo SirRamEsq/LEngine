@@ -18,7 +18,7 @@ function container.NewGui(baseclass)
 		gui.CPPInterface = CPP.interface
 		gui.EID			= gui.LEngineData.entityID;
 
-		local defaultWindowSizeW = 220
+		local defaultWindowSizeW = 200
 		local defaultWindowSizeH = 200
 
 		local defaultWindowPosX = 20
@@ -37,7 +37,7 @@ function container.NewGui(baseclass)
 		end
 		gui.maxFrames=3
 		gui.currentFrame=0
-		gui.frameCounterMax=500
+		gui.frameCounterMax=100
 		gui.frameCounter=0
 	end
 
@@ -59,7 +59,7 @@ function container.NewGui(baseclass)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
-			 CPP.ImGui.SameLine();CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
@@ -73,7 +73,6 @@ function container.NewGui(baseclass)
 			CPP.ImGui.ProgressBar(gui.frameCounter / gui.frameCounterMax, CPP.Coord2df(128, 16))
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text("-_-")
-		CPP.ImGui.End()
 
 		if(buttonPress == true)then
 			CPP.interface:WriteError(gui.EID, "Button Pressed!")
@@ -86,11 +85,21 @@ function container.NewGui(baseclass)
 		if(gui.frameCounter > gui.frameCounterMax)then
 			gui.frameCounter = 0
 			gui.currentFrame = gui.currentFrame + 1
+			--CPP.interface:PushState("")	
 		end
 		if(gui.currentFrame > gui.maxFrames)then
 			gui.currentFrame = 0
 		end
 
+		if(gui.currentFrame==1)then
+			CPP.ImGui.PushStyleColorText(CPP.Color4f(1.0, 0.1, 0.1, 1))
+			CPP.ImGui.Text("PREPARING TO POP STATE")
+			CPP.ImGui.PopStyleColor(1)
+		end
+		if(gui.currentFrame==2)then
+			CPP.interface:EntityDelete(gui.EID)
+		end
+		CPP.ImGui.End()
 		CPP.ImGui.PopStyleColor(3)
 	end
 

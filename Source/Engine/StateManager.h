@@ -52,7 +52,7 @@ class GameState{
 		bool SetCurrentMap(const RSC_Map* m, unsigned int entranceID);
 
 	protected:
-		virtual void Init()=0;
+		virtual void Init(const RSC_Script* stateScript = NULL)=0;
 		virtual void Close()=0;
 
 		virtual void HandleEvent(const Event* event)=0;
@@ -103,6 +103,7 @@ class GameState{
 class GameStateManager{
 	friend Kernel;
 	friend EventDispatcher;
+	friend EntityManager;
 	friend GameState;
 
 	public:
@@ -112,8 +113,9 @@ class GameStateManager{
 		/**
 		 * Push and Initialize state
 		 * this class assumes ownership of the state
+		 * Can optionally pass a script to be run
 		 */
-		void PushState(std::unique_ptr<GameState> state);
+		void PushState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
 		/**
 		 * State is popped and deleted
 		 */

@@ -6,7 +6,7 @@ class GameStateMock : public GameState{
 		GameStateMock(GameStateManager* gm);
 		~GameStateMock();
 
-		void Init();
+		void Init(const RSC_Script* stateScript = NULL);
 		void Close();
 		void HandleEvent(const Event*);
 		bool Update();

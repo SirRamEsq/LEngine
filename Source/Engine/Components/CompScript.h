@@ -77,8 +77,11 @@ class ComponentScript : public BaseComponent{
 		 */
         bool EventLuaRemoveObserver (EID id);
 
+		///*DEPRECIATED*
         RenderText* RenderObjectText    (int x, int y, const std::string& text, bool abss=true);
+		///*DEPRECIATED*
         RenderLine* RenderObjectLine    (int x, int y, int xx, int yy);
+		///*DEPRECIATED*
         void        RenderObjectDelete  (RenderableObject* obj);
 
         std::string scriptName;

@@ -112,6 +112,8 @@ class LuaInterface{
 		/////////
 			///Set parent for all component managers defined in the EntityManager
 			void SetParent(EID child, EID parent);
+			///Will push a new GS_Script state onto the stack with a script
+			void PushState(const std::string& scriptPath);
 
 		static const std::string LUA_52_INTERFACE_ENV_TABLE;
 		static const std::string DEBUG_LOG;

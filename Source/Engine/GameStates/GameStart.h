@@ -17,7 +17,7 @@ class GameStartState : public GameState{
     public:
         GameStartState(GameStateManager* gsm);
 
-        void Init();
+        void Init(const RSC_Script* stateScript = NULL);
         void Close();
 
         void HandleEvent(const Event* event);

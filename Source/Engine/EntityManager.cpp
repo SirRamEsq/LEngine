@@ -1,4 +1,5 @@
 #include "EntityManager.h"
+#include "Kernel.h"
 
 void EntityManager::DeleteEntity(EID id){
     deadEntities.push_back(id);
@@ -16,6 +17,8 @@ void EntityManager::DispatchEvent(const Event* event){
 }
 
 void EntityManager::BroadcastEvent(const Event* event){
+	//Send to state
+	Kernel::stateMan.HandleEvent(event);
     for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
         i->second->BroadcastEvent(event);
     }
@@ -38,11 +41,12 @@ void EntityManager::Cleanup(){
     for(auto i = deadEntities.begin(); i!=deadEntities.end(); i++){
         EID id=*i;
 
-        for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
-			//Let all entities know that this entity is about to be deleted
-			Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
-			BroadcastEvent(&event);
+		//Let all entities know that this entity is about to be deleted
+		Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
+		BroadcastEvent(&event);
 
+
+        for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
             i->second->DeleteComponent(id);
         }
 
