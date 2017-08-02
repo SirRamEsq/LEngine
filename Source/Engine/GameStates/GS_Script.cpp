@@ -41,6 +41,11 @@ void GS_Script::HandleEvent(const Event* event){
 }
 
 bool GS_Script::Update(){
+	if(nextMap != NULL){
+		SetCurrentMap(nextMap, nextMapEntrance);
+		nextMap = NULL;
+		nextMapEntrance = NULL;
+	}
 	UpdateComponentManagers();
 	return !quit;
 }

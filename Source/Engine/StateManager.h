@@ -49,7 +49,8 @@ class GameState{
 
 
 		RenderManager				renderMan;
-		bool SetCurrentMap(const RSC_Map* m, unsigned int entranceID);
+		///Stores passed arguments till the start of the next frame, then loads the map
+		void SetMapNextFrame(const RSC_Map* m, unsigned int entranceID);
 
 	protected:
 		virtual void Init(const RSC_Script* stateScript = NULL)=0;
@@ -79,7 +80,10 @@ class GameState{
 		std::shared_ptr<InputManager::KeyMapping> input;
 
 		void DrawPreviousState();
+		bool SetCurrentMap(const RSC_Map* m, unsigned int entranceID);
 
+		const RSC_Map* nextMap;
+		unsigned int nextMapEntrance;
 	private:
 		void SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLayerGeneric*>& layers);
 		//returns a data structure mapping tiled EIDS to engine EIDS

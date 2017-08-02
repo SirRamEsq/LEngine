@@ -6,6 +6,7 @@ function container.NewState(baseclass)
 	local state = {} --ignore baseClass
 
 	function state.Initialize()
+		CPP.interface:LoadMap("MAP1.tmx", 0)
 	end
 
 	function state.Update()

@@ -17,6 +17,9 @@ GameState::GameState(GameStateManager* gsm)
 
     mCurrentMap=NULL;
     SetDependencies();
+
+	nextMap = NULL;
+	nextMapEntrance = 0;
 }
 
 void GameState::SetDependencies(){
@@ -300,6 +303,10 @@ void GameState::SetMapLinkEntities(
     }
 }
 
+void GameState::SetMapNextFrame(const RSC_Map* m, unsigned int entranceID){
+	nextMap = m;
+	nextMapEntrance = entranceID;
+}
 
 bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     if(m==NULL){

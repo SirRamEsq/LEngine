@@ -93,11 +93,12 @@ function container.NewGui(baseclass)
 
 		if(gui.currentFrame==1)then
 			CPP.ImGui.PushStyleColorText(CPP.Color4f(1.0, 0.1, 0.1, 1))
-			CPP.ImGui.Text("PREPARING TO POP STATE")
+			CPP.ImGui.Text("PREPARING TO Push STATE")
 			CPP.ImGui.PopStyleColor(1)
 		end
 		if(gui.currentFrame==2)then
-			CPP.interface:EntityDelete(gui.EID)
+			--CPP.interface:EntityDelete(gui.EID)
+			CPP.interface:PushState("States/mainState.lua")
 		end
 		CPP.ImGui.End()
 		CPP.ImGui.PopStyleColor(3)

@@ -671,6 +671,11 @@ void LuaInterface::PushState(const std::string& scriptPath){
 	Kernel::stateMan.PushState(make_unique<GS_Script>(&Kernel::stateMan), script);
 }
 
+void LuaInterface::LoadMap(const std::string& mapPath, unsigned int entranceID){
+	const RSC_Map* m = K_MapMan.GetLoadItem(mapPath, mapPath);
+	parentState->SetMapNextFrame(m, entranceID);
+}
+
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
@@ -707,6 +712,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetParent",	&LuaInterface::SetParent)
 
 				.addFunction("PushState",	&LuaInterface::PushState)
+				.addFunction("LoadMap",	&LuaInterface::LoadMap)
 
 			.endClass()
 
