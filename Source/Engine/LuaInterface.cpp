@@ -970,7 +970,6 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("Separator", &ImGui::Separator)
 				.addFunction("SameLine", &ImGui::SameLineWrapper)
 
-
 				.addFunction("PushStyleColorWindowBG", &ImGui::PushStyleColorWindowBG)
 				.addFunction("PushStyleColorButton", &ImGui::PushStyleColorButton)
 				.addFunction("PushStyleColorButtonHovered", &ImGui::PushStyleColorButtonHovered)

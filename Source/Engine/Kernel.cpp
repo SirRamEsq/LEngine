@@ -37,6 +37,8 @@ void Kernel::Close(){
 	rscSoundMan  .Clear();
 	rscScriptMan .Clear();
 	rscMapMan	 .Clear();
+
+	ImGui::Shutdown();
 }
 
 void Kernel::Inst(){
@@ -81,38 +83,39 @@ void Kernel::Inst(int argc, char *argv[]){
 	Kernel::stateMan.PushNextState();
 }
 
+bool Kernel::Update(){
+	ImGuiNewFrame(SDLMan->mMainWindow);
+	//ImGui::ShowMetricsWindow();
+
+	nextGameTick = SDL_GetTicks() + SKIP_TICKS;
+
+	returnValue=stateMan.Update();
+
+	//Audio subsystem can be put on a different thread
+	audioSubsystem.ProcessEvents();
+
+	gameLoops++;
+
+	//If we're behind, skip drawing
+	//Don't skip if the max amount of frame skip has been passed
+	if( (SDL_GetTicks()<nextGameTick) or (gameLoops>MAX_FRAMESKIP) ){
+		//game render
+		stateMan.Draw();
+		glFinish();
+	}
+	SDL_GL_SwapWindow(SDLMan->GetWindow());
+
+	return returnValue;
+}
+
 bool Kernel::Run(){
 	gameLoops=0;
 
 	//loop seems to be locked to 60fps no matter what?
 	while(SDL_GetTicks()>nextGameTick) {
-		ImGuiNewFrame(SDLMan->mMainWindow);
-		//ImGui::ShowMetricsWindow();
-
-		nextGameTick = SDL_GetTicks() + SKIP_TICKS;
-
-		returnValue=stateMan.Update();
-		if(returnValue!=1){
-			stateMan.PopState();
-			if(stateMan.IsEmpty()){
-				return returnValue;
-			}
+		if(Update() != true){
+			return false;
 		}
-		stateMan.PushNextState();
-
-		//Audio subsystem can be put on a different thread
-		audioSubsystem.ProcessEvents();
-
-		gameLoops++;
-
-		//If we're behind, skip drawing
-		//Don't skip if the max amount of frame skip has been passed
-		if( (SDL_GetTicks()<nextGameTick) or (gameLoops>MAX_FRAMESKIP) ){
-			//game render
-			stateMan.Draw();
-			glFinish();
-		}
-		SDL_GL_SwapWindow(SDLMan->GetWindow());
 	}
 	return true;
 }
