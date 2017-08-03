@@ -75,6 +75,8 @@ void GameState::UpdateComponentManagers(){
 
 GameStateManager::GameStateManager(){
    	mCurrentState=NULL;
+	nextFrameStateScript = NULL;
+	nextFrameState.reset(NULL);
 }
 
 void GameStateManager::Close(){
@@ -97,6 +99,7 @@ void GameStateManager::PushNextState(){
 
 		mCurrentState=mGameStates.back().get();
 		mCurrentState->Init(nextFrameStateScript);
+		nextFrameStateScript = NULL;
 	}
 }
 
@@ -142,9 +145,18 @@ void GameStateManager::HandleEvent(const Event* event){
 
 bool GameStateManager::Update(){
     mCurrentState->entityMan.Cleanup();
+	PushNextState();
     input.HandleInput();
 
-    if(mCurrentState!=NULL){return mCurrentState->Update();}
+    if(mCurrentState!=NULL){
+		if(!mCurrentState->Update()){
+			PopState();
+			if(mGameStates.empty()){
+				return false;
+			}
+		}
+		return true;
+	}
 
     return false;
 }

@@ -16,6 +16,11 @@ void GameStateMock::Close(){
 void GameStateMock::HandleEvent(const Event*){
 }
 bool GameStateMock::Update(){
+	if(nextMap != NULL){
+		SetCurrentMap(nextMap, nextMapEntrance);
+		nextMap = NULL;
+		nextMapEntrance = NULL;
+	}
 	updateCount+=1;
 	return true;
 }

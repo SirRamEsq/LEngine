@@ -56,6 +56,7 @@ class Kernel{
 		static void Inst(int argc, char *argv[]);
 		static void Inst();
 		static bool Run();
+		static bool Update();
 		static void Close();
 
 		static AudioSubsystem				audioSubsystem;

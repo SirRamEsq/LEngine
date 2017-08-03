@@ -41,8 +41,6 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	auto scriptType = "TEST";
 	luaInterface->RunScript(eid, script.get(), mapDepth, parent, scriptName, scriptType, NULL,NULL);
 
-	stateManager->UpdateCurrentState();
-
 	REQUIRE(lastError == "Interface Working");
 
 	SECTION("Ensure Input events are properly handled"){
