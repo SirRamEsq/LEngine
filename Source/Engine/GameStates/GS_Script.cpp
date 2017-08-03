@@ -25,7 +25,8 @@ void GS_Script::Init(const RSC_Script* stateScript){
 }
 
 void GS_Script::Close(){
-
+	entityMan.ClearAllEntities();
+	entityMan.ClearAllReservedEntities();
 }
 
 void GS_Script::HandleEvent(const Event* event){

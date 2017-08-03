@@ -83,11 +83,17 @@ EID EntityManager::NewEntity(const std::string& entityName){
 }
 
 void EntityManager::ClearAllEntities(){
-    for(EID i=EID_MIN; i<entityNumber; i++){
+    for(EID i = EID_MIN; i < entityNumber; i++){
         DeleteEntity(i);
     }
-    mFlagDeleteAll=true;
-    entityNumber=EID_MIN;
+    mFlagDeleteAll = true;
+    entityNumber = EID_MIN;
+}
+
+void EntityManager::ClearAllReservedEntities(){
+    for(EID i = 0; i < EID_MIN; i++){
+        DeleteEntity(i);
+    }
 }
 
 void EntityManager::ClearNameMappings(){

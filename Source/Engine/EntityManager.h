@@ -56,6 +56,11 @@ class EntityManager{
 		 * \see DeleteEntity(EID id)
 		 */
         void ClearAllEntities();
+
+		/**
+		 * Deletes all EIDs between first reserved EID and EID_MIN
+		 */
+		void ClearAllReservedEntities();
 		
 		/**
 		 * Dispatches an Event to all registered Component Managers
