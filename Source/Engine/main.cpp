@@ -8,9 +8,6 @@ int main(int argc, char *argv[]){
 
 	Kernel::Inst(argc, argv);
 
-	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
-	Kernel::stateMan.UpdateCurrentState();
-
 	while(Kernel::Run()){}
 	Kernel::Close();
 

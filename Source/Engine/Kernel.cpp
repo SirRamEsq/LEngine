@@ -76,6 +76,9 @@ void Kernel::Inst(int argc, char *argv[]){
 
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
+
+	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
+	Kernel::stateMan.PushNextState();
 }
 
 bool Kernel::Run(){
@@ -95,7 +98,7 @@ bool Kernel::Run(){
 				return returnValue;
 			}
 		}
-		stateMan.UpdateCurrentState();
+		stateMan.PushNextState();
 
 		//Audio subsystem can be put on a different thread
 		audioSubsystem.ProcessEvents();

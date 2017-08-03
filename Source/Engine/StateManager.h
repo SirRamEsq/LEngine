@@ -115,11 +115,13 @@ class GameStateManager{
 		GameState* GetCurrentState(){return mCurrentState;}
 
 		/**
-		 * Push and Initialize state
+		 * Prepares to push State Next Frame
+		 * Sets internal nextFrameState and nextFrameScript
 		 * this class assumes ownership of the state
 		 * Can optionally pass a script to be run
 		 */
 		void PushState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
+
 		/**
 		 * State is popped and deleted
 		 */
@@ -132,7 +134,6 @@ class GameStateManager{
 		bool IsEmpty(){
 			return mGameStates.empty();
 		}
-		void UpdateCurrentState();
 		InputManager input;
 
 	protected:
@@ -143,10 +144,14 @@ class GameStateManager{
 		void Draw();
 
 		void DrawPreviousState(GameState* gs);
+		void PushNextState();
 
 	private:
 		GameState* GetPreviousState(GameState* gs);
 		GameState* mCurrentState;
+		///State to push next frame
+		std::unique_ptr<GameState> nextFrameState;
+		const RSC_Script* nextFrameStateScript;
 		std::vector<std::unique_ptr<GameState> > mGameStates;
 
 		/*

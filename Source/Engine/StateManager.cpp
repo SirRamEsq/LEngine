@@ -86,13 +86,18 @@ void GameStateManager::Close(){
 }
 
 void GameStateManager::PushState(std::unique_ptr<GameState> state, const RSC_Script* script){
-    mGameStates.push_back( std::move(state) );
-    mCurrentState=mGameStates.back().get();
-    mCurrentState->Init(script);
+	nextFrameState = std::move(state);
+	nextFrameStateScript = script;
 }
 
-void GameStateManager::UpdateCurrentState(){
-    mCurrentState=mGameStates.back().get();
+void GameStateManager::PushNextState(){
+	if(nextFrameState.get() != NULL){
+		mGameStates.push_back( std::move(nextFrameState) );
+		nextFrameState.reset(NULL);
+
+		mCurrentState=mGameStates.back().get();
+		mCurrentState->Init(nextFrameStateScript);
+	}
 }
 
 void GameStateManager::PopState(){
@@ -333,17 +338,6 @@ bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     auto objectsUsingEntrance = SetMapGetEntitiesUsingEntrances(layers);
 
     SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
-
-    //Try to run this map's script
-    /*if(mCurrentMap->GetGlobalScriptName()!=""){
-        //mCurrentMap->mScriptComp=new ComponentScript(EID_MAPSCRIPT, K_ComScriptMan->logFileName);
-        if(!mCurrentMap->mScriptComp->FullInitialize(mCurrentMap->GetGlobalScriptName(), 0, 0, "MAPSCRIPT", "MAPSCRIPT")){
-            delete mCurrentMap->mScriptComp;
-            ErrorLog::WriteToFile("Couldn't load map script", ErrorLog::GenericLogFile);
-            ErrorLog::WriteToFile(mCurrentMap->GetGlobalScriptName(), ErrorLog::GenericLogFile);
-        }
-    }
-    else{mCurrentMap->mScriptComp=NULL;}*/
 
     return true;
 }
