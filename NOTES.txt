@@ -8,7 +8,6 @@ Event Managerment:
 	Currently, all events are processed as soon as they are recieved, maybe have an event queue to handle events async
 
 TODO:
-	Implement debug mode controlled by command line flag
 	Have function in luaInterface to check for incorrect EIDS
 	Added debug boolean in LEngine.lua
 
@@ -20,9 +19,8 @@ TODO:
 		Can use perspective matrix with gui... can be used to achieve interesting effects?
 			Either way, instead of generating the matrix every frame (when it's currently constant anyway)
 			Store it somewhere and read from it
-		Implement buttons that support mouse/keyboard navigation
+		Implement buttons that support keyboard navigation
 		Input remapping gui	
-		Implement Sprites and Sprite Buttons
 
 	BUGS:
 

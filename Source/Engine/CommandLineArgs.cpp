@@ -9,6 +9,10 @@ CommandLineArgs::CommandLineArgs(){
 }
 
 void CommandLineArgs::ParseArgs(int argc, char *argv[]){
+	for(int ii=L_CMD_FIRST; ii<L_CMD_LAST; ii++){
+		switchValues[ii]="";
+	}
+
     //start with i=1 because argv[0] is the program name
     for(int i=1; i<argc; i+=2){
         for(int ii=L_CMD_FIRST; ii<L_CMD_LAST; ii++){
@@ -21,4 +25,8 @@ void CommandLineArgs::ParseArgs(int argc, char *argv[]){
 
 std::string CommandLineArgs::GetValue(L_CMD_ENUM value){
     return switchValues[value];
+}
+
+bool CommandLineArgs::Exists(L_CMD_ENUM value){
+	return (switchValues[value] == "");
 }
