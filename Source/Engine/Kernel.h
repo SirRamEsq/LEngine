@@ -77,7 +77,12 @@ class Kernel{
 		static GenericContainer<RSC_GLProgram>	rscShaderProgramMan;
 
 		static ImGuiState guiState;
+
+		static bool DEBUG_MODE();
+
 	private:
+		static bool debugMode;
+
 		Kernel();
 		~Kernel();
 

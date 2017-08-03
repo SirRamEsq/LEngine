@@ -9,6 +9,7 @@ struct CommandLineArgs{
         void ParseArgs(int argc, char *argv[]);
 
         std::string GetValue(L_CMD_ENUM value);
+		bool Exists(L_CMD_ENUM);
 
     private:
         char*       switchNames [L_CMD_LAST];

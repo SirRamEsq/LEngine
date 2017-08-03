@@ -9,6 +9,7 @@ AudioSubsystem				Kernel::audioSubsystem;
 int			 Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int			 Kernel::returnValue;
+bool 		Kernel::debugMode;
 
 GenericContainer<RSC_Sprite>	Kernel::rscSpriteMan;
 GenericContainer<RSC_Texture>	Kernel::rscTexMan;
@@ -61,6 +62,7 @@ void Kernel::Inst(int argc, char *argv[]){
         ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
     }
 
+	debugMode = (commandLine.Exists(L_CMD_DEBUG) == true);
 
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
@@ -81,6 +83,10 @@ void Kernel::Inst(int argc, char *argv[]){
 
 	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
 	Kernel::stateMan.PushNextState();
+}
+
+bool Kernel::DEBUG_MODE(){
+	return debugMode;
 }
 
 bool Kernel::Update(){
