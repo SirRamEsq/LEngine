@@ -37,7 +37,7 @@ function container.NewGui(baseclass)
 		end
 		gui.maxFrames=3
 		gui.currentFrame=0
-		gui.frameCounterMax=100
+		gui.frameCounterMax=500
 		gui.frameCounter=0
 	end
 
@@ -85,21 +85,18 @@ function container.NewGui(baseclass)
 		if(gui.frameCounter > gui.frameCounterMax)then
 			gui.frameCounter = 0
 			gui.currentFrame = gui.currentFrame + 1
-			--CPP.interface:PushState("")	
 		end
 		if(gui.currentFrame > gui.maxFrames)then
 			gui.currentFrame = 0
 		end
 
-		if(gui.currentFrame==1)then
-			CPP.ImGui.PushStyleColorText(CPP.Color4f(1.0, 0.1, 0.1, 1))
-			CPP.ImGui.Text("PREPARING TO Push STATE")
-			CPP.ImGui.PopStyleColor(1)
-		end
-		if(gui.currentFrame==2)then
+		if(CPP.ImGui.Button("Proceed"))then
 			gui.currentFrame = 0
-			--CPP.interface:EntityDelete(gui.EID)
 			CPP.interface:PushState("States/mainState.lua")
+		end
+		CPP.ImGui.SameLine()
+		if(CPP.ImGui.Button("Back"))then
+			CPP.interface:EntityDelete(gui.EID)
 		end
 		CPP.ImGui.End()
 		CPP.ImGui.PopStyleColor(3)
