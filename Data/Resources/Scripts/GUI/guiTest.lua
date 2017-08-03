@@ -1,3 +1,4 @@
+
 --- ImGui TestBed
 -- Use this for a reference as to how to use the CPP.ImGui api
 
@@ -42,14 +43,17 @@ function container.NewGui(baseclass)
 	end
 
 	function gui.Update()
-		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
+		local windowFlags = 0 -- imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
 		CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
 		--Sets ProgressBar BG
 		CPP.ImGui.PushStyleColorFrameBG(CPP.Color4f(0, 0.3, 0.3, 1))
 		CPP.ImGui.PushStyleColorProgressBarFilled(CPP.Color4f(0, 0.6, 0.6, 1))
+		CPP.ImGui.PushStyleColorButton(CPP.Color4f(0, 0, 0.3, 1))
+		CPP.ImGui.PushStyleColorButtonActive(CPP.Color4f(0, 0.3, 0, 1))
+		CPP.ImGui.PushStyleColorButtonHovered(CPP.Color4f(0, 0.6, 0.6, 1))
 
-		CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
-		CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
+		--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
+		--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
 		CPP.ImGui.BeginFlags("TEST", windowFlags)
 			CPP.ImGui.Text("Testing!")
 			CPP.ImGui.SameLine()
@@ -59,7 +63,7 @@ function container.NewGui(baseclass)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
-			 CPP.ImGui.SameLine();CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
@@ -73,7 +77,6 @@ function container.NewGui(baseclass)
 			CPP.ImGui.ProgressBar(gui.frameCounter / gui.frameCounterMax, CPP.Coord2df(128, 16))
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text("-_-")
-		CPP.ImGui.End()
 
 		if(buttonPress == true)then
 			CPP.interface:WriteError(gui.EID, "Button Pressed!")
@@ -91,7 +94,8 @@ function container.NewGui(baseclass)
 			gui.currentFrame = 0
 		end
 
-		CPP.ImGui.PopStyleColor(3)
+		CPP.ImGui.End()
+		CPP.ImGui.PopStyleColor(6)
 	end
 
 	return gui;
