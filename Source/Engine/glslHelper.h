@@ -3,6 +3,7 @@
 
 #include "Errorlog.h"
 #include "math.h"
+#include "Defines.h"
 
 // const used to convert degrees into radians
 //is defined in math.h #define M_PI 3.14
@@ -106,6 +107,7 @@ class Matrix4 {
 
         static Matrix4 IdentityMatrix ();
         static Matrix4 ZeroMatrix     ();
+		static Matrix4 OrthoGraphicProjectionMatrix(const Coord2df& displaySize);
 
         GLfloat m[16];
 };

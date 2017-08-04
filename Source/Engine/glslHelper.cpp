@@ -214,6 +214,15 @@ Matrix4 Matrix4::IdentityMatrix() {
 	);
 }
 
+Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Coord2df& displaySize){
+	return Matrix4 (
+        2.0f/displaySize.x,		0.0f,                   0.0f, 0.0f ,
+        0.0f,                 	2.0f/-displaySize.y, 	0.0f, 0.0f ,
+        0.0f,                 	0.0f,                  -1.0f, 0.0f ,
+        -1.0f,                 	1.0f,                   0.0f, 1.0f
+	);
+}
+
 Vec4 Matrix4::operator* (const Vec4& rhs) {
 	// 0x + 4y + 8z + 12w
 	float x =
