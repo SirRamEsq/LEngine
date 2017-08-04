@@ -359,17 +359,8 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_SCISSOR_TEST);
 
-    // Setup viewport, orthographic projection matrix
+    // Setup viewport, projection matrix
     glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
-    /*
-	const float ortho_projection[4][4] =
-    {
-        { 2.0f/io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
-        { 0.0f,                  2.0f/-io.DisplaySize.y, 0.0f, 0.0f },
-        { 0.0f,                  0.0f,                  -1.0f, 0.0f },
-        {-1.0f,                  1.0f,                   0.0f, 1.0f },
-    };
-	*/
 
     guiState->shaderHandle->Bind();
     glUniform1i(guiState->attribLocationTex, 0);
