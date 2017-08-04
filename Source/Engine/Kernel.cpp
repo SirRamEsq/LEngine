@@ -19,6 +19,7 @@ GenericContainer<RSC_Script>	Kernel::rscScriptMan;
 GenericContainer<RSC_Map>		Kernel::rscMapMan;
 GenericContainer<RSC_GLShader>	Kernel::rscShaderMan;
 GenericContainer<RSC_GLProgram>	Kernel::rscShaderProgramMan;
+GenericContainer<RSC_Font>		Kernel::rscFontMan;
 
 ImGuiState Kernel::guiState;
 
@@ -38,6 +39,9 @@ void Kernel::Close(){
 	rscSoundMan  .Clear();
 	rscScriptMan .Clear();
 	rscMapMan	 .Clear();
+	rscShaderMan	 .Clear();
+	rscShaderProgramMan	 .Clear();
+	rscFontMan	 .Clear();
 
 	ImGui::Shutdown();
 }
@@ -75,12 +79,18 @@ void Kernel::Inst(int argc, char *argv[]){
 	rscSoundMan		.SetLoadFunction(&RSC_Sound::LoadResource	);
 	rscScriptMan	.SetLoadFunction(&RSC_Script::LoadResource);
 	rscMapMan		.SetLoadFunction(&RSC_MapImpl::LoadResource   );
+	rscFontMan		.SetLoadFunction(&RSC_Font::LoadResource   );
 
 	commandLine.ParseArgs(argc, argv);
 
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
 
+	//std::string fontName = "ebFonts/apple_kid.ttf";
+	std::string fontName = "extra_fonts/DroidSans.ttf";
+	//std::string fontName = "XXRaytid.ttf";
+	auto fontResource = rscFontMan.GetLoadItem(fontName,fontName);
+	auto font = fontResource->GetFont(20);
 	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
 	Kernel::stateMan.PushNextState();
 }
@@ -91,7 +101,17 @@ bool Kernel::DEBUG_MODE(){
 
 bool Kernel::Update(){
 	ImGuiNewFrame(SDLMan->mMainWindow);
-	//ImGui::ShowMetricsWindow();
+	//std::string fontName = "ebFonts/apple_kid.ttf";
+	std::string fontName = "extra_fonts/DroidSans.ttf";
+	//std::string fontName = "XXRaytid.ttf";
+	auto fontResource = rscFontMan.GetLoadItem(fontName,fontName);
+	auto font = fontResource->GetFont(20);
+	ImGui::PushFont(font);
+
+	if(debugMode){
+		ImGui::ShowMetricsWindow();
+	}
+	ImGui::PopFont();
 
 	nextGameTick = SDL_GetTicks() + SKIP_TICKS;
 
