@@ -246,6 +246,7 @@ void Kernel::ImGuiNewFrame(SDL_Window* window){
     SDL_GL_GetDrawableSize(window, &display_w, &display_h);
     io.DisplaySize = ImVec2((float)w, (float)h);
     io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+	guiState.projectionMatrix = Matrix4::OrthoGraphicProjectionMatrix(Coord2df(w,h));
 
     // Setup time step
     Uint32	time = SDL_GetTicks();

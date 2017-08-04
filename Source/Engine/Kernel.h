@@ -49,6 +49,8 @@ struct ImGuiState{
 	unsigned int 	vboHandle = 0;
 	unsigned int	vaoHandle = 0;
 	unsigned int	elementsHandle = 0;
+
+	Matrix4 projectionMatrix;
 };
 
 class Kernel{

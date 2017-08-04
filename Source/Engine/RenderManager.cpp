@@ -361,16 +361,19 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
 
     // Setup viewport, orthographic projection matrix
     glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
-    const float ortho_projection[4][4] =
+    /*
+	const float ortho_projection[4][4] =
     {
         { 2.0f/io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
         { 0.0f,                  2.0f/-io.DisplaySize.y, 0.0f, 0.0f },
         { 0.0f,                  0.0f,                  -1.0f, 0.0f },
         {-1.0f,                  1.0f,                   0.0f, 1.0f },
     };
+	*/
+
     guiState->shaderHandle->Bind();
     glUniform1i(guiState->attribLocationTex, 0);
-    glUniformMatrix4fv(guiState->attribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+    glUniformMatrix4fv(guiState->attribLocationProjMtx, 1, GL_FALSE, guiState->projectionMatrix.m);
     glBindVertexArray(guiState->vaoHandle);
 
     for (int n = 0; n < drawData->CmdListsCount; n++)
