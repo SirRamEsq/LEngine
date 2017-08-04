@@ -21,6 +21,7 @@
 #include "Resources/RSC_Background.h"
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_GLShader.h"
+#include "Resources/RSC_Font.h"
 
 #include "AudioSubsystem.h"
 #include "CommandLineArgs.h"
@@ -72,6 +73,7 @@ class Kernel{
 		static GenericContainer<RSC_Script>		rscScriptMan;
 		static GenericContainer<RSC_Texture>	rscTexMan;
 		static GenericContainer<RSC_Map>		rscMapMan;
+		static GenericContainer<RSC_Font>		rscFontMan;
 
 		//RSC_GLPrograms don't own shaders, but obviously make extensive use of them
 		//be careful not to delete shaders in use by programs
@@ -82,6 +84,8 @@ class Kernel{
 
 		static bool DEBUG_MODE();
 
+		///Is called once per run to initialize imgui resources
+		static void ImGuiCreateFontsTexture();
 	private:
 		static bool debugMode;
 
@@ -92,8 +96,6 @@ class Kernel{
 		static void ImGuiNewFrame(SDL_Window* window);
 		///Is called once per run to initialize imgui resources
 		static void ImGuiCreateDeviceObjects();
-		///Is called once per run to initialize imgui resources
-		static void ImGuiCreateFontsTexture();
 
 		static int gameLoops;
 		static unsigned int nextGameTick;
@@ -114,6 +116,7 @@ class Kernel{
 #define K_MusicMan		Kernel::rscMusicMan
 #define K_ScriptMan		Kernel::rscScriptMan
 #define K_MapMan		Kernel::rscMapMan
+#define K_FontMan		Kernel::rscFontMan
 #define K_ShaderMan		Kernel::rscShaderMan
 #define K_ShaderProgramMan		Kernel::rscShaderProgramMan
 
