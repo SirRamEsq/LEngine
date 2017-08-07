@@ -16,6 +16,11 @@ namespace ImGui{
 
     void SetNextWindowSizeWrapper(const Coord2df& size, ImGuiSetCond cond = 0);
     void SetNextWindowPosWrapper(const Coord2df& pos, ImGuiSetCond cond = 0);
+    void SetNextWindowPosCenterWrapper(ImGuiSetCond cond = 0);
+	///Must pass y Value
+    void SetNextWindowPosCenterWrapperX(float y, ImGuiSetCond cond = 0);
+	///Must pass x Value
+    void SetNextWindowPosCenterWrapperY(float x, ImGuiSetCond cond = 0);
 	void SetNextWindowSizeConstraintsWrapper(const Coord2df& size_min, const Coord2df& size_max);
 
 	///Display Text
@@ -25,7 +30,7 @@ namespace ImGui{
 	
 	///Display a frame from a sprite
 	void Sprite(const RSC_Sprite* sprite, const std::string& animation, int frame);
-	///Display a button by using a frame from a sprite
+	///Display a button by using a frame from a sprite bool SpriteButton(const RSC_Sprite* sprite, const std::string& animation, int frame);
 	bool SpriteButton(const RSC_Sprite* sprite, const std::string& animation, int frame);
 
 	/**
