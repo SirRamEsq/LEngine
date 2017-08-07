@@ -35,6 +35,18 @@ void ImGui::SetNextWindowPosWrapper(const Coord2df& pos, ImGuiSetCond cond){
 	ImGui::SetNextWindowPos(pos, cond);
 }
 
+void ImGui::SetNextWindowPosCenterWrapper(ImGuiSetCond cond){
+	ImGui::SetNextWindowPosWrapper(Coord2df(-FLT_MAX, -FLT_MAX), cond);
+}
+
+void ImGui::SetNextWindowPosCenterWrapperX(float y, ImGuiSetCond cond){
+	ImGui::SetNextWindowPosWrapper(Coord2df(-FLT_MAX, y), cond);
+}
+
+void ImGui::SetNextWindowPosCenterWrapperY(float x, ImGuiSetCond cond){
+	ImGui::SetNextWindowPosWrapper(Coord2df(x, -FLT_MAX), cond);
+}
+
 void ImGui::SetNextWindowSizeConstraintsWrapper(const Coord2df& size_min, const Coord2df& size_max){
 	SetNextWindowSizeConstraints(size_min, size_max);
 }
