@@ -1,4 +1,5 @@
 #include "Kernel.h"
+#include "gui/imgui_LEngine.h"
 
 SDLInit*					Kernel::SDLMan;
 GameStateManager			Kernel::stateMan;
@@ -86,11 +87,6 @@ void Kernel::Inst(int argc, char *argv[]){
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
 
-	//std::string fontName = "ebFonts/apple_kid.ttf";
-	std::string fontName = "extra_fonts/DroidSans.ttf";
-	//std::string fontName = "XXRaytid.ttf";
-	auto fontResource = rscFontMan.GetLoadItem(fontName,fontName);
-	auto font = fontResource->GetFont(20);
 	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
 	Kernel::stateMan.PushNextState();
 }
@@ -101,20 +97,12 @@ bool Kernel::DEBUG_MODE(){
 
 bool Kernel::Update(){
 	ImGuiNewFrame(SDLMan->mMainWindow);
-	//std::string fontName = "ebFonts/apple_kid.ttf";
-	std::string fontName = "extra_fonts/DroidSans.ttf";
-	//std::string fontName = "XXRaytid.ttf";
-	auto fontResource = rscFontMan.GetLoadItem(fontName,fontName);
-	auto font = fontResource->GetFont(20);
-	ImGui::PushFont(font);
 
 	if(debugMode){
 		ImGui::ShowMetricsWindow();
 	}
-	ImGui::PopFont();
 
 	nextGameTick = SDL_GetTicks() + SKIP_TICKS;
-
 	returnValue=stateMan.Update();
 
 	//Audio subsystem can be put on a different thread
@@ -153,75 +141,80 @@ void Kernel::ImGuiCreateDeviceObjects(){
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
-    const GLchar *vertex_shader =
-        "#version 300 es\n"
-		"precision mediump float;\n"
-        "uniform mat4 ProjMtx;\n"
-        "in vec2 Position;\n"
-        "in vec2 UV;\n"
-        "in vec4 Color;\n"
-        "out vec2 Frag_UV;\n"
-        "out vec4 Frag_Color;\n"
-        "void main()\n"
-        "{\n"
-        "	Frag_UV = UV;\n"
-        "	Frag_Color = Color;\n"
-        "	gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
-        "}\n";
+	if(guiState.shaderHandle.get()  == NULL){
+		const GLchar *vertex_shader =
+			"#version 300 es\n"
+			"precision mediump float;\n"
+			"uniform mat4 ProjMtx;\n"
+			"in vec2 Position;\n"
+			"in vec2 UV;\n"
+			"in vec4 Color;\n"
+			"out vec2 Frag_UV;\n"
+			"out vec4 Frag_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Frag_UV = UV;\n"
+			"	Frag_Color = Color;\n"
+			"	gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
+			"}\n";
 
-    const GLchar* fragment_shader =
-        "#version 300 es\n"
-		"precision mediump float;\n"
-        "uniform sampler2D Texture;\n"
-        "in vec2 Frag_UV;\n"
-        "in vec4 Frag_Color;\n"
-        "out vec4 Out_Color;\n"
-        "void main()\n"
-        "{\n"
-        "	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
-        "}\n";
+		const GLchar* fragment_shader =
+			"#version 300 es\n"
+			"precision mediump float;\n"
+			"uniform sampler2D Texture;\n"
+			"in vec2 Frag_UV;\n"
+			"in vec4 Frag_Color;\n"
+			"out vec4 Out_Color;\n"
+			"void main()\n"
+			"{\n"
+			"	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
+			"}\n";
 
-	guiState.vertHandle = make_unique<RSC_GLShader>(vertex_shader, SHADER_VERTEX);
-	guiState.fragHandle = make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
-	guiState.shaderHandle = make_unique<RSC_GLProgram>();
+		guiState.vertHandle = make_unique<RSC_GLShader>(vertex_shader, SHADER_VERTEX);
+		guiState.fragHandle = make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
+		guiState.shaderHandle = make_unique<RSC_GLProgram>();
 
-	if(guiState.vertHandle->IsUsable() == false){
-		ErrorLog::WriteToFile("Couldn't load ImGui Vertex Shader", ErrorLog::GenericLogFile);
-		throw LEngineException("Imgui No Vertex Shader");
-	}
-	if(guiState.fragHandle->IsUsable() == false){
-		ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
-		throw LEngineException("Imgui No Fragment Shader");
-	}
-	
-	guiState.shaderHandle->AddShader(guiState.vertHandle.get());
-	guiState.shaderHandle->AddShader(guiState.fragHandle.get());
-	guiState.shaderHandle->LinkProgram();
-	guiState.shaderHandle->Bind();
+		if(guiState.vertHandle->IsUsable() == false){
+			ErrorLog::WriteToFile("Couldn't load ImGui Vertex Shader", ErrorLog::GenericLogFile);
+			throw LEngineException("Imgui No Vertex Shader");
+		}
+		if(guiState.fragHandle->IsUsable() == false){
+			ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
+			throw LEngineException("Imgui No Fragment Shader");
+		}
+		
+		guiState.shaderHandle->AddShader(guiState.vertHandle.get());
+		guiState.shaderHandle->AddShader(guiState.fragHandle.get());
+		guiState.shaderHandle->LinkProgram();
+		guiState.shaderHandle->Bind();
 
-    guiState.attribLocationTex = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "Texture");
-    guiState.attribLocationProjMtx = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "ProjMtx");
-    guiState.attribLocationPosition = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Position");
-    guiState.attribLocationUV = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "UV");
-    guiState.attribLocationColor = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Color");
+		guiState.attribLocationTex = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "Texture");
+		guiState.attribLocationProjMtx = glGetUniformLocation(guiState.shaderHandle->GetHandle(), "ProjMtx");
+		guiState.attribLocationPosition = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Position");
+		guiState.attribLocationUV = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "UV");
+		guiState.attribLocationColor = glGetAttribLocation(guiState.shaderHandle->GetHandle(), "Color");
 
-    glGenBuffers(1, &guiState.vboHandle);
-    glGenBuffers(1, &guiState.elementsHandle);
+		glGenBuffers(1, &guiState.vboHandle);
+		glGenBuffers(1, &guiState.elementsHandle);
 
-    glGenVertexArrays(1, &guiState.vaoHandle);
-    glBindVertexArray(guiState.vaoHandle);
-    glBindBuffer(GL_ARRAY_BUFFER, guiState.vboHandle);
-    glEnableVertexAttribArray(guiState.attribLocationPosition);
-    glEnableVertexAttribArray(guiState.attribLocationUV);
-    glEnableVertexAttribArray(guiState.attribLocationColor);
+		glGenVertexArrays(1, &guiState.vaoHandle);
+		glBindVertexArray(guiState.vaoHandle);
+		glBindBuffer(GL_ARRAY_BUFFER, guiState.vboHandle);
+		glEnableVertexAttribArray(guiState.attribLocationPosition);
+		glEnableVertexAttribArray(guiState.attribLocationUV);
+		glEnableVertexAttribArray(guiState.attribLocationColor);
 
 #define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
-    glVertexAttribPointer(guiState.attribLocationPosition, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, pos));
-    glVertexAttribPointer(guiState.attribLocationUV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, uv));
-    glVertexAttribPointer(guiState.attribLocationColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, col));
+		glVertexAttribPointer(guiState.attribLocationPosition, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, pos));
+		glVertexAttribPointer(guiState.attribLocationUV, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, uv));
+		glVertexAttribPointer(guiState.attribLocationColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, col));
 #undef OFFSETOF
 
-    ImGuiCreateFontsTexture();
+	}
+
+	if(guiState.fontTexture == 0){
+		ImGuiCreateFontsTexture();
+	}
 
     // Restore modified GL state
     glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -254,8 +247,9 @@ void Kernel::ImGuiCreateFontsTexture(){
 }
 
 void Kernel::ImGuiNewFrame(SDL_Window* window){
-    if (!guiState.fontTexture)
+    if (!guiState.fontTexture){
         ImGuiCreateDeviceObjects();
+	}
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -296,4 +290,12 @@ void Kernel::ImGuiNewFrame(SDL_Window* window){
 
     // Start the frame
     ImGui::NewFrame();
+}
+
+void Kernel::ImGuiInvalidateFontTexture(){
+	//Delete Font texture and it will be reloaded next frame
+	if(Kernel::guiState.fontTexture != 0 ){
+		glDeleteTextures(1, &Kernel::guiState.fontTexture);
+		Kernel::guiState.fontTexture = 0;
+	}
 }

@@ -17,6 +17,8 @@ function container.NewMain(baseclass)
 
 		main.defaultWindowPos = CPP.Coord2df(450, 300)
 		main.childEID = CPP.interface:EntityNew("GUI/guiTest.lua", 0,0, main.depth, main.EID, "NAME", "TYPE")
+		main.font = "extra_fonts/Roboto-Medium.ttf"
+		main.fontSize = 20
 	end
 
 	function main.Update()
@@ -24,17 +26,22 @@ function container.NewMain(baseclass)
 
 		CPP.ImGui.SetNextWindowPos(main.defaultWindowPos, 0)
 		CPP.ImGui.SetNextWindowFocus();
-		CPP.ImGui.BeginFlags("Main", windowFlags)
 
-		if(CPP.ImGui.Button("Proceed"))then
-			CPP.interface:PushState("States/mainState.lua")
-		end
-		CPP.ImGui.SameLine()
-		if(CPP.ImGui.Button("Back"))then
-			CPP.interface:EntityDelete(main.EID)
-		end
+		local popFont = CPP.ImGui.PushFont(main.font, main.fontSize)
+		if(popFont)then
+			CPP.ImGui.BeginFlags("Main", windowFlags)
 
-		CPP.ImGui.End()
+			if(CPP.ImGui.Button("Proceed"))then
+				CPP.interface:PushState("States/mainState.lua")
+			end
+			CPP.ImGui.SameLine()
+			if(CPP.ImGui.Button("Back"))then
+				CPP.interface:EntityDelete(main.EID)
+			end
+
+			CPP.ImGui.End()
+			CPP.ImGui.PopFont()
+		end
 	end
 
 	return main;

@@ -3,4 +3,9 @@
 
 rm ./bin/LEngine
 colormake --file ./Makefile
-./bin/LEngine -map MAP1.tmx
+
+#if file exists, clear output and run
+if [ -f ./bin/LEngine ]; then
+	clear
+	./bin/LEngine -map MAP1.tmx
+fi

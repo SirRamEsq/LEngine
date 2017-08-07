@@ -14,17 +14,17 @@ ImFont* RSC_Font::GetFont(int size) const {
 	auto fontIterator = fonts.find(size);
 	if(fontIterator == fonts.end()){
 		ImFontConfig config;
-		config.OversampleH = 3;
-		config.OversampleV = 1;
+		//config.OversampleH = 3;
+		//config.OversampleV = 1;
 		//ensure that the data isn't erased by ImGui
+		//config.GlyphExtraSpacing.x =2.0f;
 		config.FontDataOwnedByAtlas = false;
-
-		config.GlyphExtraSpacing.x =1.0f;
 		
 		auto font = io.Fonts->AddFontFromMemoryTTF(data->GetData(), data->length, size, &config);
-		//Kernel::ImGuiCreateFontsTexture();
-
 		fonts[size] = font;
+
+		//Have the kernel generate a new font texture
+		Kernel::ImGuiInvalidateFontTexture();
 		return font;
 	}
 

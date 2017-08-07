@@ -980,6 +980,9 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("PushStyleColorText", &ImGui::PushStyleColorText)
 				.addFunction("PushStyleColorProgressBarFilled", &ImGui::PushStyleColorPlotHistogram)
 				.addFunction("PopStyleColor", &ImGui::PopStyleColor)
+
+				.addFunction("PushFont", &ImGui::PushFontWrapper)
+				.addFunction("PopFont", &ImGui::PopFontWrapper)
 			.endNamespace()
 
 		.endNamespace()

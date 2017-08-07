@@ -84,8 +84,8 @@ class Kernel{
 
 		static bool DEBUG_MODE();
 
-		///Is called once per run to initialize imgui resources
 		static void ImGuiCreateFontsTexture();
+		static void ImGuiInvalidateFontTexture();
 	private:
 		static bool debugMode;
 

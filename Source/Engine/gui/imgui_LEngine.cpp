@@ -108,6 +108,20 @@ void ImGui::PushStyleColorText(const Color4f& c){
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(c.r,c.g,c.b,c.a));
 }
 
+bool ImGui::PushFontWrapper(const std::string& name, int size){
+	auto fontResource = K_FontMan.GetLoadItem(name, name);
+	auto font = fontResource->GetFont(size);
+	if(font->IsLoaded()){
+			ImGui::PushFont(font);
+			return true;
+	}
+	return false;
+}
+
+void ImGui::PopFontWrapper(){
+	ImGui::PopFont();
+}
+
 ////////////
 //INTERNAL//
 ////////////
