@@ -54,6 +54,10 @@ namespace ImGui{
 	void PushStyleColorPlotHistogram(const Color4f& c);
 	void PushStyleColorText(const Color4f& c);
 
+	//Returns true if font is pushed
+	bool PushFontWrapper(const std::string& name, int size);
+	void PopFontWrapper();
+
 	////////////
 	//INTERNAL//
 	////////////
