@@ -19,7 +19,7 @@ function container.NewMain(baseclass)
 		main.childEID = CPP.interface:EntityNew("GUI/guiTest.lua", 0,0, main.depth, main.EID, "NAME", "TYPE")
 		--main.font = "extra_fonts/Roboto-Medium.ttf"
 		main.font = "ebFonts/wisdom.ttf"
-		main.fontSize = 20
+		main.fontSize = 30
 	end
 
 	function main.Update()
@@ -33,7 +33,7 @@ function container.NewMain(baseclass)
 		CPP.ImGui.BeginFlags("Main", windowFlags)
 
 		if(CPP.ImGui.Button("Proceed"))then
-			CPP.interface:PushState("States/mainState.lua")
+			CPP.interface:PushState("States/levelState.lua")
 		end
 		CPP.ImGui.SameLine()
 		if(CPP.ImGui.Button("Back"))then
