@@ -40,7 +40,7 @@ bool GameStartState::Update(){
 	countdown++;
 	if(countdown > countdownMax){
 		countdown = 0;
-		std::string scriptPath = "GUI/mainMenu.lua";
+		std::string scriptPath = "States/startupState.lua";
 		const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
 		gameStateManager->PushState(make_unique<GS_Script>(gameStateManager), script);
 	}
