@@ -17,9 +17,10 @@ void MapNode::SetParent(MapNode* parent){
 		if(parent == NULL){return;}
 
 		positionLocal = mParent->TranslateWorldToLocal(positionLocal);
+		return;
 	}
 	Coord2df oldParentCoord, newParentcoord;
-	//Assume no parent is set and set local coordinates to world
+	//Set local coordinates to world
 	positionLocal = mParent->TranslateLocalToWorld(positionLocal);
 
 	mParent = parent;
@@ -34,12 +35,13 @@ void MapNode::UpdateWorld(){
 	//Component manager will ensure that the parents are run before the children
 	//This guarantees that the parent's world position is up-to-date
 	
-	//Set World Coordinates to Local Coordinates
-	positionWorld = positionLocal;
-
+	if(mParent==NULL){	
+		//Set World Coordinates to Local Coordinates
+		positionWorld = positionLocal;
+	}
 	//If this node has a parent, translate the world Coordinates by their world coordinates
-	if(mParent!=NULL){
-		positionWorld = positionWorld + mParent->positionWorld;
+	else{	
+		positionWorld = positionLocal + mParent->positionWorld;
 	}
 }
 
@@ -85,19 +87,17 @@ ComponentPosition::~ComponentPosition(){
 }
 
 void ComponentPosition::SetParent(BaseComponent* p){
+	parent = p;
+
 	//If parent is null, then set the node parent to the root node owned by the manager
 	if(p==NULL){
 		mNode.SetParent(mNode.GetRootNode());
-		return;
 	}
 	//Set node's parent to the parent's node
 	else{
 		auto parentPosition = static_cast<ComponentPosition*>(p);
 		mNode.SetParent(parentPosition->GetMapNode());
 	}
-
-	//Set this component's parent to the parent
-	parent = p;
 }
 
 Coord2df ComponentPosition::GetPositionWorld(){
