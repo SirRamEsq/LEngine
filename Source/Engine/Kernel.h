@@ -31,6 +31,8 @@
 #include <vector>
 
 struct ImGuiState{
+	void Reset();
+
 	bool 	mousePressed[3] = { false, false, false };
 	float 	mouseWheel = 0.0f;
 

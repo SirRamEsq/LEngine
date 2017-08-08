@@ -27,6 +27,36 @@ ImGuiState Kernel::guiState;
 Kernel::Kernel(){}
 Kernel::~Kernel(){}
 
+void ImGuiState::Reset(){
+	mousePressed[0]=false;
+	mousePressed[1]=false;
+	mousePressed[2]=false;
+
+	time = 0.0f;
+	Kernel::ImGuiInvalidateFontTexture();
+	fontTexture = 0;
+
+	shaderHandle.reset(NULL);
+	vertHandle.reset(NULL);
+	fragHandle.reset(NULL);
+
+	glDeleteBuffers(1, &vboHandle);
+	glDeleteBuffers(1, &elementsHandle);
+
+	glDeleteVertexArrays(1, &vaoHandle);
+
+	attribLocationUV = 0;
+	attribLocationProjMtx = 0;
+	attribLocationPosition = 0;
+	attribLocationTex = 0;
+	attribLocationColor = 0;
+
+	vboHandle = 0;
+	vaoHandle = 0;
+	elementsHandle = 0;
+
+}
+
 void Kernel::Close(){
 	ErrorLog::WriteToFile("Closing...", ErrorLog::GenericLogFile);
 
@@ -43,6 +73,8 @@ void Kernel::Close(){
 	rscShaderMan	 .Clear();
 	rscShaderProgramMan	 .Clear();
 	rscFontMan	 .Clear();
+
+	guiState.Reset();
 
 	ImGui::Shutdown();
 }
