@@ -128,12 +128,14 @@ class RenderManager{
 		void RemoveObjectWorld	(RenderableObjectWorld* obj);
 
 	private:
+		std::unique_ptr<RSC_GLProgram> LoadShaderProgram(const std::string& vertexName, const std::string& fragName);
+		void LinkShaderProgram(RSC_GLProgram* program);
+
 		/**
-		 * Will Load default shaders for Tile, Light Sprite, Image
-		 * Also sets static 'loadedShaders' boolean to true after loading
+		 * Will Load default shaders for Tile, Light Sprite, Image if not already loaded
+		 * will assign default shaders to member data
 		 */
-		static void LoadDefaultShaders();
-		static bool loadedShaders;
+		void LoadDefaultShaders();
 
 		void ImGuiRender(ImDrawData* drawData);
 

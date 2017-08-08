@@ -146,8 +146,6 @@ bool LOrderOBJs(RenderableObject* r1, RenderableObject* r2){
 GLuint RenderManager::GlobalCameraUBO=0;
 GLuint RenderManager::GlobalProgramUBO=0;
 
-//false until 'LoadDefaultShaders' is called
-bool RenderManager::loadedShaders = false;
 const GLuint RenderManager::CameraDataBindingIndex = 1;
 const GLuint RenderManager::ProgramDataBindingIndex = 2;
 const std::string RenderManager::defaultProgramTileName = "defaultProgramTile";
@@ -159,20 +157,20 @@ const std::string RenderManager::defaultProgramImageName = "defaultProgramImage"
 RenderManager::RenderManager()
 	: timeElapsed(0){
 
-	if(loadedShaders == false){
-		LoadDefaultShaders();
-	}
+	LoadDefaultShaders();
 
 	listChange=false;
 	nextTextID=0;
 
-	defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
-	defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
-	defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
-	defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
 	if( (defaultProgramTile == NULL) or (defaultProgramImage == NULL) or (defaultProgramLight == NULL) or (defaultProgramSprite == NULL) ){
-		ErrorLog::WriteToFile("RenderManager couldn't load all default shaders", ErrorLog::SEVERITY::FATAL);
-		throw LEngineException("RenderManagers Shaders couldn't be loaded");
+		std::stringstream ss;
+		ss << "RenderManager Couldn't load all default shaders";
+		if(defaultProgramTile == NULL){ ss << "\n -Tile shader program could not be loaded";}
+		if(defaultProgramSprite == NULL){ ss << "\n -Sprite shader program could not be loaded";}
+		if(defaultProgramLight == NULL){ ss << "\n -Light shader program could not be loaded";}
+		if(defaultProgramImage == NULL){ ss << "\n -Image shader program could not be loaded";}
+		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::FATAL);
+		throw LEngineException(ss.str());
 	}
 }
 
@@ -412,164 +410,118 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
+std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(const std::string& vertName, const std::string& fragName){
+	std::unique_ptr<const RSC_GLShader> fragShader(make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(fragName), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> vertShader(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(vertName),   SHADER_VERTEX ));
+
+	if(fragShader->GetShaderID()!=0){K_ShaderMan.LoadItem(fragName, fragShader);}
+	if(vertShader->GetShaderID()!=0){K_ShaderMan.LoadItem(vertName, vertShader);}
+
+	std::unique_ptr<RSC_GLProgram> program = make_unique<RSC_GLProgram>();
+	program->AddShader(K_ShaderMan.GetItem(fragName));
+	program->AddShader(K_ShaderMan.GetItem(vertName));
+	program->LinkProgram();
+	program->Bind();
+
+	return program;
+}
+
+void RenderManager::LinkShaderProgram(RSC_GLProgram* program){
+	GLuint programHandle			= program->GetHandle();
+	GLuint programUniformBlockHandle= program->GetUniformBlockHandle("CameraData");
+	//Bind program GPU buffer to the index
+	glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
+	try{
+		GLuint programUniformBlockHandleProgramData= program->GetUniformBlockHandle("ProgramData");
+		glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+	}
+	catch(LEngineShaderProgramException e){
+		//It's fine if gl can't link the uniform block
+		//if the program doesn't use the program data block, the compiled code won't have one
+		//which will throw an error
+	}
+}
+
 void RenderManager::LoadDefaultShaders(){
-	std::string shaderFragmentNameSpriteBatch  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
-	std::string shaderVertexNameSpriteBatch    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
-
-	std::unique_ptr<const RSC_GLShader> shaderFragmentSpriteBatch (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameSpriteBatch), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> shaderVertexSpriteBatch	 (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameSpriteBatch),   SHADER_VERTEX ));
-
-	if(shaderFragmentSpriteBatch->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameSpriteBatch, shaderFragmentSpriteBatch);}
-	if(shaderVertexSpriteBatch->GetShaderID()!=0)	{K_ShaderMan.LoadItem(shaderVertexNameSpriteBatch, shaderVertexSpriteBatch);}
-
-
-
-
-	std::string shaderFragmentNameTileLayer  = "Data/Resources/Shaders/fragmentTileMain.glsl";
-	std::string shaderVertexNameTileLayer	 = "Data/Resources/Shaders/vertexTileMain.glsl";
-
-	std::unique_ptr<const RSC_GLShader> shaderFragmentTileLayer(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameTileLayer), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> shaderVertexTileLayer  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameTileLayer),	 SHADER_VERTEX ));
-
-	if(shaderFragmentTileLayer->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameTileLayer, shaderFragmentTileLayer);}
-	if(shaderVertexTileLayer->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameTileLayer, shaderVertexTileLayer);}
+	//Init gpu data if it hasn't been already
+	if(GlobalCameraUBO==0){
+		//Create memory location on GPU to store uniform camera data for ALL SHADER PROGRAMS
+		//The memory location ID is then sent to each individual camera so that the cameras can bind
+		//the needed data into the uniform buffer
+		//This buffer stores a mat4 (proj matrix) and a vec2 (camera translation)
+							//2 floats (padded to vec4)for vec2, 16 for matrix
+		GLuint bufferSize=(sizeof(float)*4) + (sizeof(float)*16);
+		glGenBuffers(1, &GlobalCameraUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
+		glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+		//Bind generated CPU buffer to the index
+		glBindBufferBase(GL_UNIFORM_BUFFER, CameraDataBindingIndex, GlobalCameraUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 
-	std::string shaderFragmentNameImage  = "Data/Resources/Shaders/fragmentImage.glsl";
-	std::string shaderVertexNameImage	 = "Data/Resources/Shaders/vertexImage.glsl";
-
-	std::unique_ptr<const RSC_GLShader> shaderFragmentImage(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameImage), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> shaderVertexImage  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameImage),	 SHADER_VERTEX ));
-
-	if(shaderFragmentImage->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameImage, shaderFragmentImage);}
-	if(shaderVertexImage->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameImage, shaderVertexImage);}
-
-
-
-	std::string shaderFragmentNameLight  = "Data/Resources/Shaders/fragmentLightMain.glsl";
-	std::string shaderVertexNameLight	 = "Data/Resources/Shaders/vertexLightMain.glsl";
-
-	std::unique_ptr<const RSC_GLShader> shaderFragmentLight(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderFragmentNameLight), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> shaderVertexLight  (new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(shaderVertexNameLight),	 SHADER_VERTEX ));
-
-	if(shaderFragmentLight->GetShaderID()!=0) {K_ShaderMan.LoadItem(shaderFragmentNameLight, shaderFragmentLight);}
-	if(shaderVertexLight->GetShaderID()!=0)   {K_ShaderMan.LoadItem(shaderVertexNameLight, shaderVertexLight);}
-
-
-	//this line keeps from reinitialize the GPU data if it's already been set
-	//All this init code needs moved/changed now that RenderManager isn't a singleton
-	if(GlobalCameraUBO!=0){return;}
-
-	//Create memory location on GPU to store uniform camera data for ALL SHADER PROGRAMS
-	//The memory location ID is then sent to each individual camera so that the cameras can bind
-	//the needed data into the uniform buffer
-	//This buffer stores a mat4 (proj matrix) and a vec2 (camera translation)
-						//2 floats (padded to vec4)for vec2, 16 for matrix
-	GLuint bufferSize=(sizeof(float)*4) + (sizeof(float)*16);
-	glGenBuffers(1, &GlobalCameraUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
-	glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
-	//Bind generated CPU buffer to the index
-	glBindBufferBase(GL_UNIFORM_BUFFER, CameraDataBindingIndex, GlobalCameraUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-
-	//Create memory location on GPU to store uniform data for ALL SHADER PROGRAMS
-	//The memory location ID is then sent to each individual camera so that the cameras can bind
-	//the needed data into the uniform buffer
-		//This buffer stores the elapsed time
-	bufferSize=(sizeof(float)*4);
-	glGenBuffers(1, &GlobalProgramUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
-	glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
-	//Bind generated CPU buffer to the index
-	glBindBufferBase(GL_UNIFORM_BUFFER, ProgramDataBindingIndex, GlobalProgramUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	//Link uniform buffer location with each program
-	//Sprite batch program
-	std::unique_ptr<RSC_GLProgram> shaderProgramSpriteBatch = make_unique<RSC_GLProgram>();
-	shaderProgramSpriteBatch->AddShader(K_ShaderMan.GetItem(shaderFragmentNameSpriteBatch));
-	shaderProgramSpriteBatch->AddShader(K_ShaderMan.GetItem(shaderVertexNameSpriteBatch));
-	shaderProgramSpriteBatch->LinkProgram();
-	shaderProgramSpriteBatch->Bind();
-
-	GLuint programHandle			= shaderProgramSpriteBatch->GetHandle();
-	GLuint programUniformBlockHandle= shaderProgramSpriteBatch->GetUniformBlockHandle("CameraData");
-	//Bind program GPU buffer to the index
-	glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
-	try{
-		GLuint programUniformBlockHandleProgramData= shaderProgramSpriteBatch->GetUniformBlockHandle("ProgramData");
-		glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+		//Create memory location on GPU to store uniform data for ALL SHADER PROGRAMS
+		//The memory location ID is then sent to each individual camera so that the cameras can bind
+		//the needed data into the uniform buffer
+			//This buffer stores the elapsed time
+		bufferSize=(sizeof(float)*4);
+		glGenBuffers(1, &GlobalProgramUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
+		glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+		//Bind generated CPU buffer to the index
+		glBindBufferBase(GL_UNIFORM_BUFFER, ProgramDataBindingIndex, GlobalProgramUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
-	catch(LEngineShaderProgramException e){
-		//if the program doesn't use the program data block, the compiled code won't have one
-	}
-	std::unique_ptr<const RSC_GLProgram> constProgramSprite = std::move(shaderProgramSpriteBatch);
-	K_ShaderProgramMan.LoadItem(defaultProgramSpriteName, constProgramSprite); 
 
+	defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
+	defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
+	defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
+	defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
 
-	//Tile layer shader shader setup
-	std::unique_ptr<RSC_GLProgram> shaderProgramTileLayer = make_unique<RSC_GLProgram>();
-	shaderProgramTileLayer->AddShader(K_ShaderMan.GetItem(shaderFragmentNameTileLayer));
-	shaderProgramTileLayer->AddShader(K_ShaderMan.GetItem(shaderVertexNameTileLayer));
-	shaderProgramTileLayer->LinkProgram();
-	shaderProgramTileLayer->Bind();
+	if(defaultProgramSprite == NULL){
+		std::string shaderFrag  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
+		std::string shaderVert    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
+		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
+		LinkShaderProgram(shaderProgram.get());
 
-	programHandle			 = shaderProgramTileLayer->GetHandle();
-	programUniformBlockHandle= shaderProgramTileLayer->GetUniformBlockHandle("CameraData");
-	//Bind program GPU buffer to the index
-	glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
-	try{
-		GLuint programUniformBlockHandleProgramData= shaderProgramTileLayer->GetUniformBlockHandle("ProgramData");
-		glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
-	}
-	catch(LEngineShaderProgramException e){
-		//if the program doesn't use the program data block, the compiled code won't have one
-	}
-	std::unique_ptr<const RSC_GLProgram> constProgramTile = std::move(shaderProgramTileLayer);
-	K_ShaderProgramMan.LoadItem(defaultProgramTileName, constProgramTile);
+		std::unique_ptr<const RSC_GLProgram> constProgramSprite = std::move(shaderProgram);
+		K_ShaderProgramMan.LoadItem(defaultProgramSpriteName, constProgramSprite); 
 
+		defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
+	}
 
-	//Image layer shader shader setup
-	std::unique_ptr<RSC_GLProgram> shaderProgramImage = make_unique<RSC_GLProgram>();
-	shaderProgramImage->AddShader(K_ShaderMan.GetItem(shaderFragmentNameImage));
-	shaderProgramImage->AddShader(K_ShaderMan.GetItem(shaderVertexNameImage));
-	shaderProgramImage->LinkProgram();
-	shaderProgramImage->Bind();
-	programHandle			 = shaderProgramImage->GetHandle();
-	programUniformBlockHandle= shaderProgramImage->GetUniformBlockHandle("CameraData");
-	//Bind program GPU buffer to the index
-	glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
-	try{
-		GLuint programUniformBlockHandleProgramData= shaderProgramImage->GetUniformBlockHandle("ProgramData");
-		glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
-	}
-	catch(LEngineShaderProgramException e){
-		//if the program doesn't use the program data block the compiled code won't have one
-	}
-	std::unique_ptr<const RSC_GLProgram> constProgramImage = std::move(shaderProgramImage);
-	K_ShaderProgramMan.LoadItem(defaultProgramImageName, constProgramImage);
+	if(defaultProgramTile == NULL){
+		std::string shaderFrag  = "Data/Resources/Shaders/fragmentTileMain.glsl";
+		std::string shaderVert	 = "Data/Resources/Shaders/vertexTileMain.glsl";
+		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
+		LinkShaderProgram(shaderProgram.get());
 
-	//Light shader shader setup
-	std::unique_ptr<RSC_GLProgram> shaderProgramLight = make_unique<RSC_GLProgram>();
-	shaderProgramLight->AddShader(K_ShaderMan.GetItem(shaderFragmentNameLight));
-	shaderProgramLight->AddShader(K_ShaderMan.GetItem(shaderVertexNameLight));
-	shaderProgramLight->LinkProgram();
-	shaderProgramLight->Bind();
-	programHandle			 = shaderProgramLight->GetHandle();
-	programUniformBlockHandle= shaderProgramLight->GetUniformBlockHandle("CameraData");
-	//Bind program GPU buffer to the index
-	glUniformBlockBinding(programHandle, programUniformBlockHandle, CameraDataBindingIndex);
-	try{
-		GLuint programUniformBlockHandleProgramData= shaderProgramLight->GetUniformBlockHandle("ProgramData");
-		glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData, ProgramDataBindingIndex);
+		std::unique_ptr<const RSC_GLProgram> constProgramSprite = std::move(shaderProgram);
+		K_ShaderProgramMan.LoadItem(defaultProgramTileName, constProgramSprite); 
+
+		defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
 	}
-	catch(LEngineShaderProgramException e){
-		//if the program doesn't use the program data block, the compiled code won't have one
+
+	if(defaultProgramImage == NULL){
+		std::string shaderFrag  = "Data/Resources/Shaders/fragmentImage.glsl";
+		std::string shaderVert	 = "Data/Resources/Shaders/vertexImage.glsl";
+		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
+		LinkShaderProgram(shaderProgram.get());
+
+		std::unique_ptr<const RSC_GLProgram> constProgramSprite = std::move(shaderProgram);
+		K_ShaderProgramMan.LoadItem(defaultProgramImageName, constProgramSprite); 
+
+		defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
 	}
-	std::unique_ptr<const RSC_GLProgram> constProgramLight = std::move(shaderProgramLight);
-	K_ShaderProgramMan.LoadItem(defaultProgramLightName, constProgramLight);
-	
-	loadedShaders = true;
+
+	if(defaultProgramLight == NULL){
+		std::string shaderFrag  = "Data/Resources/Shaders/fragmentLightMain.glsl";
+		std::string shaderVert	 = "Data/Resources/Shaders/vertexLightMain.glsl";
+		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
+		LinkShaderProgram(shaderProgram.get());
+
+		std::unique_ptr<const RSC_GLProgram> constProgramSprite = std::move(shaderProgram);
+		K_ShaderProgramMan.LoadItem(defaultProgramLightName, constProgramSprite); 
+
+		defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
+	}
 }
