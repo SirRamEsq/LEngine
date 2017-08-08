@@ -17,7 +17,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 
 		K_StateMan.PushState(std::move(make_unique<GameStateMock>(&K_StateMan)));
 		//Update stateman, causing the new state to be pushed
-		//Kernel::Update();
+		Kernel::Update();
 		stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 2);
 
@@ -35,14 +35,13 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 		auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
 		auto state = stateSmart.get();
 		K_StateMan.PushState(std::move(stateSmart));
-		//Kernel::Update();
 
-		REQUIRE(state->init == true);
+		REQUIRE(state->init == false);
 		REQUIRE(state->updateCount == 0);
 		REQUIRE(state->drawCount == 0);
 		REQUIRE(state->close == false);
 
-		//Kernel::Update();
+		Kernel::Update();
 
 		REQUIRE(state->init == true);
 		REQUIRE(state->updateCount == 1);
@@ -57,7 +56,8 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 			auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
 			auto state = stateSmart.get();
 			K_StateMan.PushState(std::move(stateSmart));
-			//Kernel::Update();
+
+			Kernel::Update();
 
 			std::string mapName = "MAP1.tmx";
 			auto mapToLoad = RSC_MapImpl::LoadResource(mapName);
@@ -67,7 +67,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 			REQUIRE(mapToLoad->GetHeightPixels() > 0 );
 
 			state->SetMapNextFrame(mapToLoad.get(), 0);
-			//Kernel::Update();
+			Kernel::Update();
 			REQUIRE(state->GetEntityMan()->GetEntityCount() > 0);
 		}
 		());
