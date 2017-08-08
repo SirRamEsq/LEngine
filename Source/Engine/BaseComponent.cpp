@@ -4,6 +4,7 @@
 BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* p)
 	: mEntityID(id), logFileName(logName), parent(p){
 		eventCallback = NULL;
+		updatedThisFrame = false;
 }
 
 BaseComponent::~BaseComponent(){

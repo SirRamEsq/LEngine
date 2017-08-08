@@ -17,7 +17,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	Kernel::Update();
 
 	auto posMan = state->GetComponentManagerPosition();
-	auto eid = 200;
+	auto eid = 250;
 	posMan->AddComponent(eid);
 
 	auto posComp = (ComponentPosition*) posMan->GetComponent(eid);
@@ -50,6 +50,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
 		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
+		REQUIRE(parent != NULL);
 
 		auto childEID = eid;
 		auto child = posComp;
@@ -74,9 +75,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		child->SetMovement(Coord2df(0.0f, 0.0f));
 
 		//parent should be updated before child
-		//posMan->Update();
-		parent->Update();
-		child->Update();
+		posMan->Update();
 
 		REQUIRE(parent->GetPositionWorld().x == Approx(parentX + parentXspd));
 		REQUIRE(parent->GetPositionWorld().y == Approx(parentY + parentYspd));
@@ -92,6 +91,8 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
 		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
+
+		REQUIRE(parent != NULL);
 
 		auto childEID = eid;
 		auto child = posComp;
@@ -115,10 +116,8 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		parent->SetMovement(Coord2df(parentXspd, parentYspd));
 		child->SetMovement(Coord2df(0.0f, 0.0f));
 
-		//posMan->Update();
+		posMan->Update();
 
-parent->Update();
-child->Update();
 		REQUIRE(parent->GetPositionWorld().x == Approx(parentX + parentXspd));
 		REQUIRE(parent->GetPositionWorld().y == Approx(parentY + parentYspd));
 
