@@ -24,6 +24,11 @@ void BaseComponent::SetParent(BaseComponent* p){
 }
 
 void BaseComponent::SetParentEID(EID p){
+	if(p == 0){
+		SetParent(NULL);
+		return;
+	}
+		
 	if(mManager->HasComponent(p)==false){
 		std::stringstream ss;
 		ss << "Parent with eid " << p << " Doesn't Exist";
@@ -75,10 +80,8 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 	//Update parent before child
 	auto parent = child->GetParent();
 	if(parent != NULL){
-		if(parent->updatedThisFrame == false){
-			//Recurse update function with parent
-			UpdateComponent(parent);
-		}
+		//Recurse update function with parent
+		UpdateComponent(parent);
 	}
 
 	//Update child

@@ -80,7 +80,8 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 
 		std::string mapDepthString = "10";
 		std::string parentString = "0";
-		std::string eidString = "20";
+		std::stringstream eidString;
+		eidString << eid;
 
 		scriptComponent->RunFunction("PrintDepth");
 		REQUIRE(lastError == mapDepthString);
@@ -89,7 +90,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		REQUIRE(lastError == parentString);
 
 		scriptComponent->RunFunction("PrintEID");
-		REQUIRE(lastError == eidString);
+		REQUIRE(lastError == eidString.str());
 
 		scriptComponent->RunFunction("PrintName");
 		REQUIRE(lastError == scriptName);

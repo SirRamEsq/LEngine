@@ -14,8 +14,10 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	auto state = stateSmrtPtr.get();
 	stateManager->PushState(std::move(stateSmrtPtr));
 
+	Kernel::Update();
+
 	auto posMan = state->GetComponentManagerPosition();
-	auto eid = 20;
+	auto eid = 200;
 	posMan->AddComponent(eid);
 
 	auto posComp = (ComponentPosition*) posMan->GetComponent(eid);
@@ -45,7 +47,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	}
 
 	SECTION("Parents can be added and updated correctly"){
-		auto parentEID = 21;
+		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
 		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
 
@@ -72,8 +74,12 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		child->SetMovement(Coord2df(0.0f, 0.0f));
 
 		//parent should be updated before child
-		posMan->Update();
+		//posMan->Update();
+		parent->Update();
+		child->Update();
 
+		REQUIRE(parent->GetPositionWorld().x == Approx(parentX + parentXspd));
+		REQUIRE(parent->GetPositionWorld().y == Approx(parentY + parentYspd));
 		//This will be false if the child was updated before the parent
 		REQUIRE(child->GetPositionWorld().x == Approx(childX + parentX + parentXspd));
 		REQUIRE(child->GetPositionWorld().y == Approx(childY + parentY + parentYspd));
@@ -83,7 +89,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	}
 
 	SECTION("Ensure that coordinates can be translated between world and local"){
-		auto parentEID = 21;
+		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
 		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
 
@@ -109,7 +115,12 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		parent->SetMovement(Coord2df(parentXspd, parentYspd));
 		child->SetMovement(Coord2df(0.0f, 0.0f));
 
-		posMan->Update();
+		//posMan->Update();
+
+parent->Update();
+child->Update();
+		REQUIRE(parent->GetPositionWorld().x == Approx(parentX + parentXspd));
+		REQUIRE(parent->GetPositionWorld().y == Approx(parentY + parentYspd));
 
 		//Ensure that these values differ
 		REQUIRE(child->GetPositionWorld().x != Approx(child->GetPositionLocal().x));
