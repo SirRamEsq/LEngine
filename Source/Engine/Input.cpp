@@ -4,6 +4,13 @@
 const std::string InputManager::defaultKeyMappingIniFileName = "keyini.txt";
 
 InputManager::InputManager(){
+	ReadKeyIniFile();
+    eventDispatcher=NULL;
+}
+
+void InputManager::ReadKeyIniFile(){
+	ascii.clear();
+	asciiREV.clear();
     if(keyMappingIni.OpenReadFile("keyini.txt")){
         keyMappingIni.ReadFileToMap();
 
@@ -24,8 +31,6 @@ InputManager::InputManager(){
     }
     keyMappingIni.CloseReadFile();
 	keyMappingIni.CopyReadMapToWriteMap();
-
-    eventDispatcher=NULL;
 }
 
 InputManager::~InputManager(){
@@ -121,6 +126,9 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
         }
     }
 	if(value == ""){return false;}
+
+	//lowerCase
+	std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 
 	keyMappingIni.WriteString(key, value);
 	OverwriteKeyIni();

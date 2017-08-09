@@ -147,6 +147,7 @@ void GameStateManager::HandleEvent(const Event* event){
 bool GameStateManager::Update(){
 	if(remapKey != ""){
 		input.WriteMapSetKeyToNextInput(remapKey);
+		input.ReadKeyIniFile();
 		remapKey = "";
 	}
     mCurrentState->entityMan.Cleanup();
