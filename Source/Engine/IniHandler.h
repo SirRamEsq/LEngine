@@ -2,6 +2,7 @@
 #define L_INIHANDLER
 
 #include "Errorlog.h"
+#include "Defines.h"
 
 #include <iostream>
 #include <fstream>
@@ -10,32 +11,38 @@
 #include <cstring>
 #include <sstream>
 
+/**
+ * Class is used to read and write key/value pairs from/to a .txt file
+ *
+ * Can have two files open, one for reading and one for writing
+ * 
+ * \note
+ * INI File must take the form
+ * key = value;
+ * key=value;
+ * key =value;
+ * key= value;
+ * end each line with a ';'
+ */
 class IniHandler{
     typedef std::map<std::string, std::string> KeyValue;
-    typedef KeyValue::iterator KVIt;
     public:
         IniHandler();
         ~IniHandler();
 
-        template <typename T>
-        T StringToNumber (const std::string& Text )//Text not by const reference so that the function can be used with a
-        {                               //character array as argument
-            std::stringstream ss(Text);
-            T result;
-            return ss >> result ? result : 0;
-        }
-
+		///Opens a file to read K/v pairs from
         bool OpenReadFile (std::string& fname);
+		///Opens a file to read k/v pairs to
         bool OpenWriteFile(std::string& fname);
 
         template <typename T>
         T ReadValueNum (const std::string& key){
-            KVIt i=readMap.find(key);
+            auto i=readMap.find(key);
             if(i==readMap.end()){return 0;}
             return (StringToNumber<T>(i->second));
         }
         std::string ReadValueStr (const std::string& key){
-            KVIt i=readMap.find(key);
+            auto i=readMap.find(key);
             if(i==readMap.end()){return "";}
             return i->second;
         }
@@ -45,24 +52,36 @@ class IniHandler{
             return (int)val[0];
         }
 
-        int         WriteInt   (std::string key, int value);
-        bool        WriteBool  (std::string key, bool value);
-        std::string WriteString(std::string key, std::string value);
-        double      WriteDouble(std::string key, double value);
+		///Converts a value to a string, then adds it to the writeMap of k/v pairs
+        template <typename T>
+        T WriteValue (const std::string& key, T value){
+			return WriteString(key, NumberToString<T>(value));
+        }
+		///Adds a k/v pair to the write map
+        bool WriteString(const std::string& key, const std::string& value);
 
-        bool ReadFileToMap();  //Read all key value pairs from the ini file into the read map
-        bool WriteMapToFile(); //Write all key value pairs from the write map into the ini file
+  		///Read all key value pairs from the ini file into the read map
+        bool ReadFileToMap();
+ 		///Write all key value pairs from the write map into the ini file
+        bool WriteMapToFile();
 
+		///Closes read file if one is open
         void CloseReadFile();
+		///Closes write file if one is open
         void CloseWriteFile();
 
+		///Clears key/value pairs to be written to the open write file
         void ClearWriteMap();
+		///Clears key/value pairs read from an opened read file
         void ClearReadMap();
 
-        KVIt readItBeg(){return readMap.begin();}
-        KVIt readItEnd(){return readMap.end();}
-        KVIt writeItBeg(){return writeMap.begin();}
-        KVIt writeItEnd(){return writeMap.end();}
+		KeyValue::iterator readItBeg(){return readMap.begin();}
+		KeyValue::iterator readItEnd(){return readMap.end();}
+		KeyValue::iterator writeItBeg(){return writeMap.begin();}
+		KeyValue::iterator writeItEnd(){return writeMap.end();}
+
+		///Copies the map loaded into the read map into the write map
+		void CopyReadMapToWriteMap();
 
     private:
         KeyValue readMap;

@@ -9,15 +9,15 @@ InputManager::InputManager(){
         std::map<std::string, std::string>::iterator i;
         i=ini.readItBeg();
         std::string key;
-        int val;
+        int value;
         while(i!=ini.readItEnd()){
             key=i->first;
-            val=ini.ReadValueNum<int>(key);
-            if(val==0){
-                val=ini.ReadASCIIValue(key);
+            value=ini.ReadValueNum<int>(key);
+            if(value==0){
+                value=ini.ReadASCIIValue(key);
             }
-            ascii[key]=val;
-            asciiREV[val]=key;
+            ascii[key]=value;
+            asciiREV[value]=key;
             i++;
         }
     }
