@@ -1,27 +1,29 @@
 #include "Input.h"
 #include "Kernel.h"
+
+const std::string InputManager::defaultKeyMappingIniFileName = "keyini.txt";
+
 InputManager::InputManager(){
-    IniHandler ini;
-    std::string iniStr="keyini.txt";
-    if(ini.OpenReadFile(iniStr)){
-        ini.ReadFileToMap();
+    if(keyMappingIni.OpenReadFile("keyini.txt")){
+        keyMappingIni.ReadFileToMap();
 
         std::map<std::string, std::string>::iterator i;
-        i=ini.readItBeg();
+        i=keyMappingIni.readItBeg();
         std::string key;
         int value;
-        while(i!=ini.readItEnd()){
+        while(i!=keyMappingIni.readItEnd()){
             key=i->first;
-            value=ini.ReadValueNum<int>(key);
+            value=keyMappingIni.ReadValueNum<int>(key);
             if(value==0){
-                value=ini.ReadASCIIValue(key);
+                value=keyMappingIni.ReadASCIIValue(key);
             }
             ascii[key]=value;
             asciiREV[value]=key;
             i++;
         }
     }
-    ini.CloseReadFile();
+    keyMappingIni.CloseReadFile();
+	keyMappingIni.CopyReadMapToWriteMap();
 
     eventDispatcher=NULL;
 }
@@ -64,7 +66,6 @@ void InputManager::HandleInput(){
 
     while(SDL_PollEvent(&event)) {
         if( (keyup = (event.type==SDL_KEYUP) ) or (event.type == SDL_KEYDOWN) ){
-            //NOT USING UNICODE!!!
             int asciiValue=event.key.keysym.sym;
 
             keyi=asciiREV.find(asciiValue);
@@ -99,4 +100,33 @@ void InputManager::KeyPress(const std::string& keyName){
 
 void InputManager::KeyRelease(const std::string& keyName){
 	SendEvent(Event::MSG::KEYUP, keyName);
+}
+
+bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
+	if(key == ""){return false;}
+
+	std::string value = "";
+	//time in miliseconds
+	auto timer = SDL_GetTicks();
+	//Ten seconds
+	Uint32 timeLimit = 10 * 1000;
+	timer += timeLimit;
+
+    SDL_Event event;
+    while( (SDL_PollEvent(&event)) and (timer > SDL_GetTicks()) ) {
+        if( (event.type == SDL_KEYDOWN) ){
+            SDL_Keycode keyCode = event.key.keysym.sym;
+			value = SDL_GetKeyName(keyCode);
+        }
+    }
+	if(value == ""){return false;}
+
+	keyMappingIni.WriteString(key, value);
+	return true;
+}
+
+void InputManager::OverwriteKeyIni(){
+	keyMappingIni.OpenWriteFile("keyini.txt");
+	keyMappingIni.WriteMapToFile();
+	keyMappingIni.CloseWriteFile();
 }

@@ -31,9 +31,9 @@ class IniHandler{
         ~IniHandler();
 
 		///Opens a file to read K/v pairs from
-        bool OpenReadFile (std::string& fname);
+        bool OpenReadFile (const std::string& fname);
 		///Opens a file to read k/v pairs to
-        bool OpenWriteFile(std::string& fname);
+        bool OpenWriteFile(const std::string& fname);
 
         template <typename T>
         T ReadValueNum (const std::string& key){
