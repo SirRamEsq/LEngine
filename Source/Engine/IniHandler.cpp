@@ -7,7 +7,7 @@ IniHandler::~IniHandler(){
     CloseWriteFile();
 }
 
-bool IniHandler::OpenReadFile(std::string& fname){
+bool IniHandler::OpenReadFile(const std::string& fname){
     if(iniRead.is_open()){CloseReadFile();}
     iniRead.open(fname.c_str());
     if(!iniRead.good()){
@@ -17,7 +17,7 @@ bool IniHandler::OpenReadFile(std::string& fname){
     return true;
 }
 
-bool IniHandler::OpenWriteFile(std::string& fname){
+bool IniHandler::OpenWriteFile(const std::string& fname){
     if(iniWrite.is_open()){CloseWriteFile();}
     iniWrite.open(fname.c_str());
     if(!iniWrite.good()){

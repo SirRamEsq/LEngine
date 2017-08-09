@@ -47,6 +47,12 @@ class InputManager{
 		 */
         std::shared_ptr<KeyMapping> SetEventDispatcher(EventDispatcher* e, std::shared_ptr<KeyMapping>* mapping=NULL);
 
+		static const std::string defaultKeyMappingIniFileName;
+
+		///Sets 'writeMapNextKey' and listens for the next SDL input event
+		bool WriteMapSetKeyToNextInput(const std::string& key);
+		void OverwriteKeyIni();
+
     private:
 		void SendEvent(Event::MSG message, std::string keyName);
 		void KeyPress(const std::string& keyName);
@@ -56,6 +62,7 @@ class InputManager{
 
         EventDispatcher* eventDispatcher;
         std::shared_ptr<KeyMapping> keyListeners;
+		IniHandler keyMappingIni;
 };
 
 #endif
