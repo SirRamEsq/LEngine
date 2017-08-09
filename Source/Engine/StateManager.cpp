@@ -74,6 +74,7 @@ void GameState::UpdateComponentManagers(){
 }
 
 GameStateManager::GameStateManager(){
+	remapKey="";
    	mCurrentState=NULL;
 	nextFrameStateScript = NULL;
 	nextFrameState.reset(NULL);
@@ -144,6 +145,10 @@ void GameStateManager::HandleEvent(const Event* event){
 }
 
 bool GameStateManager::Update(){
+	if(remapKey != ""){
+		input.WriteMapSetKeyToNextInput(remapKey);
+		remapKey = "";
+	}
     mCurrentState->entityMan.Cleanup();
 	PushNextState();
     input.HandleInput();
@@ -352,4 +357,8 @@ bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
 
     return true;
+}
+
+void GameStateManager::RemapKey(const std::string& key){
+	remapKey=key;
 }

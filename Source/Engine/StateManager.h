@@ -136,6 +136,9 @@ class GameStateManager{
 		}
 		InputManager input;
 
+		///Sets 'remapKey' and remaps next frame
+		void RemapKey(const std::string& key);
+
 	protected:
 		void Close();
 
@@ -153,6 +156,9 @@ class GameStateManager{
 		std::unique_ptr<GameState> nextFrameState;
 		const RSC_Script* nextFrameStateScript;
 		std::vector<std::unique_ptr<GameState> > mGameStates;
+
+		///Next key to remap
+		std::string remapKey;
 
 		/*
 		 * Input Manager which is used to pass key mappings to each individual state
