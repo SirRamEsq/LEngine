@@ -93,6 +93,13 @@ enum LOrigin {
 typedef int MAP_DEPTH;
 typedef unsigned long int EID; //EID stands for "Entity ID"
 
+template <typename T>
+T StringToNumber (const std::string& Text ){
+	std::stringstream ss(Text);
+	T result;
+	return ss >> result ? result : 0;
+}
+
 //Endian related functions
 bool GET_ENDIAN();
 int32_t INT32_MAKE_BIG_ENDIAN(int32_t i);
@@ -297,13 +304,6 @@ std::string NumberToString ( T Number ){
 	std::stringstream ss;
 	ss << Number;
 	return ss.str();
-}
-
-template <typename T>
-T StringToNumber ( const std::string &Text ){//Text not by const reference so that the function can be used with a                              //character array as argument
-	std::stringstream ss(Text);
-	T result;
-	return ss >> result ? result : 0;
 }
 
 //Herb sutters make_unique function
