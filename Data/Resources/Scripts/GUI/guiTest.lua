@@ -40,6 +40,8 @@ function container.NewGui(baseclass)
 		gui.currentFrame=0
 		gui.frameCounterMax=500
 		gui.frameCounter=0
+			
+		CPP.interface:ListenForInput(gui.EID, "specialLuaKey");
 	end
 
 	function gui.Update()
@@ -111,12 +113,18 @@ function container.NewGui(baseclass)
 			CPP.ImGui.SetNextWindowFocus();
 			CPP.ImGui.BeginFlags("Input", windowFlags2)
 				CPP.ImGui.Text("Press Key")
-				CPP.interface:RemapInputToNextKeyPress("Special_KEY")
+				CPP.interface:RemapInputToNextKeyPress("specialLuaKey")
 			CPP.ImGui.End()
 
 			if(popFont)then
 				CPP.ImGui.PopFont()
 			end
+		end
+	end
+
+	function gui.OnKeyDown(keyname)
+		if(keyname=="specialLuaKey") then
+			CPP.interface:EntityDelete(gui.EID)
 		end
 	end
 

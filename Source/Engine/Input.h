@@ -26,6 +26,9 @@ class InputManager{
         InputManager();
         ~InputManager();
 
+		///Reads input into map from file
+		void ReadKeyIniFile();
+
 		/**
 		 * When this function is run, all states and scripts will be notified of input
 		 * Process all events from SDL, sends events specified by the key mapping to the dispatcher.
