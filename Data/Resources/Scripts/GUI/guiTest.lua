@@ -44,6 +44,7 @@ function container.NewGui(baseclass)
 
 	function gui.Update()
 		local windowFlags = 0 -- imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
+		local remap = false;
 		CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
 		--Sets ProgressBar BG
 		CPP.ImGui.PushStyleColorFrameBG(CPP.Color4f(0, 0.3, 0.3, 1))
@@ -78,6 +79,8 @@ function container.NewGui(baseclass)
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text("-_-")
 
+			remap = CPP.ImGui.Button("Remap Input")
+
 		if(buttonPress == true)then
 			CPP.interface:WriteError(gui.EID, "Button Pressed!")
 		end
@@ -96,6 +99,25 @@ function container.NewGui(baseclass)
 
 		CPP.ImGui.End()
 		CPP.ImGui.PopStyleColor(6)
+
+		if(remap == true)then
+			local windowFlags2 = imGuiFlags.NoTitleBar + imGuiFlags.NoMove + imGuiFlags.NoResize
+			windowFlags2 = windowFlags2 + imGuiFlags.AlwaysAutoResize
+			local fontName = "ebFonts/wisdom.ttf"
+			local fontSize = 20
+			local popFont = CPP.ImGui.PushFont(fontName, fontSize)
+			CPP.ImGui.SetNextWindowPosCenter(0)
+			CPP.ImGui.SetNextWindowSize(CPP.Coord2df(200,32), 0)
+			CPP.ImGui.SetNextWindowFocus();
+			CPP.ImGui.BeginFlags("Input", windowFlags2)
+				CPP.ImGui.Text("Press Key")
+				CPP.interface:RemapInputToNextKeyPress("Special_KEY")
+			CPP.ImGui.End()
+
+			if(popFont)then
+				CPP.ImGui.PopFont()
+			end
+		end
 	end
 
 	return gui;

@@ -676,6 +676,10 @@ void LuaInterface::LoadMap(const std::string& mapPath, unsigned int entranceID){
 	parentState->SetMapNextFrame(m, entranceID);
 }
 
+void LuaInterface::RemapInputToNextKeyPress(const std::string& key){
+	Kernel::stateMan.RemapKey(key);
+}
+
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
@@ -713,6 +717,7 @@ void LuaInterface::ExposeCPP(){
 
 				.addFunction("PushState",	&LuaInterface::PushState)
 				.addFunction("LoadMap",	&LuaInterface::LoadMap)
+				.addFunction("RemapInputToNextKeyPress",	&LuaInterface::RemapInputToNextKeyPress)
 
 			.endClass()
 

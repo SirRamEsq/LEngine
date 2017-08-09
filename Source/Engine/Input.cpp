@@ -113,15 +113,17 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
 	timer += timeLimit;
 
     SDL_Event event;
-    while( (SDL_PollEvent(&event)) and (timer > SDL_GetTicks()) ) {
+    while( (SDL_PollEvent(&event)) or (timer > SDL_GetTicks()) ) {
         if( (event.type == SDL_KEYDOWN) ){
             SDL_Keycode keyCode = event.key.keysym.sym;
 			value = SDL_GetKeyName(keyCode);
+			break;
         }
     }
 	if(value == ""){return false;}
 
 	keyMappingIni.WriteString(key, value);
+	OverwriteKeyIni();
 	return true;
 }
 

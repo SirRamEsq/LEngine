@@ -1,9 +1,10 @@
-up    = w;
-down  = s;
+Special_KEY = F7;
+down = s;
+left = a;
+pause = p;
 right = d;
-left  = a;
-use   = f;
 swing = e;
 throw = t;
-pause = p;
-whip  = c;
+up = w;
+use = f;
+whip = c;

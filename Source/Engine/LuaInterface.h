@@ -116,6 +116,8 @@ class LuaInterface{
 			void PushState(const std::string& scriptPath);
 			///Will load map at specified path
 			void LoadMap(const std::string& mapPath, unsigned int entranceID);
+			///Sets a key
+			void RemapInputToNextKeyPress(const std::string& key);
 
 		static const std::string LUA_52_INTERFACE_ENV_TABLE;
 		static const std::string DEBUG_LOG;
