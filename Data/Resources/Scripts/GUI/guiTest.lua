@@ -113,12 +113,13 @@ function container.NewGui(baseclass)
 			CPP.ImGui.SetNextWindowFocus();
 			CPP.ImGui.BeginFlags("Input", windowFlags2)
 				CPP.ImGui.Text("Press Key")
-				CPP.interface:RemapInputToNextKeyPress("specialLuaKey")
 			CPP.ImGui.End()
 
 			if(popFont)then
 				CPP.ImGui.PopFont()
 			end
+
+			CPP.interface:RemapInputToNextKeyPress("specialLuaKey")
 		end
 	end
 

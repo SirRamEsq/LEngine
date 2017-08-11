@@ -123,6 +123,12 @@ class GameStateManager{
 		void PushState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
 
 		/**
+		 * Pops current state and Pushes the new one at the beginning of the next frame
+		 * Acts as a wrapper around 'PushState' that sets swapState to true
+		 */
+		void SwapState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
+
+		/**
 		 * State is popped and deleted
 		 */
 		void PopState();
@@ -159,6 +165,9 @@ class GameStateManager{
 
 		///Next key to remap
 		std::string remapKey;
+
+		///Whether the next state to push should replace the current state
+		bool swapState;
 
 		/*
 		 * Input Manager which is used to pass key mappings to each individual state

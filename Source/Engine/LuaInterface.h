@@ -114,6 +114,8 @@ class LuaInterface{
 			void SetParent(EID child, EID parent);
 			///Will push a new GS_Script state onto the stack with a script
 			void PushState(const std::string& scriptPath);
+			///Will swap state with a new GS_Script
+			void SwapState(const std::string& scriptPath);
 			///Will load map at specified path
 			void LoadMap(const std::string& mapPath, unsigned int entranceID);
 			///Sets a key

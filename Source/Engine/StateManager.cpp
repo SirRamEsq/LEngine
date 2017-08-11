@@ -75,6 +75,7 @@ void GameState::UpdateComponentManagers(){
 
 GameStateManager::GameStateManager(){
 	remapKey="";
+	swapState = false;
    	mCurrentState=NULL;
 	nextFrameStateScript = NULL;
 	nextFrameState.reset(NULL);
@@ -91,10 +92,20 @@ void GameStateManager::Close(){
 void GameStateManager::PushState(std::unique_ptr<GameState> state, const RSC_Script* script){
 	nextFrameState = std::move(state);
 	nextFrameStateScript = script;
+	swapState = false;
+}
+
+void GameStateManager::SwapState(std::unique_ptr<GameState> state, const RSC_Script* script){
+	PushState(std::move(state), script);
+	swapState = true;
 }
 
 void GameStateManager::PushNextState(){
 	if(nextFrameState.get() != NULL){
+		//Pop current state before pushing the new one
+		if(swapState == true){
+			PopState();
+		}
 		mGameStates.push_back( std::move(nextFrameState) );
 		nextFrameState.reset(NULL);
 
