@@ -33,9 +33,6 @@
 struct ImGuiState{
 	void Reset();
 
-	bool 	mousePressed[3] = { false, false, false };
-	float 	mouseWheel = 0.0f;
-
 	double 	time = 0.0f;
 	GLuint 	fontTexture = 0;
 
@@ -81,6 +78,8 @@ class Kernel{
 		//be careful not to delete shaders in use by programs
 		static GenericContainer<RSC_GLShader>	rscShaderMan;
 		static GenericContainer<RSC_GLProgram>	rscShaderProgramMan;
+
+		static InputManager inputManager;
 
 		static ImGuiState guiState;
 

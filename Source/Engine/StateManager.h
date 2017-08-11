@@ -111,7 +111,7 @@ class GameStateManager{
 	friend GameState;
 
 	public:
-		GameStateManager();
+		GameStateManager(InputManager* input);
 		GameState* GetCurrentState(){return mCurrentState;}
 
 		/**
@@ -140,10 +140,7 @@ class GameStateManager{
 		bool IsEmpty(){
 			return mGameStates.empty();
 		}
-		InputManager input;
-
-		///Sets 'remapKey' and remaps next frame
-		void RemapKey(const std::string& key);
+		InputManager* inputManager;
 
 	protected:
 		void Close();

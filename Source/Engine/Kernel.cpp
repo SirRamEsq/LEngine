@@ -2,10 +2,11 @@
 #include "gui/imgui_LEngine.h"
 
 SDLInit*					Kernel::SDLMan;
-GameStateManager			Kernel::stateMan;
 InputManager				Kernel::inputMan;
 CommandLineArgs				Kernel::commandLine;
 AudioSubsystem				Kernel::audioSubsystem;
+InputManager 				Kernel::inputManager;
+GameStateManager			Kernel::stateMan(&Kernel::inputManager);
 
 int			 Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
@@ -28,10 +29,6 @@ Kernel::Kernel(){}
 Kernel::~Kernel(){}
 
 void ImGuiState::Reset(){
-	mousePressed[0]=false;
-	mousePressed[1]=false;
-	mousePressed[2]=false;
-
 	time = 0.0f;
 	Kernel::ImGuiInvalidateFontTexture();
 	fontTexture = 0;
@@ -128,6 +125,7 @@ bool Kernel::DEBUG_MODE(){
 }
 
 bool Kernel::Update(){
+    inputManager.HandleInput();
 	ImGuiNewFrame(SDLMan->mMainWindow);
 
 	if(debugMode){
@@ -301,21 +299,17 @@ void Kernel::ImGuiNewFrame(SDL_Window* window){
     guiState.time = current_time;
 
     // Setup inputs
-    // (we already got mouse wheel, keyboard keys & characters from SDL_PollEvent())
-    int mx, my;
-    Uint32 mouseMask = SDL_GetMouseState(&mx, &my);
-    if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS)
-        io.MousePos = ImVec2((float)mx, (float)my);   // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
-    else
-        io.MousePos = ImVec2(-1, -1);
+    if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS){
+		io.MousePos = ImVec2(inputManager.GetMousePosition());
+	}
+	else{
+		io.MousePos = ImVec2(-1,-1);
+	}
 
-    io.MouseDown[0] = guiState.mousePressed[0] || (mouseMask & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;		// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-    io.MouseDown[1] = guiState.mousePressed[1] || (mouseMask & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
-    io.MouseDown[2] = guiState.mousePressed[2] || (mouseMask & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
-    guiState.mousePressed[0] = guiState.mousePressed[1] = guiState.mousePressed[2] = false;
-
-    io.MouseWheel = guiState.mouseWheel;
-    guiState.mouseWheel = 0.0f;
+	io.MouseDown[0] = inputManager.GetMouseButtonLeft();
+	io.MouseDown[1] = inputManager.GetMouseButtonRight();
+	io.MouseDown[2] = inputManager.GetMouseButtonMiddle();
+	io.MouseWheel = inputManager.GetMouseWheel();
 
     // Hide OS mouse cursor if ImGui is drawing it
     SDL_ShowCursor(io.MouseDrawCursor ? 0 : 1);
