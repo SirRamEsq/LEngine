@@ -48,6 +48,12 @@ class LuaInterface{
 			void PlaySound		(const std::string& sndName);
 			const RSC_Sprite* LoadSprite(const std::string& sprPath);
 
+			Coord2df GetMousePosition();
+			float GetMouseWheel();
+			bool GetMouseButtonLeft();
+			bool GetMouseButtonRight();
+			bool GetMouseButtonMiddle();
+
 		//////////////
 		//Components//
 		//////////////
