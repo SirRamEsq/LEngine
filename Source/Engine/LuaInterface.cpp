@@ -685,6 +685,27 @@ void LuaInterface::RemapInputToNextKeyPress(const std::string& key){
 	Kernel::stateMan.inputManager->RemapKey(key);
 }
 
+Coord2df LuaInterface::GetMousePosition(){
+	return Kernel::inputManager.GetMousePosition();
+}
+
+float LuaInterface::GetMouseWheel(){
+	return Kernel::inputManager.GetMouseWheel();
+}
+
+bool LuaInterface::GetMouseButtonLeft(){
+	return Kernel::inputManager.GetMouseButtonLeft();
+}
+
+bool LuaInterface::GetMouseButtonRight(){
+	return Kernel::inputManager.GetMouseButtonRight();
+}
+
+bool LuaInterface::GetMouseButtonMiddle(){
+	return Kernel::inputManager.GetMouseButtonMiddle();
+}
+
+
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
@@ -719,6 +740,12 @@ void LuaInterface::ExposeCPP(){
 
 				.addFunction("GetMap",		&LuaInterface::GetMap)
 				.addFunction("SetParent",	&LuaInterface::SetParent)
+
+				.addFunction("GetMousePosition",	&LuaInterface::GetMousePosition)
+				.addFunction("GetMouseWheel",	&LuaInterface::GetMouseWheel)
+				.addFunction("GetMouseButtonLeft",	&LuaInterface::GetMouseButtonLeft)
+				.addFunction("GetMouseButtonRight",	&LuaInterface::GetMouseButtonRight)
+				.addFunction("GetMouseButtonMiddle",	&LuaInterface::GetMouseButtonMiddle)
 
 				.addFunction("PushState",	&LuaInterface::PushState)
 				.addFunction("SwapState",	&LuaInterface::PushState)

@@ -63,6 +63,8 @@ std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(Event
 }
 
 void InputManager::HandleInput(){
+	//Reset mousewheel every frame
+	mouseWheel = 0.0f;
 	if(remapKey != ""){
 		WriteMapSetKeyToNextInput(remapKey);
 		ReadKeyIniFile();
