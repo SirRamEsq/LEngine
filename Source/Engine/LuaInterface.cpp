@@ -682,7 +682,7 @@ void LuaInterface::LoadMap(const std::string& mapPath, unsigned int entranceID){
 }
 
 void LuaInterface::RemapInputToNextKeyPress(const std::string& key){
-	Kernel::stateMan.RemapKey(key);
+	Kernel::stateMan.inputManager->RemapKey(key);
 }
 
 void LuaInterface::ExposeCPP(){

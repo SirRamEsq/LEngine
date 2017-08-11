@@ -23,7 +23,7 @@ GameState::GameState(GameStateManager* gsm)
 }
 
 void GameState::SetDependencies(){
-    input = gameStateManager->input.SetEventDispatcher(&eventDispatcher);
+    input = gameStateManager->inputManager->SetEventDispatcher(&eventDispatcher);
 
     entityMan.RegisterComponentManager(&comPosMan,          EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
     entityMan.RegisterComponentManager(&comInputMan,        EntityManager::DEFAULT_UPDATE_ORDER::INPUT);
@@ -73,7 +73,8 @@ void GameState::UpdateComponentManagers(){
     //execution now jumps to rendermanager
 }
 
-GameStateManager::GameStateManager(){
+GameStateManager::GameStateManager(InputManager* input)
+	: inputManager(input){
 	remapKey="";
 	swapState = false;
    	mCurrentState=NULL;
@@ -131,7 +132,7 @@ void GameStateManager::PopState(){
     }
 
     mCurrentState  = mGameStates.back().get();
-    input.SetEventDispatcher(&mCurrentState->eventDispatcher, &mCurrentState->input);
+    inputManager->SetEventDispatcher(&mCurrentState->eventDispatcher, &mCurrentState->input);
 }
 
 void GameStateManager::DrawPreviousState(GameState* gs){
@@ -156,14 +157,8 @@ void GameStateManager::HandleEvent(const Event* event){
 }
 
 bool GameStateManager::Update(){
-	if(remapKey != ""){
-		input.WriteMapSetKeyToNextInput(remapKey);
-		input.ReadKeyIniFile();
-		remapKey = "";
-	}
     mCurrentState->entityMan.Cleanup();
 	PushNextState();
-    input.HandleInput();
 
     if(mCurrentState!=NULL){
 		if(!mCurrentState->Update()){
@@ -371,6 +366,3 @@ bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     return true;
 }
 
-void GameStateManager::RemapKey(const std::string& key){
-	remapKey=key;
-}

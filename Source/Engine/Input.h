@@ -56,6 +56,14 @@ class InputManager{
 		bool WriteMapSetKeyToNextInput(const std::string& key);
 		void OverwriteKeyIni();
 
+		Coord2df GetMousePosition();
+		float GetMouseWheel();
+		bool GetMouseButtonLeft();
+		bool GetMouseButtonRight();
+		bool GetMouseButtonMiddle();
+
+		void RemapKey(const std::string keyName);
+
     private:
 		void SendEvent(Event::MSG message, std::string keyName);
 		void KeyPress(const std::string& keyName);
@@ -63,9 +71,23 @@ class InputManager{
         asciiMap    ascii;
         asciiMapREV asciiREV;
 
+		//Mouse state
+		int mouseX;
+		int mouseY;
+		float mouseWheel;
+		//Buttons held down
+		bool mouseButtonLeft;
+		bool mouseButtonRight;
+		bool mouseButtonMiddle;
+
+		std::string sdlTextInput;
+
         EventDispatcher* eventDispatcher;
         std::shared_ptr<KeyMapping> keyListeners;
 		IniHandler keyMappingIni;
+
+		//key to be remapped next frame
+		std::string remapKey;
 };
 
 #endif

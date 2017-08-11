@@ -1,9 +1,12 @@
 #include "Input.h"
-#include "Kernel.h"
+#include <algorithm>
+
 
 const std::string InputManager::defaultKeyMappingIniFileName = "keyini.txt";
 
-InputManager::InputManager(){
+InputManager::InputManager()
+	: mouseX(0), mouseY(0), mouseWheel(0), 
+	mouseButtonLeft(false), mouseButtonRight(0), mouseButtonMiddle(0){
 	ReadKeyIniFile();
     eventDispatcher=NULL;
 }
@@ -60,6 +63,12 @@ std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(Event
 }
 
 void InputManager::HandleInput(){
+	if(remapKey != ""){
+		WriteMapSetKeyToNextInput(remapKey);
+		ReadKeyIniFile();
+		remapKey = "";
+	}
+
     if(eventDispatcher==NULL){return;}
     SDL_Event event;
 
@@ -80,7 +89,21 @@ void InputManager::HandleInput(){
 				else        {KeyRelease(keyi->second);}
             }
         }
+
+		else if (event.type == SDL_MOUSEWHEEL){
+			mouseWheel = event.wheel.y;
+		}
+
+    	else if (event.type == SDL_TEXTINPUT){
+            sdlTextInput = (event.text.text);
+        }
     }
+
+	//MouseX and MouseY are set the mouse's x,y coordinates relative to the origin of the SDLWindow
+    auto mouseMask = SDL_GetMouseState(&mouseX, &mouseY);
+	mouseButtonLeft = ( (mouseMask & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0);
+	mouseButtonRight = ( (mouseMask & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0);
+	mouseButtonMiddle = ( (mouseMask & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0);
 }
 
 void InputManager::SendEvent(Event::MSG message, std::string keyName){
@@ -139,4 +162,29 @@ void InputManager::OverwriteKeyIni(){
 	keyMappingIni.OpenWriteFile("keyini.txt");
 	keyMappingIni.WriteMapToFile();
 	keyMappingIni.CloseWriteFile();
+}
+
+Coord2df InputManager::GetMousePosition(){
+	return Coord2df(mouseX, mouseY);
+}
+
+bool InputManager::GetMouseButtonLeft(){
+	return mouseButtonLeft;
+}
+
+bool InputManager::GetMouseButtonRight(){
+	return mouseButtonRight;
+}
+
+bool InputManager::GetMouseButtonMiddle(){
+	return mouseButtonMiddle;
+}
+
+float InputManager::GetMouseWheel(){
+	return mouseWheel;
+}
+
+
+void InputManager::RemapKey(const std::string keyName){
+	remapKey = keyName;
 }
