@@ -1,9 +1,8 @@
-Special_KEY = F7;
 down = s;
 left = a;
 pause = p;
 right = d;
-specialLuaKey = n;
+specialLuaKey = l;
 swing = e;
 throw = t;
 up = w;
