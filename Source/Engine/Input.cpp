@@ -148,13 +148,21 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
 	timer += timeLimit;
 
     SDL_Event event;
-    while( (SDL_PollEvent(&event)) or (timer > SDL_GetTicks()) ) {
-        if( (event.type == SDL_KEYDOWN) ){
-            value = event.key.keysym.sym;
-			break;
-        }
+	bool breakOut = false;
+	//keep while loops nested to avoid branching based on an uninitialized value
+    while(timer > SDL_GetTicks()) {
+		while(SDL_PollEvent(&event)){
+			if( (event.type == SDL_KEYDOWN) ){
+				value = event.key.keysym.sym;
+				breakOut = true;
+				break;
+			}
+			/// \TODO add a check for a joypad button/axis/hat/etc press
+		}
 
-		/// \TODO add a check for a joypad button/axis/hat/etc press
+		if(breakOut){
+			break;
+		}
     }
 	if(value == 0){return false;}
 	std::stringstream ss; 

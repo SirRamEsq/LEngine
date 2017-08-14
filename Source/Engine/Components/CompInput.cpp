@@ -6,6 +6,9 @@ using namespace luabridge;
 ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logName) : BaseComponent(id, logName), keyMapping(keys){
     mEntityID=id;
 }
+ComponentInput::~ComponentInput(){
+
+}
 
 void ComponentInput::Update(){}
 

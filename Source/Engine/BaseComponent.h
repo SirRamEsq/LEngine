@@ -52,7 +52,7 @@ class BaseComponentManager{
         BaseComponentManager(const std::string& logName, EventDispatcher* e)
             : logFileName(logName), eventDispatcher(e){}
 
-        /// \TODO use smart pointers, Valgrind reports a mem leak in the Delete component function
+        /// \TODO use smart pointers
         typedef std::map<EID, BaseComponent*> compMap;
         typedef compMap::iterator compMapIt;
 
