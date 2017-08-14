@@ -29,6 +29,9 @@ function container.NewGui(baseclass)
 		gui.defaultWindowSize =	CPP.Coord2df(defaultWindowSizeW, defaultWindowSizeH)
 		gui.defaultWindowPos =	CPP.Coord2df(defaultWindowPosX, defaultWindowPosY)
 		gui.defaultButtonSize = CPP.Coord2df(defaultButtonSizeW, defaultButtonSizeH)
+		gui.winSize = CPP.Coord2df(0,0)
+
+		gui.winName = "TEST1"
 	
 		gui.sprite1 = CPP.interface:LoadSprite("SpriteArrow.xml");
 		if(gui.sprite1 == nil)then
@@ -44,7 +47,7 @@ function container.NewGui(baseclass)
 
 	function gui.Update()
 		local resolution = CPP.interface:GetResolution()
-		local windowFlags = 0 -- imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
+		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove + imGuiFlags.AlwaysAutoResize
 		local remap = false;
 		CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
 		--Sets ProgressBar BG
@@ -56,11 +59,12 @@ function container.NewGui(baseclass)
 
 		--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
 		--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
-		CPP.ImGui.BeginFlags("TEST", windowFlags)
+		CPP.ImGui.BeginFlags(gui.winName, windowFlags)
 			CPP.ImGui.Text("Testing!")
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text( "-_-" )
 			CPP.ImGui.Text( "Resolution: " .. tostring(resolution.x) .. "x" .. tostring(resolution.y) )
+			CPP.ImGui.Text( "This Window Size: " .. tostring(gui.winSize.x) .. "x" .. tostring(gui.winSize.y) )
 
 			CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
@@ -112,8 +116,24 @@ function container.NewGui(baseclass)
 			gui.currentFrame = 0
 		end
 
+
+		gui.winSize = CPP.ImGui.GetWindowSize()
 		CPP.ImGui.End()
 		CPP.ImGui.PopStyleColor(6)
+
+
+		--Center Window
+		CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(( resolution.x/2) - (gui.winSize.x/2), 0), 0)
+
+		--Left Align Window
+		if(CPP.interface:GetMouseButtonMiddle())then
+			CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(0, 0), 0)
+		end
+
+		--Right Align Window
+		if(CPP.interface:GetMouseButtonRight())then
+			CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(( resolution.x) - (gui.winSize.x), 0), 0)
+		end
 
 		if(remap == true)then
 			local windowFlags2 = imGuiFlags.NoTitleBar + imGuiFlags.NoMove + imGuiFlags.NoResize
