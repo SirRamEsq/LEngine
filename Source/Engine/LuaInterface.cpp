@@ -997,6 +997,10 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("BeginFlags", &ImGui::BeginFlags)
 				.addFunction("End", &ImGui::End)
 
+				.addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
+				.addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
+				.addFunction("GetWindowSize", &ImGui::GetWindowSizeWrapper)
+
 				.addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)
 				.addFunction("SetNextWindowFocus", &ImGui::SetNextWindowFocus)
 				.addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)

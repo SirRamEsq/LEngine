@@ -13,6 +13,7 @@ namespace ImGui{
 
     void SetWindowPosWrapper(const char* name, const Coord2df& pos, ImGuiSetCond cond = 0);
     void SetWindowSizeWrapper(const char* name, const Coord2df& size, ImGuiSetCond cond = 0);
+	Coord2df GetWindowSizeWrapper();
 
     void SetNextWindowSizeWrapper(const Coord2df& size, ImGuiSetCond cond = 0);
     void SetNextWindowPosWrapper(const Coord2df& pos, ImGuiSetCond cond = 0);

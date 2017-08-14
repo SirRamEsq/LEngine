@@ -9,6 +9,10 @@ void ImGui::SetWindowSizeWrapper(const char* name, const Coord2df& size, ImGuiSe
 	ImGui::SetWindowSize(name, size, cond);
 }
 
+Coord2df ImGui::GetWindowSizeWrapper(){
+	return ImGui::GetWindowSize();
+}
+
 bool ImGui::ButtonWrapper(const char* label){
 	ImGui::Button(label);
 }
