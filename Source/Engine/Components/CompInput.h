@@ -12,6 +12,7 @@
 class ComponentInput : public BaseComponent{
     public:
         ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logFile);
+		~ComponentInput();
 
         void Update();
         void HandleEvent(const Event* event);

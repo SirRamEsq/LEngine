@@ -15,7 +15,7 @@ DEPEXT		:= d
 OBJEXT		:= o
 
 #Flags, Libraries and Includes
-CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++11
+CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++11 -ggdb3
 LIB				:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lfreetype
 INC			:= $(INCDIR) -I/usr/local/include
 INCDEP		:= $(INCDIR)

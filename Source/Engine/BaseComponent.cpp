@@ -58,13 +58,13 @@ void BaseComponentManager::DeleteAllComponents(){
 
 void BaseComponentManager::DeleteComponent(EID id){
     auto comp=componentList.find(id);
-    if(comp!=componentList.end()){
-		Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
-		BroadcastEvent(&event);
+    if(comp==componentList.end()){return;}
 
-        componentList.erase(id);
-        delete comp->second;
-    }
+	Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
+	BroadcastEvent(&event);
+
+	delete (comp->second);
+	componentList.erase(id);
 }
 
 bool BaseComponentManager::HasComponent(EID id){
