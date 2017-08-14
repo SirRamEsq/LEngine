@@ -705,6 +705,10 @@ bool LuaInterface::GetMouseButtonMiddle(){
 	return Kernel::inputManager.GetMouseButtonMiddle();
 }
 
+Coord2df LuaInterface::GetResolution(){
+	return Kernel::GetResolution();
+}
+
 
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
@@ -746,6 +750,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetMouseButtonLeft",	&LuaInterface::GetMouseButtonLeft)
 				.addFunction("GetMouseButtonRight",	&LuaInterface::GetMouseButtonRight)
 				.addFunction("GetMouseButtonMiddle",	&LuaInterface::GetMouseButtonMiddle)
+
+				.addFunction("GetResolution",	&LuaInterface::GetResolution)
 
 				.addFunction("PushState",	&LuaInterface::PushState)
 				.addFunction("SwapState",	&LuaInterface::PushState)
