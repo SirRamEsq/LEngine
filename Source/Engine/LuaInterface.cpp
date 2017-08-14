@@ -241,7 +241,8 @@ LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, c
 }
 
 LuaInterface::~LuaInterface(){
-
+	//close state
+	lua_close(lState);	
 }
 
 int LuaInterface::RunScriptLoadFromChunk(const RSC_Script* script){
