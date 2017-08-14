@@ -1,7 +1,5 @@
-
 --- ImGui TestBed
 -- Use this for a reference as to how to use the CPP.ImGui api
-
 
 local result=0;
 result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV))
@@ -45,6 +43,7 @@ function container.NewGui(baseclass)
 	end
 
 	function gui.Update()
+		local resolution = CPP.interface:GetResolution()
 		local windowFlags = 0 -- imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove
 		local remap = false;
 		CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
@@ -61,6 +60,7 @@ function container.NewGui(baseclass)
 			CPP.ImGui.Text("Testing!")
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text( "-_-" )
+			CPP.ImGui.Text( "Resolution: " .. tostring(resolution.x) .. "x" .. tostring(resolution.y) )
 
 			CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
 			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
@@ -118,19 +118,12 @@ function container.NewGui(baseclass)
 		if(remap == true)then
 			local windowFlags2 = imGuiFlags.NoTitleBar + imGuiFlags.NoMove + imGuiFlags.NoResize
 			windowFlags2 = windowFlags2 + imGuiFlags.AlwaysAutoResize
-			local fontName = "ebFonts/wisdom.ttf"
-			local fontSize = 20
-			local popFont = CPP.ImGui.PushFont(fontName, fontSize)
 			CPP.ImGui.SetNextWindowPosCenter(0)
 			CPP.ImGui.SetNextWindowSize(CPP.Coord2df(200,32), 0)
 			CPP.ImGui.SetNextWindowFocus();
 			CPP.ImGui.BeginFlags("Input", windowFlags2)
 				CPP.ImGui.Text("Press Key")
 			CPP.ImGui.End()
-
-			if(popFont)then
-				CPP.ImGui.PopFont()
-			end
 
 			CPP.interface:RemapInputToNextKeyPress("specialLuaKey")
 		end

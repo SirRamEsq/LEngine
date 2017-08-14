@@ -153,6 +153,8 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
             value = event.key.keysym.sym;
 			break;
         }
+
+		/// \TODO add a check for a joypad button/axis/hat/etc press
     }
 	if(value == 0){return false;}
 	std::stringstream ss; 

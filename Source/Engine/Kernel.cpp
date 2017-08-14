@@ -325,3 +325,7 @@ void Kernel::ImGuiInvalidateFontTexture(){
 		Kernel::guiState.fontTexture = 0;
 	}
 }
+
+Coord2df Kernel::GetResolution(){
+	return Coord2df(SCREEN_W, SCREEN_H);
+}

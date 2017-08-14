@@ -87,6 +87,8 @@ class Kernel{
 
 		static void ImGuiCreateFontsTexture();
 		static void ImGuiInvalidateFontTexture();
+
+		static Coord2df GetResolution();
 	private:
 		static bool debugMode;
 
