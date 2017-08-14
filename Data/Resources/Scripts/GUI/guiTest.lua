@@ -87,9 +87,6 @@ function container.NewGui(baseclass)
 			CPP.ImGui.Text("MouseY: " .. tostring(mousePos.y))
 			CPP.ImGui.Text("MouseWheel: " .. tostring(mouseWheel))
 
-			if(CPP.interface:GetMouseButtonLeft())then
-				CPP.ImGui.Text("MouseButtonLeft")
-			end
 			if(CPP.interface:GetMouseButtonRight())then
 				CPP.ImGui.Text("MouseButtonRight")
 			end
