@@ -11,6 +11,14 @@ function container.NewGui(baseclass)
 	--Ignore baseclass
 	gui = {}
 
+	function gui.LoadFont()
+		local popFont = CPP.ImGui.PushFont(gui.font, gui.fontSize)
+
+		if(popFont)then
+			CPP.ImGui.PopFont(1)
+		end
+	end
+
 	function gui.Initialize()
 		gui.depth		= gui.LEngineData.depth;
 		gui.parent		= gui.LEngineData.parent;
@@ -41,6 +49,13 @@ function container.NewGui(baseclass)
 		gui.currentFrame=0
 		gui.frameCounterMax=500
 		gui.frameCounter=0
+		gui.noBG=false
+		gui.translateY = 0
+
+		gui.font = "ebFonts/wisdom.ttf"
+		gui.fontSize = 30
+		--load font before remap key button is pushed
+		gui.LoadFont()
 			
 		CPP.interface:ListenForInput(gui.EID, "specialLuaKey");
 	end
@@ -49,7 +64,11 @@ function container.NewGui(baseclass)
 		local resolution = CPP.interface:GetResolution()
 		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove + imGuiFlags.AlwaysAutoResize
 		local remap = false;
-		CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
+		if(gui.noBG == false)then
+			CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0.2, 0.2, 0.2, 1))
+		else
+			CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0,0,0, 0))
+		end
 		--Sets ProgressBar BG
 		CPP.ImGui.PushStyleColorFrameBG(CPP.Color4f(0, 0.3, 0.3, 1))
 		CPP.ImGui.PushStyleColorProgressBarFilled(CPP.Color4f(0, 0.6, 0.6, 1))
@@ -123,35 +142,46 @@ function container.NewGui(baseclass)
 
 
 		--Center Window
-		CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(( resolution.x/2) - (gui.winSize.x/2), 0), 0)
+		gui.currentPosition = CPP.Coord2df(( resolution.x/2) - (gui.winSize.x/2), gui.translateY)
 
 		--Left Align Window
 		if(CPP.interface:GetMouseButtonMiddle())then
-			CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(0, 0), 0)
+			gui.currentPosition = CPP.Coord2df(0, gui.translateY)
 		end
 
 		--Right Align Window
 		if(CPP.interface:GetMouseButtonRight())then
-			CPP.ImGui.SetWindowPos(gui.winName, CPP.Coord2df(( resolution.x) - (gui.winSize.x), 0), 0)
+			 gui.currentPosition = CPP.Coord2df(( resolution.x) - (gui.winSize.x), gui.translateY)
 		end
 
+		gui.translateY = gui.translateY - (CPP.interface:GetMouseWheel()*5)
+		CPP.ImGui.SetWindowPos(gui.winName, gui.currentPosition, 0)
+
 		if(remap == true)then
-			local windowFlags2 = imGuiFlags.NoTitleBar + imGuiFlags.NoMove + imGuiFlags.NoResize
+			local windowFlags2 = imGuiFlags.NoTitleBar + imGuiFlags.NoMove + imGuiFlags.NoResize + imGuiFlags.AlwaysAutoResize
 			windowFlags2 = windowFlags2 + imGuiFlags.AlwaysAutoResize
-			CPP.ImGui.SetNextWindowPosCenter(0)
-			CPP.ImGui.SetNextWindowSize(CPP.Coord2df(200,32), 0)
+			local popFont = CPP.ImGui.PushFont(gui.font, gui.fontSize)
+			local newPos = CPP.Coord2df(0,0) 
+
+			CPP.ImGui.SetNextWindowPos(newPos, 0)
+			CPP.ImGui.SetNextWindowSize(resolution, 0)
 			CPP.ImGui.SetNextWindowFocus();
+			CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0, 0.3, 0.3, 1))
 			CPP.ImGui.BeginFlags("Input", windowFlags2)
 				CPP.ImGui.Text("Press Key")
 			CPP.ImGui.End()
 
 			CPP.interface:RemapInputToNextKeyPress("specialLuaKey")
+			CPP.ImGui.PopStyleColor(1)
+			if(popFont)then
+				CPP.ImGui.PopFont(1)
+			end
 		end
 	end
 
 	function gui.OnKeyDown(keyname)
 		if(keyname=="specialLuaKey") then
-			CPP.interface:EntityDelete(gui.EID)
+			gui.noBG = not gui.noBG
 		end
 	end
 
