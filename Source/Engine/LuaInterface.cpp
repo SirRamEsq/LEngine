@@ -886,6 +886,8 @@ void LuaInterface::ExposeCPP(){
 				.addData("x", &Coord2df::x)
 				.addData("y", &Coord2df::y)
 				.addFunction("Round", &Coord2df::Round)
+				.addFunction("Add", &Coord2df::operator+)
+				.addFunction("Subtract", &Coord2df::operator-)
 			.endClass()
 
 			.beginClass<Color4f>("Color4f")
