@@ -205,13 +205,14 @@ void ComponentPositionManager::AddComponent(EID id, EID parent){
 	if(i != componentList.end()){return;}
 
 	//Assign manager's root node as the node's parent by default
-	ComponentPosition* pos=new ComponentPosition(id, &mRootNode, logFileName);
+	auto pos = make_unique<ComponentPosition>(id, &mRootNode, logFileName);
 	pos->mManager=this;
-	componentList[id]=pos;
+	auto dumbPointer = pos.get();
+	componentList[id] = std::move(pos);
 
 	//Change component's parent
 	//If the parent is valid, its map node will become the new node's parent
-	SetParent(pos->GetEID(), parent);
+	SetParent(dumbPointer->GetEID(), parent);
 }
 
 MapNode* const ComponentPositionManager::GetRootNode(){

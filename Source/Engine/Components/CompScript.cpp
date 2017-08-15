@@ -283,10 +283,10 @@ ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* i
 }
 
 void ComponentScriptManager::AddComponent(EID id, EID parent){
-    compMapIt i=componentList.find(id);
+    auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentScript* script=new ComponentScript(id, lState, eventDispatcher, lInterface, dependencyRenderManager, logFileName);
-    componentList[id]=script;
+    auto script = make_unique<ComponentScript>(id, lState, eventDispatcher, lInterface, dependencyRenderManager, logFileName);
+    componentList[id] = std::move(script);
 }
 
 void ComponentScriptManager::SetDependencies(RenderManager* rm){

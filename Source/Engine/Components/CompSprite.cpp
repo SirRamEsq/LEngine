@@ -270,9 +270,9 @@ ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseCompone
 }
 
 void ComponentSpriteManager::AddComponent(EID id, EID parent){
-    compMapIt i=componentList.find(id);
+    auto i = componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentSprite* sprite=new ComponentSprite(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
-    componentList[id]=sprite;
+    auto sprite = make_unique<ComponentSprite>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
+    componentList[id] = std::move(sprite);
 }
 
