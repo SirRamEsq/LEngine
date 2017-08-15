@@ -44,8 +44,8 @@ ComponentCameraManager::~ComponentCameraManager(){
 void ComponentCameraManager::AddComponent(EID id, EID parent){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentCamera* cam=new ComponentCamera(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
-    componentList[id]=cam;
+    auto cam = make_unique<ComponentCamera>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
+    componentList[id] = std::move(cam);
 }
 
 void ComponentCameraManager::SetDependencies(ComponentPositionManager* pos, RenderManager* rm){

@@ -20,10 +20,10 @@ void ComponentInput::ListenForInput(std::string keyName){
 }
 
 void ComponentInputManager::AddComponent(EID id, EID parent){
-    compMapIt i=componentList.find(id);
+    auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentInput* input=new ComponentInput(keyMapping.get(), id, logFileName);
-    componentList[id]=input;
+    auto input = make_unique<ComponentInput>(keyMapping.get(), id, logFileName);
+    componentList[id] = std::move(input);
 }
 
 void ComponentInputManager::SetDependency(std::shared_ptr<InputManager::KeyMapping> keys){

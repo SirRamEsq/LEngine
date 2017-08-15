@@ -519,10 +519,10 @@ ComponentParticleManager::~ComponentParticleManager(){
 }
 
 void ComponentParticleManager::AddComponent(EID id, EID parent){
-    compMapIt i=componentList.find(id);
+    auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentParticle* par=new ComponentParticle(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
-    componentList[id]=par;
+    auto par = make_unique<ComponentParticle>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
+    componentList[id] = std::move(par);
 }
 
 void ComponentParticleManager::SetDependencies(RenderManager* rm, ComponentPositionManager* pos){

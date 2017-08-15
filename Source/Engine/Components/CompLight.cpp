@@ -81,17 +81,17 @@ ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponent
 }
 
 void ComponentLightManager::AddComponent(EID id, EID parent){
-    compMapIt i=componentList.find(id);
+    auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
-    ComponentLight* light=new ComponentLight(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
-    componentList[id]=light;
+    auto light = make_unique<ComponentLight>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
+    componentList[id] = std::move(light);
 }
 
 
 void ComponentLightManager::Update(){
 	//Update all entities
     for(auto i=componentList.begin(); i!=componentList.end(); i++){
-		UpdateComponent(i->second);
+		UpdateComponent(i->second.get());
     }
 
 	//Reset all 'updatedThisFrame' bits
@@ -220,11 +220,11 @@ void ComponentLightManager::BuildVAO(){
     unsigned int vertex=0;
     unsigned int lightCount=0;
 
-    for(auto i=componentList.begin(); i!=componentList.end(); i++){
-        auto lightSources=((ComponentLight*)(i->second))->lightSources;
+    for(auto i = componentList.begin(); i != componentList.end(); i++) {
+        auto lightSources=((ComponentLight*)(i->second.get()))->lightSources;
         for(auto lightSource=lightSources.begin(); lightSource!=lightSources.end(); lightSource++){
             float radius = lightSource->radius;
-            auto pos = ((ComponentLight*)(i->second))->myPos->GetPositionWorld();
+            auto pos = ((ComponentLight*)(i->second.get()))->myPos->GetPositionWorld();
 			pos = pos.Round();
 
             //Will subtract camera translation in shader later on during rendering
@@ -243,6 +243,7 @@ void ComponentLightManager::BuildVAO(){
             vertex+=4;
         }
     }
+
     numberOfLights=lightCount;
     vao.UpdateGPU();
 }

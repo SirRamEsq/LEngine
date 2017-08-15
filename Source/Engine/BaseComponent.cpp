@@ -50,9 +50,6 @@ int BaseComponentManager::GetComponentCount(){
 
 void BaseComponentManager::DeleteAllComponents(){
     auto comp=componentList.begin();
-    for(auto comp = componentList.begin(); comp != componentList.end(); comp++){
-        delete comp->second;
-    }
     componentList.clear();
 }
 
@@ -63,7 +60,6 @@ void BaseComponentManager::DeleteComponent(EID id){
 	Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
 	BroadcastEvent(&event);
 
-	delete (comp->second);
 	componentList.erase(id);
 }
 
@@ -93,7 +89,7 @@ void BaseComponentManager::UpdateComponent(BaseComponent* child){
 void BaseComponentManager::Update(){
 	//Update all entities
     for(auto i=componentList.begin(); i!=componentList.end(); i++){
-		UpdateComponent(i->second);
+		UpdateComponent(i->second.get());
     }
 
 	//Reset all 'updatedThisFrame' bits
@@ -130,18 +126,18 @@ void BaseComponentManager::BroadcastEvent(const Event* event){
 }
 
 BaseComponent* BaseComponentManager::GetComponent(EID id){
-    compMap::iterator i=componentList.find(id);
+    auto i=componentList.find(id);
     if(i!=componentList.end()){
-        return i->second;
+        return i->second.get();
     }
     return NULL;
 }
 
 void BaseComponentManager::AddComponent(std::unique_ptr<BaseComponent> comp){
     auto id = comp->GetEID();
-    auto i=componentList.find(id);
+    auto i = componentList.find(id);
     if(i!=componentList.end()){return;}
-    componentList[id]=comp.release();
+    componentList[id]=std::move(comp);
 }
 
 void BaseComponentManager::SetParent(EID child, EID parent){
@@ -157,5 +153,5 @@ void BaseComponentManager::SetParent(EID child, EID parent){
 	auto parentComponent = componentList.find(parent);
 	if(parentComponent == componentList.end()){return;}
 
-	childComponent->second->SetParent(parentComponent->second);
+	childComponent->second->SetParent(parentComponent->second.get());
 }

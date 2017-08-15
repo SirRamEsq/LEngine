@@ -71,7 +71,8 @@ function container.NewGui(baseclass)
 		end
 		--Sets ProgressBar BG
 		CPP.ImGui.PushStyleColorFrameBG(CPP.Color4f(0, 0.3, 0.3, 1))
-		CPP.ImGui.PushStyleColorProgressBarFilled(CPP.Color4f(0, 0.6, 0.6, 1))
+		local progressBarFill = gui.frameCounter /gui.frameCounterMax
+		CPP.ImGui.PushStyleColorProgressBarFilled(CPP.Color4f(1 - progressBarFill, progressBarFill, 0, 1))
 		CPP.ImGui.PushStyleColorButton(CPP.Color4f(0, 0, 0.3, 1))
 		CPP.ImGui.PushStyleColorButtonActive(CPP.Color4f(0, 0.3, 0, 1))
 		CPP.ImGui.PushStyleColorButtonHovered(CPP.Color4f(0, 0.6, 0.6, 1))
@@ -100,7 +101,7 @@ function container.NewGui(baseclass)
 			local spriteButtonPress = CPP.ImGui.SpriteButton(gui.sprite1, "Fire", gui.currentFrame)
 
 			CPP.ImGui.Text("Animation ProgressBar")
-			CPP.ImGui.ProgressBar(gui.frameCounter / gui.frameCounterMax, CPP.Coord2df(128, 16))
+			CPP.ImGui.ProgressBar(progressBarFill, CPP.Coord2df(128, 16))
 			CPP.ImGui.SameLine()
 			CPP.ImGui.Text("-_-")
 

@@ -5,6 +5,7 @@
 #include "Event.h"
 
 #include <map>
+#include <memory>
 
 class BaseComponentManager;
 class ComponentPositionManager;
@@ -52,10 +53,6 @@ class BaseComponentManager{
         BaseComponentManager(const std::string& logName, EventDispatcher* e)
             : logFileName(logName), eventDispatcher(e){}
 
-        /// \TODO use smart pointers
-        typedef std::map<EID, BaseComponent*> compMap;
-        typedef compMap::iterator compMapIt;
-
 	   	///Create a new component with the specified ID
         virtual void    AddComponent        (EID id, EID parent=0)=0;
  		///Add a loaded component (good for mocking)
@@ -99,7 +96,7 @@ class BaseComponentManager{
 		 */
 		virtual void UpdateComponent(BaseComponent* child);
 
-        std::map<EID, BaseComponent*> componentList;
+        std::map<EID, std::unique_ptr<BaseComponent> > componentList;
         EventDispatcher* eventDispatcher;
 };
 
