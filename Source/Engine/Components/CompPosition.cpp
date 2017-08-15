@@ -207,6 +207,8 @@ void ComponentPositionManager::AddComponent(EID id, EID parent){
 	//Assign manager's root node as the node's parent by default
 	auto pos = make_unique<ComponentPosition>(id, &mRootNode, logFileName);
 	pos->mManager=this;
+
+	//Grab a dumb pointer for setting the parent after adding the component to the list
 	auto dumbPointer = pos.get();
 	componentList[id] = std::move(pos);
 

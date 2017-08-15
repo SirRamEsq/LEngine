@@ -1,1 +1,0 @@
-(cd /home/ryan/Documents/CPP/Projects/LEngine-master; /home/ryan/Documents/CPP/Projects/LEngine-master/bin/LEngineUbuntuDEBUG_BUILD -map test.tmx)

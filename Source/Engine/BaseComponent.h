@@ -40,10 +40,10 @@ class BaseComponent{
         EID mEntityID;
         BaseComponentManager* mManager;
 
+		///Pointer to component's parent, should be same type of component as derived class BaseComponent* parent;
 		BaseComponent* parent;
 
     private:
-		//Pointer to component's parent, should be same type of component as derived class BaseComponent* parent;
 		///Can be used to handle an event (optional)
         EventFunction eventCallback;
 };
