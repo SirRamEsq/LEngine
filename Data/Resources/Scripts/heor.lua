@@ -78,7 +78,6 @@ function NewHeor(baseclass)
 	--General Movement Variables
 		heor.health=heor.c.MAXHEALTH;
 		heor.coinCount=0;
-		heor.coinText=nil;
 		heor.xspd=0;
 		heor.yspd=0;
 		heor.groundSpeed=0;
@@ -210,13 +209,8 @@ function heor.Initialize()
 
 	heor.SoundJump = "smw_jump.wav";
 
-	heor.coinText=heor.CPPInterface:RenderObjectText(EID, 400, 0, "Coins : " .. tostring(heor.coinCount));
-	heor.coinText:SetColor(200,200,100);
-	heor.coinText:SetDepth(-1004);
-
-	heor.HUD.text.health=heor.CPPInterface:RenderObjectText(EID, 190, 0, "Health : " .. tostring(heor.health));
-	heor.HUD.text.health:SetColor(200,20,10);
-	heor.HUD.text.health:SetDepth(-1004);
+	--heor.coinText=heor.CPPInterface:RenderObjectText(EID, 400, 0, "Coins : " .. tostring(heor.coinCount));
+	--heor.HUD.text.health=heor.CPPInterface:RenderObjectText(EID, 190, 0, "Health : " .. tostring(heor.health));
 
 	heor.CompCollision			= heor.CPPInterface:GetCollisionComponent(EID);
 	heor.CompSprite		= heor.CPPInterface:GetSpriteComponent(EID);
@@ -926,6 +920,28 @@ function heor.Update()
 
 	heor.CompPosition:SetMovement(updateVec);
 
+
+	-------
+	--GUI--
+	-------
+	local resolution = CPP.interface:GetResolution()
+	local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove + imGuiFlags.AlwaysAutoResize
+	CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0,0,0, 0))
+	CPP.ImGui.PushStyleColorText(CPP.Color4f(.9,.1,.1,1))
+	heor.guiName = "heorGUI"
+
+	--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
+	--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
+	CPP.ImGui.BeginFlags(heor.guiName, windowFlags)
+	CPP.ImGui.Text(tostring(heor.health))
+	local winSize = CPP.ImGui.GetWindowSize()
+	CPP.ImGui.End()
+	CPP.ImGui.PopStyleColor(2)
+
+	--Center Window
+	local guiPosition = CPP.Coord2df(( resolution.x/2) - (winSize.x/2), 0)
+	CPP.ImGui.SetWindowPos(heor.guiName, guiPosition, 0)
+
 	-----------------------------------------
 	--Prepare for TCollision and Next Frame--
 	-----------------------------------------
@@ -1069,7 +1085,6 @@ function heor.TakeDamage(hitpoints)
 	heor.LockInput(30);
 
 	heor.health = heor.health-hitpoints;
-	heor.HUD.text.health:ChangeText("Health : " .. tostring(heor.health));
 end
 
 function heor.Attacked(damage)

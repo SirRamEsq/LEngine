@@ -78,7 +78,7 @@ bool ImGui::SpriteButton(const RSC_Sprite* sprite, const std::string& animation,
 }
 
 void ImGui::ProgressBarWrapper(float fraction, const Coord2df& screenSize){
-        ImGui::ProgressBar(fraction,screenSize);
+		ImGui::ProgressBar(fraction,screenSize);
 }
 
 void ImGui::SameLineWrapper(){
@@ -141,7 +141,7 @@ void ImGui::PopFontWrapper(){
 ////////////
 //INTERNAL//
 ////////////
-void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, int frame,  ImTextureID& textureID, Coord2df& size, Coord2df& startUV, Coord2df& endUV){
+void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, int frame,	ImTextureID& textureID, Coord2df& size, Coord2df& startUV, Coord2df& endUV){
 	try{
 		auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(), sprite->GetTextureName());
 		textureID = (void*) texture->GetOpenGLID();
