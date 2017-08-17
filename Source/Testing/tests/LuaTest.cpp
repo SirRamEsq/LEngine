@@ -55,23 +55,29 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		//This should not trigger any new error messages; lastError should not change by pressing a key
 		auto previousErrorMessage = lastError;
 		stateManager->inputManager->SimulateKeyPress(ignoredKey);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == previousErrorMessage);
 
 		stateManager->inputManager->SimulateKeyPress(incorrectKey);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == "KeyPress: Incorrect Input");
 
 		stateManager->inputManager->SimulateKeyPress(keyPressed);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == "KeyPress: Correct Input");
 
 
 		previousErrorMessage = lastError;
 		stateManager->inputManager->SimulateKeyRelease(ignoredKey);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == previousErrorMessage);
 
 		stateManager->inputManager->SimulateKeyRelease(incorrectKey);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == "KeyRelease: Incorrect Input");
 
 		stateManager->inputManager->SimulateKeyRelease(keyPressed);	
+		stateManager->inputManager->HandleInput();
 		REQUIRE(lastError == "KeyRelease: Correct Input");
 	}
 

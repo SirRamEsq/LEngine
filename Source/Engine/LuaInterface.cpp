@@ -495,7 +495,7 @@ void LuaInterface::WriteError	  (EID id, const std::string& error){
 	}
 }
 
-void LuaInterface::PlaySound	  (const std::string& sndName					  ){
+void LuaInterface::PlaySound	  (const std::string& sndName){
 	SoundEvent snd(sndName, 100);
 	if(snd.sound!=NULL){
 		K_AudioSub.PushSoundEvent(snd);
@@ -602,10 +602,6 @@ void LuaInterface::EntityDelete(EID entity){
 /////////////
 //Rendering//
 /////////////
-RenderText* LuaInterface::RenderObjectText	  (EID selfID, int x, int y, const std::string& text, bool abss){
-	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(selfID)));
-	return script->RenderObjectText(x,y,text,abss);
-}
 RenderLine* LuaInterface::RenderObjectLine	  (EID selfID, int x, int y, int xx, int yy){
 	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(selfID)));
 	return script->RenderObjectLine(x,y,xx,yy);
@@ -653,6 +649,7 @@ void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std:
 	if(script==NULL){return;}
 	script->HandleEvent(&e);
 }
+
 ///////////
 //Handles//
 ///////////
@@ -730,7 +727,6 @@ void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
 			.beginClass<LuaInterface>("LuaInterface") //define class object
-				.addFunction("RenderObjectText",	&LuaInterface::RenderObjectText)
 				.addFunction("RenderObjectDelete",	&LuaInterface::RenderObjectDelete)
 				.addFunction("RenderObjectLine",	&LuaInterface::RenderObjectLine)
 
@@ -892,14 +888,6 @@ void LuaInterface::ExposeCPP(){
 				.addData("angleV", &RSC_Heightmap::angleV)
 			.endClass()
 
-
-			.beginClass<Coord2d>("Coord2d")
-				.addConstructor <void (*) (void)> ()//Empty Constructor
-				.addConstructor <void (*) (int, int)> ()//Constructor
-				.addData("x", &Coord2d::x)
-				.addData("y", &Coord2d::y)
-			.endClass()
-
 			.beginClass<Coord2df>("Coord2df")
 				.addConstructor <void (*) (void)> ()//Empty Constructor
 				.addConstructor <void (*) (float, float)> ()//Constructor
@@ -974,22 +962,6 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetEffect",				&ParticleCreator::SetEffect)
 			.endClass()
 
-			.deriveClass<RenderText, RenderableObject>("RenderText")
-				.addFunction("ChangeText",		&RenderText::ChangeText)
-				.addFunction("ChangePosition",	&RenderText::ChangePosition)
-
-				.addFunction("SetColor",		&RenderText::SetColorI)
-				.addFunction("SetX",			&RenderText::SetX)
-				.addFunction("SetY",			&RenderText::SetY)
-				.addFunction("SetW",			&RenderText::SetW)
-				.addFunction("SetH",			&RenderText::SetH)
-
-				.addFunction("GetX",			&RenderText::GetX)
-				.addFunction("GetY",			&RenderText::GetY)
-				.addFunction("GetW",			&RenderText::GetW)
-				.addFunction("GetH",			&RenderText::GetH)
-			.endClass()
-
 			.deriveClass<RenderLine, RenderableObject>("RenderLine")
 				.addFunction("ChangePosition",	&RenderLine::ChangePosition)
 
@@ -1027,8 +999,6 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetNextWindowFocus", &ImGui::SetNextWindowFocus)
 				.addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
 				.addFunction("SetNextWindowPosCenter", &ImGui::SetNextWindowPosCenterWrapper)
-				//.addFunction("SetNextWindowPosCenterX", &ImGui::SetNextWindowPosCenterWrapperX)
-				//.addFunction("SetNextWindowPosCenterY", &ImGui::SetNextWindowPosCenterWrapperY)
 				.addFunction("SetNextWindowSizeConstraints", &ImGui::SetNextWindowSizeConstraintsWrapper)
 
 				.addFunction("Text", &ImGui::TextWrapper)
