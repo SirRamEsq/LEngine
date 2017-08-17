@@ -128,6 +128,10 @@ class LuaInterface{
 			void RemapInputToNextKeyPress(const std::string& key);
 			///Gets screen resolution
 			Coord2df GetResolution();
+			void SimulateKeyPress(const std::string& keyName);
+			void SimulateKeyRelease(const std::string& keyName);
+			bool RecordKeysBegin();
+			bool RecordKeysEnd();
 
 		static const std::string LUA_52_INTERFACE_ENV_TABLE;
 		static const std::string DEBUG_LOG;
