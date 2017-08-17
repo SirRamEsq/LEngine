@@ -8,6 +8,7 @@
 #include "IniHandler.h"
 
 #include <map>
+#include <vector>
 #include <set>
 
 class Kernel; //forward declare
@@ -39,6 +40,7 @@ class InputManager{
 		/**
 		 * Enter the name of a key, and all entities listening for the given key
 		 * will be sent an event as if the key was actually pressed
+		 * These functions will process their simulated input during the HandleInput function
 		 */
 		void SimulateKeyPress(const std::string& keyName);
 		void SimulateKeyRelease(const std::string& keyName);
@@ -88,6 +90,14 @@ class InputManager{
 
 		//key to be remapped next frame
 		std::string remapKey;
+
+		/** 
+		 * Simulated keypresses and releases are put into this structure
+		 * they are processed during the andleInput function
+		 */
+		std::vector< std::pair< bool, std::string> > simulatedInput;
+		const bool SIM_KEYUP = false;
+		const bool SIM_KEYDOWN = true;
 };
 
 #endif
