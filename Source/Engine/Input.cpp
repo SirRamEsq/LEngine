@@ -46,11 +46,11 @@ InputManager::~InputManager(){
 }
 
 void InputManager::SimulateKeyPress(const std::string& keyName){
-	KeyPress(keyName);	
+	simulatedInput.push_back(std::pair<bool,std::string>(SIM_KEYDOWN, keyName));
 }
 
 void InputManager::SimulateKeyRelease(const std::string& keyName){
-	KeyRelease(keyName);
+	simulatedInput.push_back(std::pair<bool,std::string>(SIM_KEYUP, keyName));
 }
 
 std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(EventDispatcher* e, std::shared_ptr<InputManager::KeyMapping>* mapping){
@@ -75,6 +75,17 @@ void InputManager::HandleInput(){
 		ReadKeyIniFile();
 		remapKey = "";
 	}
+
+	//Process simulated Input first
+	for(auto i = simulatedInput.begin(); i != simulatedInput.end(); i++){
+		if(std::get<0>(*i) == SIM_KEYUP){
+			KeyRelease(std::get<1>(*i));
+		}
+		else{
+			KeyPress(std::get<1>(*i));
+		}
+	}
+	simulatedInput.clear();
 
     if(eventDispatcher==NULL){return;}
     SDL_Event event;
