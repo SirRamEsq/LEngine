@@ -50,8 +50,7 @@ enum TILE_FLAGS{
     TF_solid=1,
     TF_useHMap=2,
     TF_destructable=4,
-    TF_instantDeath=8,
-    TF_swim=16
+    TF_instantDeath=8
 };
 enum BG_FLAGS{
     BG_REPEATX=1,
