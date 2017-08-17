@@ -79,7 +79,6 @@ class LuaInterface{
 		/////////////
 		//Rendering//
 		/////////////
-			RenderText* RenderObjectText	(EID selfID, int x, int y, const std::string& text, bool abss=true);
 			RenderLine* RenderObjectLine	(EID selfID, int x, int y, int xx, int yy);
 			void		RenderObjectDelete	(EID selfID, RenderableObject* obj);
 

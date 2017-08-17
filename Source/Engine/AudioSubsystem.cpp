@@ -49,7 +49,7 @@ void AudioSubsystem::PushSoundEvent(SoundEvent event){
 }
 
 void AudioSubsystem::ProcessEvents(){
-    //We have the frame's batch of audio events here, could lead to some interesting processing
+    //We have an entire frame's batch of audio events here, could lead to some interesting effects?
     while(!soundQueue.empty()){
         SoundEvent& event= soundQueue.front();
         event.sound->PlaySound(-1, 0);
