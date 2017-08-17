@@ -42,7 +42,7 @@ bool GameStartState::Update(){
 		countdown = 0;
 		std::string scriptPath = "States/startupState.lua";
 		const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-		gameStateManager->PushState(make_unique<GS_Script>(gameStateManager), script);
+		gameStateManager->SwapState(make_unique<GS_Script>(gameStateManager), script);
 	}
 
     UpdateComponentManagers();

@@ -1,10 +1,6 @@
-down = s;
-left = a;
-pause = p;
-right = d;
-specialLuaKey = 59;
-swing = e;
-throw = t;
-up = w;
-use = f;
-whip = c;
+f = use;
+a = left;
+d = right;
+e = swing;
+s = down;
+w = up;

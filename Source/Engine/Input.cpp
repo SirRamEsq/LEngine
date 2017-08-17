@@ -12,29 +12,21 @@ InputManager::InputManager()
 }
 
 void InputManager::ReadKeyIniFile(){
-	ascii.clear();
-	asciiREV.clear();
+	sdlKeyToInput.clear();
     if(keyMappingIni.OpenReadFile("keyini.txt")){
         keyMappingIni.ReadFileToMap();
 
-        std::map<std::string, std::string>::iterator i;
-        i=keyMappingIni.readItBeg();
-        std::string key;
-        int value;
-        while(i!=keyMappingIni.readItEnd()){
-            key=i->first;
+        for(auto i = keyMappingIni.readItBeg(); i != keyMappingIni.readItEnd(); i++){
+			std::string value = i->second;
 
 			//Get KeySym value
-            value=keyMappingIni.ReadValueNum<int>(key);
+            int key = StringToNumber<int>(i->first);
 
 			//If ascii character was passed instead of KeySym value
-            if(value==0){
-                value=keyMappingIni.ReadASCIIValue(key);
+            if(key==0){
+                key = (int)i->first[0];
             }
-
-            ascii[key]=value;
-            asciiREV[value]=key;
-            i++;
+			sdlKeyToInput[key] = value;
         }
     }
     keyMappingIni.CloseReadFile();
@@ -90,7 +82,6 @@ void InputManager::HandleInput(){
     if(eventDispatcher==NULL){return;}
     SDL_Event event;
 
-    asciiMapREV::iterator keyi;
     KeyMapping::iterator keyMI;
 
     std::string keyStr;
@@ -98,11 +89,10 @@ void InputManager::HandleInput(){
 
     while(SDL_PollEvent(&event)) {
         if( (keyup = (event.type==SDL_KEYUP) ) or (event.type == SDL_KEYDOWN) ){
-            int asciiValue=event.key.keysym.sym;
+            int keyValue = event.key.keysym.sym;
+			auto keyi = sdlKeyToInput.find(keyValue);
 
-            keyi=asciiREV.find(asciiValue);
-
-            if(keyi!=asciiREV.end()){
+            if(keyi != sdlKeyToInput.end()){
 				if(!keyup)   {KeyPress(keyi->second);}
 				else        {KeyRelease(keyi->second);}
             }
@@ -148,10 +138,10 @@ void InputManager::KeyRelease(const std::string& keyName){
 	SendEvent(Event::MSG::KEYUP, keyName);
 }
 
-bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
-	if(key == ""){return false;}
+bool InputManager::WriteMapSetKeyToNextInput(const std::string& keyName){
+	if(keyName == ""){return false;}
 
-	SDL_Keycode value = 0;
+	SDL_Keycode key = 0;
 	//time in miliseconds
 	auto timer = SDL_GetTicks();
 	//Ten seconds
@@ -164,7 +154,7 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
     while(timer > SDL_GetTicks()) {
 		while(SDL_PollEvent(&event)){
 			if( (event.type == SDL_KEYDOWN) ){
-				value = event.key.keysym.sym;
+				key = event.key.keysym.sym;
 				breakOut = true;
 				break;
 			}
@@ -175,11 +165,11 @@ bool InputManager::WriteMapSetKeyToNextInput(const std::string& key){
 			break;
 		}
     }
-	if(value == 0){return false;}
+	if(key == 0){return false;}
 	std::stringstream ss; 
-	ss << value;
+	ss << key;
 
-	keyMappingIni.WriteString(key, ss.str());
+	keyMappingIni.WriteString(ss.str(), keyName);
 	OverwriteKeyIni();
 	return true;
 }
