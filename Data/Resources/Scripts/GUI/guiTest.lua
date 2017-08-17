@@ -51,6 +51,7 @@ function container.NewGui(baseclass)
 		gui.frameCounter=0
 		gui.noBG=false
 		gui.translateY = 0
+		gui.simulateKeyPress = true
 
 		gui.font = "ebFonts/wisdom.ttf"
 		gui.fontSize = 30
@@ -148,6 +149,14 @@ function container.NewGui(baseclass)
 		--Left Align Window
 		if(CPP.interface:GetMouseButtonMiddle())then
 			gui.currentPosition = CPP.Coord2df(0, gui.translateY)
+			if(gui.simulateKeyPress == false) then
+				CPP.interface:SimulateKeyPress("specialLuaKey")
+				CPP.interface:SimulateKeyRelease("specialLuaKey")
+				
+				gui.simulateKeyPress = true
+			end
+		else
+			gui.simulateKeyPress = false
 		end
 
 		--Right Align Window

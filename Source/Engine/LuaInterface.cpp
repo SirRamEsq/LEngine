@@ -710,6 +710,21 @@ Coord2df LuaInterface::GetResolution(){
 	return Kernel::GetResolution();
 }
 
+void LuaInterface::SimulateKeyPress(const std::string& keyName){
+	Kernel::inputManager.SimulateKeyPress(keyName);
+}
+
+void LuaInterface::SimulateKeyRelease(const std::string& keyName){
+	Kernel::inputManager.SimulateKeyRelease(keyName);
+}
+
+bool LuaInterface::RecordKeysBegin(){
+
+}
+
+bool LuaInterface::RecordKeysEnd(){
+
+}
 
 void LuaInterface::ExposeCPP(){
 	getGlobalNamespace(lState) //global namespace to lua
@@ -758,6 +773,10 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SwapState",	&LuaInterface::PushState)
 				.addFunction("LoadMap",	&LuaInterface::LoadMap)
 				.addFunction("RemapInputToNextKeyPress",	&LuaInterface::RemapInputToNextKeyPress)
+				.addFunction("SimulateKeyPress",	&LuaInterface::SimulateKeyPress)
+				.addFunction("SimulateKeyRelease",	&LuaInterface::SimulateKeyRelease)
+				.addFunction("RecordKeysBegin",	&LuaInterface::RecordKeysBegin)
+				.addFunction("RecordKeysEnd",	&LuaInterface::RecordKeysEnd)
 
 			.endClass()
 
