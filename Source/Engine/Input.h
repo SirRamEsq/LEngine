@@ -7,6 +7,7 @@
 
 #include "IniHandler.h"
 
+#include <string>
 #include <map>
 #include <vector>
 #include <set>
@@ -17,9 +18,6 @@ class Kernel; //forward declare
  * Handles input from SDL, sends events to StateManager and Entities inside the state
  */
 class InputManager{
-    typedef std::map<std::string, int> asciiMap;
-    typedef std::map<int, std::string>  asciiMapREV;
-
     public:
         typedef std::set<EID> EntitySet;
         typedef std::map<std::string, EntitySet> KeyMapping;
@@ -70,8 +68,7 @@ class InputManager{
 		void SendEvent(Event::MSG message, std::string keyName);
 		void KeyPress(const std::string& keyName);
 		void KeyRelease(const std::string& keyName);
-        asciiMap    ascii;
-        asciiMapREV asciiREV;
+		std::map<int, std::string> sdlKeyToInput;
 
 		//Mouse state
 		int mouseX;

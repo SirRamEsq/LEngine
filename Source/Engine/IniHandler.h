@@ -35,23 +35,6 @@ class IniHandler{
 		///Opens a file to write k/v pairs to
         bool OpenWriteFile(const std::string& fname);
 
-        template <typename T>
-        T ReadValueNum (const std::string& key){
-            auto i=readMap.find(key);
-            if(i==readMap.end()){return 0;}
-            return (StringToNumber<T>(i->second));
-        }
-        std::string ReadValueStr (const std::string& key){
-            auto i=readMap.find(key);
-            if(i==readMap.end()){return "";}
-            return i->second;
-        }
-        int ReadASCIIValue(const std::string& key){
-            std::string val=ReadValueStr(key);
-            if(val==""){return -1;}
-            return (int)val[0];
-        }
-
 		///Converts a value to a string, then adds it to the writeMap of k/v pairs
         template <typename T>
         T WriteValue (const std::string& key, T value){
