@@ -283,6 +283,16 @@ void TiledSet::LoadHeightMaps(GID id){
     tileHMAPs[id]=hmap;
 }
 
+std::string TiledSet::GetTileProperty(GID id, const std::string& property) const{
+	auto i = tileProperties.find(id);
+	if ( i == tileProperties.end() ) {return "";}
+
+	auto propertyIterator = i->second.find(property);
+	if ( propertyIterator == i->second.end()){ return "";}
+
+	return std::get<1>(propertyIterator->second);
+}
+
 /////////////////////
 //TiledLayerGeneric//
 /////////////////////
@@ -424,10 +434,6 @@ bool TiledTileLayer::IsDestructible() const {
     return ((layerFlags&TF_destructable)==TF_destructable);
 }
 
-bool TiledTileLayer::IsWater() const {
-    return ((layerFlags&TF_swim)==TF_swim);
-}
-
 bool TiledTileLayer::IsSolid() const {
     return ((layerFlags&TF_solid)==TF_solid);
 }
@@ -558,6 +564,12 @@ RSC_Map::RSC_Map(){
 }
 RSC_Map::~RSC_Map(){
 
+}
+
+std::string TiledTileLayer::GetTileProperty(unsigned int x, unsigned int y, const std::string& property){
+	GID tileID = GetGID(x,y);
+	if(tileID == 0){return "";}
+	return tileSet->GetTileProperty(tileID, property);
 }
 ////////
 //RSC_MapImpl//
@@ -1033,7 +1045,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
 
     bool propertyCollision=false;
     bool propertyDestructible=false;
-    bool propertySwim=false;
     bool propertyHMap=false;
     float friction;
     std::map<std::string, std::string>  extraProperties;
@@ -1048,7 +1059,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     attributes["DESTRUCTIBLE"]  = Attribute("bool", &propertyDestructible);
     attributes["COLLISION"]     = Attribute("bool", &propertyCollision);
     attributes["USEHMAP"]       = Attribute("bool", &propertyHMap);
-    attributes["SWIM"]          = Attribute("bool", &propertySwim);
     attributes["ANIMATIONSPEED"]= Attribute("unsigned int",  &animationRate);
     TMXLoadAttributesFromProperties(&properties, attributes); //store unspecified properties in tileLayer->extraproperties
 
@@ -1060,7 +1070,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
 
     if(propertyCollision)   {tileLayer->layerFlags = tileLayer->layerFlags | TF_solid;       }
     if(propertyDestructible){tileLayer->layerFlags = tileLayer->layerFlags | TF_destructable;}
-    if(propertySwim)        {tileLayer->layerFlags = tileLayer->layerFlags | TF_swim;        }
     if(propertyHMap)        {tileLayer->layerFlags = tileLayer->layerFlags | TF_useHMap;     }
 
     subnode=subnode->next_sibling();

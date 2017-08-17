@@ -764,12 +764,12 @@ void LuaInterface::ExposeCPP(){
 			.beginClass<TiledTileLayer>("TiledTileLayer") //define class object
 				.addFunction("GetFriction",		&TiledTileLayer::GetFriction)
 				.addFunction("IsDestructible",	&TiledTileLayer::IsDestructible)
-				.addFunction("IsWater",			&TiledTileLayer::IsWater)
 				.addFunction("UsesHMaps",		&TiledTileLayer::UsesHMaps)
 				.addFunction("GetTile",			&TiledTileLayer::GetTile)
 				.addFunction("SetTile",			&TiledTileLayer::SetTile)
 				.addFunction("HasTile",			&TiledTileLayer::HasTile)
 				.addFunction("UpdateRenderArea",	&TiledTileLayer::UpdateRenderArea)
+				.addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
 			.endClass()
 
 			.beginClass<RSC_Sprite>("RSC_Sprite") //define class object

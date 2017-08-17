@@ -154,6 +154,7 @@ class TiledSet : public GIDEnabled{
         int               GetTilesHigh  ()       const {return tilesHigh;     }
         int               GetTilesTotal ()       const {return tilesTotal;    }
         std::string       GetTextureName()       const {return textureName;   }
+		std::string			GetTileProperty(GID id, const std::string& property) const;
         const RSC_Texture*   GetTexture    ()       const {return texture;       }
 
         std::string transparentColor;
@@ -247,6 +248,9 @@ class TiledTileLayer : public TiledLayerGeneric{
 		 */
         bool HasTile(unsigned int x, unsigned int y) const;
 
+		///Calls 'GetTileProperty' from tiledset
+		std::string GetTileProperty(unsigned int x, unsigned int y, const std::string& property);
+
         //LuaInterface Functions
         unsigned int GetTile(unsigned int x, unsigned int y) const;
         void SetTile(unsigned int x, unsigned int y, unsigned int id);
@@ -254,7 +258,6 @@ class TiledTileLayer : public TiledLayerGeneric{
         //Lua Functions
         bool    IsSolid         () const;
         bool    IsDestructible  () const;
-        bool    IsWater         () const;
         bool    UsesHMaps       () const;
         float   GetFriction     () const;
         //All set tiles will be updated on the GPU
