@@ -201,7 +201,7 @@ function container.NewLouie(baseclass)
 			CPP.interface:WriteError(louie.EID, "sprite is NIL");
 		end
 		if( louie.baldSprite==nil ) then
-			CPP.interface:WriteError(louie.EID, "sprite is NIL");
+			CPP.interface:WriteError(louie.EID, "bald sprite is NIL");
 		end
 
 		--Logical origin is as at the top left; (0,0) is top left
@@ -230,6 +230,10 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileLeft;
 		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileRight
 
+		--rolling collision box
+		louie.CompCollision:AddCollisionBox(, , coords.GROUND_ORDER);
+		louie.CompCollision:CheckForTiles(self.boxID.TILE_DOWN_R);
+
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.CRect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
 		louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, louie.entityCollision.primaryCollision.ID, 30)
@@ -254,7 +258,22 @@ function container.NewLouie(baseclass)
 		louie.input.OnKeyUp(keyname)
 	end
 
+	function louie.SetCollisionBoxes()
+		if(louie.currentState == louie.c.STATE_ROLL)then
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT)
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT)
+		else
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT)
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT)
+		end
+	end
+
 	function louie.Update()
+		louie.SetCollisionBoxes()
 		louie.Climb()	
 		louie.WallSlide()
 		louie.UpdateInputs()

@@ -95,6 +95,8 @@ function collision.Init(self, w, h, iface, component, eid)
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
 	self.boxTileRight= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
 	self.boxTileLeft=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
+	self.boxTileRightShort= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET + coords.RIGHT_H_OFFSET/2,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET/2);
+	self.boxTileLeftShort=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET + coords.RIGHT_H_OFFSET/2,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET/2 );
 	self.boxTileUp=		 CPP.CRect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
 
 	self.boxTileDownR= CPP.CRect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
@@ -111,6 +113,14 @@ function collision.Init(self, w, h, iface, component, eid)
 
 	self.cComp:AddCollisionBox(self.boxTileLeft, self.boxID.TILE_LEFT, coords.LEFT_ORDER);
 	self.cComp:CheckForTiles(self.boxID.TILE_LEFT);
+
+	self.cComp:AddCollisionBox(self.boxTileRightShort, self.boxID.TILE_RIGHT_SHORT, coords.RIGHT_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_RIGHT_SHORT);
+	self.cComp:Deactivate(self.boxID.TILE_RIGHT_SHORT);
+
+	self.cComp:AddCollisionBox(self.boxTileLeftShort, self.boxID.TILE_LEFT_SHORT, coords.LEFT_ORDER);
+	self.cComp:CheckForTiles(self.boxID.TILE_LEFT_SHORT);
+	self.cComp:Deactivate(self.boxID.TILE_RIGHT_SHORT);
 
 	self.cComp:AddCollisionBox(self.boxTileUp, self.boxID.TILE_UP, coords.UP_ORDER);
 	self.cComp:CheckForTiles(self.boxID.TILE_UP);
@@ -270,7 +280,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--===========================--
 	--If Right Collision Occurred--
 	--===========================--
-	elseif ( (boxid==self.boxID.TILE_RIGHT) ) then
+	elseif ( (boxid==self.boxID.TILE_RIGHT) (boxid == self.boxID.TILE_RIGHT_SHORT)) then
 		if(usesHMaps)then
 			return;
 		end
@@ -290,7 +300,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 	--==========================--
 	--If Left Collision Occurred--
 	--==========================--
-	elseif ( (boxid==self.boxID.TILE_LEFT) ) then
+	elseif ( (boxid==self.boxID.TILE_LEFT) or (boxid == self.boxID.TILE_LEFT_SHORT) ) then
 		if(usesHMaps)then
 			return;
 		end
