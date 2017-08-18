@@ -495,11 +495,17 @@ void LuaInterface::WriteError	  (EID id, const std::string& error){
 	}
 }
 
-void LuaInterface::PlaySound	  (const std::string& sndName){
-	SoundEvent snd(sndName, 100);
+void LuaInterface::PlaySound(const std::string& sndName, int volume){
+	SoundEvent snd(sndName, volume);
 	if(snd.sound!=NULL){
 		K_AudioSub.PushSoundEvent(snd);
 	}
+}
+
+void LuaInterface::PlayMusic(const std::string& musName, int volume, int loops){
+	auto music = K_MusicMan.GetLoadItem(musName, musName);
+	if( music == NULL){return;}
+	K_AudioSub.PlayMusic(music, volume, loops);
 }
 
 //////////////

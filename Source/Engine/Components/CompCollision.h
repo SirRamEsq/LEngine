@@ -38,7 +38,6 @@ struct TColPacket{
     int GetX(){return x;}
     int GetY(){return y;}
     int GetID(){return box;}
-	int GetTileID(){return tileID;}
     RSC_Heightmap GetHmap();
     /*LTDF* GetTDF(){return tdf;}
     LTDF* tdf;//tdf collided with*/

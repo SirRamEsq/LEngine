@@ -57,3 +57,27 @@ void AudioSubsystem::ProcessEvents(){
         soundQueue.pop();
     }
 }
+
+void AudioSubsystem::UpdateMusic(){
+	if(nextPlaying != NULL){
+		if(nowPlaying != NULL){
+			if(nowPlaying->FadeOut(5000) != true){
+				return;
+			}
+		}
+		nowPlaying = nextPlaying;
+
+		RSC_Music::SetVolume(nextPlayingVolume);
+		nowPlaying->FadeIn(5000, nextPlayingLoops);
+
+		nextPlaying = NULL;
+		nextPlayingLoops = -1;
+		nextPlayingVolume = MIX_MAX_VOLUME;
+	}
+}
+
+void AudioSubsystem::PlayMusic(const RSC_Music* music, int volume, int loops){
+	nextPlaying = music;
+	nextPlayingVolume = volume;
+	nextPlayingLoops = loops;
+}

@@ -23,10 +23,16 @@ class AudioSubsystem{
         ~AudioSubsystem();
 
         void ProcessEvents();
+		void UpdateMusic();
 
         void PushSoundEvent(SoundEvent event);
+		void PlayMusic(const RSC_Music* music, int volume, int loops);
 
     private:
+		const RSC_Music* nowPlaying;
+		const RSC_Music* nextPlaying;
+		int nextPlayingLoops;
+		int nextPlayingVolume;
         std::queue<SoundEvent> soundQueue;
 };
 
