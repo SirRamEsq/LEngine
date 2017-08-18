@@ -45,7 +45,8 @@ class LuaInterface{
 			void ListenForInput (EID id, const std::string& inputName );
 			void WriteError		(EID id, const std::string& error	  );
 			//sends event to audio subsystem
-			void PlaySound		(const std::string& sndName);
+			void PlaySound		(const std::string& sndName, int volume);
+			void PlayMusic		(const std::string& musName, int volume, int loops);
 			const RSC_Sprite* LoadSprite(const std::string& sprPath);
 
 			Coord2df GetMousePosition();

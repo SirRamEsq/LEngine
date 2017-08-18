@@ -885,6 +885,12 @@ function container.NewLouie(baseclass)
 		end
 	end
 
+	function louie.GetHat()
+		if(louie.health <= 1)then
+			louie.health = 2
+		end
+	end
+
 	function louie.BreakBox(layer, tx, ty)
 		--returns true if box is broken
 		tileID = layer:GetGID(tx,ty)
@@ -894,12 +900,14 @@ function container.NewLouie(baseclass)
 			local isBoxHat = layer:GetTileProperty(tileID, "isBoxHat")
 
 			if(isBoxHat)then
-				louie.AddHat()
+				louie.GetHat()
 			end
 
+			--destroy box
 			layer:SetGID(tx,ty, 0)
 			return true
 		end
+
 		return false
 	end
 

@@ -24,7 +24,15 @@ class RSC_Music{
     public:
         RSC_Music(const std::string& name, char* data, unsigned int dataSize);
         ~RSC_Music();
-        std::string musicName;
+
+		void FadeIn(int timeInMS, int loops = -1) const;
+		void PlayMusic(int loops = -1) const;
+		bool FadeOut(int timeInMS) const;
+
+		static int SetVolume(int volume);
+		static int GetVolume();
+
+        const std::string musicName;
 
         static std::unique_ptr<RSC_Music> LoadResource(const std::string& fname);
 
