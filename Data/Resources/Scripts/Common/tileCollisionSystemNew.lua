@@ -265,7 +265,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 		self.frameProperties.highestHeight=frameheight;
 		self.groundTouch=true;
 
-		self.callbackFunctions.TileDown(newPosition, thisAngle);
+		self.callbackFunctions.TileDown(newPosition, thisAngle, layer, tx, ty);
 
 	--===========================--
 	--If Right Collision Occurred--
@@ -284,7 +284,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 			--can't possibly also have it above you
 			self.ignoreTileX=tx;
 
-			self.callbackFunctions.TileRight(newPosition);
+			self.callbackFunctions.TileRight(newPosition, layer, tx, ty);
 		end
 
 	--==========================--
@@ -303,7 +303,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 			--It's impossible, because since you just collided with the x-coord to your left and were pushed back, you
 			--can't possibly also have it above you
 			self.ignoreTileX=tx;
-			self.callbackFunctions.TileLeft(newPosition);
+			self.callbackFunctions.TileLeft(newPosition, layer, tx, ty);
 		end
 
 	--=========================--
@@ -318,7 +318,7 @@ function collision.OnTileCollision(self, packet, hspd, vspd, exactX, exactY)
 
 		self.previous.tileUp		=true;
 
-		self.callbackFunctions.TileUp(newPosition);
+		self.callbackFunctions.TileUp(newPosition, layer, tx, ty);
 	end
 end
 
