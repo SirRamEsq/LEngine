@@ -38,6 +38,7 @@ struct TColPacket{
     int GetX(){return x;}
     int GetY(){return y;}
     int GetID(){return box;}
+	int GetTileID(){return tileID;}
     RSC_Heightmap GetHmap();
     /*LTDF* GetTDF(){return tdf;}
     LTDF* tdf;//tdf collided with*/
@@ -45,7 +46,7 @@ struct TColPacket{
     const TiledTileLayer* tl;
 	
 		/**
-		 * Handles setting an EColPacket and from event->extradata
+		 * Handles setting a TColPacket and from event->extradata
 		 */
 		class ExtraDataDefinition : public Event::ExtraDataDefinition{
 			public:

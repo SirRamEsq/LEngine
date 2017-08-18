@@ -249,7 +249,7 @@ class TiledTileLayer : public TiledLayerGeneric{
         bool HasTile(unsigned int x, unsigned int y) const;
 
 		///Calls 'GetTileProperty' from tiledset
-		std::string GetTileProperty(unsigned int x, unsigned int y, const std::string& property);
+		std::string GetTileProperty(GID id, const std::string& property);
 
         //LuaInterface Functions
         unsigned int GetTile(unsigned int x, unsigned int y) const;

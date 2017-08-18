@@ -566,10 +566,9 @@ RSC_Map::~RSC_Map(){
 
 }
 
-std::string TiledTileLayer::GetTileProperty(unsigned int x, unsigned int y, const std::string& property){
-	GID tileID = GetGID(x,y);
-	if(tileID == 0){return "";}
-	return tileSet->GetTileProperty(tileID, property);
+std::string TiledTileLayer::GetTileProperty(GID id, const std::string& property){
+	if(id == 0){return "";}
+	return tileSet->GetTileProperty(id, property);
 }
 ////////
 //RSC_MapImpl//
