@@ -147,26 +147,26 @@ function collision.SetWidthHeight(w, h)
 	--(when such a collision would result in left or right firing instead of feet)
 
 	collision.coordinates.RIGHT_X_OFFSET		=  w
-	collision.coordinates.RIGHT_Y_OFFSET		=  6
+	collision.coordinates.RIGHT_Y_OFFSET		=  9
 	collision.coordinates.RIGHT_W_OFFSET		=  1
 	collision.coordinates.RIGHT_H_OFFSET		=  h-14;
 	collision.coordinates.RIGHT_ORDER				=  15;
 
 	collision.coordinates.LEFT_X_OFFSET			=  0;
-	collision.coordinates.LEFT_Y_OFFSET			=  6
+	collision.coordinates.LEFT_Y_OFFSET			=  9
 	collision.coordinates.LEFT_W_OFFSET			=  -1;
 	collision.coordinates.LEFT_H_OFFSET			=  h-14;
 	collision.coordinates.LEFT_ORDER				=  15;
 
-	collision.coordinates.UP_Y_OFFSET				=  0;
-	collision.coordinates.UP_H_OFFSET				=  -1;
+	collision.coordinates.UP_Y_OFFSET				=  8;
+	collision.coordinates.UP_H_OFFSET				=  1;
 	collision.coordinates.UP_W_OFFSET				=  (w/2);
 	collision.coordinates.UP_X_OFFSET				=  (w/4);
 	collision.coordinates.UP_ORDER					=  10;
 end
 
 function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
-	if(tileCollisionPacket:GetLayer():UsesHMaps() == true) then return 16 end
+	if(tileCollisionPacket:GetLayer():UsesHMaps() == false) then return 16 end
 	local box_value = 0;
 	local boxid=tileCollisionPacket:GetID();
 	local hmap=tileCollisionPacket:GetHmap();

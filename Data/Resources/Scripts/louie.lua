@@ -924,7 +924,6 @@ function container.NewLouie(baseclass)
 	function louie.BreakBox(layer, tx, ty)
 		--returns true if box is broken
 		tileID = layer:GetTile(tx,ty)
-		CPP.interface:WriteError(louie.EID, tostring(layer))
 		local hm = layer:UsesHMaps();
 		local isBox = layer:GetTileProperty(tileID, "isBox")
 
@@ -1002,9 +1001,7 @@ function container.NewLouie(baseclass)
 
 	function louie.OnTileUp(newPosition, layer, tx, ty)
 		if (louie.yspd<0) then
-			if(louie.currentState == louie.c.STATE_ROLL)then
-				louie.BreakBox(layer, tx, ty)
-			end
+			louie.BreakBox(layer, tx, ty)
 			louie.CompPosition:TranslateWorldToLocal(newPosition);
 			louie.CompPosition:SetPositionLocalY(newPosition.y);
 			louie.yspd=0;
