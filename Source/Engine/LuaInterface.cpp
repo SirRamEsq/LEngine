@@ -730,6 +730,11 @@ bool LuaInterface::RecordKeysEnd(){
 }
 
 void LuaInterface::ExposeCPP(){
+	/*
+	 * if a const pointer is passed to lua
+	 * it WILL NOT CONTAIN non-const methods
+	 * it will be as if they aren't even declared
+	 */
 	getGlobalNamespace(lState) //global namespace to lua
 		.beginNamespace ("CPP") //'CPP' table
 			.beginClass<LuaInterface>("LuaInterface") //define class object
@@ -783,14 +788,12 @@ void LuaInterface::ExposeCPP(){
 			.endClass()
 
 			.beginClass<TiledTileLayer>("TiledTileLayer") //define class object
-				.addFunction("GetFriction",		&TiledTileLayer::GetFriction)
-				.addFunction("IsDestructible",	&TiledTileLayer::IsDestructible)
+				.addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
 				.addFunction("UsesHMaps",		&TiledTileLayer::UsesHMaps)
 				.addFunction("GetTile",			&TiledTileLayer::GetTile)
 				.addFunction("SetTile",			&TiledTileLayer::SetTile)
 				.addFunction("HasTile",			&TiledTileLayer::HasTile)
 				.addFunction("UpdateRenderArea",	&TiledTileLayer::UpdateRenderArea)
-				.addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
 			.endClass()
 
 			.beginClass<RSC_Sprite>("RSC_Sprite") //define class object

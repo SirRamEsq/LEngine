@@ -55,6 +55,8 @@ class LuaInterface{
 			bool GetMouseButtonRight();
 			bool GetMouseButtonMiddle();
 
+			std::string GetTileProperty(const TiledTileLayer* layer, GID id, const std::string& property);
+
 		//////////////
 		//Components//
 		//////////////
