@@ -145,7 +145,7 @@ function yellowGrunt.OnEntityCollision(entityID, packet)
 end
 
 function yellowGrunt.OnTileCollision(packet)
-  local absoluteCoords=yellowGrunt.myPositionComp:GetPositionWorldInt();
+  local absoluteCoords=yellowGrunt.myPositionComp:GetPositionWorld();
   yellowGrunt.collision.OnTileCollision(packet, yellowGrunt.xSpeed, yellowGrunt.ySpeed, absoluteCoords.x, absoluteCoords.y);
 end
 

@@ -33,7 +33,7 @@ function NewHeor(baseclass)
 	heor.c.TILEHEIGHT=16;
 
 	heor.c.MAXSPEED=16;
-	heor.c.MAXHEALTH=10;
+	heor.c.MAXHEALTH=2;
 
 	heor.c.WIDTH=18; --WIDTH of object sprite
 	heor.c.HEIGHT=32; --HEIGHT of object sprite
@@ -224,6 +224,8 @@ function heor.Initialize()
 	----------------
 	heor.mySprite			 = heor.CPPInterface:LoadSprite("SpriteLouie.xml");
 	heor.mySpriteRoll  = heor.CPPInterface:LoadSprite("SpriteLouieRoll.xml");
+	heor.mySpriteBald			 = heor.CPPInterface:LoadSprite("SpriteLouieBald.xml");
+	heor.mySpriteBaldRoll  = heor.CPPInterface:LoadSprite("SpriteLouieBaldRoll.xml");
 
 	if( heor.mySprite==nil ) then
 		heor.CPPInterface:WriteError(heor.EID, "sprite is NIL");
@@ -927,13 +929,13 @@ function heor.Update()
 	local resolution = CPP.interface:GetResolution()
 	local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove + imGuiFlags.AlwaysAutoResize
 	CPP.ImGui.PushStyleColorWindowBG(CPP.Color4f(0,0,0, 0))
-	CPP.ImGui.PushStyleColorText(CPP.Color4f(.9,.1,.1,1))
+	CPP.ImGui.PushStyleColorProgressBarFilled(CPP.Color4f(.9,.1,.1,1))
 	heor.guiName = "heorGUI"
 
 	--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
 	--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)
 	CPP.ImGui.BeginFlags(heor.guiName, windowFlags)
-	CPP.ImGui.Text(tostring(heor.health))
+	CPP.ImGui.ProgressBar(heor.health / 10, CPP.Coord2df(128, 16))
 	local winSize = CPP.ImGui.GetWindowSize()
 	CPP.ImGui.End()
 	CPP.ImGui.PopStyleColor(2)

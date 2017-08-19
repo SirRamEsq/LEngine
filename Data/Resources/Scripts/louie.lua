@@ -23,7 +23,7 @@ Each map will have challenges
 local result=0;
 result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV))
 
-local container
+local container = {}
 function container.NewLouie(baseclass)
 	function SetConstants(louie)
 		--Constants
@@ -37,11 +37,13 @@ function container.NewLouie(baseclass)
 		louie.c.TILE_WIDTH=16;
 		louie.c.TILE_HEIGHT=16;
 
-		louie.c.MAX_SPEED=16;
-		louie.c.MAX_HEALTH=10;
+		louie.c.MAXSPEED=16;
+		louie.c.MAXHEALTH=10;
 
 		louie.c.COL_WIDTH=18; --WIDTH of object sprite
 		louie.c.COL_HEIGHT=32; --HEIGHT of object sprite
+		louie.c.WIDTH=18; --WIDTH of object sprite
+		louie.c.HEIGHT=32; --HEIGHT of object sprite
 
 		louie.c.GRAVITY=0.21875;
 		louie.c.SLOPE_GRAVITY=0.15
@@ -84,10 +86,13 @@ function container.NewLouie(baseclass)
 
 	function louie.InitVariables()
 		--Useful functions
-			local result, louie.common = pcall(loadfile(commonPath .. "/commonFunctions.lua", _ENV))
+			local result
+			local common
+			result, common = pcall(loadfile(commonPath .. "/commonFunctions.lua", _ENV))
+			louie.common = common
 
 		--General Movement Variables
-			louie.health=louie.c.MAXHEALTH;
+			louie.health= 2 
 			louie.coinCount=0;
 			louie.xspd=0;
 			louie.yspd=0;
@@ -154,7 +159,7 @@ function container.NewLouie(baseclass)
 
 		--Collision
 			--security hole here? user can just use '..' to go wherever they want
-			result, louie.tileCollision = pcall(loadfile(commonPath .. "/tileCollisionSystem.lua", _ENV))
+			result, louie.tileCollision = pcall(loadfile(commonPath .. "/tileCollisionSystemNew.lua", _ENV))
 
 		--Sound Effects
 			louie.SoundJump = "smw_jump.wav";
@@ -210,7 +215,7 @@ function container.NewLouie(baseclass)
 		louie.mainSpriteID		= louie.CompSprite:AddSprite(louie.mainSprite,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+1);
 		louie.mainSpriteRollID = louie.CompSprite:AddSprite(louie.mainSpriteRoll,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+8);
 		louie.baldSpriteID		= louie.CompSprite:AddSprite(louie.baldSprite,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+1);
-		louie.baldSpriteIDRoll = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+8);
+		louie.baldSpriteRollID = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+8);
 
 		louie.CompSprite:SetAnimation		(louie.mainSpriteID, "Stand");
 		louie.CompSprite:SetAnimationSpeed  (louie.mainSpriteID, 1);
@@ -229,10 +234,6 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.callbackFunctions.TileDown  = louie.OnTileDown;
 		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileLeft;
 		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileRight
-
-		--rolling collision box
-		louie.CompCollision:AddCollisionBox(, , coords.GROUND_ORDER);
-		louie.CompCollision:CheckForTiles(self.boxID.TILE_DOWN_R);
 
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.CRect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
@@ -284,7 +285,6 @@ function container.NewLouie(baseclass)
 
 		louie.HandleInput()
 		louie.Animate()
-		louie.ClampSpeed()
 
 		louie.UpdateCPP()
 		louie.UpdateGUI()
@@ -403,6 +403,13 @@ function container.NewLouie(baseclass)
 
 	end
 
+	function louie.CanClimb()
+		if(louie.climb.LAYER == nil)then return end
+		local world = louie.CompPosition:GetPositionWorld():Round()
+
+		return louie.climb.LAYER:HasTile( (world.x + (louie.c.WIDTH/2))/16, (world.y + (louie.c.HEIGHT/2))/16 )
+	end
+
 	function louie.Climb()
 		if(louie.currentState == louie.c.STATE_CLIMB)then
 			if(louie.CanClimb() == false)then
@@ -491,7 +498,7 @@ function container.NewLouie(baseclass)
 			end
 		end
 
-		if ((not louie.input.key[louie.c.K_LEFT]) and (not louie.input.key.[louie.c.K_RIGHT]) and (louie.tileCollision.groundTouch))then
+		if ((not louie.input.key[louie.c.K_LEFT]) and (not louie.input.key[louie.c.K_RIGHT]) and (louie.tileCollision.groundTouch))then
 			friction=friction*5;
 		end
 		if ( ((not louie.input.key[louie.c.K_LEFT]) and (not louie.input.key[louie.c.K_RIGHT])) or (louie.inputLock) )then
@@ -556,8 +563,8 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.InputJump()
-		if louie.tileCollision.tileCollision.previous.tileUp == true then return; end
-		louie.CPPInterface:PlaySound(louie.SoundJump);
+		if louie.tileCollision.previous.tileUp == true then return; end
+		CPP.interface:PlaySound(louie.SoundJump, 100);
 		if(math.abs(louie.angleSigned)<25)then
 			louie.yspd = louie.c.JUMPHEIGHT;
 		else
@@ -574,12 +581,12 @@ function container.NewLouie(baseclass)
 			louie.xspd = louie.xspd * 1.5;
 		end
 
-		louie.CPPInterface:EventLuaBroadcastEvent(louie.EID, "JUMP");
+		CPP.interface:EventLuaBroadcastEvent(louie.EID, "JUMP");
 		louie.UnlockInput();
 	end
 
 	function louie.InputWallJump()
-		louie.CPPInterface:PlaySound(louie.SoundJump);
+		CPP.interface:PlaySound(louie.SoundJump, 100);
 		louie.xspd = louie.c.WALLJUMP_XSPD * louie.facingDir;
 		louie.yspd = -louie.c.WALLJUMP_YSPD;
 
@@ -597,11 +604,11 @@ function container.NewLouie(baseclass)
 			louie.xspd = louie.xspd * 1.5;
 		end
 
-		louie.CPPInterface:EventLuaBroadcastEvent(louie.EID, "JUMP");
+		CPP.interface:EventLuaBroadcastEvent(louie.EID, "JUMP");
 		louie.UnlockInput();
 	end
 
-	function louie.ChangeState()
+	function louie.ChangeState(newState)
 		if(newState == louie.c.STATE_NORMAL) then
 			louie.UnlockInput();
 
@@ -621,7 +628,7 @@ function container.NewLouie(baseclass)
 		if (newState==nil)then
 			assert(nil, "NEWSTATE IS NIL")
 
-			louie.CPPInterface:WriteError(louie.EID, "NIL");
+			CPP.interface:WriteError(louie.EID, "NIL");
 		end
 
 		louie.currentState = newState;
@@ -702,7 +709,7 @@ function container.NewLouie(baseclass)
 		
 		--Right Pressed
 		if ( (louie.input.key[louie.c.K_RIGHT]) and (not louie.inputLock) ) then
-			if((louie.tileCollision.tileCollision.previous.tileRight==true)and(not louie.tileCollision.groundTouch)and(louie.yspd>=0))then
+			if((louie.tileCollision.previous.tileRight==true)and(not louie.tileCollision.groundTouch)and(louie.yspd>=0))then
 				louie.facingDir = louie.c.FACING_LEFT; --face opposite way of wall slide
 				louie.ChangeState(louie.c.STATE_WALLSLIDE);
 			else
@@ -725,7 +732,7 @@ function container.NewLouie(baseclass)
 
 		--Left Pressed
 		if ( (louie.input.key[louie.c.K_LEFT]) and (not louie.inputLock) ) then
-			if((louie.tileCollision.tileCollision.previous.tileLeft==true) and(not louie.tileCollision.groundTouch)and(louie.yspd>=0))then
+			if((louie.tileCollision.previous.tileLeft==true) and(not louie.tileCollision.groundTouch)and(louie.yspd>=0))then
 				louie.facingDir = louie.c.FACING_RIGHT; --face opposite way of wall slide
 				louie.ChangeState(louie.c.STATE_WALLSLIDE);
 			else
@@ -763,7 +770,7 @@ function container.NewLouie(baseclass)
 		end
 	end
 
-	function louie.ClampSpeed()
+	function louie.UpdateCPP()
 		local speedDampenX=1;
 		local speedDampenY=1;
 
@@ -805,9 +812,6 @@ function container.NewLouie(baseclass)
 			platformVelocityX=0;
 			platformVelocityY=0;
 		end
-	end
-	
-	function louie.UpdateCPP()
 		updateVec=CPP.Coord2df((louie.xspd*speedDampenX), (louie.yspd*speedDampenY));
 		louie.CompPosition:SetMovement(updateVec);
 	end
@@ -840,8 +844,8 @@ function container.NewLouie(baseclass)
 		local yy=Vec2d.y;
 
 		if(louie.currentState==louie.c.STATE_WALLSLIDE)then
-			if((louie.tileCollision.tileCollision.previous.tileRight==false)and(louie.facingDir==louie.c.FACING_LEFT))
-			or((louie.tileCollision.tileCollision.previous.tileLeft==false) and(louie.facingDir==louie.c.FACING_RIGHT))then
+			if((louie.tileCollision.previous.tileRight==false)and(louie.facingDir==louie.c.FACING_LEFT))
+			or((louie.tileCollision.previous.tileLeft==false) and(louie.facingDir==louie.c.FACING_RIGHT))then
 				louie.ChangeState(louie.c.STATE_NORMAL);
 			end
 		end
@@ -852,12 +856,19 @@ function container.NewLouie(baseclass)
 
 	function louie.CollisionUpdate()
 		louie.tileCollision.Update(louie.xspd, louie.yspd)
-		if(louie.currentState == louie.c.STATE_GRAB)then
-			louie.CompCollision:Activate(louie.entityCollision.grabCollision.ID);
-			louie.CompCollision:ChangeWidth(louie.entityCollision.grabCollision.ID, louie.c.WIDTH/2 * louie.facingDir);
-		else
-			louie.CompCollision:Deactivate(louie.entityCollision.grabCollision.ID);
-		end
+	end
+	
+	function louie.LandOnGround(ycoordinate, angleGround)
+		--Update position
+		newPosition= CPP.Coord2df(0,ycoordinate);
+
+		newPosition= louie.CompPosition:TranslateWorldToLocal(newPosition);
+
+		louie.CompPosition:SetPositionLocalY(newPosition.y);
+
+		--Update variables
+		louie.tileCollision.groundTouch=true;
+		louie.angle=angleGround;
 	end
 
 	function louie.OnEntityCollision(entityID, packet)
@@ -866,7 +877,7 @@ function container.NewLouie(baseclass)
 		local myBoxID=packet:GetID();
 		local objectType=packet:GetType();
 		local objectName=packet:GetName();
-		local otherEntity = louie.CPPInterface:EntityGetInterface(entityID)
+		local otherEntity = CPP.interface:EntityGetInterface(entityID)
 		local bounceThreshold = 3;
 
 		if ((myBoxID==louie.entityCollision.primaryCollision.ID))then
@@ -875,8 +886,8 @@ function container.NewLouie(baseclass)
 			if(solid==true)then
 				if(bounce==true)then
 					if(louie.yspd >= bounceThreshold)then
-						local thisPos = louie.CPPInterface:EntityGetPositionWorld(louie.EID)
-						local otherPos = louie.CPPInterface:EntityGetPositionWorld(entityID)
+						local thisPos = CPP.interface:EntityGetPositionWorld(louie.EID)
+						local otherPos = CPP.interface:EntityGetPositionWorld(entityID)
 						if((thisPos.y+louie.c.HEIGHT) <= (otherPos.y + leeway) )then
 							louie.yspd = louie.yspd * -.9
 							otherEntity.Attack(1);
@@ -884,14 +895,14 @@ function container.NewLouie(baseclass)
 					end
 				end
 				if(louie.yspd>=0)then
-					local thisPos = louie.CPPInterface:EntityGetPositionWorld(louie.EID)
-					local otherPos = louie.CPPInterface:EntityGetPositionWorld(entityID)
+					local thisPos = CPP.interface:EntityGetPositionWorld(louie.EID)
+					local otherPos = CPP.interface:EntityGetPositionWorld(entityID)
 					if((thisPos.y+louie.c.HEIGHT) <= (otherPos.y + leeway) )then
 						louie.tileCollision.groundTouch=true;
 						louie.LandOnGround(otherPos.y-louie.c.HEIGHT, 0);
 						louie.CompPosition:SetParent(entityID);
 
-						local vecMove = louie.CPPInterface:EntityGetMovement(entityID);
+						local vecMove = CPP.interface:EntityGetMovement(entityID);
 						louie.platformVelocityX=vecMove.x;
 						louie.platformVelocityY=vecMove.y;
 
@@ -912,18 +923,21 @@ function container.NewLouie(baseclass)
 
 	function louie.BreakBox(layer, tx, ty)
 		--returns true if box is broken
-		tileID = layer:GetGID(tx,ty)
+		tileID = layer:GetTile(tx,ty)
+		CPP.interface:WriteError(louie.EID, tostring(layer))
+		local hm = layer:UsesHMaps();
 		local isBox = layer:GetTileProperty(tileID, "isBox")
 
-		if(isBox)then
+		if(isBox == "true")then
 			local isBoxHat = layer:GetTileProperty(tileID, "isBoxHat")
 
-			if(isBoxHat)then
+			if(isBoxHat == "true")then
 				louie.GetHat()
 			end
 
 			--destroy box
-			layer:SetGID(tx,ty, 0)
+			layer:SetTile(tx,ty, 0)
+			layer:UpdateRenderArea(CPP.CRect(tx,ty, 0,0))
 			return true
 		end
 

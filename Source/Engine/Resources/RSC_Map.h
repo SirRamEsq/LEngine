@@ -242,18 +242,18 @@ class TiledTileLayer : public TiledLayerGeneric{
 		/**
 		 * Sets GID at Tile-Coordinate x,y
 		 */
-        void SetGID(unsigned int x, unsigned int y, GID id);
+        void SetGID(unsigned int x, unsigned int y, GID id) const;
 		/**
 		 * Checks if GID at Tile-Coordinate x,y is not 0
 		 */
         bool HasTile(unsigned int x, unsigned int y) const;
 
 		///Calls 'GetTileProperty' from tiledset
-		std::string GetTileProperty(GID id, const std::string& property);
+		std::string GetTileProperty(GID id, const std::string& property) const;
 
         //LuaInterface Functions
         unsigned int GetTile(unsigned int x, unsigned int y) const;
-        void SetTile(unsigned int x, unsigned int y, unsigned int id);
+        void SetTile(unsigned int x, unsigned int y, unsigned int id) const;
 
         //Lua Functions
         bool    IsSolid         () const;
@@ -261,7 +261,7 @@ class TiledTileLayer : public TiledLayerGeneric{
         bool    UsesHMaps       () const;
         float   GetFriction     () const;
         //All set tiles will be updated on the GPU
-        void    UpdateRenderArea(CRect area);
+        void    UpdateRenderArea(CRect area) const;
 
         unsigned int GetAnimationRate () const {return animatedRefreshRate;  }
 
@@ -277,7 +277,7 @@ class TiledTileLayer : public TiledLayerGeneric{
         unsigned int animatedRefreshRate;
 
     private:
-        std::vector<std::vector<GID> > data2D;
+        mutable std::vector<std::vector<GID> > data2D;
 
         void InitializeMap();
 		bool inline IsValidXY(unsigned int x, unsigned int y) const;

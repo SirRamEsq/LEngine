@@ -404,7 +404,7 @@ GID TiledTileLayer::GetGID(unsigned int x, unsigned int y) const {
     }
     return 0;
 }
-void TiledTileLayer::SetGID(unsigned int x, unsigned int y, GID id) {
+void TiledTileLayer::SetGID(unsigned int x, unsigned int y, GID id) const {
     if(IsValidXY(x,y)){
         data2D[x][y] = id;
     }
@@ -415,13 +415,13 @@ unsigned int TiledTileLayer::GetTile(unsigned int x, unsigned int y) const {
     }
 	return 0;
 }
-void TiledTileLayer::SetTile(unsigned int x, unsigned int y, unsigned int id) {
+void TiledTileLayer::SetTile(unsigned int x, unsigned int y, unsigned int id) const {
     if(IsValidXY(x,y)){
         data2D[x][y] = id;
     }
 }
 
-void TiledTileLayer::UpdateRenderArea(CRect area){
+void TiledTileLayer::UpdateRenderArea(CRect area) const {
     updatedAreas.push_back(area);
 }
 
@@ -566,7 +566,7 @@ RSC_Map::~RSC_Map(){
 
 }
 
-std::string TiledTileLayer::GetTileProperty(GID id, const std::string& property){
+std::string TiledTileLayer::GetTileProperty(GID id, const std::string& property) const{
 	if(id == 0){return "";}
 	return tileSet->GetTileProperty(id, property);
 }
