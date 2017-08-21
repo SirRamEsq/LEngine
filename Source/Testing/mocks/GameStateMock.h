@@ -8,6 +8,7 @@ class GameStateMock : public GameState{
 
 		void Init(const RSC_Script* stateScript = NULL);
 		void Close();
+		void Resume();
 		void HandleEvent(const Event*);
 		bool Update();
 		void Draw();
@@ -22,5 +23,6 @@ class GameStateMock : public GameState{
 		int drawCount;
 		int updateCount;
 		bool close;
+		bool resume;
 		bool init;
 };

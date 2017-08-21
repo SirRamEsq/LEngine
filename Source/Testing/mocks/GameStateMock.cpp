@@ -3,6 +3,7 @@
 GameStateMock::GameStateMock(GameStateManager* gm)
 	:GameState(gm){
 	init=false;
+	resume=false;
 	close=false;
 	updateCount=0;
 	drawCount=0;
@@ -12,6 +13,9 @@ void GameStateMock::Init(const RSC_Script* stateScript){
 }
 void GameStateMock::Close(){
 	close = true;
+}
+void GameStateMock::Resume(){
+	resume = true;
 }
 void GameStateMock::HandleEvent(const Event*){
 }

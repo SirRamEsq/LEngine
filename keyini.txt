@@ -1,6 +1,7 @@
-f = use;
+59 = specialLuaKey;
 a = left;
 d = right;
 e = swing;
+f = use;
 s = down;
 w = up;
