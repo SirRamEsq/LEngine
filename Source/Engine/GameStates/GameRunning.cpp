@@ -24,7 +24,11 @@ int DEBUGrepeat=0;
 GameRunningState::GameRunningState(GameStateManager* gsm)
 	: GameState(gsm){
 
- }
+}
+
+GameRunningState::~GameRunningState(){
+
+}
 
 void GameRunningState::Init(const RSC_Script* stateScript){
     countdown=1;
@@ -57,6 +61,10 @@ void GameRunningState::Init(const RSC_Script* stateScript){
 }
 
 void GameRunningState::Close(){
+}
+
+void GameRunningState::Resume(){
+
 }
 
 void GameRunningState::HandleEvent(const Event* event){

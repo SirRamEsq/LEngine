@@ -6,19 +6,33 @@
 #include "../gui/imgui_LEngine.h"
 
 
+int countdown = 0;
+int countdownMax = 100;
+int countdownIncrement = 1;
+std::string countdownMessage = "~----- Starting Up! -----~";
+
 GameStartState::GameStartState(GameStateManager* gsm)
 	: GameState(gsm){
 
  }
 
+GameStartState::~GameStartState(){
+
+}
+
 void GameStartState::Init(const RSC_Script* stateScript){
+
 }
 
 void GameStartState::Close(){
+
 }
 
-int countdown = 0;
-int countdownMax = 100;
+void GameStartState::Resume(){
+	countdownIncrement *= -1;
+	countdownMessage = "~----- Shutting Down! -----~";
+}
+
 
 void GameStartState::HandleEvent(const Event* event){
     if(event->message == Event::MSG::KEYDOWN){
@@ -32,17 +46,16 @@ void GameStartState::HandleEvent(const Event* event){
 bool GameStartState::Update(){
 	ImGui::SetNextWindowPos(Coord2df((SCREEN_W/2)-100, (SCREEN_H/2)-50));
 	ImGui::BeginFlags("STARTUPWINDOW", ImGuiWindowFlags_NoTitleBar + ImGuiWindowFlags_NoResize);
-	ImGui::TextWrapper("~----- Starting Up! -----~");
+	ImGui::TextWrapper(countdownMessage);
 	ImGui::ProgressBar(float(countdown) / float(countdownMax), Coord2df(-1.0f, 0.0f));
 
 	ImGui::End();
     if(countdown < 0){return false;}
-	countdown++;
+	countdown += countdownIncrement;
 	if(countdown > countdownMax){
-		countdown = 0;
 		std::string scriptPath = "States/startupState.lua";
 		const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-		gameStateManager->SwapState(make_unique<GS_Script>(gameStateManager), script);
+		gameStateManager->PushState(make_unique<GS_Script>(gameStateManager), script);
 	}
 
     UpdateComponentManagers();

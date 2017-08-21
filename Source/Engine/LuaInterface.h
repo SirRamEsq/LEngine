@@ -26,6 +26,7 @@ class GameState;
 class ComponentPosition;
 class ComponentCollision;
 class ComponentParticle;
+class GS_Script;
 
 class LuaInterface{
 	friend GameState;
@@ -120,8 +121,12 @@ class LuaInterface{
 		/////////
 			///Set parent for all component managers defined in the EntityManager
 			void SetParent(EID child, EID parent);
+
 			///Will push a new GS_Script state onto the stack with a script
-			void PushState(const std::string& scriptPath);
+			std::shared_ptr<GS_Script> PushState(const std::string& scriptPath);
+			///Will pop current state off the stack
+			void PopState();
+
 			///Will swap state with a new GS_Script
 			void SwapState(const std::string& scriptPath);
 			///Will load map at specified path
