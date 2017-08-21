@@ -22,6 +22,10 @@ GameState::GameState(GameStateManager* gsm)
 	nextMapEntrance = 0;
 }
 
+GameState::~GameState(){
+
+}
+
 void GameState::SetDependencies(){
     input = gameStateManager->inputManager->SetEventDispatcher(&eventDispatcher);
 
@@ -79,7 +83,7 @@ GameStateManager::GameStateManager(InputManager* input)
 	swapState = false;
    	mCurrentState=NULL;
 	nextFrameStateScript = NULL;
-	nextFrameState.reset(NULL);
+	nextFrameState.reset();
 }
 
 void GameStateManager::Close(){
@@ -90,14 +94,13 @@ void GameStateManager::Close(){
  	mCurrentState=NULL;
 }
 
-void GameStateManager::PushState(std::unique_ptr<GameState> state, const RSC_Script* script){
-	nextFrameState = std::move(state);
+void GameStateManager::PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
+	nextFrameState = state;
 	nextFrameStateScript = script;
-	swapState = false;
-}
+	swapState = false; }
 
-void GameStateManager::SwapState(std::unique_ptr<GameState> state, const RSC_Script* script){
-	PushState(std::move(state), script);
+void GameStateManager::SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
+	PushState(state, script);
 	swapState = true;
 }
 
@@ -107,8 +110,8 @@ void GameStateManager::PushNextState(){
 		if(swapState == true){
 			PopState();
 		}
-		mGameStates.push_back( std::move(nextFrameState) );
-		nextFrameState.reset(NULL);
+		mGameStates.push_back( nextFrameState);
+		nextFrameState.reset();
 
 		mCurrentState=mGameStates.back().get();
 		mCurrentState->Init(nextFrameStateScript);
@@ -117,13 +120,17 @@ void GameStateManager::PushNextState(){
 }
 
 void GameStateManager::PopState(){
+	popState=true;	
+}
+
+void GameStateManager::PopTopState(){
     if(mGameStates.empty()){
         return;
     }
-    //Inform the state that it is being deleted
+    //Inform the state that it is being popped
     mGameStates.back()->Close();
 
-    //Delete state
+    //Pop State, deleting it if this is the last shared_ptr to it
     mGameStates.pop_back();
 
     if(mGameStates.empty()){
@@ -133,6 +140,14 @@ void GameStateManager::PopState(){
 
     mCurrentState  = mGameStates.back().get();
     inputManager->SetEventDispatcher(&mCurrentState->eventDispatcher, &mCurrentState->input);
+
+	mCurrentState->Resume();
+
+	//Reset next state to push, in case both pop state and push state were called in the same frame
+	nextFrameState.reset();
+	mCurrentState=mGameStates.back().get();
+	mCurrentState->Init(nextFrameStateScript);
+	nextFrameStateScript = NULL;
 }
 
 void GameStateManager::DrawPreviousState(GameState* gs){
@@ -158,7 +173,14 @@ void GameStateManager::HandleEvent(const Event* event){
 
 bool GameStateManager::Update(){
     mCurrentState->entityMan.Cleanup();
-	PushNextState();
+	if(popState == false){
+		PushNextState();
+	}
+	else{
+		PopTopState();
+		popState = false;
+	}
+
 
     if(mCurrentState!=NULL){
 		if(!mCurrentState->Update()){

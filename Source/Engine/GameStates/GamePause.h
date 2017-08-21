@@ -12,12 +12,13 @@ class Kernel; //forward declare
 
 class GamePauseState : public GameState{
     public:
-        GamePauseState(GameStateManager* gsm)
-            :GameState(gsm){
+        GamePauseState(GameStateManager* gsm);
 
-        }
+		~GamePauseState();
         void Init(const RSC_Script* stateScript = NULL);
+
         void Close();
+		void Resume();
 
         void HandleEvent(const Event* event);
         bool Update();

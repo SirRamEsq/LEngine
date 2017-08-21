@@ -20,6 +20,17 @@ function container.NewMain(baseclass)
 		--main.font = "extra_fonts/Roboto-Medium.ttf"
 		main.font = "ebFonts/wisdom.ttf"
 		main.fontSize = 30
+		main.pushedState = nil
+	end
+
+	--This function is called when a state is resumed after the state above it is popped off the stack
+	function main.Resume()
+
+	end
+
+	--Not a destructor, is only called when this state is popped off the stack
+	function main.Close()
+
 	end
 
 	function main.Update()
@@ -33,11 +44,11 @@ function container.NewMain(baseclass)
 		CPP.ImGui.BeginFlags("Main", windowFlags)
 
 		if(CPP.ImGui.Button("Proceed"))then
-			CPP.interface:PushState("States/levelState.lua")
+			main.pushedState = CPP.interface:PushState("States/levelState.lua")
 		end
 		CPP.ImGui.SameLine()
 		if(CPP.ImGui.Button("Back"))then
-			CPP.interface:EntityDelete(main.EID)
+			CPP.interface:PopState()
 		end
 
 		CPP.ImGui.End()

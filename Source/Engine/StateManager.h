@@ -42,8 +42,7 @@ class GameState{
 		GameState(GameStateManager* gsm);
 
 		//Virtual destructor; enables derived classes to be fully deleted from a base GameState pointer
-		virtual ~GameState(){
-		}
+		virtual ~GameState();
 
 		RSC_Map* GetCurrentMap(){return mCurrentMap.get();}
 
@@ -54,7 +53,15 @@ class GameState{
 
 	protected:
 		virtual void Init(const RSC_Script* stateScript = NULL)=0;
+
+		/**
+		 * Function called when state is about to be removed from the stack
+		 * This function should not be treated like a destructor, the state beneath it on the stack
+		 * may want to access its data after it is popped
+		 */
 		virtual void Close()=0;
+		///Function called when state is resumed after popping a state above it off the stack
+		virtual void Resume()=0;
 
 		virtual void HandleEvent(const Event* event)=0;
 		virtual bool Update()=0;
@@ -120,16 +127,16 @@ class GameStateManager{
 		 * this class assumes ownership of the state
 		 * Can optionally pass a script to be run
 		 */
-		void PushState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
+		void PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
 
 		/**
 		 * Pops current state and Pushes the new one at the beginning of the next frame
 		 * Acts as a wrapper around 'PushState' that sets swapState to true
 		 */
-		void SwapState(std::unique_ptr<GameState> state, const RSC_Script* script = NULL);
+		void SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
 
 		/**
-		 * State is popped and deleted
+		 * State is popped at the start of the next frame 
 		 */
 		void PopState();
 
@@ -151,20 +158,22 @@ class GameStateManager{
 
 		void DrawPreviousState(GameState* gs);
 		void PushNextState();
+		void PopTopState();
 
 	private:
 		GameState* GetPreviousState(GameState* gs);
 		GameState* mCurrentState;
 		///State to push next frame
-		std::unique_ptr<GameState> nextFrameState;
+		std::shared_ptr<GameState> nextFrameState;
 		const RSC_Script* nextFrameStateScript;
-		std::vector<std::unique_ptr<GameState> > mGameStates;
+		std::vector<std::shared_ptr<GameState> > mGameStates;
 
 		///Next key to remap
 		std::string remapKey;
 
 		///Whether the next state to push should replace the current state
 		bool swapState;
+		bool popState;
 
 		/*
 		 * Input Manager which is used to pass key mappings to each individual state

@@ -670,14 +670,22 @@ void LuaInterface::SetParent(EID child, EID parent){
 	parentState->entityMan.SetParent(child, parent);
 }
 
-void LuaInterface::PushState(const std::string& scriptPath){
+std::shared_ptr<GS_Script> LuaInterface::PushState(const std::string& scriptPath){
 	const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-	Kernel::stateMan.PushState(make_unique<GS_Script>(&Kernel::stateMan), script);
+	auto newState = std::make_shared<GS_Script>(&Kernel::stateMan);
+
+	Kernel::stateMan.PushState(newState, script);
+
+	return newState;
+}
+
+void LuaInterface::PopState(){
+	Kernel::stateMan.PopState();
 }
 
 void LuaInterface::SwapState(const std::string& scriptPath){
 	const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-	Kernel::stateMan.SwapState(make_unique<GS_Script>(&Kernel::stateMan), script);
+	Kernel::stateMan.SwapState(std::make_shared<GS_Script>(&Kernel::stateMan), script);
 }
 
 void LuaInterface::LoadMap(const std::string& mapPath, unsigned int entranceID){
@@ -777,7 +785,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetResolution",	&LuaInterface::GetResolution)
 
 				.addFunction("PushState",	&LuaInterface::PushState)
-				.addFunction("SwapState",	&LuaInterface::PushState)
+				.addFunction("PopState",	&LuaInterface::PopState)
+				.addFunction("SwapState",	&LuaInterface::SwapState)
 				.addFunction("LoadMap",	&LuaInterface::LoadMap)
 				.addFunction("RemapInputToNextKeyPress",	&LuaInterface::RemapInputToNextKeyPress)
 				.addFunction("SimulateKeyPress",	&LuaInterface::SimulateKeyPress)
@@ -993,6 +1002,10 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetHeightTiles",		 &RSC_Map::GetHeightTiles)
 				.addFunction("GetWidthPixels",		  &RSC_Map::GetWidthPixels)
 				.addFunction("GetHeightPixels",		  &RSC_Map::GetHeightPixels)
+			.endClass()
+
+			.beginClass<GS_Script>("GameState")
+				.addFunction("GetEIDFromName",		  &GS_Script::GetEIDFromName)
 			.endClass()
 
 			.beginNamespace("ImGui")

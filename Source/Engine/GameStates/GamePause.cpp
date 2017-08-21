@@ -10,6 +10,21 @@ int ttid1=0;
 int ttid2=0;
 int ttid3=0;
 int ttid4=0;
+
+
+GamePauseState::GamePauseState(GameStateManager* gsm)
+	:GameState(gsm){
+
+}
+
+GamePauseState::~GamePauseState(){
+    ttid=0; delete tt; tt=NULL;
+    ttid1=0; delete tt1; tt1=NULL;
+    ttid2=0; delete tt2; tt2=NULL;
+    ttid3=0; delete tt3; tt3=NULL;
+    ttid4=0; delete tt4; tt4=NULL;
+}
+
 void GamePauseState::Init(const RSC_Script* stateScript){
     exit=false;
 
@@ -36,11 +51,10 @@ void GamePauseState::Init(const RSC_Script* stateScript){
 }
 
 void GamePauseState::Close(){
-    ttid=0; delete tt; tt=NULL;
-    ttid1=0; delete tt1; tt1=NULL;
-    ttid2=0; delete tt2; tt2=NULL;
-    ttid3=0; delete tt3; tt3=NULL;
-    ttid4=0; delete tt4; tt4=NULL;
+}
+
+void GamePauseState::Resume(){
+
 }
 
 void GamePauseState::HandleEvent(const Event* event){

@@ -16,9 +16,12 @@ class Kernel; //forward declare
 class GameStartState : public GameState{
     public:
         GameStartState(GameStateManager* gsm);
+		~GameStartState();
 
         void Init(const RSC_Script* stateScript = NULL);
+
         void Close();
+		void Resume();
 
         void HandleEvent(const Event* event);
         bool Update();
