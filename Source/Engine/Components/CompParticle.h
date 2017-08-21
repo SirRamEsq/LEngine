@@ -70,6 +70,8 @@ class ParticleCreator : public RenderableObjectWorld{
         void SetVertexShaderCode  (const std::string& code);
         void SetShape (const PARTICLE_SHAPE& shape);
         void SetEffect(const PARTICLE_EFFECT& effect);
+		void SetSprite(const RSC_Sprite* sprite);
+		void SetAnimation(const std::string& animationName);
 
         //Starts the particle Creator, changed parameters do not take effect till stopping and starting the creator
         void Start();
@@ -95,8 +97,10 @@ class ParticleCreator : public RenderableObjectWorld{
         unsigned int mParticleLifeSpan; //Time until particles end
         unsigned int mLifeSpan;         //Time until particle Creator end
 
-        RSC_Sprite* mSprite;
-        bool     mSpriteUsage;
+        const RSC_Sprite* mSprite;
+		std::string mAnimationName;
+		const RSC_Texture* mTexture;
+		int mCurrentFrame;
 
         Color4f mDefaultColorMin;
         Color4f mDefaultColorMax;
@@ -200,6 +204,8 @@ extern const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_SHAPE_SQUARE;
 extern const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_EFFECT_FADE_IN;
 extern const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_EFFECT_FADE_OUT;
 
+
+extern const std::string PARTICLE_SHADER_FRAGMENT_MAIN_SPRITE_END;
 
 extern const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_END;
 

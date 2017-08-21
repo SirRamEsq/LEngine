@@ -1,4 +1,5 @@
 #include "CompParticle.h"
+#include "../Kernel.h"
 #include <math.h>
 
 /*
@@ -22,6 +23,7 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
     mTime=0;
     mParticlesPerFrame=1;
     mSprite=NULL;
+	mTexture=NULL;
     mParticlesToRender=0;
 
     mParticlesToRender=0;
@@ -177,8 +179,11 @@ RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
     std::stringstream ss;
     ss
     << PARTICLE_SHADER_FRAGMENT_DECLARATIONS
-    << PARTICLE_SHADER_FRAGMENT_MAIN_BEGIN
-    << scriptCodeFragment.str()
+    << PARTICLE_SHADER_FRAGMENT_MAIN_BEGIN;
+	if(mSprite!=NULL){
+		scriptCodeFragment << PARTICLE_SHADER_FRAGMENT_MAIN_SPRITE_END;
+	}
+    scriptCodeFragment << scriptCodeFragment.str()
     << PARTICLE_SHADER_FRAGMENT_MAIN_END
     ;
 
@@ -218,6 +223,16 @@ void ParticleCreator::SetParticlesPerFrame(const float& particles){
     mParticlesPerFrame=0;
 }
 
+void ParticleCreator::SetSprite(const RSC_Sprite* sprite){
+	mSprite = sprite;	
+	std::string textureName = sprite->GetTextureName();
+	mTexture = K_TextureMan.GetLoadItem(textureName, textureName);
+}
+
+void ParticleCreator::SetAnimation(const std::string& animationName){
+	mAnimationName = animationName;
+}
+
 void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float& bMin, const float& aMin,
                                 const float& rMax, const float& gMax, const float& bMax, const float& aMax){
     Color4f cMin(rMin,gMin,bMin,aMax);
@@ -231,9 +246,6 @@ void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float
     mShape=shape;
 }
 
-void ParticleCreator::SetSprite(RSC_Sprite* spr){
-    mSprite=NULL;
-}
 */
 
 void ParticleCreator::SetPosition(const Coord2df& positionMin, const Coord2df& positionMax){
@@ -333,17 +345,40 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                                                     mDefaultColorMax.a)
                             );
 
-        for(int vert=0; vert<4; vert++){
+		CRect coord (-1,-1,2,2);
+		if(mSprite!=NULL){
+			auto animationStruct = mSprite->GetAnimation(mAnimationName);
+			if(animationStruct != NULL){
+				coord = animationStruct->GetCRectAtIndex(mCurrentFrame);
+			}
+		}
+		Coord2df pos=myPos->GetPositionWorld();
+		Vec2 offset(0,0);
+		Vec2 tex(0,0);
+		Vec2 worldPos(pos.x, pos.y);
+        for(int vert = 0; vert < 4; vert++){
             ParticleVertexData& data = vboData.get()[writeLocationVertex + vert];
 
-            Coord2df pos=myPos->GetPositionWorld();
-            Vec2 offset(0,0);
-            Vec2 tex(0,0);
-            Vec2 worldPos(pos.x, pos.y);
-            if(vert==0){offset.x=-1 * scaling.x; offset.y=-1 * scaling.y;     tex.x= -1; tex.y= -1;}
-            if(vert==1){offset.x= 1 * scaling.x; offset.y=-1 * scaling.y;     tex.x=  1; tex.y= -1;}
-            if(vert==2){offset.x= 1 * scaling.x; offset.y= 1 * scaling.y;     tex.x=  1; tex.y=  1;}
-            if(vert==3){offset.x=-1 * scaling.x; offset.y= 1 * scaling.y;     tex.x= -1; tex.y=  1;}
+            if(vert==0){
+				offset.x=-1 * scaling.x; offset.y=-1 * scaling.y;
+				tex.x= coord.GetLeft();
+				tex.y= coord.GetTop();
+			}
+            if(vert==1){
+				offset.x= 1 * scaling.x; offset.y=-1 * scaling.y;
+			   	tex.x= coord.GetRight();
+				tex.y= coord.GetTop();
+			}
+            if(vert==2){
+				offset.x= 1 * scaling.x; offset.y= 1 * scaling.y;
+				tex.x= coord.GetRight();
+				tex.y= coord.GetBottom();
+			}
+            if(vert==3){
+				offset.x=-1 * scaling.x; offset.y= 1 * scaling.y;
+				tex.x= coord.GetLeft();
+				tex.y= coord.GetBottom();
+			}
 
             data.position      = position + offset + worldPos;
             data.texture       = tex;
@@ -430,6 +465,9 @@ void ParticleCreator::Update(){
 
 void ParticleCreator::Render(const RSC_GLProgram* program){
     if(mState==PARTICLE_CREATOR_STOPPED){return;}
+	if(mTexture!=NULL){
+		mTexture->Bind();
+	}
 
     program->Bind();
     glBindVertexArray (vao);
