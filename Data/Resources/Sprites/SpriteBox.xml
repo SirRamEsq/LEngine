@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite origin="center" width="16" height="16" transparentColor="ff00ff" textureName="items.png">
+	<animation name="box" speed="1.0">
+		<image x="0" y="144" w="16" h="16"/>
+	</animation>
+</sprite>

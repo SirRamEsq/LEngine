@@ -72,6 +72,7 @@ class ParticleCreator : public RenderableObjectWorld{
         void SetEffect(const PARTICLE_EFFECT& effect);
 		void SetSprite(const RSC_Sprite* sprite);
 		void SetAnimation(const std::string& animationName);
+		void SetWarpQuads(bool vlaue);
 
         //Starts the particle Creator, changed parameters do not take effect till stopping and starting the creator
         void Start();
@@ -129,6 +130,7 @@ class ParticleCreator : public RenderableObjectWorld{
         unsigned int mParticleBufferReadLocation;
         unsigned int mParticleBufferWriteLocation;
 
+		bool mWarpQuads;
         bool         mUseSprite;
         unsigned int vboBufferSize;
         unsigned int mTime;
