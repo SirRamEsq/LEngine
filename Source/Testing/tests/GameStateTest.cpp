@@ -6,11 +6,6 @@
 TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	Kernel::Inst();
 
-	/**
-	 * This unit test now fails due to imGui throwing an error
-	 * on calling Kernel::Update
-	 * Kernel Update is commented out
-	 */
 	SECTION( "Can Push to and Pop from StateManager") {
 		auto stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 1);
@@ -22,10 +17,13 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 		REQUIRE(stateSize == 2);
 
 		K_StateMan.PopState();
+		//Update stateman, causing the new state to be popped
+		Kernel::Update();
 		stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 1);
 
 		K_StateMan.PopState();
+		Kernel::Update();
 		stateSize = K_StateMan.stackSize();
 		REQUIRE(stateSize == 0);
 		REQUIRE(K_StateMan.IsEmpty());
