@@ -91,6 +91,7 @@ const std::string PARTICLE_SHADER_FRAGMENT_DECLARATIONS=
 
 "in vec4  fragmentColor;\n"
 "in vec2  fragmentUV;\n"
+"uniform sampler2d textureSampler;\n"
 
 "out vec4 fragColor;\n"
 ;
@@ -129,6 +130,12 @@ const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_EFFECT_FADE_OUT=
     "//The * 3.0 is used to keep the color as bold as possible\n"
     "luaOut.a = (1.0 - timeAlpha) * luaOut.a * 3.0;\n"
 ;
+
+const std::string PARTICLE_SHADER_FRAGMENT_MAIN_SPRITE_END=
+	"vec4 texel = texture (textureSampler, fragmentUV);\n"
+	"luaOut = (texel * luaOut);\n"
+;
+
 const std::string PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_END=
     ""
 ;
