@@ -272,21 +272,9 @@ void ParticleCreator::SetScalingY(const float& yscaleMin, const float& yscaleMax
     mYScalingMax=yscaleMax;
 }
 
-/*
-void ParticleCreator::SetRotation(double rotationMin, double rotationMax){
-    mRotationMin=rotationMin;
-    mRotationMax=rotationMax;
+void ParticleCreator::SetWarpQuads(bool value){
+	mWarpQuads	 = value;
 }
-
-void ParticleCreator::SetAnimationSpeed(double speedMin, double speedMax){
-    mAnimationSpeedMin=speedMin;
-    mAnimationSpeedMax=speedMax;
-}
-
-void ParticleCreator::SetParticlesPerFrame(float particles){
-    mParticlesPerFrame=particles;
-}
-*/
 
 //Location and Size is in particles, not bytes or verticies
 void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigned int& writeSize){
@@ -365,16 +353,40 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 				tex.y= coord.GetTop();
 			}
             if(vert==1){
+				if(warpQuads){
+					position = Vec2(
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
+                                                        mDefaultPositionMax.x),
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.y,
+                                                        mDefaultPositionMax.y)
+					);
+				}
 				offset.x= 1 * scaling.x; offset.y=-1 * scaling.y;
 			   	tex.x= coord.GetRight();
 				tex.y= coord.GetTop();
 			}
             if(vert==2){
+				if(warpQuads){
+					position = Vec2(
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
+                                                        mDefaultPositionMax.x),
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.y,
+                                                        mDefaultPositionMax.y)
+					);
+				}
 				offset.x= 1 * scaling.x; offset.y= 1 * scaling.y;
 				tex.x= coord.GetRight();
 				tex.y= coord.GetBottom();
 			}
             if(vert==3){
+				if(warpQuads){
+					position = Vec2(
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
+                                                        mDefaultPositionMax.x),
+						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.y,
+                                                        mDefaultPositionMax.y)
+					);
+				}
 				offset.x=-1 * scaling.x; offset.y= 1 * scaling.y;
 				tex.x= coord.GetLeft();
 				tex.y= coord.GetBottom();
