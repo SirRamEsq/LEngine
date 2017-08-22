@@ -3,7 +3,7 @@ result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV)
 
 local container = {}
 function container.NewState(baseclass)
-	local state = {} --ignore baseClass
+	local state = baseclass or {}
 
 	function state.Initialize()
 		CPP.interface:LoadMap("MAP1.tmx", 0)

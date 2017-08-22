@@ -7,8 +7,7 @@ result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV)
 
 local container = {}
 function container.NewMain(baseclass)
-	--Ignore baseclass
-	local main = {}
+	local main = baseclass or {}
 
 	function main.Initialize()
 		main.depth		= main.LEngineData.depth;
@@ -21,6 +20,8 @@ function container.NewMain(baseclass)
 		main.font = "ebFonts/wisdom.ttf"
 		main.fontSize = 30
 		main.pushedState = nil
+
+		main.SetData("t", 5)
 	end
 
 	--This function is called when a state is resumed after the state above it is popped off the stack
@@ -50,6 +51,8 @@ function container.NewMain(baseclass)
 		if(CPP.ImGui.Button("Back"))then
 			CPP.interface:PopState()
 		end
+
+		CPP.ImGui.Text("DATA: " .. tostring(main.GetData("t")))
 
 		CPP.ImGui.End()
 

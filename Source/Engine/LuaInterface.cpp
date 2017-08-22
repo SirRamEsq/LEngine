@@ -319,6 +319,26 @@ int LuaInterface::RunScriptGetChunk(const RSC_Script* script){
 ///////////
 //General//
 ///////////
+int LuaInterface::GetTypeFunction(const std::string& type){
+	auto typeIT = types.find(type);
+	if(typeIT == types.end()){	
+		std::stringstream fileName;
+		fileName << TYPE_DIR << type << ".lua";
+		auto typeScript = K_ScriptMan.GetLoadItem(fileName.str(),fileName.str());
+		if(typeScript != NULL){
+			int functionReference = RunScriptLoadFromChunk(typeScript);
+			types[type] = functionReference;
+		}
+		else{
+			std::stringstream ss;
+			ss << "Couldn't load type function '"<<type<<"' at path '"<<fileName.str()<<"'";
+			ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, DEBUG_LOG);
+			return -1;
+		}
+	}
+	return types[type];
+}
+
 //Clears stack
 bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
 							 const TiledObject* obj, LuaRef* initTable){
@@ -336,6 +356,17 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 	//pushes class factory function on the stack
 	lua_rawgeti(lState, LUA_REGISTRYINDEX, functionReference);
 
+	//Push type function if one exists
+	int typeFunction = -1;
+	if(type != ""){
+		typeFunction = GetTypeFunction(type);
+		if(typeFunction != -1){
+			//push type function along with base class argument and call function
+			lua_rawgeti(lState, LUA_REGISTRYINDEX, typeFunction);
+			ErrorLog::WriteToFile("Pushed Type " + type, ErrorLog::SEVERITY::DEBUG);
+		}
+	}
+	//Push the result of baseClass as an argument for the type function
 	if(baseScript != NULL){
 		//push baseClass and calls function
 		lua_rawgeti(lState, LUA_REGISTRYINDEX, baseLuaClass);
@@ -352,11 +383,29 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 			return false;
 		}
 	}
+	//push nil if there is no base class
 	else{
 		lua_pushnil(lState);
 	}
 
-	//Call function (passing either baseclass or nil) and place table at the top of the stack
+	//call type function if one exists
+	if(typeFunction != -1){
+		//Call function with 1 arg and place table at the top of the stack
+		if(int error= lua_pcall (lState, 1, 1, 0)  != 0){
+			std::stringstream ss;
+			ss << "type did not return a callable function\n" << "   ...Error code "	<< error << "\n";
+			ss << "Error String is '" << lua_tostring(lState, -1) << "'\n";
+			ss << "Type is: " << type;
+			// completely clear the stack before return
+			lua_settop(lState, 0);
+			ErrorLog::WriteToFile(ss.str(), DEBUG_LOG);
+
+			throw LEngineException(ss.str());
+			return false;
+		}
+	}
+
+	//Call function (passing either baseclass, typeclass, or nil) then place table at top of stack
 	if(int error= lua_pcall (lState, 1, 1, 0)  != 0){
 		std::stringstream ss;
 		ss << "Script [" << script->scriptName << "] with EID [" << id << "] did not return a callable function \n"
