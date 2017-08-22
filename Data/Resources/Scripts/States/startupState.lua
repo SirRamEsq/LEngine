@@ -21,17 +21,7 @@ function container.NewMain(baseclass)
 		main.fontSize = 30
 		main.pushedState = nil
 
-		main.SetData("t", 5)
-	end
-
-	--This function is called when a state is resumed after the state above it is popped off the stack
-	function main.Resume()
-
-	end
-
-	--Not a destructor, is only called when this state is popped off the stack
-	function main.Close()
-
+		main.SetData("t", "Success!")
 	end
 
 	function main.Update()
