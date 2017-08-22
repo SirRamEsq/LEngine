@@ -156,10 +156,14 @@ class LuaInterface{
 		lua_State* GetState() {return lState;}
 
 	private:
+		int GetTypeFunction(const std::string& type);
+
 		ErrorCallback errorCallbackFunction;
 		//All entities derive from this
 		const RSC_Script* baseScript;
 		int baseLuaClass;
+		///Map type names to lua generator functions
+		std::map<std::string, int> types;
 
 		//RunScript Helper Functions
 		int RunScriptLoadFromChunk(const RSC_Script* script);

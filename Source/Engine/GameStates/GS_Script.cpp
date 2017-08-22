@@ -12,7 +12,7 @@ GS_Script::~GS_Script(){
 
 void GS_Script::Init(const RSC_Script* stateScript){
 	std::string scriptName = "STATE";
-	std::string scriptType = "gui";
+	std::string scriptType = "__BaseState";
 	MAP_DEPTH depth = 0;
 	EID parent = 0;
 	EID eid = EID_RESERVED_STATE_ENTITY;
