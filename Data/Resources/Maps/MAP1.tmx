@@ -114852,9 +114852,9 @@
     <property name="direction" value="left"/>
    </properties>
   </object>
-  <object id="45" name="YellowGrunt" x="176" y="1088" width="56" height="28">
+  <object id="45" name="Fountain" x="176" y="1088" width="56" height="28">
    <properties>
-    <property name="SCRIPT" value="yellowGrunt.lua"/>
+    <property name="SCRIPT" value="waterFountain.lua"/>
     <property name="direction" value="right"/>
    </properties>
   </object>
