@@ -29,7 +29,7 @@ class GS_Script : public GameState{
 	////////////////////
 	//SCRIPT INTERFACE//
 	////////////////////
-		EID GetEIDFromName(const std::string& name);
+		EID GetStateEID() const ;
 
 	private:
 		bool quit;

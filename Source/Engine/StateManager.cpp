@@ -20,6 +20,7 @@ GameState::GameState(GameStateManager* gsm)
 
 	nextMap = NULL;
 	nextMapEntrance = 0;
+	isLuaState=false;
 }
 
 GameState::~GameState(){
@@ -299,6 +300,11 @@ void GameState::SetMapLinkEntities(
             //Initialize Script
             std::string& scriptName = objectIt->second.script;
 
+			//Map Names to EIDs
+			if(objectIt->second.name != ""){
+				nameLookupEID[objectIt->second.name] = child;
+			}	
+
             if(scriptName!=""){
                 const RSC_Script* script=K_ScriptMan.GetItem(scriptName);
                 if(script==NULL){
@@ -359,6 +365,13 @@ void GameState::SetMapNextFrame(const RSC_Map* m, unsigned int entranceID){
 	nextMapEntrance = entranceID;
 }
 
+EID GameState::GetEIDFromName(const std::string& name) const{
+	auto i = nameLookupEID.find(name);
+	if(i == nameLookupEID.end() ) {return 0;}
+
+	return i->second;
+}
+
 bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     if(m==NULL){
         ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
@@ -371,6 +384,7 @@ bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     entityMan.ClearAllEntities();
 	//Actually delete all entities
 	entityMan.Cleanup();
+	nameLookupEID.clear();
 
     //Copy map passed
     mCurrentMap.reset();

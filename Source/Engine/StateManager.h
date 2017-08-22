@@ -39,6 +39,7 @@ class GameState{
 	friend ComponentLightManager;
 
 	public:
+		bool IsLuaState() const {return isLuaState;}
 		GameState(GameStateManager* gsm);
 
 		//Virtual destructor; enables derived classes to be fully deleted from a base GameState pointer
@@ -69,6 +70,9 @@ class GameState{
 		virtual void SetDependencies();
 		void UpdateComponentManagers();
 
+		///Get eid from data structure nameLookupEID
+		EID GetEIDFromName(const std::string& name) const;
+
 		LuaInterface				luaInterface;
 		EventDispatcher				eventDispatcher;
 		EntityManager				entityMan;
@@ -91,6 +95,10 @@ class GameState{
 
 		const RSC_Map* nextMap;
 		unsigned int nextMapEntrance;
+
+		///used by LuaInterface to determine if this state is a GS_Script
+		bool isLuaState;
+
 	private:
 		void SetMapHandleRenderableLayers(const std::map <MAP_DEPTH, TiledLayerGeneric*>& layers);
 		//returns a data structure mapping tiled EIDS to engine EIDS
@@ -106,6 +114,8 @@ class GameState{
 		//is copy of what is stored in resource manager
 		std::unique_ptr<RSC_Map> mCurrentMap;
 		std::vector<std::unique_ptr<RenderableObjectWorld> > mCurrentMapTileLayers;
+		///This is used to lookup eids by entity name
+		std::map<std::string, EID> nameLookupEID;
 };
 
 /**
