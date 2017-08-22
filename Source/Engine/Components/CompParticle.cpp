@@ -353,7 +353,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 				tex.y= coord.GetTop();
 			}
             if(vert==1){
-				if(warpQuads){
+				if(mWarpQuads){
 					position = Vec2(
 						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
                                                         mDefaultPositionMax.x),
@@ -366,7 +366,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 				tex.y= coord.GetTop();
 			}
             if(vert==2){
-				if(warpQuads){
+				if(mWarpQuads){
 					position = Vec2(
 						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
                                                         mDefaultPositionMax.x),
@@ -379,7 +379,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 				tex.y= coord.GetBottom();
 			}
             if(vert==3){
-				if(warpQuads){
+				if(mWarpQuads){
 					position = Vec2(
 						mRandom.GenerateRandomFloatValue(mDefaultPositionMin.x,
                                                         mDefaultPositionMax.x),

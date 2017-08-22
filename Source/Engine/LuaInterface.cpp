@@ -737,6 +737,17 @@ bool LuaInterface::RecordKeysEnd(){
 
 }
 
+EID LuaInterface::GetEIDFromName(const std::string& name){
+	return parentState->GetEIDFromName(name);
+}
+
+GS_Script* LuaInterface::GetCurrentGameState(){
+	if(parentState->IsLuaState() == true){
+		return (GS_Script*) parentState;	
+	}
+	return NULL;
+}
+
 void LuaInterface::ExposeCPP(){
 	/*
 	 * if a const pointer is passed to lua
@@ -794,6 +805,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("RecordKeysBegin",	&LuaInterface::RecordKeysBegin)
 				.addFunction("RecordKeysEnd",	&LuaInterface::RecordKeysEnd)
 
+				.addFunction("GetEIDFromName",	 &LuaInterface::GetEIDFromName)
+				.addFunction("GetCurrentGameState",	 &LuaInterface::GetEIDFromName)
 			.endClass()
 
 			.beginClass<TiledTileLayer>("TiledTileLayer") //define class object
@@ -1005,7 +1018,7 @@ void LuaInterface::ExposeCPP(){
 			.endClass()
 
 			.beginClass<GS_Script>("GameState")
-				.addFunction("GetEIDFromName",		  &GS_Script::GetEIDFromName)
+				.addFunction("GetStateEID",		  &GS_Script::GetStateEID)
 			.endClass()
 
 			.beginNamespace("ImGui")

@@ -2,7 +2,7 @@
 
 GS_Script::GS_Script(GameStateManager* gsm)
 	:GameState(gsm){
-
+	isLuaState = true;
 }
 
 GS_Script::~GS_Script(){
@@ -71,6 +71,6 @@ void GS_Script::Draw(){
 ////////////////////
 //SCRIPT INTERFACE//
 ////////////////////
-EID GS_Script::GetEIDFromName(const std::string& name){
-	return 0;
+EID GS_Script::GetStateEID() const{
+	entityScript->GetEID();
 }
