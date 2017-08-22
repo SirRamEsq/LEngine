@@ -10,26 +10,23 @@ GS_Script::~GS_Script(){
 	entityMan.ClearAllReservedEntities();
 }
 
-//Initialize states with an optional script? RSC_Script
 void GS_Script::Init(const RSC_Script* stateScript){
 	std::string scriptName = "STATE";
 	std::string scriptType = "gui";
 	MAP_DEPTH depth = 0;
 	EID parent = 0;
 	EID eid = EID_RESERVED_STATE_ENTITY;
+	quit = false;
 
 	if(stateScript==NULL){
 		throw LEngineException("GS_Script::Init, stateScript is NULL");
+		quit = true;
+		return;
 	}
 
-	//comPosMan.AddComponent(eid);
 	comScriptMan.AddComponent(eid);
-
 	luaInterface.RunScript(eid, stateScript, depth, parent, scriptName, scriptType, NULL, NULL);
-
 	entityScript = (ComponentScript*)comScriptMan.GetComponent(eid);
-
-	quit = false;
 }
 
 void GS_Script::Close(){
