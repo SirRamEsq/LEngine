@@ -129,7 +129,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE=
 		"rad = math.rad, random = math.random, sin = math.sin, sinh = math.sinh,	\n"
 		"sqrt = math.sqrt, tan = math.tan, tanh = math.tanh							\n"
 	"},																			\n"
-	"os = { clock = os.clock, difftime = os.difftime, time = os.time },			\n"
+	"os = { date = os.date, clock = os.clock, difftime = os.difftime, time = os.time },	\n"
 "}																			\n";
 
 LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY)

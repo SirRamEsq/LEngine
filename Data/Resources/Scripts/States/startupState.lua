@@ -21,7 +21,7 @@ function container.NewMain(baseclass)
 		main.fontSize = 30
 		main.pushedState = nil
 
-		main.SetData("t", "Success!")
+		main.SetData("t", {"Success!", 5})
 	end
 
 	function main.Update()
@@ -42,7 +42,12 @@ function container.NewMain(baseclass)
 			CPP.interface:PopState()
 		end
 
-		CPP.ImGui.Text("DATA: " .. tostring(main.GetData("t")))
+		CPP.ImGui.Text("DATA:  " .. tostring(main.GetData("t")[1]))
+		--Should be nil
+		CPP.ImGui.Text("DATA2: " .. tostring(main.data))
+		CPP.ImGui.Separator()	
+		CPP.ImGui.Text("Date:  " .. tostring(os.date("%x", os.time())))
+		CPP.ImGui.Text("Time:  " .. tostring(os.date("%I:%M:%S", os.time())))
 
 		CPP.ImGui.End()
 

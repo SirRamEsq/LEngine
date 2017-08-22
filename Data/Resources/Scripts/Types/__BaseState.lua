@@ -4,7 +4,9 @@ result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV)
 local container = {}
 function container.NewState(baseclass)
 	local state = {} --ignore baseClass
-	state.data = {}
+
+	--private member variable
+	local data = {}
 
 	-----------------
 	--CPP Functions--
@@ -24,11 +26,11 @@ function container.NewState(baseclass)
 	-----------------
 	--State will be used to store data across multiple map loads
 	function state.GetData(key)
-		return state.data[key]
+		return data[key]
 	end
 
 	function state.SetData(key, value)
-		state.data[key] = value
+		data[key] = value
 	end
 
 	state.EntityInterface = {
