@@ -30,9 +30,17 @@ class GS_Script : public GameState{
 	////////////////////
 		EID GetStateEID() const ;
 
+		GS_Script* PushState(const std::string& scriptName);
+		GS_Script* PushedStateGet(int index);
+		void PushedStateDelete(int index);
+		void PushedStateDeleteAll();
+
 	private:
 		bool quit;
 		ComponentScript* entityScript;
+
+		///Stores previously pushed but now popped states
+		std::vector< std::shared_ptr<GS_Script> > pushedStates;
 };
 
 #endif

@@ -1,8 +1,9 @@
 #include "GS_Script.h"
+#include "../Kernel.h"
 
 GS_Script::GS_Script(GameStateManager* gsm)
 	:GameState(gsm){
-
+isLuaState = true;
 }
 
 GS_Script::~GS_Script(){
@@ -77,4 +78,15 @@ EID GS_Script::GetStateEID() const{
 	if(entityScript!=NULL){
 		entityScript->GetEID();
 	}
+}
+
+GS_Script* GS_Script::PushState(const std::string& scriptPath){
+	const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
+	auto newState = std::make_shared<GS_Script>(&Kernel::stateMan);
+
+	gameStateManager->PushState(newState, script);
+
+	pushedStates.push_back(newState);
+
+	return newState.get();
 }

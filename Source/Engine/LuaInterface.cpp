@@ -719,13 +719,10 @@ void LuaInterface::SetParent(EID child, EID parent){
 	parentState->entityMan.SetParent(child, parent);
 }
 
-std::shared_ptr<GS_Script> LuaInterface::PushState(const std::string& scriptPath){
-	const RSC_Script* script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-	auto newState = std::make_shared<GS_Script>(&Kernel::stateMan);
-
-	Kernel::stateMan.PushState(newState, script);
-
-	return newState;
+GS_Script* LuaInterface::PushState(const std::string& scriptPath){
+	if(parentState->IsLuaState() == true){
+		return ((GS_Script*)(parentState))->PushState(scriptPath);
+	}
 }
 
 void LuaInterface::PopState(){

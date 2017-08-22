@@ -125,7 +125,7 @@ class LuaInterface{
 			void SetParent(EID child, EID parent);
 
 			///Will push a new GS_Script state onto the stack with a script
-			std::shared_ptr<GS_Script> PushState(const std::string& scriptPath);
+			GS_Script* PushState(const std::string& scriptPath);
 			///Will pop current state off the stack
 			void PopState();
 

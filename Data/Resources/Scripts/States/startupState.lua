@@ -46,8 +46,9 @@ function container.NewMain(baseclass)
 		--Should be nil
 		CPP.ImGui.Text("DATA2: " .. tostring(main.data))
 		CPP.ImGui.Separator()	
-		CPP.ImGui.Text("Date:  " .. tostring(os.date("%x", os.time())))
-		CPP.ImGui.Text("Time:  " .. tostring(os.date("%I:%M:%S", os.time())))
+		local time = os.time() 
+		CPP.ImGui.Text("Date:  " .. tostring(os.date("%x", time)))
+		CPP.ImGui.Text("Time:  " .. tostring(os.date("%I:%M:%S", time)))
 
 		CPP.ImGui.End()
 
