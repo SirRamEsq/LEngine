@@ -2,7 +2,7 @@
 
 GS_Script::GS_Script(GameStateManager* gsm)
 	:GameState(gsm){
-	isLuaState = true;
+
 }
 
 GS_Script::~GS_Script(){
@@ -33,11 +33,15 @@ void GS_Script::Init(const RSC_Script* stateScript){
 }
 
 void GS_Script::Close(){
-	entityScript->RunFunction("Close");
+	if(entityScript!=NULL){
+		entityScript->RunFunction("Close");
+	}
 }
 
 void GS_Script::Resume(){
-	entityScript->RunFunction("Resume");
+	if(entityScript!=NULL){
+		entityScript->RunFunction("Resume");
+	}
 }
 
 void GS_Script::HandleEvent(const Event* event){
@@ -49,6 +53,7 @@ void GS_Script::HandleEvent(const Event* event){
 
 	else if(event->message == Event::MSG::ENTITY_DELETED){
 		if(event->sender == EID_RESERVED_STATE_ENTITY){
+			entityScript = NULL;
 			quit = true;
 		}
 	}
@@ -72,5 +77,7 @@ void GS_Script::Draw(){
 //SCRIPT INTERFACE//
 ////////////////////
 EID GS_Script::GetStateEID() const{
-	entityScript->GetEID();
+	if(entityScript!=NULL){
+		entityScript->GetEID();
+	}
 }

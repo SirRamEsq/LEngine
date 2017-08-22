@@ -21,7 +21,6 @@ class GS_Script : public GameState{
         void Close();
 		void Resume();
 
-		///If the script entity wants to pop this state, it must delete itself
         void HandleEvent(const Event* event);
         bool Update();
         void Draw();
