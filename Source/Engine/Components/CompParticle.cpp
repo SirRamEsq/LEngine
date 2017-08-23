@@ -370,8 +370,15 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                             );
 
 		CRect coord (-1,-1,2,2);
+		float texCoordLeft = 0;
+		float texCoordRight = 1;
+		float texCoordTop = 0;
+		float texCoordBottom = 1;
 		if((mAnimation!=NULL) and (mTexture!=NULL)){
-			coord = mAnimation->GetCRectAtIndex(mAnimationFrame);
+			texCoordLeft = mAnimation->GetUVLeft(mAnimationFrame);
+			texCoordRight = mAnimation->GetUVRight(mAnimationFrame);
+			texCoordBottom = mAnimation->GetUVBottom(mAnimationFrame);
+			texCoordTop = mAnimation->GetUVTop(mAnimationFrame);
 		}
 		Coord2df pos=myPos->GetPositionWorld();
 		Vec2 offset(0,0);
@@ -382,8 +389,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 
             if(vert==0){
 				offset.x=-1 * scaling.x; offset.y=-1 * scaling.y;
-				tex.x= ((float)coord.GetLeft()) / mTexture->GetWidth();
-				tex.y= ((float)coord.GetTop()) / mTexture->GetHeight();
+				tex.x = texCoordLeft;
+				tex.y = texCoordTop;
 			}
             if(vert==1){
 				if(mWarpQuads){
@@ -395,8 +402,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x= 1 * scaling.x; offset.y=-1 * scaling.y;
-				tex.x= ((float)coord.GetRight()) / mTexture->GetWidth();
-				tex.y= ((float)coord.GetTop()) / mTexture->GetHeight();
+				tex.x = texCoordRight;
+				tex.y = texCoordTop;
 			}
             if(vert==2){
 				if(mWarpQuads){
@@ -408,8 +415,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x= 1 * scaling.x; offset.y= 1 * scaling.y;
-				tex.x= ((float)coord.GetRight()) / mTexture->GetWidth();
-				tex.y= ((float)coord.GetBottom()) / mTexture->GetHeight();
+				tex.x = texCoordRight;
+				tex.y = texCoordBottom;
 			}
             if(vert==3){
 				if(mWarpQuads){
@@ -421,8 +428,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x=-1 * scaling.x; offset.y= 1 * scaling.y;
-				tex.x= ((float)coord.GetLeft()) / mTexture->GetWidth();
-				tex.y= ((float)coord.GetBottom()) / mTexture->GetHeight();
+				tex.x = texCoordLeft;
+				tex.y = texCoordBottom;
 			}
 
             data.position      = position + offset + worldPos;

@@ -21,8 +21,11 @@ enum AnimationLoadTag{
     LOAD_TAG_ANIMATION_SEQUENCE  = 2
 };
 
+class RSC_Sprite;
+
 class LAnimation{
     typedef std::vector<CRect> imageVec;
+	friend RSC_Sprite;
 
     public:
         LAnimation(const double&, AnimationLoadTag t);
@@ -41,6 +44,11 @@ class LAnimation{
         int GetHeight   (int index) const ;
         double GetSpeed ()          const {return defaultSpeed;}
 
+		float GetUVTop(int index) const;
+		float GetUVLeft(int index) const;
+		float GetUVBottom(int index) const;
+		float GetUVRight(int index) const;
+
         int NumberOfImages() const {return images.size();}
 
         void SetColorKey(int image, unsigned int r, unsigned int g, unsigned int b);
@@ -48,12 +56,19 @@ class LAnimation{
         const AnimationLoadTag loadTag;
 
     protected:
+		void CalculateUV(int textureWidth, int textureHeight);
         void DeleteImages();
 		bool ValidateIndex(int index) const;
         imageVec images;
         int currentImage;
 
         double defaultSpeed;
+		bool isUVCalculated;
+
+
+		///stores the uv coordinates for each frame
+		///Pair is stored as <(Left, Top), (Right, Bottom)>
+		std::vector< std::pair <Coord2df, Coord2df> > UVCoords;
 };
 
 class RSC_Sprite{
@@ -107,8 +122,8 @@ class RSC_Sprite{
         int transparentColorBlue;
 
     private:
-        void LoadAnimation(rapidxml::xml_node<>* animationNode);
-        void LoadAnimationSequence(rapidxml::xml_node<>* animationNode);
+        LAnimation* LoadAnimation(rapidxml::xml_node<>* animationNode);
+        LAnimation* LoadAnimationSequence(rapidxml::xml_node<>* animationNode);
 };
 
 #endif

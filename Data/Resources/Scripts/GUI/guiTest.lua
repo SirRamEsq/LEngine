@@ -50,7 +50,7 @@ function container.NewGui(baseclass)
 		gui.frameCounterMax=500
 		gui.frameCounter=0
 		gui.noBG=false
-		gui.translateY = 0
+		gui.translateY = 150
 		gui.simulateKeyPress = true
 
 		gui.font = "ebFonts/wisdom.ttf"

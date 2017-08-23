@@ -3,11 +3,37 @@
 #include "ResourceLoading.h"
 #include "../Defines.h"
 
+#include "../Kernel.h"
+
 #include <stdio.h>
 #include <string.h>
 //////////////
 //LAnimation//
 //////////////
+
+void LAnimation::CalculateUV(int textureWidth, int textureHeight){
+	if ( (textureWidth <= 0 ) or (textureHeight <= 0 ) ){return;}	
+
+	UVCoords.clear();
+	for(auto i = images.begin(); i != images.end(); i++){
+		float leftUV = ((float)(*i).GetLeft()) / textureWidth; 
+		float topUV = ((float)(*i).GetTop()) / textureHeight;
+		float rightUV = ((float)(*i).GetRight())/ textureWidth;
+		float bottomUV = ((float)(*i).GetBottom()) / textureHeight;
+
+		UVCoords.push_back(std::pair<Coord2df,Coord2df>(
+			Coord2df(
+				leftUV,
+				topUV	
+			),
+			Coord2df(
+				rightUV,
+				bottomUV
+			)
+		));
+	}
+	isUVCalculated = true;
+}
 
 bool LAnimation::ValidateIndex(int index) const {
 	return ((index>=0)and(index<images.size()));
@@ -46,6 +72,7 @@ void LAnimation::DeleteImages(){
 LAnimation::LAnimation(const double& spd, AnimationLoadTag t) : loadTag(t){
     defaultSpeed=spd;
     currentImage=0;
+	isUVCalculated = false;
 }
 
 const CRect& LAnimation::GetCRectAtIndex(int imageIndex)const {
@@ -53,6 +80,34 @@ const CRect& LAnimation::GetCRectAtIndex(int imageIndex)const {
     	return images[imageIndex];
 	}
 	throw LEngineException("Invalid index for animation");
+}
+
+float LAnimation::GetUVTop(int index) const{
+	if((ValidateIndex(index)) and (isUVCalculated)){
+		return (std::get<0>(UVCoords[index])).y; 
+	}
+	return 0;
+}
+
+float LAnimation::GetUVRight(int index) const{
+	if((ValidateIndex(index)) and (isUVCalculated)){
+		return (std::get<1>(UVCoords[index])).x; 
+	}
+	return 1;
+}
+
+float LAnimation::GetUVBottom(int index) const{
+	if((ValidateIndex(index)) and (isUVCalculated)){
+		return (std::get<1>(UVCoords[index])).y; 
+	}
+	return 1;
+}
+
+float LAnimation::GetUVLeft(int index) const{
+	if((ValidateIndex(index)) and (isUVCalculated)){
+		return (std::get<0>(UVCoords[index])).x; 
+	}
+	return 0;
 }
 
 ///////////
@@ -154,11 +209,12 @@ bool RSC_Sprite::LoadFromXML(const char* dat, unsigned int fsize){
     std::string animationTagName = "";
     for(; animationNode!=0; animationNode=animationNode->next_sibling()){ //Get all animations
         animationTagName = animationNode->name();
+		LAnimation* newAnimation = NULL;
         if(animationTagName == "animation"){
-            LoadAnimation(animationNode);
+            newAnimation = LoadAnimation(animationNode);
         }
         else if(animationTagName == "animationSequence"){
-            LoadAnimationSequence(animationNode);
+            newAnimation = LoadAnimationSequence(animationNode);
         }
         else{
             std::stringstream ss;
@@ -166,11 +222,19 @@ bool RSC_Sprite::LoadFromXML(const char* dat, unsigned int fsize){
             ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
             continue;
         }
+
+		if(newAnimation != NULL){
+			auto texture = K_TextureMan.GetLoadItem(mTextureName, mTextureName);
+			if(texture != NULL){
+				newAnimation->CalculateUV(texture->GetWidth(), texture->GetHeight());
+			}
+		}
+		
     }
     return true;
 }
 
-void RSC_Sprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
+LAnimation* RSC_Sprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
     using namespace rapidxml;
 
     LAnimation* animation;
@@ -201,8 +265,9 @@ void RSC_Sprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
 
         animation->AppendImage(rect);
     }
+	return animation;
 }
-void RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
+LAnimation* RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
     using namespace rapidxml;
 
     LAnimation* animation;
@@ -240,6 +305,7 @@ void RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNode){
 
         rect.x += rect.w;
     }
+	return animation;
 }
 
 std::unique_ptr<RSC_Sprite> RSC_Sprite::LoadResource(const std::string& fname){

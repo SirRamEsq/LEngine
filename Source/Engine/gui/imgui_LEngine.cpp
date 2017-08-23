@@ -142,7 +142,20 @@ void ImGui::PopFontWrapper(){
 //INTERNAL//
 ////////////
 void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, int frame,	ImTextureID& textureID, Coord2df& size, Coord2df& startUV, Coord2df& endUV){
-	try{
+	auto ani = sprite->GetAnimation(animation);
+	if(ani != NULL){
+		auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(), sprite->GetTextureName());
+		textureID = (void*) texture->GetOpenGLID();
+		startUV.x = ani->GetUVLeft(frame);
+		startUV.y = ani->GetUVTop(frame);
+		endUV.x = ani->GetUVRight(frame);
+		endUV.y = ani->GetUVBottom(frame);
+		auto rect =  ani->GetCRectAtIndex(frame);
+		size.x = rect.w;
+		size.y = rect.h;
+	}
+
+	/*try{
 		auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(), sprite->GetTextureName());
 		textureID = (void*) texture->GetOpenGLID();
 		auto animationStruct = sprite->GetAnimation(animation);
@@ -164,4 +177,5 @@ void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, 
 		ss << "Error Occured in CalculateUV " << e.what();
 		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
 	}
+	*/
 }
