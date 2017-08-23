@@ -35,10 +35,10 @@ function container.NewBoxBreak(baseclass)
 		box.myPositionComp	= CPP.interface:GetPositionComponent (EID);
 		box.myParticleComp	= CPP.interface:GetParticleComponent (EID);
 
-		louie.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
+		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
 
 		if(boxType == 0)then
-			louie.animation = "box";
+			box.animation = "box";
 		end
 		--------------------
 		--Particle Effects--

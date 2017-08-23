@@ -37,6 +37,9 @@ function NewFountain(baseclass)
 		water.myPositionComp	= water.CPPInterface:GetPositionComponent (EID);
 		water.myParticleComp	= water.CPPInterface:GetParticleComponent (EID);
 
+
+		water.sprite	 = CPP.interface:LoadSprite("SpriteLouie.xml");
+		water.animation = "Stand";
 		--------------------
 		--Particle Effects--
 		--------------------
@@ -75,6 +78,12 @@ function NewFountain(baseclass)
 		water.particleCreator:SetColor(0.1, 0.6, 0.7, 1.0,	0.2, 0.8, 0.9, 1.0);
 		--water.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
 		--water.particleCreator:SetFragmentShaderCode(particleShaderCode);
+		
+		water.particleCreator:SetSprite(water.sprite)
+		water.particleCreator:SetAnimation(water.animation)
+		water.particleCreator:SetAnimationSpeed(0)
+		water.particleCreator:SetAnimationFrame(0)
+		
 		water.particleCreator:SetShape(4);
 		water.particleCreator:SetEffect(2);
 		water.particleCreator:Start();

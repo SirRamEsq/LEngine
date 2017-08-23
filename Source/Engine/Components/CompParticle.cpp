@@ -241,7 +241,32 @@ void ParticleCreator::SetSprite(const RSC_Sprite* sprite){
 }
 
 void ParticleCreator::SetAnimation(const std::string& animationName){
-	mAnimationName = animationName;
+	if(mSprite != NULL){
+		mAnimation = mSprite->GetAnimation(animationName);
+	}
+}
+
+void ParticleCreator::SetAnimationFrame(int frame){
+	mAnimationFrame = frame;
+	if(mAnimation != NULL){
+		if (mAnimationFrame >= mAnimation->NumberOfImages()){
+			mAnimationFrame = mAnimation->NumberOfImages()-1;
+		}
+	}
+}
+
+void ParticleCreator::SetAnimationSpeed(float speed){
+	mAnimationSpeed = speed;
+}
+
+void ParticleCreator::Animate(){
+	mAnimationFrameIncrement += mAnimationSpeed;
+	mAnimationFrame += floor(mAnimationFrameIncrement);
+	mAnimationFrameIncrement -= floor(mAnimationFrameIncrement);
+
+	if (mAnimationFrame >= mAnimation->NumberOfImages()){
+		mAnimationFrame = 0;
+	}
 }
 
 void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float& bMin, const float& aMin,
@@ -303,7 +328,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
     unsigned int writeSizeVertex = writeSize * 4;
     unsigned int maxParticlesVertex = mMaxParticles * 4;
 
-    for(int i=0; i<writeSize; i++){
+    for(int i=0; i < writeSize; i++){
         //Treat buffer as Ring
         if( writeLocationVertex >= maxParticlesVertex ){
             writeLocationVertex -= maxParticlesVertex;
@@ -345,11 +370,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                             );
 
 		CRect coord (-1,-1,2,2);
-		if(mSprite!=NULL){
-			auto animationStruct = mSprite->GetAnimation(mAnimationName);
-			if(animationStruct != NULL){
-				coord = animationStruct->GetCRectAtIndex(mCurrentFrame);
-			}
+		if((mAnimation!=NULL) and (mTexture!=NULL)){
+			coord = mAnimation->GetCRectAtIndex(mAnimationFrame);
 		}
 		Coord2df pos=myPos->GetPositionWorld();
 		Vec2 offset(0,0);
@@ -360,8 +382,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 
             if(vert==0){
 				offset.x=-1 * scaling.x; offset.y=-1 * scaling.y;
-				tex.x= coord.GetLeft();
-				tex.y= coord.GetTop();
+				tex.x= ((float)coord.GetLeft()) / mTexture->GetWidth();
+				tex.y= ((float)coord.GetTop()) / mTexture->GetHeight();
 			}
             if(vert==1){
 				if(mWarpQuads){
@@ -373,8 +395,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x= 1 * scaling.x; offset.y=-1 * scaling.y;
-			   	tex.x= coord.GetRight();
-				tex.y= coord.GetTop();
+				tex.x= ((float)coord.GetRight()) / mTexture->GetWidth();
+				tex.y= ((float)coord.GetTop()) / mTexture->GetHeight();
 			}
             if(vert==2){
 				if(mWarpQuads){
@@ -386,8 +408,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x= 1 * scaling.x; offset.y= 1 * scaling.y;
-				tex.x= coord.GetRight();
-				tex.y= coord.GetBottom();
+				tex.x= ((float)coord.GetRight()) / mTexture->GetWidth();
+				tex.y= ((float)coord.GetBottom()) / mTexture->GetHeight();
 			}
             if(vert==3){
 				if(mWarpQuads){
@@ -399,8 +421,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 					);
 				}
 				offset.x=-1 * scaling.x; offset.y= 1 * scaling.y;
-				tex.x= coord.GetLeft();
-				tex.y= coord.GetBottom();
+				tex.x= ((float)coord.GetLeft()) / mTexture->GetWidth();
+				tex.y= ((float)coord.GetBottom()) / mTexture->GetHeight();
 			}
 
             data.position      = position + offset + worldPos;
@@ -434,6 +456,7 @@ void ParticleCreator::Stop(){
 }
 
 void ParticleCreator::Update(){
+	Animate();
     if      (mState==PARTICLE_CREATOR_STOPPED){return;}
 
     //Treat as ring buffer
