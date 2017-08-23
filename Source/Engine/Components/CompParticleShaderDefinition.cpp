@@ -91,7 +91,7 @@ const std::string PARTICLE_SHADER_FRAGMENT_DECLARATIONS=
 
 "in vec4  fragmentColor;\n"
 "in vec2  fragmentUV;\n"
-"uniform sampler2d textureSampler;\n"
+"uniform sampler2D textureSampler;\n"
 
 "out vec4 fragColor;\n"
 ;
