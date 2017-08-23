@@ -25,17 +25,6 @@ void EntityManager::BroadcastEvent(const Event* event){
 }
 
 void EntityManager::Cleanup(){
-    if(mFlagDeleteAll){
-        for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
-            i->second->DeleteAllComponents();
-        }
-
-        mFlagDeleteAll=false;
-        deadEntities.clear();
-        ClearNameMappings();
-
-        return;
-    }
     if(deadEntities.empty()){return;}
 
     for(auto i = deadEntities.begin(); i!=deadEntities.end(); i++){
@@ -55,6 +44,11 @@ void EntityManager::Cleanup(){
             EIDToName.erase(id);
             nameToEID.erase(entityName);
         }
+    }
+
+    if(mFlagDeleteAll){
+        mFlagDeleteAll=false;
+        ClearNameMappings();
     }
     deadEntities.clear();
 }
