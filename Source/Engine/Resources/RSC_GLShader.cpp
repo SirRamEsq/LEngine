@@ -57,6 +57,12 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
 
     //Check if Usable
     mUsable=CheckShaderCompileErrors(mHandleID, "SHADER");
+	if(mUsable == false){
+		std::stringstream ss;
+		ss << "Shader '" << mHandleID << "' of type '" << mShaderType << "' is unusable\n"
+			<< "Source Code;\n" << glslCode; 
+		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR);
+	}
 }
 
 bool RSC_GLShader::IsUsable(){
@@ -82,7 +88,9 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
         if(!success){
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
             std::stringstream ss;
-            ss << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << ", ID IS: " << shader << " |\n"
+            ss << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << ", ID IS: " << shader << " |\n";
+
+			ss
             << infoLog
             << "\n| -- --------------------------------------------------- -- |" << std::endl;
             ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
