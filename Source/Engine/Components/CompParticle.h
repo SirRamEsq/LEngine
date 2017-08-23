@@ -49,8 +49,6 @@ class ParticleCreator : public RenderableObjectWorld{
 
         void Render(const RSC_GLProgram* program);
 
-        //void SetSprite  (RSC_Sprite* spr);
-
         void SetVelocity        (const Coord2df& velocityMin,  const Coord2df& velocityMax);
         void SetAcceleration    (const Coord2df& accelMin,     const Coord2df& accelMax   );
         //This position is relative the the position componentŔ
@@ -70,8 +68,11 @@ class ParticleCreator : public RenderableObjectWorld{
         void SetVertexShaderCode  (const std::string& code);
         void SetShape (const PARTICLE_SHAPE& shape);
         void SetEffect(const PARTICLE_EFFECT& effect);
+
 		void SetSprite(const RSC_Sprite* sprite);
-		void SetAnimation(const std::string& animationName);
+		void SetAnimation(const std::string& name);
+		void SetAnimationSpeed(float speed);
+		void SetAnimationFrame(int frame);
 		void SetWarpQuads(bool vlaue);
 
         //Starts the particle Creator, changed parameters do not take effect till stopping and starting the creator
@@ -81,6 +82,7 @@ class ParticleCreator : public RenderableObjectWorld{
         void Update();
 
     private:
+		void Animate();
         void WriteData(const unsigned int& writeLocation, const unsigned int& writeSize);
 
         bool active;
@@ -99,8 +101,12 @@ class ParticleCreator : public RenderableObjectWorld{
         unsigned int mLifeSpan;         //Time until particle Creator end
 
         const RSC_Sprite* mSprite;
-		std::string mAnimationName;
+		const LAnimation* mAnimation;
 		const RSC_Texture* mTexture;
+		int mAnimationFrame;
+		float mAnimationFrameIncrement;
+		float mAnimationSpeed;
+
 		int mCurrentFrame;
 
         Color4f mDefaultColorMin;

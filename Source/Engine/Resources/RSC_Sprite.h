@@ -14,64 +14,6 @@
 //SpriteContainer owns sprites
 //sprites own animations
 //animations own images
-//images do not own textures
-
-/*
-class LImage{
-    public:
-        LImage(const std::string& fileName, const CRect& coord, LOrigin origin=L_ORIGIN_CENTER);
-        LImage(RSC_Texture* texture, const CRect& coord, LOrigin origin=L_ORIGIN_CENTER);
-        LImage();
-        ~LImage();
-
-        inline int GetWidth() {return mRectCoord.GetWidth();}
-        inline int GetHeight(){return mRectCoord.GetHeight();}
-
-        void Blit(int x, int y, double scalingx, double scalingy, double rotation, L_COLOR color,
-                                                                                    LOrigin origin=L_ORIGIN_CENTER);
-        void Blit(int x, int y, double scalingx, double scalingy, double rotation, L_COLOR color, RSC_Texture* destination,
-                                                                                    LOrigin origin=L_ORIGIN_CENTER);
-
-        GLuint GetVBOID(){return mVBOID;}
-        GLuint GetIBOID(){return mIBOID;}
-
-        void CalculateVerticies(LOrigin origin);
-
-        void SetColorKey(unsigned int r, unsigned int g, unsigned int b);
-
-        uint8_t GetPixelAlpha(int x, int y){return mTexture->GetPixelAlpha(x,y);}
-
-        LImage& operator =(const LImage& img);
-
-        RSC_Texture* GetTexture(){return mTexture;}
-        CRect GetCoords(){return mRectCoord;}
-        LOrigin GetOrigin(){return mOldOrigin;}
-
-    private:
-        //Pre condition is that mTexture, mRectCoord, and mOldOrigin be set
-        void Initialize();
-
-        RSC_Texture*   mTexture;
-        CRect  mRectCoord;
-        LVertexData2D mVData[ 4 ];
-
-        LOrigin mOldOrigin;
-
-        //-Binds NULL VBO and IBO
-        void InitVBO();
-        void FreeVBO();
-
-        //Vertex and Index Buffer IDs
-        GLuint mVBOID;
-        GLuint mIBOID;
-
-        float mTexTop;
-		float mTexBottom;
-		float mTexLeft;
-		float mTexRight;
-
-		int mHalfHeight, mHalfWidth, mHalfHeightN, mHalfWidthN;
-};*/
 
 enum AnimationLoadTag{
     LOAD_TAG_UNK = 0,

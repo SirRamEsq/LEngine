@@ -1037,6 +1037,11 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetFragmentShaderCode",	&ParticleCreator::SetFragmentShaderCode)
 				.addFunction("SetShape",				&ParticleCreator::SetShape)
 				.addFunction("SetEffect",				&ParticleCreator::SetEffect)
+
+				.addFunction("SetSprite",				&ParticleCreator::SetSprite)
+				.addFunction("SetAnimation",			&ParticleCreator::SetAnimation)
+				.addFunction("SetAnimationSpeed",		&ParticleCreator::SetAnimationSpeed)
+				.addFunction("SetAnimationFrame",		&ParticleCreator::SetAnimationFrame)
 			.endClass()
 
 			.deriveClass<RenderLine, RenderableObject>("RenderLine")
