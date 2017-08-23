@@ -178,7 +178,7 @@ bool RSC_GLProgram::LinkProgram(){
             GLint infoLength=0;
             glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLength);
             if(infoLength > 0){
-                std::unique_ptr<char> infoLog( new char (infoLength));
+                std::unique_ptr<char> infoLog( new char[infoLength] );
                 glGetShaderInfoLog(shader->GetShaderID(), infoLength, NULL, infoLog.get());
                 std::string str(infoLog.get(), infoLength);
                 ErrorLog::WriteToFile(str, ErrorLog::GenericLogFile);

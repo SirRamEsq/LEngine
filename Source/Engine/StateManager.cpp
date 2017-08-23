@@ -146,8 +146,7 @@ void GameStateManager::PopTopState(){
 
 	//Reset next state to push, in case both pop state and push state were called in the same frame
 	nextFrameState.reset();
-	mCurrentState=mGameStates.back().get();
-	mCurrentState->Init(nextFrameStateScript);
+	mCurrentState = mGameStates.back().get();
 	nextFrameStateScript = NULL;
 }
 
@@ -373,7 +372,7 @@ EID GameState::GetEIDFromName(const std::string& name) const{
 }
 
 bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
-    if(m==NULL){
+    if(m == NULL){
         ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
         return false;
     }

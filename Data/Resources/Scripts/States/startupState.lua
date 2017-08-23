@@ -20,19 +20,21 @@ function container.NewMain(baseclass)
 		main.font = "ebFonts/wisdom.ttf"
 		main.fontSize = 30
 		main.pushedState = nil
+		main.winName = "MAIN"
 
 		main.SetData("t", {"Success!", 5})
 	end
 
 	function main.Update()
 		local windowFlags = imGuiFlags.NoTitleBar + imGuiFlags.NoResize + imGuiFlags.NoMove + imGuiFlags.AlwaysAutoResize
+		local resolution = CPP.interface:GetResolution()
 
 		local popFont = CPP.ImGui.PushFont(main.font, main.fontSize)
 		--CPP.ImGui.SetNextWindowPos(main.defaultWindowPos, 0)
-		CPP.ImGui.SetNextWindowPosCenter(0)
+		--CPP.ImGui.SetNextWindowPosCenter(0)
 		CPP.ImGui.SetNextWindowFocus();
 
-		CPP.ImGui.BeginFlags("Main", windowFlags)
+		CPP.ImGui.BeginFlags(main.winName, windowFlags)
 
 		if(CPP.ImGui.Button("Proceed"))then
 			main.pushedState = CPP.interface:PushState("States/levelState.lua")
@@ -50,7 +52,13 @@ function container.NewMain(baseclass)
 		CPP.ImGui.Text("Date:  " .. tostring(os.date("%x", time)))
 		CPP.ImGui.Text("Time:  " .. tostring(os.date("%I:%M:%S", time)))
 
+		main.winSize = CPP.ImGui.GetWindowSize()
 		CPP.ImGui.End()
+
+		--Center Window
+		main.currentPosition = CPP.Coord2df(( resolution.x/2) - (main.winSize.x/2), 0)
+
+		CPP.ImGui.SetWindowPos(main.winName, main.currentPosition, 0)
 
 		if(popFont)then
 			CPP.ImGui.PopFont()

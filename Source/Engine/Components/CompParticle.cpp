@@ -14,7 +14,7 @@ Each Particle Creator will have two draw calls, one for the head of the buffer a
 ////////////////////
 
 ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile)
-    : dependencyRenderManager(rm), RenderableObjectWorld(dependencyRenderManager), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
+    : RenderableObjectWorld(rm), dependencyRenderManager(rm), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
 
     mScriptShaderCodeVertex="";
     mScriptShaderCodeFragment="";
@@ -71,7 +71,13 @@ void ParticleCreator::Start(){
     SetShaderProgram(mShaderProgram.get());
 
     //Set up time uniform (which is a float)
-    mTimeUniformLocation = mShaderProgram->GetUniformLocation("time");
+	try{
+		mTimeUniformLocation = mShaderProgram->GetUniformLocation("time");
+	}
+	catch(LEngineShaderProgramException e){
+		//if uniform is compiled out of the script, it wasn't needed
+	}
+
     glUniform1f(mTimeUniformLocation, ((float)(mTime)) );
 
 
@@ -119,7 +125,12 @@ void ParticleCreator::Start(){
 	glEnableVertexAttribArray (6);
 
 	//Set up Camera UBO
-	dependencyRenderManager->AssignCameraUBO(mShaderProgram.get());
+	try{
+		dependencyRenderManager->AssignCameraUBO(mShaderProgram.get());
+	}
+	catch(LEngineShaderProgramException e){
+		//if uniform is compiled out of the script, it wasn't needed
+	}
 
     //The particle creator will begin generating particles, but this state indicates that
     //it hasn't hit the maximum number of particles yet
@@ -183,7 +194,7 @@ RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
 	if(mSprite!=NULL){
 		scriptCodeFragment << PARTICLE_SHADER_FRAGMENT_MAIN_SPRITE_END;
 	}
-    scriptCodeFragment << scriptCodeFragment.str()
+    ss << scriptCodeFragment.str()
     << PARTICLE_SHADER_FRAGMENT_MAIN_END
     ;
 

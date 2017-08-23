@@ -5,11 +5,11 @@ local container = {}
 function container.NewState(baseclass)
 	local state = baseclass or {}
 
-	function state.Close()
-
-	end
-
 	function state.Initialize()
+		state.depth		= state.LEngineData.depth;
+		state.parent		= state.LEngineData.parent;
+		state.EID		= state.LEngineData.entityID;
+
 		CPP.interface:LoadMap("MAP1.tmx", 0)
 	end
 
