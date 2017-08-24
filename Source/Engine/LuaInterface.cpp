@@ -817,6 +817,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetCollisionComponent",	&LuaInterface::GetCollisionComponent)
 				.addFunction("GetPositionComponent",	&LuaInterface::GetPositionComponent)
 				.addFunction("GetParticleComponent",	&LuaInterface::GetParticleComponent)
+				.addFunction("GetCameraComponent",	&LuaInterface::GetCameraComponent)
 
 				.addFunction("EntityNew",				&LuaInterface::EntityNew)
 				.addFunction("EntityGetInterface",		&LuaInterface::EntityGetInterface)
