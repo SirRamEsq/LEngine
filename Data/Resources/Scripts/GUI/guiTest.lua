@@ -70,7 +70,7 @@ function container.NewGui(baseclass)
 		gui.sprite	 = CPP.interface:LoadSprite("SpriteArrow.xml");
 		gui.animation = "Fire";
 		Vec2d = gui.myPositionComp:GetPositionLocal();
-		local xPos = Vec2d.x+00;
+		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
 		gui.particleLifetime = 200;
 
@@ -91,19 +91,16 @@ function container.NewGui(baseclass)
 		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
 		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
 
-		local particleShaderCode= "vec4 luaOut=vec4(fragmentColor.rgb, dotProductUV);\n"
-
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(.1);
+		gui.particleCreator:SetParticlesPerFrame(.05);
 		gui.particleCreator:SetScalingX(6,8);
 		gui.particleCreator:SetScalingY(6,8);
 		gui.particleCreator:SetDepth(gui.depth);
 		--gui.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
 		gui.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
 		--gui.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
-		--gui.particleCreator:SetFragmentShaderCode(particleShaderCode);
 		
 		gui.particleCreator:SetSprite(gui.sprite)
 		gui.particleCreator:SetAnimation(gui.animation)
@@ -111,8 +108,8 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetRandomUV(false)
 		gui.particleCreator:SetWarpQuads(false)
 		
-		--gui.particleCreator:SetShape(4);
-		--gui.particleCreator:SetEffect(2);
+		gui.particleCreator:SetShape(4);
+		gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
 	end
 

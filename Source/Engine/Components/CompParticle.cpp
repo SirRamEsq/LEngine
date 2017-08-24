@@ -18,15 +18,21 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
 
     mScriptShaderCodeVertex="";
     mScriptShaderCodeFragment="";
+
     mShape=PARTICLE_SQUARE;
     mEffect=PARTICLE_NONE;
+
     mTime=0;
     mParticlesPerFrame=1;
+    mParticlesToRender=0;
+
     mSprite=NULL;
 	mTexture=NULL;
-    mParticlesToRender=0;
 	mAnimationFrame = 0;
 	mAnimation = NULL;
+
+	vbo = 0;
+	vao = 0;
 
 
     mParticlesToRender=0;
@@ -51,7 +57,8 @@ void ParticleCreator::SetRandomUV(bool value){
 	mRandomUV = value;
 }
 
-void ParticleCreator::Start(){
+bool ParticleCreator::Start(){
+	if(mState == PARTICLE_CREATOR_STOPPING){return false;}
     mTime=0;
     mCurrentParticleIndex=0;
     mParticlesToRender=0;
@@ -88,55 +95,57 @@ void ParticleCreator::Start(){
     glUniform1f(mTimeUniformLocation, ((float)(mTime)) );
 
 
-
-    //Vertex VBO
-	glGenBuffers (1, &vbo);
-	glBindBuffer (GL_ARRAY_BUFFER, vbo);
-                            //     Size of Buffer                           Pointer to data
-	glBufferData (GL_ARRAY_BUFFER, vboBufferSize,    vboData.get(), GL_STATIC_DRAW);
-
-    unsigned int stride=sizeof(ParticleVertexData);
-
-    //Generate VAO
-	glGenVertexArrays (1, &vao);
-	glBindVertexArray (vao);
-    glBindBuffer (GL_ARRAY_BUFFER, vbo);
-
-	//Bind Position to 0
-	glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
-
-	//Bind Texture to 1
-	glVertexAttribPointer (1, 2, GL_FLOAT, GL_FALSE, stride, (void*)8);
-
-	//Bind Velocity to 2
-	glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, stride, (void*)16);
-
-	//Bind Acceleration to 3
-	glVertexAttribPointer (3, 2, GL_FLOAT, GL_FALSE, stride, (void*)24);
-
-	//Bind Color to 4
-	glVertexAttribPointer (4, 4, GL_FLOAT, GL_FALSE, stride, (void*)32);
-
-	//Bind LifeTime to 5
-	glVertexAttribPointer (5, 2, GL_FLOAT, GL_FALSE, stride, (void*)48);
-
-	//Bind Scaling to 6
-	glVertexAttribPointer (6, 2, GL_FLOAT, GL_FALSE, stride, (void*)56);
-
-	glEnableVertexAttribArray (0);
-	glEnableVertexAttribArray (1);
-	glEnableVertexAttribArray (2);
-	glEnableVertexAttribArray (3);
-	glEnableVertexAttribArray (4);
-	glEnableVertexAttribArray (5);
-	glEnableVertexAttribArray (6);
-
 	//Set up Camera UBO
 	try{
 		dependencyRenderManager->AssignCameraUBO(mShaderProgram.get());
 	}
 	catch(LEngineShaderProgramException e){
 		//if uniform is compiled out of the script, it wasn't needed
+	}
+
+	unsigned int stride=sizeof(ParticleVertexData);
+	if(vbo == 0){
+		//Vertex VBO
+		glGenBuffers (1, &vbo);
+		glBindBuffer (GL_ARRAY_BUFFER, vbo);
+								//     Size of Buffer                           Pointer to data
+		glBufferData (GL_ARRAY_BUFFER, vboBufferSize,    vboData.get(), GL_STATIC_DRAW);
+	}
+
+	if(vao == 0){
+		//Generate VAO
+		glGenVertexArrays (1, &vao);
+		glBindVertexArray (vao);
+		glBindBuffer (GL_ARRAY_BUFFER, vbo);
+
+		//Bind Position to 0
+		glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, stride, (void*)0);
+
+		//Bind Texture to 1
+		glVertexAttribPointer (1, 2, GL_FLOAT, GL_FALSE, stride, (void*)8);
+
+		//Bind Velocity to 2
+		glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, stride, (void*)16);
+
+		//Bind Acceleration to 3
+		glVertexAttribPointer (3, 2, GL_FLOAT, GL_FALSE, stride, (void*)24);
+
+		//Bind Color to 4
+		glVertexAttribPointer (4, 4, GL_FLOAT, GL_FALSE, stride, (void*)32);
+
+		//Bind LifeTime to 5
+		glVertexAttribPointer (5, 2, GL_FLOAT, GL_FALSE, stride, (void*)48);
+
+		//Bind Scaling to 6
+		glVertexAttribPointer (6, 2, GL_FLOAT, GL_FALSE, stride, (void*)56);
+
+		glEnableVertexAttribArray (0);
+		glEnableVertexAttribArray (1);
+		glEnableVertexAttribArray (2);
+		glEnableVertexAttribArray (3);
+		glEnableVertexAttribArray (4);
+		glEnableVertexAttribArray (5);
+		glEnableVertexAttribArray (6);
 	}
 
     //The particle creator will begin generating particles, but this state indicates that
@@ -147,6 +156,7 @@ void ParticleCreator::Start(){
 
     //Write entire buffer
     //WriteData(0, mMaxParticles);
+	return true;
 }
 
 void ParticleCreator::SetVertexShaderCode(const std::string& code){
@@ -307,6 +317,7 @@ void ParticleCreator::SetWarpQuads(bool value){
 
 //Location and Size is in particles, not bytes or verticies
 void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigned int& writeSize){
+	if(writeSize == 0){return;}
     bool ringLoop=false; //whether there is one single contiguous memory buffer or two
 
     /*
@@ -363,9 +374,9 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                             );
 
 		CRect coord (-1,-1,2,2);
-		float texCoordLeft = 0;
+		float texCoordLeft = -1;
 		float texCoordRight = 1;
-		float texCoordTop = 0;
+		float texCoordTop = -1;
 		float texCoordBottom = 1;
 		if((mAnimation!=NULL) and (mTexture!=NULL)){
 			if(mRandomUV){
@@ -544,6 +555,8 @@ void ParticleCreator::Render(const RSC_GLProgram* program){
 
             glDrawArrays (GL_QUADS, headRenderStart, headRenderSize*4);
             glDrawArrays (GL_QUADS, tailRenderStart, tailRenderSize*4);
+
+			return;
         }
     }
 
@@ -567,20 +580,29 @@ ComponentParticle::~ComponentParticle(){
 }
 
 void ComponentParticle::Update(){
-    ParticleCreator*  pCreator=NULL;
     for(int i=0; i!=mParticleCreators.size(); i++){
-        pCreator=(mParticleCreators[i]).get();
-        pCreator->mLifeSpan--;
-        if(pCreator->mLifeSpan==0){
-            if(pCreator->mState==PARTICLE_CREATOR_STOPPED){
+        auto pCreator=(mParticleCreators[i]).get();
 
+		//update
+        pCreator->Update();
+
+		//decrease lifespan
+		//
+		//if lifespan is 0, live forever
+		if (pCreator->mLifeSpan == 0){continue;}
+
+        if(pCreator->mLifeSpan==1){
+            if(pCreator->mState==PARTICLE_CREATOR_STOPPED){
+				//Delete
             }
             else if(pCreator->mState==PARTICLE_CREATOR_STOPPING){
-
+				//ignore
             }
             else{pCreator->Stop();}
         }
-        pCreator->Update();
+		else{
+			pCreator->mLifeSpan--;
+		}
     }
 }
 
@@ -590,7 +612,7 @@ void ComponentParticle::HandleEvent(const Event* event){
 
 
 ParticleCreator* ComponentParticle::AddParticleCreator    (const unsigned int& creatorLife, const unsigned int& particleLife){
-    mParticleCreators.push_back(std::unique_ptr<ParticleCreator> (new ParticleCreator (dependencyRenderManager, particleLife, false, logFileName)));
+    mParticleCreators.push_back(make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false, logFileName));
     ParticleCreator* pc=mParticleCreators[mParticleCreators.size()-1].get();
     pc->mLifeSpan=creatorLife;
     pc->myPos=myPos;

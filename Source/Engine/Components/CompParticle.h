@@ -75,14 +75,16 @@ class ParticleCreator : public RenderableObjectWorld{
 		void SetWarpQuads(bool vlaue);
 		void SetRandomUV(bool value);
 
-        //Starts the particle Creator, changed parameters do not take effect till stopping and starting the creator
-        void Start();
+        ///Starts the particle Creator
+		///Changed parameters do not take effect till stopping and starting the creator
+		///Must be in 'stopped' state
+		///Will return false if the creator is in the stopping state
+        bool Start();
         void Stop();
 
         void Update();
 
     private:
-		void Animate();
         void WriteData(const unsigned int& writeLocation, const unsigned int& writeSize);
 
         bool active;

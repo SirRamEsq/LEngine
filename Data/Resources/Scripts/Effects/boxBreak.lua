@@ -47,8 +47,9 @@ function container.NewBoxBreak(baseclass)
 		xPos = Vec2d.x;
 		yPos = Vec2d.y+10;
 		box.particleLifetime = 200;
+		box.particleCreatorLifetime = 1
 
-		box.particleCreator = box.myParticleComp:AddParticleCreator(0, box.particleLifetime);
+		box.particleCreator = box.myParticleComp:AddParticleCreator(box.particleCreatorLifetime, box.particleLifetime);
 
 		local particlePositionMin = CPP.Coord2df(-2, -1);
 		local particlePositionMax = CPP.Coord2df( 2,	1);
@@ -71,7 +72,7 @@ function container.NewBoxBreak(baseclass)
 		box.particleCreator:SetPosition(particlePositionMin, particlePositionMax)
 		box.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax)
 		box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax)
-		box.particleCreator:SetParticlesPerFrame(10)
+		box.particleCreator:SetParticlesPerFrame(100)
 		box.particleCreator:SetScalingX(6,8)
 		box.particleCreator:SetScalingY(6,8)
 		box.particleCreator:SetDepth(box.depth)
@@ -82,10 +83,10 @@ function container.NewBoxBreak(baseclass)
 		box.particleCreator:SetEffect(2)
 
 		box.particleCreator:SetWarpQuads(true)
+		box.particleCreator:SetRandomUV(true)
 
 		box.particleCreator:SetSprite(box.sprite)
 		box.particleCreator:SetAnimation(box.animation)
-		box.particleCreator:SetAnimationSpeed(0)
 		box.particleCreator:SetAnimationFrame(0)
 
 		box.particleCreator:Start();
