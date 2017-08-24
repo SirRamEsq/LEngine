@@ -71,7 +71,6 @@ class ParticleCreator : public RenderableObjectWorld{
 
 		void SetSprite(const RSC_Sprite* sprite);
 		void SetAnimation(const std::string& name);
-		void SetAnimationSpeed(float speed);
 		void SetAnimationFrame(int frame);
 		void SetWarpQuads(bool vlaue);
 		void SetRandomUV(bool value);
@@ -105,11 +104,7 @@ class ParticleCreator : public RenderableObjectWorld{
 		const LAnimation* mAnimation;
 		const RSC_Texture* mTexture;
 		int mAnimationFrame;
-		float mAnimationFrameIncrement;
-		float mAnimationSpeed;
 		bool mRandomUV;
-
-		int mCurrentFrame;
 
         Color4f mDefaultColorMin;
         Color4f mDefaultColorMax;
