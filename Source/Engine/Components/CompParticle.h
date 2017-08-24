@@ -74,6 +74,7 @@ class ParticleCreator : public RenderableObjectWorld{
 		void SetAnimationSpeed(float speed);
 		void SetAnimationFrame(int frame);
 		void SetWarpQuads(bool vlaue);
+		void SetRandomUV(bool value);
 
         //Starts the particle Creator, changed parameters do not take effect till stopping and starting the creator
         void Start();
@@ -106,6 +107,7 @@ class ParticleCreator : public RenderableObjectWorld{
 		int mAnimationFrame;
 		float mAnimationFrameIncrement;
 		float mAnimationSpeed;
+		bool mRandomUV;
 
 		int mCurrentFrame;
 
