@@ -24,6 +24,7 @@ function container.NewGui(baseclass)
 		gui.parent		= gui.LEngineData.parent;
 		gui.CPPInterface = CPP.interface
 		gui.EID			= gui.LEngineData.entityID;
+		local EID = gui.EID
 
 		local defaultWindowSizeW = 200
 		local defaultWindowSizeH = 200
@@ -59,6 +60,55 @@ function container.NewGui(baseclass)
 		gui.LoadFont()
 			
 		CPP.interface:ListenForInput(gui.EID, "specialLuaKey");
+		gui.myPositionComp	= CPP.interface:GetPositionComponent (EID);
+		gui.myParticleComp	= CPP.interface:GetParticleComponent (EID);
+		gui.myCameraComp	= CPP.interface:GetCameraComponent (EID);
+
+		--------------------
+		--Particle Effects--
+		--------------------
+		gui.sprite	 = CPP.interface:LoadSprite("SpriteArrow.xml");
+		gui.animation = "Fire";
+		Vec2d = gui.myPositionComp:GetPositionLocal();
+		local xPos = Vec2d.x+200;
+		local yPos = Vec2d.y+250;
+		gui.particleLifetime = 200;
+
+		gui.particleCreator = gui.myParticleComp:AddParticleCreator(0, gui.particleLifetime);
+
+		local particlePositionMin = CPP.Coord2df(xPos-2, yPos-1);
+		local particlePositionMax = CPP.Coord2df(xPos+2, yPos+1);
+
+		local particleVelocityMin = CPP.Coord2df(6.25, -0.25);
+		local particleVelocityMax = CPP.Coord2df(5.75,  0.25);
+
+		local particleAccelMin= CPP.Coord2df(-0.0025, 0.08);
+		local particleAccelMax= CPP.Coord2df( 0.0025, 0.08);
+
+		local particleShaderCode= "vec4 luaOut=vec4(fragmentColor.rgb, dotProductUV);\n"
+
+		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
+		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
+		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
+		gui.particleCreator:SetParticlesPerFrame(1);
+		gui.particleCreator:SetScalingX(6,8);
+		gui.particleCreator:SetScalingY(6,8);
+		gui.particleCreator:SetDepth(gui.depth);
+		--gui.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
+		gui.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
+		--gui.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
+		--gui.particleCreator:SetFragmentShaderCode(particleShaderCode);
+		
+		gui.particleCreator:SetSprite(gui.sprite)
+		gui.particleCreator:SetAnimation(gui.animation)
+		gui.particleCreator:SetAnimationSpeed(0)
+		gui.particleCreator:SetAnimationFrame(0)
+		gui.particleCreator:SetRandomUV(false)
+		gui.particleCreator:SetWarpQuads(false)
+		
+		--gui.particleCreator:SetShape(4);
+		--gui.particleCreator:SetEffect(2);
+		gui.particleCreator:Start();
 	end
 
 	function gui.Update()
