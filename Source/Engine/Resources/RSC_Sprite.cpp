@@ -45,7 +45,7 @@ std::pair<Coord2df,Coord2df> LAnimation::GetUVRandom(int index) const{
 
 		//right side
 		//get between frame left and frame right
-		rightUV = leftRightDif * normalizedRandom;	
+		rightUV = GetUVLeft(index) + (leftRightDif * normalizedRandom);
 
 		//left side
 		//Get between frame left and rightUV
@@ -55,7 +55,7 @@ std::pair<Coord2df,Coord2df> LAnimation::GetUVRandom(int index) const{
 		//bottom side
 		//get between frame top and frame bottom
 		normalizedRandom = ((float) rand() / (RAND_MAX));
-		bottomUV = topBottomDif * normalizedRandom;	
+		bottomUV = GetUVTop(index) + ( topBottomDif * normalizedRandom );
 
 		//top side
 		//Get between frame top and bottomUV
