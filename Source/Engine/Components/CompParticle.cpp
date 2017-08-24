@@ -44,6 +44,10 @@ ParticleCreator::~ParticleCreator(){
 
 }
 
+void ParticleCreator::SetRandomUV(bool value){
+	mRandomUV = value;
+}
+
 void ParticleCreator::Start(){
     mTime=0;
     mCurrentParticleIndex=0;
@@ -375,10 +379,19 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 		float texCoordTop = 0;
 		float texCoordBottom = 1;
 		if((mAnimation!=NULL) and (mTexture!=NULL)){
-			texCoordLeft = mAnimation->GetUVLeft(mAnimationFrame);
-			texCoordRight = mAnimation->GetUVRight(mAnimationFrame);
-			texCoordBottom = mAnimation->GetUVBottom(mAnimationFrame);
-			texCoordTop = mAnimation->GetUVTop(mAnimationFrame);
+			if(mRandomUV){
+				auto coordinates = mAnimation->GetUVRandom(mAnimationFrame);
+				texCoordLeft = std::get<0>(coordinates).x;
+				texCoordRight = std::get<1>(coordinates).x;
+				texCoordBottom = std::get<1>(coordinates).y;
+				texCoordTop = std::get<0>(coordinates).y;
+			}
+			else{
+				texCoordLeft = mAnimation->GetUVLeft(mAnimationFrame);
+				texCoordRight = mAnimation->GetUVRight(mAnimationFrame);
+				texCoordBottom = mAnimation->GetUVBottom(mAnimationFrame);
+				texCoordTop = mAnimation->GetUVTop(mAnimationFrame);
+			}
 		}
 		Coord2df pos=myPos->GetPositionWorld();
 		Vec2 offset(0,0);
@@ -529,7 +542,6 @@ void ParticleCreator::Render(const RSC_GLProgram* program){
     glUniform1f(mTimeUniformLocation,  floatTime);
 
     /*
-    Figure out if we need two draw calls or one
     If the state is starting or sustaining, we can just start at the the beginning of the buffer and render 'mParticlesToRender' amount of particles
     if the state is stopping, then we need to render starting at 'mParticleBufferReadLocation' and continue on by 'mParticlesToRender' amount
     Also, if the active part of the buffer is split between the end and the start of the buffer (which it likely is) we'll need two draw calls

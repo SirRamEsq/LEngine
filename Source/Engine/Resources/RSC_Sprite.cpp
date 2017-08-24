@@ -35,6 +35,38 @@ void LAnimation::CalculateUV(int textureWidth, int textureHeight){
 	isUVCalculated = true;
 }
 
+std::pair<Coord2df,Coord2df> LAnimation::GetUVRandom(int index) const{
+	if((ValidateIndex(index)) and (isUVCalculated)){
+		//Get float between 0.0 and 1.0
+		float normalizedRandom = ((float) rand() / (RAND_MAX));
+		float leftRightDif = GetUVRight(index) - GetUVLeft(index);
+		float topBottomDif = GetUVBottom(index) - GetUVTop(index);
+		float rightUV, leftUV, topUV, bottomUV;
+
+		//right side
+		//get between frame left and frame right
+		rightUV = leftRightDif * normalizedRandom;	
+
+		//left side
+		//Get between frame left and rightUV
+		normalizedRandom = ((float) rand() / (RAND_MAX));
+		leftUV = rightUV - ((rightUV - GetUVLeft(index))*normalizedRandom);
+
+		//bottom side
+		//get between frame top and frame bottom
+		normalizedRandom = ((float) rand() / (RAND_MAX));
+		bottomUV = topBottomDif * normalizedRandom;	
+
+		//top side
+		//Get between frame top and bottomUV
+		normalizedRandom = ((float) rand() / (RAND_MAX));
+		topUV = bottomUV - ((bottomUV - GetUVTop(index))*normalizedRandom);
+				
+		return std::pair<Coord2df,Coord2df>(Coord2df(leftUV,topUV), Coord2df(rightUV,bottomUV));
+	}
+	return std::pair<Coord2df,Coord2df>(Coord2df(0,0), Coord2df(0,0));
+}
+
 bool LAnimation::ValidateIndex(int index) const {
 	return ((index>=0)and(index<images.size()));
 }

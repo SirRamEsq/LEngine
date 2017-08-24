@@ -48,6 +48,8 @@ class LAnimation{
 		float GetUVLeft(int index) const;
 		float GetUVBottom(int index) const;
 		float GetUVRight(int index) const;
+		///Gets random UVCoords bounded by a frame index coords
+		std::pair<Coord2df,Coord2df> GetUVRandom(int index) const;
 
         int NumberOfImages() const {return images.size();}
 
@@ -56,15 +58,18 @@ class LAnimation{
         const AnimationLoadTag loadTag;
 
     protected:
+		///Called after all frames have been added; Calculates UV coords for each frame
 		void CalculateUV(int textureWidth, int textureHeight);
+
         void DeleteImages();
+
+		///Returns true if index is actually a valid frame index
 		bool ValidateIndex(int index) const;
         imageVec images;
         int currentImage;
 
         double defaultSpeed;
 		bool isUVCalculated;
-
 
 		///stores the uv coordinates for each frame
 		///Pair is stored as <(Left, Top), (Right, Bottom)>
