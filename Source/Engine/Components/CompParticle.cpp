@@ -25,6 +25,9 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
     mSprite=NULL;
 	mTexture=NULL;
     mParticlesToRender=0;
+	mAnimationFrame = 0;
+	mAnimation = NULL;
+
 
     mParticlesToRender=0;
     mRandom.SetSeed(mRandom.GenerateSeed());
@@ -259,20 +262,6 @@ void ParticleCreator::SetAnimationFrame(int frame){
 	}
 }
 
-void ParticleCreator::SetAnimationSpeed(float speed){
-	mAnimationSpeed = speed;
-}
-
-void ParticleCreator::Animate(){
-	mAnimationFrameIncrement += mAnimationSpeed;
-	mAnimationFrame += floor(mAnimationFrameIncrement);
-	mAnimationFrameIncrement -= floor(mAnimationFrameIncrement);
-
-	if (mAnimationFrame >= mAnimation->NumberOfImages()){
-		mAnimationFrame = 0;
-	}
-}
-
 void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float& bMin, const float& aMin,
                                 const float& rMax, const float& gMax, const float& bMax, const float& aMax){
     Color4f cMin(rMin,gMin,bMin,aMax);
@@ -476,7 +465,6 @@ void ParticleCreator::Stop(){
 }
 
 void ParticleCreator::Update(){
-	Animate();
     if      (mState==PARTICLE_CREATOR_STOPPED){return;}
 
     //Treat as ring buffer

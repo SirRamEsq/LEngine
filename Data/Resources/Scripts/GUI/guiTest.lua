@@ -48,7 +48,7 @@ function container.NewGui(baseclass)
 		end
 		gui.maxFrames=3
 		gui.currentFrame=0
-		gui.frameCounterMax=500
+		gui.frameCounterMax=200
 		gui.frameCounter=0
 		gui.noBG=false
 		gui.translateY = 150
@@ -70,7 +70,7 @@ function container.NewGui(baseclass)
 		gui.sprite	 = CPP.interface:LoadSprite("SpriteArrow.xml");
 		gui.animation = "Fire";
 		Vec2d = gui.myPositionComp:GetPositionLocal();
-		local xPos = Vec2d.x+200;
+		local xPos = Vec2d.x+00;
 		local yPos = Vec2d.y+250;
 		gui.particleLifetime = 200;
 
@@ -78,26 +78,25 @@ function container.NewGui(baseclass)
 
 		local particlePositionMin = CPP.Coord2df(xPos-2, yPos-1);
 		local particlePositionMax = CPP.Coord2df(xPos+2, yPos+1);
-
+--[[
 		local particleVelocityMin = CPP.Coord2df(.625, -0.025);
 		local particleVelocityMax = CPP.Coord2df(.575,  0.025);
 
 		local particleAccelMin= CPP.Coord2df(-0.00025, 0.008);
 		local particleAccelMax= CPP.Coord2df( 0.00025, 0.008);
---[[
+]]--
 		local particleVelocityMin = CPP.Coord2df(6.25, -0.25);
 		local particleVelocityMax = CPP.Coord2df(5.75,  0.25);
 
-		local particleAccelMin= CPP.Coord2df(-0.0025, 0.08);
-		local particleAccelMax= CPP.Coord2df( 0.0025, 0.08);
-		--]]
+		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
+		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
 
 		local particleShaderCode= "vec4 luaOut=vec4(fragmentColor.rgb, dotProductUV);\n"
 
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(.01);
+		gui.particleCreator:SetParticlesPerFrame(.1);
 		gui.particleCreator:SetScalingX(6,8);
 		gui.particleCreator:SetScalingY(6,8);
 		gui.particleCreator:SetDepth(gui.depth);
@@ -108,10 +107,9 @@ function container.NewGui(baseclass)
 		
 		gui.particleCreator:SetSprite(gui.sprite)
 		gui.particleCreator:SetAnimation(gui.animation)
-		gui.particleCreator:SetAnimationSpeed(0)
-		gui.particleCreator:SetAnimationFrame(1)
+		gui.particleCreator:SetAnimationFrame(0)
 		gui.particleCreator:SetRandomUV(false)
-		gui.particleCreator:SetWarpQuads(true)
+		gui.particleCreator:SetWarpQuads(false)
 		
 		--gui.particleCreator:SetShape(4);
 		--gui.particleCreator:SetEffect(2);
@@ -134,6 +132,7 @@ function container.NewGui(baseclass)
 		CPP.ImGui.PushStyleColorButton(CPP.Color4f(0, 0, 0.3, 1))
 		CPP.ImGui.PushStyleColorButtonActive(CPP.Color4f(0, 0.3, 0, 1))
 		CPP.ImGui.PushStyleColorButtonHovered(CPP.Color4f(0, 0.6, 0.6, 1))
+		gui.particleCreator:SetAnimationFrame(gui.currentFrame)
 
 		--CPP.ImGui.SetNextWindowSize(gui.defaultWindowSize, 0)
 		--CPP.ImGui.SetNextWindowPos(gui.defaultWindowPos, 0)

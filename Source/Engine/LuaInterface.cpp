@@ -1041,7 +1041,6 @@ void LuaInterface::ExposeCPP(){
 
 				.addFunction("SetSprite",				&ParticleCreator::SetSprite)
 				.addFunction("SetAnimation",			&ParticleCreator::SetAnimation)
-				.addFunction("SetAnimationSpeed",		&ParticleCreator::SetAnimationSpeed)
 				.addFunction("SetAnimationFrame",		&ParticleCreator::SetAnimationFrame)
 				.addFunction("SetRandomUV",		&ParticleCreator::SetRandomUV)
 				.addFunction("SetWarpQuads",		&ParticleCreator::SetWarpQuads)
