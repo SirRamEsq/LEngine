@@ -51,44 +51,34 @@ function container.NewBoxBreak(baseclass)
 
 		box.particleCreator = box.myParticleComp:AddParticleCreator(box.particleCreatorLifetime, box.particleLifetime);
 
-		local particlePositionMin = CPP.Coord2df(-2, -1);
-		local particlePositionMax = CPP.Coord2df( 2,	1);
+		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-1);
+		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+1);
 
-		local particleVelocityMin = CPP.Coord2df(-0.25,-6.25);
-		local particleVelocityMax = CPP.Coord2df( 0.25,-5.75);
+		local particleVelocityMin = CPP.Coord2df(-0.25, -0.25);
+		local particleVelocityMax = CPP.Coord2df(0.75,  0.25);
 
+		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
+		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
 
-		box.particleVelocitySuperMin = CPP.Coord2df(-0.25,-7.25);
-		box.particleVelocitySuperMax = CPP.Coord2df( 0.25,-6.75);
-
-		--local particleVelocityMin = CPP.Coord2df(-0.20,-1);
-		--local particleVelocityMax = CPP.Coord2df( 0.20, 0);
-
-		local particleAccelMin= CPP.Coord2df(-0.0025, 0.08);
-		local particleAccelMax= CPP.Coord2df( 0.0025, 0.08);
-
-		local particleShaderCode= "vec4 luaOut=vec4(fragmentColor.rgb, dotProductUV);\n"
-
-		box.particleCreator:SetPosition(particlePositionMin, particlePositionMax)
-		box.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax)
-		box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax)
-		box.particleCreator:SetParticlesPerFrame(100)
-		box.particleCreator:SetScalingX(6,8)
-		box.particleCreator:SetScalingY(6,8)
-		box.particleCreator:SetDepth(box.depth)
-		box.particleCreator:SetColor(0.1, 0.6, 0.7, 1.0,	0.2, 0.8, 0.9, 1.0)
-		--box.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0)
-		--box.particleCreator:SetFragmentShaderCode(particleShaderCode)
-		box.particleCreator:SetShape(4)
-		box.particleCreator:SetEffect(2)
-
-		box.particleCreator:SetWarpQuads(true)
-		box.particleCreator:SetRandomUV(true)
-
+		box.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
+		box.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
+		box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
+		box.particleCreator:SetParticlesPerFrame(5);
+		box.particleCreator:SetScalingX(2,4);
+		box.particleCreator:SetScalingY(2,4);
+		box.particleCreator:SetDepth(box.depth);
+		--box.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
+		box.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
+		--box.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
+		
 		box.particleCreator:SetSprite(box.sprite)
 		box.particleCreator:SetAnimation(box.animation)
 		box.particleCreator:SetAnimationFrame(0)
-
+		box.particleCreator:SetRandomUV(true)
+		box.particleCreator:SetWarpQuads(true)
+		
+		box.particleCreator:SetShape(1);
+		--box.particleCreator:SetEffect(2);
 		box.particleCreator:Start();
 	end
 	box.time=0;

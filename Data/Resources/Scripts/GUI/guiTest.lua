@@ -72,21 +72,15 @@ function container.NewGui(baseclass)
 		Vec2d = gui.myPositionComp:GetPositionLocal();
 		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
-		gui.particleLifetime = 100;
+		gui.particleLifetime = 10;
 
-		gui.particleCreator = gui.myParticleComp:AddParticleCreator(10, gui.particleLifetime);
+		gui.particleCreator = gui.myParticleComp:AddParticleCreator(5, gui.particleLifetime);
 
-		local particlePositionMin = CPP.Coord2df(xPos-2, yPos-1);
-		local particlePositionMax = CPP.Coord2df(xPos+2, yPos+1);
---[[
-		local particleVelocityMin = CPP.Coord2df(.625, -0.025);
-		local particleVelocityMax = CPP.Coord2df(.575,  0.025);
+		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-1);
+		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+1);
 
-		local particleAccelMin= CPP.Coord2df(-0.00025, 0.008);
-		local particleAccelMax= CPP.Coord2df( 0.00025, 0.008);
-]]--
-		local particleVelocityMin = CPP.Coord2df(-1.25, -1.25);
-		local particleVelocityMax = CPP.Coord2df(1.75,  1.25);
+		local particleVelocityMin = CPP.Coord2df(-0.25, -0.25);
+		local particleVelocityMax = CPP.Coord2df(0.75,  0.25);
 
 		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
 		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
@@ -94,9 +88,9 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(10);
-		gui.particleCreator:SetScalingX(6,8);
-		gui.particleCreator:SetScalingY(6,8);
+		gui.particleCreator:SetParticlesPerFrame(5);
+		gui.particleCreator:SetScalingX(2,4);
+		gui.particleCreator:SetScalingY(2,4);
 		gui.particleCreator:SetDepth(gui.depth);
 		--gui.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
 		gui.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
@@ -108,7 +102,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetRandomUV(true)
 		gui.particleCreator:SetWarpQuads(true)
 		
-		gui.particleCreator:SetShape(4);
+		gui.particleCreator:SetShape(1);
 		--gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
 	end
