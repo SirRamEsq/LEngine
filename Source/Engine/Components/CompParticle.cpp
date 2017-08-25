@@ -470,6 +470,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 }
 
 void ParticleCreator::Stop(){
+	if((mState == PARTICLE_CREATOR_STOPPING)or(mState == PARTICLE_CREATOR_STOPPED)){return;}
+
 	//Render all particles if not already sustaining
 	mParticlesToRender = mMaxParticles;
 
@@ -548,6 +550,7 @@ void ParticleCreator::Render(const RSC_GLProgram* program){
     if the state is stopping, then we need to render starting at 'mParticleBufferReadLocation' and continue on by 'mParticlesToRender' amount
     Also, if the active part of the buffer is split between the end and the start of the buffer (which it likely is) we'll need two draw calls
     */
+
     if(mState==PARTICLE_CREATOR_STOPPING){
         if((mParticleBufferReadLocation + mParticlesToRender > mMaxParticles)){
             int headRenderStart= mParticleBufferReadLocation;
