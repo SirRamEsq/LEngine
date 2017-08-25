@@ -72,9 +72,9 @@ function container.NewGui(baseclass)
 		Vec2d = gui.myPositionComp:GetPositionLocal();
 		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
-		gui.particleLifetime = 200;
+		gui.particleLifetime = 100;
 
-		gui.particleCreator = gui.myParticleComp:AddParticleCreator(0, gui.particleLifetime);
+		gui.particleCreator = gui.myParticleComp:AddParticleCreator(10, gui.particleLifetime);
 
 		local particlePositionMin = CPP.Coord2df(xPos-2, yPos-1);
 		local particlePositionMax = CPP.Coord2df(xPos+2, yPos+1);
@@ -85,8 +85,8 @@ function container.NewGui(baseclass)
 		local particleAccelMin= CPP.Coord2df(-0.00025, 0.008);
 		local particleAccelMax= CPP.Coord2df( 0.00025, 0.008);
 ]]--
-		local particleVelocityMin = CPP.Coord2df(6.25, -0.25);
-		local particleVelocityMax = CPP.Coord2df(5.75,  0.25);
+		local particleVelocityMin = CPP.Coord2df(-1.25, -1.25);
+		local particleVelocityMax = CPP.Coord2df(1.75,  1.25);
 
 		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
 		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
@@ -94,7 +94,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(.05);
+		gui.particleCreator:SetParticlesPerFrame(10);
 		gui.particleCreator:SetScalingX(6,8);
 		gui.particleCreator:SetScalingY(6,8);
 		gui.particleCreator:SetDepth(gui.depth);
@@ -105,11 +105,11 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetSprite(gui.sprite)
 		gui.particleCreator:SetAnimation(gui.animation)
 		gui.particleCreator:SetAnimationFrame(0)
-		gui.particleCreator:SetRandomUV(false)
-		gui.particleCreator:SetWarpQuads(false)
+		gui.particleCreator:SetRandomUV(true)
+		gui.particleCreator:SetWarpQuads(true)
 		
 		gui.particleCreator:SetShape(4);
-		gui.particleCreator:SetEffect(2);
+		--gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
 	end
 

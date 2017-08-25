@@ -470,6 +470,10 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 }
 
 void ParticleCreator::Stop(){
+	//Render all particles if not already sustaining
+	mParticlesToRender = mMaxParticles;
+
+	//Set the read location the oldest written Location
     mParticleBufferReadLocation=mParticleBufferWriteLocation + 1;
 
     mState=PARTICLE_CREATOR_STOPPING;
@@ -510,17 +514,16 @@ void ParticleCreator::Update(){
     }
 
     //Creator has hit max number of particles and is still active
+	//Render all particles, ignore read position 
     else if (mState==PARTICLE_CREATOR_SUSTAINING){
         mParticlesToRender= mMaxParticles;
     }
 
     //Creator has stopped drawing new particles but still has remaining living particles
+	//Render particles starting at read Position, then increment read position by mParticlesPerFrame
     else if (mState==PARTICLE_CREATOR_STOPPING){
         mParticlesToRender-=indexDifference;
-        mParticleBufferReadLocation+=indexDifference;
-        if(mParticleBufferReadLocation>=mMaxParticles){
-            mParticleBufferReadLocation-=mMaxParticles;
-        }
+        mParticleBufferReadLocation = floor(indexBefore) + 1;
 
         if(mParticlesToRender==0){
             mState=PARTICLE_CREATOR_STOPPED;
@@ -558,6 +561,14 @@ void ParticleCreator::Render(const RSC_GLProgram* program){
 
 			return;
         }
+        else{
+            int renderStart= mParticleBufferReadLocation;
+            int renderSize = mParticlesToRender;
+
+            glDrawArrays (GL_QUADS, renderStart, renderSize*4);
+
+			return;
+		}
     }
 
 
