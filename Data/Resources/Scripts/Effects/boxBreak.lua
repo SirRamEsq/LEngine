@@ -37,6 +37,9 @@ function container.NewBoxBreak(baseclass)
 
 		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
 
+		box.timerMax = 200
+		box.timer = box.timerMax
+
 		if(boxType == 0)then
 			box.animation = "box";
 		end
@@ -51,8 +54,8 @@ function container.NewBoxBreak(baseclass)
 
 		box.particleCreator = box.myParticleComp:AddParticleCreator(box.particleCreatorLifetime, box.particleLifetime);
 
-		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-1);
-		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+1);
+		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-8);
+		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+8);
 
 		local particleVelocityMin = CPP.Coord2df(-0.25, -0.25);
 		local particleVelocityMax = CPP.Coord2df(0.75,  0.25);
@@ -84,10 +87,9 @@ function container.NewBoxBreak(baseclass)
 	box.time=0;
 
 	function box.Update()
-		box.time = box.time + 1;
-		if(box.time > 600)then
-			box.particleCreator:SetVelocity(box.particleVelocitySuperMin, box.particleVelocitySuperMax);
-			box.time=0;
+		box.timer = box.timer - 1;
+		if(box.timer < 0)then
+			CPP.interface:EntityDelete(box.EID)
 		end
 	end
 
