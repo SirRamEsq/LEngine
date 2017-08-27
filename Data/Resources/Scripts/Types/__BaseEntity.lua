@@ -19,6 +19,10 @@ function BaseEntity.new(ignoringThis)
 		return false;
 	end
 
+	function base.OnLuaEvent(eid, description)
+
+	end
+
 	base.EntityInterface = {
 	  IsSolid	  = function () return true;  end,
 	  CanBounce   = function () return false; end, --the 'goomba' property
