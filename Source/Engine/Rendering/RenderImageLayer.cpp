@@ -157,6 +157,9 @@ void RenderImageLayer::Render(const RSC_GLProgram* program){
     tex->Bind();
     tex->BlitArea(area);
     */
+
+	//Calculate a projection matrix here based on distance from the camera?
+
     program->Bind();
     glBindVertexArray (vao.GetVAOID());
     layer->GetTexture()->Bind();

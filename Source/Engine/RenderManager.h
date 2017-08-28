@@ -44,26 +44,18 @@ class RenderCamera{
 		double	GetScaling ()			{return scale;	 }
 		double	GetRotation()			{return rotation;}
 
-		int			   GetX		  (){return view.x;}
-		int			   GetY		  (){return view.y;}
-		const CRect&   GetViewRect(){return view;  }
-
 		void		  Bind			   (const GLuint& GlobalCameraUBO);
 
-		void UpdatePosition();
 		void RenderFrameBufferTextureFinal();
 
 	protected:
+		///Resolution to display
 		CRect view;
 
 		RSC_Texture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
 		RSC_Texture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
 
 	private:
-		Vec2 translation;
-
-		//Cameras can have different shaders!!!
-
 		double rotation;
 		double scale;
 

@@ -184,7 +184,7 @@ void RenderManager::OrderOBJs(){
 
 void RenderManager::Render(){
 	
-    glClearColor(0.1, 0.1, 0.1, 1);
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	timeElapsed += 1;
 
@@ -213,8 +213,9 @@ void RenderManager::Render(){
 			if((*i)->render){(*i)->Render();}
 		}
 
-		Coord2d pos((*currentCamera)->GetX(), (*currentCamera)->GetY());
-		Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), pos, defaultProgramLight);
+		//Need better way to handle light
+		//Coord2d pos((*currentCamera)->GetX(), (*currentCamera)->GetY());
+		//Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), pos, defaultProgramLight);
 
 		(*currentCamera)->RenderFrameBufferTextureFinal();
 	}

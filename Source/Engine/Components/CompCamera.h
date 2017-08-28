@@ -14,8 +14,6 @@ class ComponentCamera : public BaseComponent{
         void Update();
         void HandleEvent(const Event* event);
 
-        void SetAsMainCamera();
-
         const CRect& GetViewport();
 
     private:
