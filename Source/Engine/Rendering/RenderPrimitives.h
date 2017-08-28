@@ -41,7 +41,7 @@ class RenderText : public RenderableObjectScreen{
         int GetW(){return w;}
         int GetH(){return h;}
 
-        void Render(const RSC_GLProgram* program);
+        void Render(const RenderCamera* camera, const RSC_GLProgram* program);
 
         void DeleteTexture();
 
@@ -87,7 +87,7 @@ class RenderLine : public RenderableObjectScreen{
         int GetX2(){return mX2;}
         int GetY2(){return mY2;}
 
-        void Render(const RSC_GLProgram* program);
+        void Render(const RenderCamera* camera, const RSC_GLProgram* program);
 
     private:
         int mX1, mY1, mX2, mY2;
@@ -127,7 +127,7 @@ class RenderBox : public RenderableObjectScreen{
         int GetX2(){return mX2;}
         int GetY2(){return mY2;}
 
-        void Render(const RSC_GLProgram* program);
+        void Render(const RenderCamera* camera, const RSC_GLProgram* program);
 
     private:
         int mX1, mY1, mX2, mY2;

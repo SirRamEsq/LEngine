@@ -29,7 +29,7 @@ void RenderText::DeleteTexture(){
     }
 }
 
-void RenderText::Render(const RSC_GLProgram* program){
+void RenderText::Render(const RenderCamera* camera, const RSC_GLProgram* program){
     RSC_GLProgram::BindNULL();
     if(del){
         DeleteTexture();
@@ -148,7 +148,7 @@ RenderLine::RenderLine(RenderManager* rm, int x1, int y1, int x2, int y2, bool a
     AddToRenderManager();
 }
 
-void RenderLine::Render(const RSC_GLProgram* program){
+void RenderLine::Render(const RenderCamera* camera, const RSC_GLProgram* program){
     glBindTexture(GL_TEXTURE_2D, 0);
 
     double R, G, B;
@@ -186,7 +186,7 @@ RenderBox::RenderBox(RenderManager* rm, int x1, int y1, int x2, int y2, bool abs
 }
 RenderBox::~RenderBox(){}
 
-void RenderBox::Render(const RSC_GLProgram* program){
+void RenderBox::Render(const RenderCamera* camera, const RSC_GLProgram* program){
     glBindTexture(GL_TEXTURE_2D, 0);
 
     double R, G, B;

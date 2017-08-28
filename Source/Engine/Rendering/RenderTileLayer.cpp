@@ -194,7 +194,7 @@ void RenderTileLayer::BuildVAOArea(CRect area){
     //must call vao.UpdateGPU() when done!
 }
 
-void RenderTileLayer::Render(const RSC_GLProgram* program){
+void RenderTileLayer::Render(const RenderCamera* camera, const RSC_GLProgram* program){
 	/// \TODO divide tileMaps into chunks and render only visible chunks
 
     if(layer->updatedAreas.size()>0){
