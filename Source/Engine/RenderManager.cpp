@@ -183,7 +183,6 @@ void RenderManager::OrderOBJs(){
 }
 
 void RenderManager::Render(){
-	
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	timeElapsed += 1;
@@ -210,12 +209,11 @@ void RenderManager::Render(){
 		auto currentCamera = mCameras.begin();
 		(*currentCamera)->Bind(GlobalCameraUBO);
 		for(auto i=objectsWorld.begin(); i!=objectsWorld.end(); i++){
-			if((*i)->render){(*i)->Render();}
+			if((*i)->render){(*i)->Render(*currentCamera);}
 		}
 
 		//Need better way to handle light
-		//Coord2d pos((*currentCamera)->GetX(), (*currentCamera)->GetY());
-		//Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), pos, defaultProgramLight);
+		Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
 
 		(*currentCamera)->RenderFrameBufferTextureFinal();
 	}
@@ -291,6 +289,7 @@ void RenderManager::RemoveObjectWorld(RenderableObjectWorld* obj){
 }
 
 void RenderManager::AddObjectWorld(RenderableObjectWorld* obj){
+	//Maybe use visitor pattern here to achieve double dispatch (?)
 	objectsWorld.push_back(obj);
 	listChange=true;
 

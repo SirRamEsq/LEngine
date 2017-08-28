@@ -19,7 +19,17 @@ void RenderableObject::SetDepth(const int& i){
 	renderManager->OrderOBJs();
 }
 
-int RenderableObject::GetDepth(){return depth;}
+int RenderableObject::GetDepth(){
+	return depth;
+}
+
+void RenderableObject::Render(const RenderCamera* camera) {
+	Render(camera, shaderProgram);
+}
+
+void RenderableObject::Render(){
+	Render(NULL, shaderProgram);
+}
 
 //////////////////////////
 //RenderableObjectScreen//

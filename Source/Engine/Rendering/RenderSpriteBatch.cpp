@@ -65,7 +65,7 @@ void RenderSpriteBatch::DeleteSprite(RenderSpriteBatch::Sprite* sprite){
     currentSize--;
 }
 
-void RenderSpriteBatch::Render(const RSC_GLProgram* program){
+void RenderSpriteBatch::Render(const RenderCamera* camera, const RSC_GLProgram* program){
     unsigned int numberOfSprites=0;
     unsigned int vertexIndex=0;
     RenderSpriteBatch::Sprite* sprite;

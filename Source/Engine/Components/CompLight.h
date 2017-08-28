@@ -62,7 +62,7 @@ class ComponentLightManager : public BaseComponentManager{
         void AddComponent(EID id, EID parent = 0);
         void Update();
 
-        void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const Coord2d& topLeftCorner, const RSC_GLProgram* shaderProgram);
+        void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const RSC_GLProgram* shaderProgram);
 
         void BuildVAO();
 

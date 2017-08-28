@@ -533,7 +533,7 @@ void ParticleCreator::Update(){
     }
 }
 
-void ParticleCreator::Render(const RSC_GLProgram* program){
+void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* program){
     if(mState==PARTICLE_CREATOR_STOPPED){return;}
 	if(mTexture!=NULL){
 		mTexture->Bind();

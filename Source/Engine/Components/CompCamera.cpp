@@ -16,9 +16,8 @@ void ComponentCamera::Update(){
     Coord2df coordinates=mPosition->GetPositionWorld();
     mCamera.view.x=floor(coordinates.x+0.5f);
     mCamera.view.y=floor(coordinates.y+0.5f);
-    //mCamera.translation.x=coordinates.x;
-    //mCamera.translation.y=coordinates.y;
 }
+
 void ComponentCamera::HandleEvent(const Event* event){
 
 }

@@ -28,41 +28,41 @@ function NewCamera(baseclass)
 		-----------------------
 		camera.depth		= camera.LEngineData.depth;
 		camera.parent		= camera.LEngineData.parent;
-		camera.CPPInterface = CPP.interface
 		camera.EID			= camera.LEngineData.entityID;
 		camera.pos			= CPP.Coord2df(camera.localDefault.x,camera.localDefault.y);
 
 		CPP.interface:WriteError(camera.EID, "EID is " .. tostring(camera.EID))
-		camera.CPPInterface:WriteError(camera.EID, "Parent is " .. tostring(camera.parent))
-		camera.myPositionComp=camera.CPPInterface:GetPositionComponent(camera.EID);
+		CPP.interface:WriteError(camera.EID, "Parent is " .. tostring(camera.parent))
+		camera.myPositionComp=CPP.interface:GetPositionComponent(camera.EID);
+		camera.myCameraComp	= CPP.interface:GetCameraComponent (camera.EID);
 
 		--Set parent for All Component Managers (That have been added thus far: position and script)
 		--This will ensure that the parent script will be updated before this script
 		--Therefore, the entity the camera is following will move before the camera does
 		--This will ensure that the camera will always follow an up-to-date position and not lag behind
-		camera.CPPInterface:WriteError(camera.EID, "Attempting to set Parent");
+		CPP.interface:WriteError(camera.EID, "Attempting to set Parent");
 		CPP.interface:SetParent(camera.EID, camera.parent)
-		camera.CPPInterface:WriteError(camera.EID, "Parent set");
+		CPP.interface:WriteError(camera.EID, "Parent set");
 
 		--instead of the component managing the position, the camera will manage on its own
 		camera.myPositionComp:SetParent(0);
 		camera.myPositionComp:SetPositionLocal(camera.pos);
 
 		--recieve parent's events
-		camera.CPPInterface:EventLuaObserveEntity(camera.EID, camera.parent);
+		CPP.interface:EventLuaObserveEntity(camera.EID, camera.parent);
 
-		local map = camera.CPPInterface:GetMap()
+		local map = CPP.interface:GetMap()
 		if(map == nil)then 
-			camera.CPPInterface:WriteError(camera.EID, "Tried to get map from CPPInterface, map is nil");
+			CPP.interface:WriteError(camera.EID, "Tried to get map from CPP.interface, map is nil");
 		end
 		camera.mapWidth = map:GetWidthPixels()
 		camera.mapHeight = map:GetHeightPixels()
-		camera.CPPInterface:WriteError(camera.EID, "Camera Initialized");
+		CPP.interface:WriteError(camera.EID, "Camera Initialized");
 	end
 
 	function camera.Update()
 		if(camera.blockFollow) then
-			local parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
+			local parentPos = CPP.interface:EntityGetPositionWorld(camera.parent):Round()
 			local newPos = CPP.Coord2df(0,0);	
 
 			newPos.x = (math.floor(parentPos.x/camera.w) * camera.w)
@@ -70,7 +70,7 @@ function NewCamera(baseclass)
 
 			camera.myPositionComp:SetPositionLocal(newPos)
 		else
-			local parentPos = camera.CPPInterface:EntityGetPositionWorld(camera.parent):Round()
+			local parentPos = CPP.interface:EntityGetPositionWorld(camera.parent):Round()
 			local newPos = CPP.Coord2df(0,0);	
 			--center camera on parent
 			newPos.x = parentPos.x + camera.localDefault.x
@@ -82,11 +82,11 @@ function NewCamera(baseclass)
 			if(newPos.y < 0)then newPos.y = 0 end
 			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight - camera.h end
 
-			camera.CPPInterface:WriteError(camera.EID, "ParentX " .. parentPos.x);
-			camera.CPPInterface:WriteError(camera.EID, "ParentY " .. parentPos.y);
+			CPP.interface:WriteError(camera.EID, "ParentX " .. parentPos.x);
+			CPP.interface:WriteError(camera.EID, "ParentY " .. parentPos.y);
 
-			camera.CPPInterface:WriteError(camera.EID, "CameraX " .. newPos.x);
-			camera.CPPInterface:WriteError(camera.EID, "CameraY " .. newPos.y);
+			CPP.interface:WriteError(camera.EID, "CameraX " .. newPos.x);
+			CPP.interface:WriteError(camera.EID, "CameraY " .. newPos.y);
 			camera.myPositionComp:SetPositionWorld(newPos)
 		end
 	end

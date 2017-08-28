@@ -6,6 +6,7 @@
 
 #include <string>
 
+class RenderCamera;
 class RenderManager;
 class RenderableObjectScreen;
 class RenderableObjectWorld;
@@ -31,8 +32,9 @@ class RenderableObject{
 		virtual ~RenderableObject(){}
 
 		//All renderable objects will render using their own shader program if one is not passed to them
-		virtual void Render(const RSC_GLProgram* program) = 0;
-				void Render(					 ) {Render(shaderProgram);}
+		virtual void Render(const RenderCamera* camera, const RSC_GLProgram* program) = 0;
+		void Render(const RenderCamera* camera);
+		void Render();
 
 		void		SetDepth(const MAP_DEPTH& d);
 		MAP_DEPTH	GetDepth();
