@@ -597,7 +597,15 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.BoxJump()
+<<<<<<< HEAD
 		louie.yspd = louie.c.JUMPHEIGHT_BOX
+=======
+		louie.yspd = louie.c.JUMPHEIGHT;
+		if(not louie.input.key[louie.c.K_UP])then
+			louie.yspd = -3
+		end
+
+>>>>>>> d84ed1ac815c9c679876751f76a1a17372b23515
 		louie.groundSpeed=0;
 		louie.angle=0;
 		louie.tileCollision.groundTouch=false;
