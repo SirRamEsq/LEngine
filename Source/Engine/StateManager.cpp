@@ -259,15 +259,6 @@ std::map<EID,EID> GameState::SetMapCreateEntitiesFromLayers(const std::vector<st
             if(objectIt->second.light==true){
                 comLightMan.AddComponent(ent);
             }
-
-            //Special treatment to certain object types
-            else if(objectIt->second.type==global_TiledStrings[TILED_CAMERA]){
-                if((objectIt->second.flags & TILED_OBJECT_IS_MAIN_CAMERA)==TILED_OBJECT_IS_MAIN_CAMERA){
-                    comCameraMan.AddComponent(ent);
-                    ComponentCamera* cam=((ComponentCamera*)(comCameraMan.GetComponent(ent)));
-                    cam->SetAsMainCamera();
-                }
-            }
         }
     }
 

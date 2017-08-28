@@ -48,6 +48,8 @@ function container.NewLouie(baseclass)
 		louie.c.GRAVITY=0.21875;
 		louie.c.SLOPE_GRAVITY=0.15
 		louie.c.JUMPHEIGHT=-6;
+		--slightly higher than a regular jump
+		louie.c.JUMPHEIGHT_BOX = louie.c.JUMPHEIGHT - 1;
 		louie.c.ACCELERATION=.046875*2;
 		louie.c.ACCELERATION_AIR= louie.c.ACCELERATION;
 		louie.c.DEACCELERATION=1;
@@ -595,11 +597,16 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.BoxJump()
-		louie.yspd = louie.c.JUMPHEIGHT;
-
+		louie.yspd = louie.c.JUMPHEIGHT_BOX
 		louie.groundSpeed=0;
 		louie.angle=0;
 		louie.tileCollision.groundTouch=false;
+
+		--Up Key not Pressed
+		if (not louie.input.key[louie.c.K_UP]) then
+			louie.JumpCancel()
+		end
+
 		if(louie.currentState==louie.c.STATE_ROLL)then --long jump
 			louie.xspd = louie.xspd * 1.5;
 		end
@@ -678,6 +685,12 @@ function container.NewLouie(baseclass)
 		end
 	end
 
+	function louie.JumpCancel()
+		if(louie.yspd<(-2))then
+			louie.yspd=(-2);
+		end
+	end
+
 	function louie.HandleInput()
 		--Up Pressed
 		if (louie.input.keyPress[louie.c.K_UP]) then
@@ -697,9 +710,8 @@ function container.NewLouie(baseclass)
 		end
 		--Up Released
 		if ( (louie.input.keyRelease[louie.c.K_UP]) and (not louie.tileCollision.groundTouch) ) then
-			if(louie.yspd<(-2))then
-				louie.yspd=(-2);
-			end
+			louie.JumpCancel()
+
 			if(louie.currentState == louie.c.STATE_CLIMB) then
 				louie.yspd = 0
 			end

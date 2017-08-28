@@ -82,7 +82,6 @@ function NewFountain(baseclass)
 		
 		water.particleCreator:SetSprite(water.sprite)
 		water.particleCreator:SetAnimation(water.animation)
-		water.particleCreator:SetAnimationSpeed(0)
 		water.particleCreator:SetAnimationFrame(0)
 		water.particleCreator:SetRandomUV(true)
 		water.particleCreator:SetWarpQuads(true)
