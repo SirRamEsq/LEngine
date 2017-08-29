@@ -39,12 +39,14 @@ class RenderCamera{
 		RenderCamera(RenderManager* rm);
 		~RenderCamera();
 
-		void	SetScaling (double s)	{scale=s;		 }
-		void	SetRotation(double r)	{rotation=r;	 }
-		double	GetScaling ()			{return scale;	 }
-		double	GetRotation()			{return rotation;}
+		void	SetScaling (float s)	{scale=s;		 }
+		void	SetRotation(float r)	{rotation=r;	 }
+		float	GetScaling ()			{return scale;	 }
+		float	GetRotation()			{return rotation;}
 
-		void		  Bind			   (const GLuint& GlobalCameraUBO);
+		void  Bind (const GLuint& GlobalCameraUBO);
+
+		CRect GetView()const {return view;}
 
 		void RenderFrameBufferTextureFinal();
 
@@ -56,16 +58,19 @@ class RenderCamera{
 		RSC_Texture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
 
 	private:
-		double rotation;
-		double scale;
+		float rotation;
+		float scale;
 
 		MAP_DEPTH nearClippingPlane;
 		MAP_DEPTH farClippingPlane;
 
 		double normalizedViewportX; //between 0.0f and 1.0f
 		double normalizedViewportY; //determines where the FBO will be rendered to.
+		///Coordinates on the screen that the image will be rendered to
+		FloatRect normalizedViewport;
 
-		GLuint FBO; //frame buffer object id
+		///frame buffer object id
+		GLuint FBO; 
 
 		bool mActive;
 
