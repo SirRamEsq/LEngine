@@ -350,10 +350,10 @@ TiledObjectLayer::TiledObjectLayer(const TiledObjectLayer& rhs, const GIDManager
 
 void TiledTileLayer::InitializeMap(){
     //Build 2D array
-    for(int x=0; x<tileWidth; x++){
+    for(int x = 0; x < tileWidth; x++){
         std::vector<GID> g;
         data2D.push_back(g);
-        for(int y=0; y<tileHeight; y++){
+        for(int y = 0; y < tileHeight; y++){
             data2D.back().push_back(0);
         }
     }
@@ -367,15 +367,15 @@ TiledTileLayer::TiledTileLayer(const unsigned int& w, const unsigned int& h, con
 TiledTileLayer::TiledTileLayer(const TiledTileLayer& rhs, const GIDManager* g)
     : TiledLayerGeneric(rhs.tileWidth, rhs.tileHeight, rhs.layerName, rhs.GetDepth(), g, rhs.layerType){
 
-    for(int x=0; x<rhs.tileWidth; x++){
+    for(int x = 0; x < rhs.tileWidth; x++){
         std::vector<GID> g;
         data2D.push_back(g);
-        for(int y=0; y<rhs.tileHeight; y++){
+        for(int y = 0; y < rhs.tileHeight; y++){
             data2D.back().push_back(31337);
         }
     }
-    for(int i=0; i<rhs.tileWidth; i++){
-        for(int ii=0; ii<rhs.tileHeight; ii++){
+    for(int i = 0; i < rhs.tileWidth; i++){
+        for(int ii = 0; ii < rhs.tileHeight; ii++){
             data2D[i][ii] = rhs.data2D[i][ii];
         }
     }
@@ -451,8 +451,34 @@ float TiledTileLayer::GetFriction() const {
 ///////////////////
 
 TiledImageLayer::TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex)
-    : TiledLayerGeneric(pixelW/16, pixelH/16, name, depth, g, LAYER_IMAGE), texture(tex){
+    : TiledLayerGeneric(pixelW / 16, pixelH / 16, name, depth, g, LAYER_IMAGE), texture(tex){
+	
+		offset = Coord2d( 0, 0 );
+		parallax = Coord2df( 1, 1 ); 
+}
 
+void TiledImageLayer::SetOffset( const Coord2d& off ){
+	offset = off;
+}
+
+Coord2d TiledImageLayer::GetOffset() const {
+	return offset;
+}
+
+void TiledImageLayer::SetTexture(const RSC_Texture* tex){
+	texture = tex;
+}
+
+const RSC_Texture* TiledImageLayer::GetTexture() const{
+	return texture;
+}
+
+Coord2df TiledImageLayer::GetParallax() const{
+	return parallax;
+}
+
+void TiledImageLayer::SetParallax(const Coord2df& para){
+	parallax = para;
 }
 
 TiledImageLayer::TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g)
@@ -463,7 +489,7 @@ TiledImageLayer::TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g
     layerVisible = rhs.layerVisible;
     CopyPropertyMap(rhs.properties, properties);
     offset = rhs.offset;
-    paralax = rhs.paralax;
+    parallax = rhs.parallax;
 }
 
 /////////////

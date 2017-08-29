@@ -101,12 +101,11 @@ void RenderImageLayer::BuildVAO(CRect camera){
     color.z=1.0f;
     color.w=layer->GetAlpha();
 
-	//Grab layer properties for this
-	float parallaxX = 1.0f;
-	float parallaxY = 1.0f;
+	auto parallax = layer->GetParallax();
+	float parallaxX = parallax.x;
+	float parallaxY = parallax.y;
 
-	//Grab x,y offset of the layer for this
-    Vec2 translate(0,0);
+    auto translate = layer->GetOffset();
 
 	//How many full images are contained within the camera viewport
 	int fullX = camera.w / tex->GetWidth();
@@ -134,10 +133,6 @@ void RenderImageLayer::BuildVAO(CRect camera){
 	vao.GetColorArray()[vertexIndex + 3] = color;
 
     vao.UpdateGPU();
-
-    //glUseProgram (shader_programme);
-    //glBindVertexArray (vao.GetVAOID());
-    //if(tiledSet->GetTexture()!=NULL){tiledSet->GetTexture()->Bind();}
 }
 
 RenderImageLayer::~RenderImageLayer(){
