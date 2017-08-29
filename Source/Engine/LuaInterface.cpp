@@ -1023,6 +1023,7 @@ void LuaInterface::ExposeCPP(){
 
 			.beginClass<ComponentCamera>("ComponentCamera")
 				.addFunction("GetViewport",   &ComponentCamera::GetViewport)
+				.addFunction("SetViewport",   &ComponentCamera::SetViewport)
 			.endClass()
 
 			.deriveClass<ParticleCreator, RenderableObject>("ParticleCreator")

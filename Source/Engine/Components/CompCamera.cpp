@@ -5,7 +5,8 @@
 ///////////////////
 //ComponentCamera//
 ///////////////////
-ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile) : BaseComponent(id, logFile), mCamera(rm){
+ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile)
+	: BaseComponent(id, logFile), mCamera(rm, CRect(0,0, CAMERA_W, CAMERA_H)){
     mPosition= pos;
 }
 ComponentCamera::~ComponentCamera(){
@@ -22,8 +23,11 @@ void ComponentCamera::HandleEvent(const Event* event){
 
 }
 
+void ComponentCamera::SetViewport(CRect viewport){
+	mCamera.SetView(viewport);	
+}
 
-const CRect& ComponentCamera::GetViewport(){
+CRect ComponentCamera::GetViewport(){
     return mCamera.view;
 }
 

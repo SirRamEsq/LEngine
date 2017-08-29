@@ -13,8 +13,10 @@ class ComponentCamera : public BaseComponent{
 
         void Update();
         void HandleEvent(const Event* event);
+		///For LuaInterface
+		void SetViewport(CRect viewPort);
 
-        const CRect& GetViewport();
+        CRect GetViewport();
 
     private:
         RenderCamera mCamera;

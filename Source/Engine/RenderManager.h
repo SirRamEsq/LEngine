@@ -36,17 +36,18 @@ class RenderCamera{
 	friend class ComponentCamera;
 
 	public:
-		RenderCamera(RenderManager* rm);
+		RenderCamera(RenderManager* rm, CRect viewPort);
 		~RenderCamera();
 
-		void	SetScaling (float s)	{scale=s;		 }
-		void	SetRotation(float r)	{rotation=r;	 }
-		float	GetScaling ()			{return scale;	 }
-		float	GetRotation()			{return rotation;}
+		void	SetScaling (float s);
+		void	SetRotation(float r);
+		float	GetScaling () const;
+		float	GetRotation() const;
 
 		void  Bind (const GLuint& GlobalCameraUBO);
 
-		CRect GetView()const {return view;}
+		CRect GetView()const;
+		void SetView(CRect viewPort);
 
 		void RenderFrameBufferTextureFinal();
 
