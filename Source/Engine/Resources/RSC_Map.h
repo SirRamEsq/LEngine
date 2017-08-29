@@ -75,17 +75,17 @@ class GIDEnabled{
         GIDEnabled(GIDManager* man, GID first, GID last);
         GIDEnabled(GIDManager* man                     );
 
-        void ReconcileToFirst(){ if(firstGID>lastGID){lastGID=firstGID;} }
-        void ReconcileToLast (){ if(lastGID<firstGID){firstGID=lastGID;} }
+        void ReconcileToFirst(){ if(firstGID > lastGID){lastGID = firstGID;} }
+        void ReconcileToLast (){ if(lastGID < firstGID){firstGID = lastGID;} }
 
         GID GetFirstGID      () const {return firstGID;                  }
         GID GetLastGID       () const {return lastGID;                   }
 
-        void SetFirstGID      (GID id){firstGID=id;ReconcileToFirst();   }
-        void SetLastGID       (GID id){lastGID=id;ReconcileToLast();     }
+        void SetFirstGID      (GID id){firstGID = id;ReconcileToFirst();   }
+        void SetLastGID       (GID id){lastGID = id;ReconcileToLast();     }
 
-        void IncrementFirstGID(GID id){firstGID+=id;ReconcileToFirst();  }
-        void IncrementLastGID (GID id){lastGID+=id;ReconcileToLast();    }
+        void IncrementFirstGID(GID id){firstGID += id;ReconcileToFirst();  }
+        void IncrementLastGID (GID id){lastGID += id;ReconcileToLast();    }
 
     private:
         GID firstGID, lastGID;
@@ -288,15 +288,18 @@ class TiledImageLayer : public TiledLayerGeneric{
         TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex);
         TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g);
 
-        void SetTexture     (const std::string& textureName);
-        void SetOffset      (const Coord2d& off);
-        void SetParalax     (const Coord2d& para);
+        void SetTexture (const RSC_Texture* tex);
+        const RSC_Texture* GetTexture() const;
 
-        const RSC_Texture* GetTexture() const{return texture;}
+        void SetOffset (const Coord2d& off);
+		Coord2d GetOffset() const;
+
+        void SetParallax (const Coord2df& para);
+		Coord2df GetParallax() const;
 
     private:
         Coord2d     offset;
-        Coord2df    paralax;
+        Coord2df    parallax;
         const RSC_Texture*   texture;
 };
 
