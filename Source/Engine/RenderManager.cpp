@@ -12,21 +12,48 @@
 //RenderCamera//
 ////////////////
 
-RenderCamera::RenderCamera(RenderManager* rm)
+RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	: frameBufferTextureDiffuse(std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
 	rotation=0;
-	view.x=0;
-	view.y=0;
-	view.w=CAMERA_W;
-	view.h=CAMERA_H;
+	SetView(viewPort);
+	//view.x=0;
+	//view.y=0;
+	//view.w=CAMERA_W;
+	//view.h=CAMERA_H;
 
 	glGenFramebuffers(1, &FBO);
 
 	dependencyRenderManager->AddCamera( this);
 }
+
+
+void RenderCamera::SetScaling (float s)	{
+	scale = s;
+}
+
+void RenderCamera::SetRotation(float r)	{
+	rotation = r;
+}
+
+float RenderCamera::GetScaling() const{
+	return scale;
+}
+
+float RenderCamera::GetRotation() const{
+	return rotation;
+}
+
+CRect RenderCamera::GetView()const {
+	return view;
+}
+
+void RenderCamera::SetView(CRect viewPort){
+	view = viewPort;
+}
+
 void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	//For the purpose of scaling and rotating the viewport, I may want to replace this vec4 with a projection matrix;
 	/*Matrix4 T =translate (identity_mat4 (), vec3 (-view.x, -view.y, 0.0));
