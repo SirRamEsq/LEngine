@@ -108,6 +108,7 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	//Atatch buffer texture
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameBufferTextureDiffuse->GetOpenGLID(), 0);
 }
+
 RenderCamera::~RenderCamera(){
 	Kernel::stateMan.GetCurrentState()->renderMan.RemoveCamera(this);
 }
@@ -350,7 +351,7 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
     GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
     GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
 
-    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
+    //Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

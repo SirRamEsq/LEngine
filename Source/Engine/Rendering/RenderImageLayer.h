@@ -74,7 +74,7 @@ class RenderImageLayer : public RenderableObjectWorld{
         RenderImageLayer(RenderManager* rm, TiledImageLayer* l);
         ~RenderImageLayer();
 
-        void BuildVAO();
+        void BuildVAO(CRect camera);
 
         void Render(const RenderCamera* camera, const RSC_GLProgram* program);
 
