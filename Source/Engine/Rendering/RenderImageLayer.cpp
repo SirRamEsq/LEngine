@@ -79,7 +79,7 @@ VAOWrapper::~VAOWrapper(){
 ///////////////////
 RenderImageLayer::RenderImageLayer(RenderManager* rm, TiledImageLayer* l)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::Image), layer(l), vao(1){
-    SetDepth(l->GetDepth() + 50);
+    SetDepth(l->GetDepth());
     render=true;
     AddToRenderManager();
     BuildVAO(CRect(0,0,0,0));
@@ -99,22 +99,34 @@ void RenderImageLayer::BuildVAO(CRect camera){
     color.x=1.0f;
     color.y=1.0f;
     color.z=1.0f;
-    color.w=1.0;//layer->GetAlpha();
+    color.w=layer->GetAlpha();
 
 	//This returns garbage?
 	auto parallax = layer->GetParallax();
-	float parallaxX = 1;//parallax.x;
-	float parallaxY = 1;//parallax.y;
+	float parallaxX = parallax.x;
+	float parallaxY = parallax.y;
 
     auto translate = layer->GetOffset();
 
 	int texW = tex->GetWidth();
 	int texH = tex->GetHeight();
 
-	Vec2 topLeftTex     ( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
-	Vec2 topRightTex    ( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
-	Vec2 bottomLeftTex  ( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
-	Vec2 bottomRightTex ( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
+	auto repeat = layer->GetRepeat();
+	Vec2 topLeftTex, topRightTex, bottomLeftTex, bottomRightTex;
+	if(repeat){
+		//Repeat texture if it passes 1.0f
+		topLeftTex     = Vec2( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
+		topRightTex    = Vec2( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
+		bottomLeftTex  = Vec2( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
+		bottomRightTex = Vec2( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
+	}
+	else{
+		//Stretch/fit bg to each corner of the texture
+		topLeftTex     = Vec2( 0.0f, 0.0f );	
+		topRightTex    = Vec2( 1.0f, 0.0f );	
+		bottomLeftTex  = Vec2( 0.0f, 1.0f );	
+		bottomRightTex = Vec2( 1.0f, 1.0f );	
+	}
 
 	int vertexIndex=0;
 	vao.GetVertexArray()[vertexIndex]     = topLeftVertex;

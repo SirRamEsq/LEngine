@@ -211,6 +211,7 @@ class TiledLayerGeneric{
 
         float       GetAlpha  () const {return layerOpacity;}
         int         GetFlags  () const {return layerFlags;  }
+		void 	SetAlpha(float a){layerOpacity = a;}
         bool        IsVisible () const {return layerVisible;}
         bool        Ignore    () const;
         MAP_DEPTH   GetDepth  () const {return layerDepth;  }
@@ -297,7 +298,12 @@ class TiledImageLayer : public TiledLayerGeneric{
         void SetParallax (const Coord2df& para);
 		Coord2df GetParallax() const;
 
+		bool GetRepeat()const{return repeat;}
+		void SetRepeat(bool rep){repeat = rep;}
+
     private:
+		///If true, image is repeated, if false, image is strectched
+		bool repeat;
         Coord2d     offset;
         Coord2df    parallax;
         const RSC_Texture*   texture;

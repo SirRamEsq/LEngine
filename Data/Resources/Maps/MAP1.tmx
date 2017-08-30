@@ -6,8 +6,9 @@
   <image source="rapciu_horizon.png" width="1920" height="1080"/>
   <properties>
    <property name="DEPTH" type="int" value="50"/>
-   <property name="PARALAX_X" type="float" value="1"/>
-   <property name="PARALAX_Y" type="float" value="1"/>
+   <property name="REPEAT" type="bool" value="true"/>
+   <property name="PARALLAX_X" type="float" value="0"/>
+   <property name="PARALLAX_Y" type="float" value="0"/>
   </properties>
  </imagelayer>
 
