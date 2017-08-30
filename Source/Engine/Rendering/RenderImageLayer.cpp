@@ -90,31 +90,31 @@ void RenderImageLayer::BuildVAO(CRect camera){
     int tWidth = tex->GetWidth();
     int tHeight = tex->GetHeight();
 
-    Vec2 topLeftVertex      ( 0.0f, 0.0f);
-    Vec2 topRightVertex     ( 1.0f, 0.0f);
-    Vec2 bottomRightVertex  ( 1.0f, 1.0f);
-    Vec2 bottomLeftVertex   ( 0.0f, 1.0f);
+    Vec2 topLeftVertex      ( camera.GetLeft(), camera.GetTop());
+    Vec2 topRightVertex     ( camera.GetRight(), camera.GetTop());
+    Vec2 bottomRightVertex  ( camera.GetRight(), camera.GetBottom());
+    Vec2 bottomLeftVertex   ( camera.GetLeft(), camera.GetBottom());
 
     Vec4 color;
     color.x=1.0f;
     color.y=1.0f;
     color.z=1.0f;
-    color.w=layer->GetAlpha();
+    color.w=1.0;//layer->GetAlpha();
 
+	//This returns garbage?
 	auto parallax = layer->GetParallax();
-	float parallaxX = parallax.x;
-	float parallaxY = parallax.y;
+	float parallaxX = 1;//parallax.x;
+	float parallaxY = 1;//parallax.y;
 
     auto translate = layer->GetOffset();
 
-	//How many full images are contained within the camera viewport
-	int fullX = camera.w / tex->GetWidth();
-	int fullY = camera.h / tex->GetHeight();
+	int texW = tex->GetWidth();
+	int texH = tex->GetHeight();
 
-	Vec2 topLeftTex     (   int(floor(camera.GetLeft()  * parallaxX)+translate.x) % tex->GetWidth(),        ( int(floor( camera.GetTop() * parallaxY)+translate.y) % tex->GetHeight()) );
-	Vec2 topRightTex    ( ( int(floor(camera.GetRight() * parallaxX)+translate.x) % tex->GetWidth())+fullX, ( int(floor( camera.GetTop() * parallaxY)+translate.y) % tex->GetHeight()) );
-	Vec2 bottomLeftTex  (   int(floor(camera.GetLeft()  * parallaxX)+translate.x) % tex->GetWidth(),        ( int(floor( camera.GetBottom() * parallaxY)+translate.y) % tex->GetHeight())+fullY );
-	Vec2 bottomRightTex ( ( int(floor(camera.GetRight() * parallaxX)+translate.x) % tex->GetWidth())+fullX, ( int(floor( camera.GetBottom() * parallaxY)+translate.y) % tex->GetHeight())+fullY );
+	Vec2 topLeftTex     ( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
+	Vec2 topRightTex    ( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
+	Vec2 bottomLeftTex  ( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
+	Vec2 bottomRightTex ( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
 
 	int vertexIndex=0;
 	vao.GetVertexArray()[vertexIndex]     = topLeftVertex;

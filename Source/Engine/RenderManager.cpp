@@ -75,10 +75,10 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 
 	//down directions is negative y; up direction is positive y
 	//y gets flipped twice, once here, and once when applying the framebuffer
-	float rightSide   = CAMERA_W;// - 1.0f;
+	float rightSide   = view.w; //CAMERA_W;// - 1.0f;
 	float leftSide	  = 0;
 	float bottomSide  = 0;
-	float topSide	  = CAMERA_H;// - 1.0f;
+	float topSide	  = view.h; //CAMERA_H;// - 1.0f;
 	float zFar		  = 1.1f;
 	float zNear		  = 0.1f;
 
@@ -111,8 +111,8 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	//Render Using only full integers for translation to get that pixel-perfect look
 	position[0]=view.x;
 	position[1]=view.y;
-	position[2]=CAMERA_W;
-	position[3]=CAMERA_H;
+	position[2]=view.w;//CAMERA_W;
+	position[3]=view.h;//CAMERA_H;
 
 	glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0,				  (sizeof(float)*4),	 position);

@@ -1314,16 +1314,16 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
     std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(w,h,name,depth, &gidManager, texture));
 
     float paralaxX, paralaxY;
+	paralaxX = 1.0f;
+	paralaxY = 1.0f;
     bool repeatX, repeatY;
     attributes.clear();
-    attributes["paralaxX"]            = Attribute("float",    &paralaxX      );
-    attributes["paralaxY"]            = Attribute("float",    &paralaxY      );
-    attributes["repeatX"]             = Attribute("bool",     &repeatX       );
-    attributes["repeatY"]             = Attribute("bool",     &repeatY       );
+    attributes["PARALLAX_X"]            = Attribute("float",    &paralaxX      );
+    attributes["PARALLAX_Y"]            = Attribute("float",    &paralaxY      );
     TMXLoadProperties(subNodeProperties,imageLayer->properties);
     TMXLoadAttributesFromProperties(&imageLayer->properties, attributes);
 
-
+	imageLayer->SetParallax( Coord2df(paralaxX, paralaxY) );
 
     return imageLayer;
 }
