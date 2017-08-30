@@ -286,7 +286,7 @@ class TiledTileLayer : public TiledLayerGeneric{
 
 class TiledImageLayer : public TiledLayerGeneric{
     public:
-        TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex);
+        TiledImageLayer(const unsigned int& tileW, const unsigned int& tileH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex);
         TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g);
 
         void SetTexture (const RSC_Texture* tex);
@@ -298,12 +298,20 @@ class TiledImageLayer : public TiledLayerGeneric{
         void SetParallax (const Coord2df& para);
 		Coord2df GetParallax() const;
 
-		bool GetRepeat()const{return repeat;}
-		void SetRepeat(bool rep){repeat = rep;}
+		bool GetRepeatX()const;
+		void SetRepeatX(bool val);
+		bool GetRepeatY()const;
+		void SetRepeatY(bool val);
+
+		bool GetStretchToMapX()const;
+		void SetStretchToMapX(bool val);
+		bool GetStretchToMapY()const;
+		void SetStretchToMapY(bool val);
 
     private:
 		///If true, image is repeated, if false, image is strectched
-		bool repeat;
+		bool repeatX, repeatY;
+		bool stretchToMapX, stretchToMapY;
         Coord2d     offset;
         Coord2df    parallax;
         const RSC_Texture*   texture;
@@ -436,7 +444,7 @@ class TiledData{
         static std::unique_ptr<TiledSet>           TMXLoadTiledSet         (rapidxml::xml_node<>* tiledSetRootNode,  const GID& firstGID, GIDManager& gidManager);
         static std::unique_ptr<TiledTileLayer>     TMXLoadTiledTileLayer   (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager    );
         static std::unique_ptr<TiledObjectLayer>   TMXLoadTiledObjectLayer (rapidxml::xml_node<>* rootNode, TiledData* tiledData    );
-        static std::unique_ptr<TiledImageLayer>    TMXLoadTiledImageLayer  (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager    );
+        static std::unique_ptr<TiledImageLayer>    TMXLoadTiledImageLayer  (rapidxml::xml_node<>* rootNode, const GIDManager& gidManager, int mapTilesW, int mapTilesH);
 
         PropertyMap properties;
 };

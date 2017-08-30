@@ -450,11 +450,15 @@ float TiledTileLayer::GetFriction() const {
 //TiledImageLayer//
 ///////////////////
 
-TiledImageLayer::TiledImageLayer(const unsigned int& pixelW, const unsigned int& pixelH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex)
-    : TiledLayerGeneric(pixelW / 16, pixelH / 16, name, depth, g, LAYER_IMAGE), texture(tex){
+TiledImageLayer::TiledImageLayer(const unsigned int& tileW, const unsigned int& tileH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex)
+    : TiledLayerGeneric(tileW, tileH, name, depth, g, LAYER_IMAGE), texture(tex){
 	
 		offset = Coord2d( 0, 0 );
 		parallax = Coord2df( 1, 1 ); 
+		repeatX = false;
+		repeatY = false;
+		stretchToMapX = false;
+		stretchToMapY = false;
 }
 
 void TiledImageLayer::SetOffset( const Coord2d& off ){
@@ -490,6 +494,37 @@ TiledImageLayer::TiledImageLayer(const TiledImageLayer& rhs, const GIDManager* g
     CopyPropertyMap(rhs.properties, properties);
     offset = rhs.offset;
     parallax = rhs.parallax;
+	repeatX = rhs.repeatX;
+	repeatY = rhs.repeatY;
+	stretchToMapX = rhs.stretchToMapX;
+	stretchToMapY = rhs.stretchToMapY;
+}
+
+
+bool TiledImageLayer::GetRepeatX()const {
+	return repeatX;
+}
+void TiledImageLayer::SetRepeatX(bool val) {
+	repeatX = val;
+}
+bool TiledImageLayer::GetRepeatY()const {
+	return repeatY;
+}
+void TiledImageLayer::SetRepeatY(bool val) {
+	repeatY = val;
+}
+
+bool TiledImageLayer::GetStretchToMapX()const {
+	return stretchToMapX;
+}
+void TiledImageLayer::SetStretchToMapX(bool val) {
+	stretchToMapX = val;
+}
+bool TiledImageLayer::GetStretchToMapY()const {
+	return stretchToMapY;
+}
+void TiledImageLayer::SetStretchToMapY(bool val) {
+	stretchToMapY = val;
 }
 
 /////////////
@@ -997,7 +1032,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
         }
 
         else if(nn=="imagelayer"){
-            tiledData->AddLayer(TMXLoadTiledImageLayer(node, tiledData->gid));
+            tiledData->AddLayer(TMXLoadTiledImageLayer(node, tiledData->gid, tilesWide, tilesHigh));
         }
 
     }
@@ -1281,7 +1316,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer (rapidxml::
     return objectLayer;
 }
 
-std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml_node<>* rootNode, const GIDManager& gidManager){
+std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml_node<>* rootNode, const GIDManager& gidManager, int mapTilesW, int mapTilesH){
     rapidxml::xml_node<> *subNodeImage=rootNode->first_node();
 
     std::string name;
@@ -1311,24 +1346,33 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
             return NULL;
         }
     }
-    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(w,h,name,depth, &gidManager, texture));
+    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(mapTilesW, mapTilesH,name,depth, &gidManager, texture));
 
     float paralaxX, paralaxY;
 	paralaxX = 1.0f;
 	paralaxY = 1.0f;
 
-	bool repeat = true;
+	bool repeatX = false;
+	bool repeatY = false;
+	bool stretchX = false;
+	bool stretchY = false;
 
     attributes.clear();
     attributes["PARALLAX_X"]  = Attribute("float", &paralaxX);
     attributes["PARALLAX_Y"]  = Attribute("float", &paralaxY);
-    attributes["REPEAT"]      = Attribute("bool",  &repeat  );
+    attributes["STRETCH_TO_MAP_X"]  = Attribute("bool", &stretchX);
+    attributes["STRETCH_TO_MAP_Y"]  = Attribute("bool", &stretchY);
+    attributes["REPEAT_X"]      = Attribute("bool",  &repeatX  );
+    attributes["REPEAT_Y"]      = Attribute("bool",  &repeatY  );
     TMXLoadProperties(subNodeProperties,imageLayer->properties);
     TMXLoadAttributesFromProperties(&imageLayer->properties, attributes);
 
 	imageLayer->SetParallax( Coord2df(paralaxX, paralaxY) );
 	imageLayer->SetAlpha(1.0);
-	imageLayer->SetRepeat(repeat);
+	imageLayer->SetRepeatX(repeatX);
+	imageLayer->SetRepeatY(repeatY);
+	imageLayer->SetStretchToMapX(true);
+	imageLayer->SetStretchToMapY(true);
 
     return imageLayer;
 }
