@@ -1326,10 +1326,12 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
 
     std::string texturePath;
     int w, h;
+	float alpha = 1.0f;
     attributes.clear();
-    attributes["source"]             = Attribute("string",    &texturePath  );
-    attributes["width"]              = Attribute("int",       &w            );
-    attributes["height"]             = Attribute("int",       &h            );
+    attributes["source"] = Attribute("string",    &texturePath  );
+    attributes["width"]  = Attribute("int",       &w            );
+    attributes["height"] = Attribute("int",       &h            );
+    attributes["opacity"]= Attribute("float", &alpha);
     TMXLoadAttributes(subNodeImage, attributes);
 
     rapidxml::xml_node<>* subNodeProperties=subNodeImage->next_sibling();
@@ -1368,11 +1370,11 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
     TMXLoadAttributesFromProperties(&imageLayer->properties, attributes);
 
 	imageLayer->SetParallax( Coord2df(paralaxX, paralaxY) );
-	imageLayer->SetAlpha(1.0);
+	imageLayer->SetAlpha(alpha);
 	imageLayer->SetRepeatX(repeatX);
 	imageLayer->SetRepeatY(repeatY);
-	imageLayer->SetStretchToMapX(true);
-	imageLayer->SetStretchToMapY(true);
+	imageLayer->SetStretchToMapX(stretchX);
+	imageLayer->SetStretchToMapY(stretchY);
 
     return imageLayer;
 }
