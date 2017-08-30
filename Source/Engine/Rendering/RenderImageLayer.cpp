@@ -111,22 +111,42 @@ void RenderImageLayer::BuildVAO(CRect camera){
 	int texW = tex->GetWidth();
 	int texH = tex->GetHeight();
 
-	auto repeat = layer->GetRepeat();
-	Vec2 topLeftTex, topRightTex, bottomLeftTex, bottomRightTex;
-	if(repeat){
-		//Repeat texture if it passes 1.0f
-		topLeftTex     = Vec2( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
-		topRightTex    = Vec2( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetTop() * parallaxY)+translate.y)) / (float)texH );
-		bottomLeftTex  = Vec2( ( float(floor(camera.GetLeft()  * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
-		bottomRightTex = Vec2( ( float(floor(camera.GetRight() * parallaxX)+translate.x) / (float)texW ), ( float(floor( camera.GetBottom() * parallaxY)+translate.y)) / (float)texH );
+	auto repeatX = layer->GetRepeatX();
+	auto repeatY = layer->GetRepeatY();
+	auto stretchX = layer->GetStretchToMapX();
+	auto stretchY = layer->GetStretchToMapY();
+
+	//Stretch/fit bg to each corner of the camera viewport by default
+	float leftTex = 0.0;
+	float rightTex = 1.0f;
+	float topTex = 0.0f;
+	float bottomTex = 1.0f;
+
+	if(repeatX){
+		leftTex   = (float(floor( camera.GetLeft()   * parallaxX)+translate.x) / (float)texW );
+		rightTex  = (float(floor( camera.GetRight()  * parallaxX)+translate.x) / (float)texW );
 	}
-	else{
-		//Stretch/fit bg to each corner of the texture
-		topLeftTex     = Vec2( 0.0f, 0.0f );	
-		topRightTex    = Vec2( 1.0f, 0.0f );	
-		bottomLeftTex  = Vec2( 0.0f, 1.0f );	
-		bottomRightTex = Vec2( 1.0f, 1.0f );	
+	if(repeatY){
+		topTex    = (float(floor( camera.GetTop()    * parallaxY)+translate.y) / (float)texH );
+		bottomTex = (float(floor( camera.GetBottom() * parallaxY)+translate.y) / (float)texH );
 	}
+	//Fit image to left and right sides of the map
+	if(stretchX){
+		float mapW = layer->pixelWidth;
+		leftTex   = float(camera.GetLeft()) / mapW;
+		rightTex  = float(camera.GetRight()) / mapW; 
+	}
+	//Fit image to top and bottom sides of the map
+	if(stretchY){
+		float mapH = layer->pixelHeight;
+		topTex   = float(camera.GetTop()) / mapH;
+		bottomTex  = float(camera.GetBottom()) / mapH; 
+	}
+
+	Vec2 topLeftTex    (leftTex, topTex);
+	Vec2 topRightTex   (rightTex, topTex);
+	Vec2 bottomLeftTex (leftTex, bottomTex);
+	Vec2 bottomRightTex(rightTex, bottomTex);
 
 	int vertexIndex=0;
 	vao.GetVertexArray()[vertexIndex]     = topLeftVertex;
