@@ -2,6 +2,15 @@
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="128" height="128" tilewidth="16" tileheight="16" backgroundcolor="#246fca" nextobjectid="46">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
  <tileset firstgid="257" source="TileSets/items.tsx"/>
+ <imagelayer name="Image Layer 1">
+  <image source="rapciu_horizon.png" width="1920" height="1080"/>
+  <properties>
+   <property name="DEPTH" type="int" value="50"/>
+   <property name="PARALAX_X" type="float" value="1"/>
+   <property name="PARALAX_Y" type="float" value="1"/>
+  </properties>
+ </imagelayer>
+
  <layer name="BG1" width="128" height="128">
   <properties>
    <property name="DEPTH" type="int" value="30"/>
@@ -81965,7 +81974,7 @@
  <layer name="BOXES" width="128" height="128">
   <properties>
    <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="-10"/>
+   <property name="DEPTH" type="int" value="-15"/>
   </properties>
   <data>
    <tile gid="0"/>

@@ -24,5 +24,8 @@ void main() {
 	temp.x = position.x - cameraTranslation.x;
 	temp.y = position.y - cameraTranslation.y;
 
+	//temp.x = 0;
+	//temp.y = 823;
+
 	gl_Position = projMatrix * (vec4(temp, 1.0, 1.0));
 }

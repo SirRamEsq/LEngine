@@ -35,6 +35,9 @@ function NewCamera(baseclass)
 		CPP.interface:WriteError(camera.EID, "Parent is " .. tostring(camera.parent))
 		camera.myPositionComp=CPP.interface:GetPositionComponent(camera.EID);
 		camera.myCameraComp	= CPP.interface:GetCameraComponent (camera.EID);
+		--just for giggles
+		local resolution = CPP.interface:GetResolution()
+		camera.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
 
 		--Set parent for All Component Managers (That have been added thus far: position and script)
 		--This will ensure that the parent script will be updated before this script
@@ -45,8 +48,8 @@ function NewCamera(baseclass)
 		CPP.interface:WriteError(camera.EID, "Parent set");
 
 		--instead of the component managing the position, the camera will manage on its own
-		camera.myPositionComp:SetParent(0);
-		camera.myPositionComp:SetPositionLocal(camera.pos);
+		--camera.myPositionComp:SetParent(0);
+		--camera.myPositionComp:SetPositionLocal(camera.pos);
 
 		--recieve parent's events
 		CPP.interface:EventLuaObserveEntity(camera.EID, camera.parent);
