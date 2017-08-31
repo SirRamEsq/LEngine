@@ -56,7 +56,7 @@ ParticleCreator::~ParticleCreator(){
 }
 
 void ParticleCreator::SetUsePoint(bool value){
-	mUsePoint = true;
+	mUsePoint = value;
 }
 
 void ParticleCreator::SetPoint(const Coord2df& v){
@@ -236,9 +236,14 @@ RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
 RSC_GLShader* ParticleCreator::GenerateVertexShader(){
     std::stringstream ss;
     ss
-    << PARTICLE_SHADER_VERTEX_DECLARATIONS
-    << PARTICLE_SHADER_VERTEX_POINT_BEGIN//PARTICLE_SHADER_VERTEX_MAIN_BEGIN
-    << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN
+    << PARTICLE_SHADER_VERTEX_DECLARATIONS;
+	if(mUsePoint){
+		ss << PARTICLE_SHADER_VERTEX_POINT_BEGIN;
+	}
+	else{
+		ss << PARTICLE_SHADER_VERTEX_MAIN_BEGIN;
+	}
+	ss << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN
     << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_SHRINK
     //<< PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND
     << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_END
