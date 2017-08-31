@@ -66,7 +66,7 @@ function container.NewGui(baseclass)
 
 		--just for giggles
 		local resolution = CPP.interface:GetResolution()
-		gui.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
+		--gui.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
 
 		--------------------
 		--Particle Effects--
@@ -76,15 +76,17 @@ function container.NewGui(baseclass)
 		Vec2d = gui.myPositionComp:GetPositionLocal();
 		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
-		gui.particleLifetime = 10;
+		gui.particleLifetime = 200;
 
-		gui.particleCreator = gui.myParticleComp:AddParticleCreator(5, gui.particleLifetime);
+		gui.particleCreator = gui.myParticleComp:AddParticleCreator(0, gui.particleLifetime);
 
-		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-1);
-		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+1);
+		local particlePositionMin = CPP.Coord2df(xPos-8, yPos-8);
+		local particlePositionMax = CPP.Coord2df(xPos+8, yPos+8);
 
-		local particleVelocityMin = CPP.Coord2df(-0.25, -0.25);
-		local particleVelocityMax = CPP.Coord2df(0.75,  0.25);
+		--local particleVelocityMin = CPP.Coord2df(-0.25, -0.25);
+		--local particleVelocityMax = CPP.Coord2df(0.75,  0.25);
+		local particleVelocityMin = CPP.Coord2df(0, 0);
+		local particleVelocityMax = CPP.Coord2df(0, 0);
 
 		local particleAccelMin= CPP.Coord2df(-0.0025, 0.01);
 		local particleAccelMax= CPP.Coord2df( 0.0025, 0.01);
@@ -103,8 +105,10 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetSprite(gui.sprite)
 		gui.particleCreator:SetAnimation(gui.animation)
 		gui.particleCreator:SetAnimationFrame(0)
-		gui.particleCreator:SetRandomUV(true)
-		gui.particleCreator:SetWarpQuads(true)
+		gui.particleCreator:SetUsePoint(true)
+		gui.particleCreator:SetPoint(CPP.Coord2df(xPos,yPos))
+		gui.particleCreator:SetRandomUV(false)
+		gui.particleCreator:SetWarpQuads(false)
 		
 		gui.particleCreator:SetShape(1);
 		--gui.particleCreator:SetEffect(2);

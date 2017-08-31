@@ -34,6 +34,8 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
 	vbo = 0;
 	vao = 0;
 
+	mUsePoint = false;
+	mPointCoordinates = Coord2df(0.0, 0.0);
 
     mParticlesToRender=0;
     mRandom.SetSeed(mRandom.GenerateSeed());
@@ -51,6 +53,14 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
 
 ParticleCreator::~ParticleCreator(){
 
+}
+
+void ParticleCreator::SetUsePoint(bool value){
+	mUsePoint = true;
+}
+
+void ParticleCreator::SetPoint(const Coord2df& v){
+	mPointCoordinates = v;
 }
 
 void ParticleCreator::SetRandomUV(bool value){
@@ -227,7 +237,7 @@ RSC_GLShader* ParticleCreator::GenerateVertexShader(){
     std::stringstream ss;
     ss
     << PARTICLE_SHADER_VERTEX_DECLARATIONS
-    << PARTICLE_SHADER_VERTEX_MAIN_BEGIN
+    << PARTICLE_SHADER_VERTEX_POINT_BEGIN//PARTICLE_SHADER_VERTEX_MAIN_BEGIN
     << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN
     << PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_SHRINK
     //<< PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND
@@ -344,11 +354,31 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                                                         mDefaultPositionMax.y)
                         );
 
-        Vec2 acceleration(mRandom.GenerateRandomFloatValue( mDefaultAccelerationMin.x,
-                                                            mDefaultAccelerationMax.x),
-                        mRandom.GenerateRandomFloatValue(   mDefaultAccelerationMin.y,
-                                                            mDefaultAccelerationMax.y)
-                        );
+		Vec2 acceleration;
+
+		//If using a point to move toward/away from, then store the point in the acceleration vector
+		if(mUsePoint){
+			//x is distance from point
+			//y is angle
+			//Pythogoreas theorem
+			float xDifference = position.x - mPointCoordinates.x;
+			float yDifference = position.y - mPointCoordinates.y;
+			//square
+			float xDifferenceSquare = xDifference * xDifference;
+			float yDifferenceSquare = yDifference * yDifference;
+			//Add together and get root to get distance
+			acceleration.x = sqrt(xDifferenceSquare + yDifferenceSquare);
+
+			//SOH CAH TOA
+			acceleration.y = atan2(yDifference, xDifference);
+		}
+		else{
+			acceleration = Vec2(mRandom.GenerateRandomFloatValue( mDefaultAccelerationMin.x,
+																mDefaultAccelerationMax.x),
+							mRandom.GenerateRandomFloatValue(   mDefaultAccelerationMin.y,
+																mDefaultAccelerationMax.y)
+							);
+		}
 
         Vec2 velocity(mRandom.GenerateRandomFloatValue( mDefaultVelocityMin.x,
                                                         mDefaultVelocityMax.x),
