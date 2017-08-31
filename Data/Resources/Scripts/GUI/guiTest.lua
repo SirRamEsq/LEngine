@@ -94,7 +94,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(5);
+		gui.particleCreator:SetParticlesPerFrame(25);
 		gui.particleCreator:SetScalingX(2,4);
 		gui.particleCreator:SetScalingY(2,4);
 		gui.particleCreator:SetDepth(gui.depth);
@@ -105,7 +105,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetSprite(gui.sprite)
 		gui.particleCreator:SetAnimation(gui.animation)
 		gui.particleCreator:SetAnimationFrame(0)
-		gui.particleCreator:SetUsePoint(true)
+		gui.particleCreator:SetUsePoint(false)
 		gui.particleCreator:SetPoint(CPP.Coord2df(xPos,yPos))
 		gui.particleCreator:SetRandomUV(false)
 		gui.particleCreator:SetWarpQuads(false)
