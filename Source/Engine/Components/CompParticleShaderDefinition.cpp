@@ -57,6 +57,44 @@ const std::string PARTICLE_SHADER_VERTEX_MAIN_BEGIN=
 	"temp.y = particlePosition.y - cameraTranslation.y;\n"
 ;
 
+const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN=
+"void main(){\n"
+	"//if (particleAlpha <= 0.0)\n"
+	"//	return;\n"
+	"//Time since particle was created\n"
+	"float timeOffset = (time - lifetime.x);\n"
+	"//point is stored in acceleration\n"
+	"float initialDistance = acceleration.x; \n"
+	"float angle = acceleration.y;\n"
+
+	"float distSin = sin(angle); \n"
+	"float distCos = cos(angle); \n"
+
+	"//Magic number incoming\n"
+	"//Cap at 0\n"
+	"float rateOfChange = max(18.0f - abs(initialDistance), 0.1); \n"
+	"float accelValue = rateOfChange * log(timeOffset); \n"
+
+	"vec2 newAccel = vec2(accelValue*distSin, accelValue*distCos); \n"
+	"// calculate the current position of the particle\n"
+	"vec2 particlePosition = position\n"
+				"+ velocity * timeOffset\n"
+				"+ newAccel;\n"
+
+	"// calculate the opacity of the particle\n"
+	"// (does not have to be clamped to 0 since we are discarding\n"
+	"//  non-positive alpha particles in the geometry shader)\n"
+	"//float particleAlpha = min(1.0, (time / lifetime.y) * -2.0);\n"
+	"float timeRatio    = (timeOffset) / (lifetime.y - lifetime.x);\n"
+	"fragmentColor	    = color;\n"
+	"fragmentColor.a	= timeRatio;\n"
+	"fragmentUV=textureCoords;\n"
+
+	"vec2 temp=particlePosition;\n"
+	"temp.x = particlePosition.x - cameraTranslation.x;\n"
+	"temp.y = particlePosition.y - cameraTranslation.y;\n"
+;
+
 const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN=
     ""
 ;

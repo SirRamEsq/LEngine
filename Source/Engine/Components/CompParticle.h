@@ -75,6 +75,9 @@ class ParticleCreator : public RenderableObjectWorld{
 		void SetWarpQuads(bool vlaue);
 		void SetRandomUV(bool value);
 
+		void SetUsePoint(bool value);
+		void SetPoint(const Coord2df& v);
+
         ///Starts the particle Creator
 		///Changed parameters do not take effect till stopping and starting the creator
 		///Must be in 'stopped' state
@@ -107,6 +110,9 @@ class ParticleCreator : public RenderableObjectWorld{
 		const RSC_Texture* mTexture;
 		int mAnimationFrame;
 		bool mRandomUV;
+
+		bool mUsePoint;
+		Coord2df mPointCoordinates;
 
         Color4f mDefaultColorMin;
         Color4f mDefaultColorMax;
@@ -192,6 +198,7 @@ class ComponentParticleManager : public BaseComponentManager{
 
 extern const std::string PARTICLE_SHADER_VERTEX_DECLARATIONS;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_BEGIN;
+extern const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_SHRINK;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND;

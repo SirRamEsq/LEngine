@@ -1045,6 +1045,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetAnimationFrame",		&ParticleCreator::SetAnimationFrame)
 				.addFunction("SetRandomUV",		&ParticleCreator::SetRandomUV)
 				.addFunction("SetWarpQuads",		&ParticleCreator::SetWarpQuads)
+				.addFunction("SetUsePoint",		&ParticleCreator::SetUsePoint)
+				.addFunction("SetPoint",		&ParticleCreator::SetPoint)
 			.endClass()
 
 			.deriveClass<RenderLine, RenderableObject>("RenderLine")
