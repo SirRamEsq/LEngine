@@ -77,6 +77,7 @@ class ParticleCreator : public RenderableObjectWorld{
 
 		void SetUsePoint(bool value);
 		void SetPoint(const Coord2df& v);
+		void SetPointIntensity(float value);
 
         ///Starts the particle Creator
 		///Changed parameters do not take effect till stopping and starting the creator
@@ -113,6 +114,7 @@ class ParticleCreator : public RenderableObjectWorld{
 
 		bool mUsePoint;
 		Coord2df mPointCoordinates;
+		float mPointIntensity;
 
         Color4f mDefaultColorMin;
         Color4f mDefaultColorMax;
@@ -198,7 +200,7 @@ class ComponentParticleManager : public BaseComponentManager{
 
 extern const std::string PARTICLE_SHADER_VERTEX_DECLARATIONS;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_BEGIN;
-extern const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN;
+extern const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN(float magicNumber);
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_SHRINK;
 extern const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND;

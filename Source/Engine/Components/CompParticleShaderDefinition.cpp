@@ -57,7 +57,10 @@ const std::string PARTICLE_SHADER_VERTEX_MAIN_BEGIN=
 	"temp.y = particlePosition.y - cameraTranslation.y;\n"
 ;
 
-const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN=
+const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN(float magicNumber){
+	//18 works pretty well
+	std::stringstream ss;	
+	ss <<
 "void main(){\n"
 	"//if (particleAlpha <= 0.0)\n"
 	"//	return;\n"
@@ -72,9 +75,9 @@ const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN=
 
 	"//Magic number incoming\n"
 	"//Cap at 0\n"
-	"float rateOfChange = max(18.0f - abs(initialDistance), 0.1); \n"
+	"float rateOfChange = max(";
+	ss << "float(" << magicNumber << ") - abs(initialDistance), 0.1); \n"
 	"float accelValue = rateOfChange * log(timeOffset); \n"
-
 	"vec2 newAccel = vec2(accelValue*distSin, accelValue*distCos); \n"
 	"// calculate the current position of the particle\n"
 	"vec2 particlePosition = position\n"
@@ -94,6 +97,8 @@ const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN=
 	"temp.x = particlePosition.x - cameraTranslation.x;\n"
 	"temp.y = particlePosition.y - cameraTranslation.y;\n"
 ;
+	return ss.str();
+}
 
 const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_BEGIN=
     ""
