@@ -13,8 +13,7 @@ Log::Entry::Entry(const std::string& text, Log::SEVERITY s, const std::string& t
 
 std::string Log::Entry::ToString() const{
 	std::stringstream ss;
-	ss << "[" <<  Log::SEVERITY_STR[severity] << "] "
-		<< message;
+	ss << Log::SEVERITY_STR[severity] << message;
 	return ss.str();
 }
 
@@ -44,13 +43,16 @@ Log::~Log(){
 void Log::SetEntryFilter(fp_EntryFilter filter){
 	entryFilter = filter;
 }
+void Log::SetEntryFilterFlags(int flags){
+	filterFlags = flags;
+}
 
 std::vector<const Log::Entry*> Log::GetEntries() const{
 	std::vector<const Entry*> returnEntries;	
 	for(auto i = entries.begin(); i != entries.end(); i++){
 		if(entryFilter != NULL){
 			//ignore entry if returns false
-			if(not entryFilter(*i)){
+			if(not entryFilter(*i, filterFlags)){
 				continue;
 			}
 		}

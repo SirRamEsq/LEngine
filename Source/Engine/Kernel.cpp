@@ -14,6 +14,7 @@ int			 Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int			 Kernel::returnValue;
 bool 		Kernel::debugMode;
+std::vector<bool> Kernel::debugLogFlags;
 
 GenericContainer<RSC_Sprite>	Kernel::rscSpriteMan;
 GenericContainer<RSC_Texture>	Kernel::rscTexMan;
@@ -97,6 +98,21 @@ void Kernel::Inst(int argc, char *argv[]){
 	commandLine.ParseArgs(argc, argv);
 
 	debugMode = (commandLine.GetValue(L_CMD_DEBUG) == "true");
+	if(debugMode){
+		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
+			debugLogFlags.push_back(true);
+		}
+		auto *fp = static_cast<bool (*)(const Log::Entry&, int)>(
+			[] (const Log::Entry& entry, int flags){
+				if((flags & entry.severity) == 0){
+					return false;
+				}	
+
+				return true;
+			}
+		);
+		log.SetEntryFilter(fp);
+	}
 	K_Log.Write( commandLine.GetValue(L_CMD_DEBUG));
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
@@ -139,6 +155,19 @@ void Kernel::DEBUG_DebugWindowEnd(){
 }
 
 void Kernel::DEBUG_DisplayLog(){
+	int newFlags = 0;
+	int index =0;
+	for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
+		bool pressed = debugLogFlags[index];
+		ImGui::Checkbox(i->second.c_str(), &pressed);
+		debugLogFlags[index]=pressed;
+		if(pressed){
+			newFlags += i->first;	
+		}
+		index++;
+	}
+
+	log.SetEntryFilterFlags(newFlags);
 	auto entries = log.GetEntries();
 	ImGui::CollapsingHeader("Log");
 	
