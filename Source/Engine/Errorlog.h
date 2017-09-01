@@ -14,12 +14,12 @@ class Log{;
     public:
         class Exception : public LEngineException{using LEngineException::LEngineException;};
         enum SEVERITY{
-            FATAL = 0,
-            ERROR = 1,
-            WARN = 2,
-            INFO = 3,
-            DEBUG = 4,
-            TRACE = 5
+            FATAL = 1,
+            ERROR = 2,
+            WARN = 4,
+            INFO = 8,
+            DEBUG = 16,
+            TRACE = 32 
         };
 
 		struct Entry{
@@ -34,7 +34,7 @@ class Log{;
 		};
 
 		///Signature of function used to determine if an entry is filtered or not
-		typedef bool (*fp_EntryFilter)(const Entry& entry);
+		typedef bool (*fp_EntryFilter)(const Entry& entry, int flags);
 
 
 		Log();
@@ -42,6 +42,8 @@ class Log{;
 
 		///Set filter to use when calling GetEntries
 		void SetEntryFilter(fp_EntryFilter filter);
+		///Set filter flags to use for different severity levels
+		void SetEntryFilterFlags(int flags);
 		///Returns all entries. Will use filter set by SetEntryFilter if one was passed
 		std::vector<const Entry*> GetEntries() const;
 
@@ -63,6 +65,8 @@ class Log{;
 		///file path used when saving to file
         static const std::string logPath;
 
+		///Stores string reprentation of different severity levels
+        static std::map<SEVERITY, std::string> SEVERITY_STR;
     protected:
 		///All entries written to this log
 		mutable std::vector<Entry> entries;
@@ -70,10 +74,9 @@ class Log{;
     private:
 		///Filter used when calling GetEntries
 		fp_EntryFilter entryFilter;
+		int filterFlags;
         std::ofstream* GetFilePointer(const std::string& fname);
 
-		///Stores string reprentation of different severity levels
-        static std::map<SEVERITY, std::string> SEVERITY_STR;
 };
 /*
 class ErrorLog{;

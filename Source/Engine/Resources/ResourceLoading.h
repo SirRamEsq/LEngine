@@ -10,7 +10,6 @@
 #include "RSC_Sound.h"
 #include "RSC_Script.h"
 #include "RSC_Heightmap.h"
-#include "RSC_Background.h"
 #include "RSC_Map.h"
 #include "../Exceptions.h"
 

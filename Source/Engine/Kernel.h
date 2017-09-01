@@ -18,7 +18,6 @@
 #include "Resources/RSC_Sound.h"
 #include "Resources/RSC_Script.h"
 #include "Resources/RSC_Heightmap.h"
-#include "Resources/RSC_Background.h"
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_GLShader.h"
 #include "Resources/RSC_Font.h"
@@ -112,7 +111,7 @@ class Kernel{
 		static void DEBUG_DisplayLog();
 		static void DEBUG_DebugWindowEnd();
 
-
+		static std::vector<bool> debugLogFlags;
 };
 
 //for more laconic access
