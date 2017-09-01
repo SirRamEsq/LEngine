@@ -76,19 +76,12 @@ void ParticleCreator::SetRandomUV(bool value){
 bool ParticleCreator::Start(){
 	if(mState == PARTICLE_CREATOR_STOPPING){return false;}
     mTime=0;
+	mLifeSpan = mLifeSpanMax;
     mCurrentParticleIndex=0;
     mParticlesToRender=0;
     //Only one vertex per object; the rest are created in a geometry shader;
     //Getting ceiling of this rounded number
     mMaxParticles=ceil( (mParticleLifeSpan * mParticlesPerFrame));
-
-    //Get size of VBO in bytes
-    vboBufferSize = mMaxParticles * sizeof ( ParticleVertexData ) * VerticiesPerParticle;
-
-    //Assign smart pointer to new data buffer
-    vboData.reset(new ParticleVertexData [mMaxParticles * VerticiesPerParticle] );
-
-
 
     //Generate and set shader program
     mShaderProgram.reset(new RSC_GLProgram);
@@ -121,6 +114,12 @@ bool ParticleCreator::Start(){
 
 	unsigned int stride=sizeof(ParticleVertexData);
 	if(vbo == 0){
+		//Get size of VBO in bytes
+		vboBufferSize = mMaxParticles * sizeof ( ParticleVertexData ) * VerticiesPerParticle;
+
+		//Assign smart pointer to new data buffer
+		vboData.reset(new ParticleVertexData [mMaxParticles * VerticiesPerParticle] );
+
 		//Vertex VBO
 		glGenBuffers (1, &vbo);
 		glBindBuffer (GL_ARRAY_BUFFER, vbo);
@@ -650,10 +649,7 @@ void ComponentParticle::Update(){
 
         if(pCreator->mLifeSpan==1){
             if(pCreator->mState==PARTICLE_CREATOR_STOPPED){
-				//returns item after the one erased, can be container::end
-				i = mParticleCreators.erase(i);
-				//continue, do not increment, i already points to next element 
-				continue;
+				//ignore
             }
             else if(pCreator->mState==PARTICLE_CREATOR_STOPPING){
 				//ignore
@@ -676,12 +672,13 @@ void ComponentParticle::HandleEvent(const Event* event){
 ParticleCreator* ComponentParticle::AddParticleCreator    (const unsigned int& creatorLife, const unsigned int& particleLife){
     mParticleCreators.push_back(make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false, logFileName));
     ParticleCreator* pc=mParticleCreators[mParticleCreators.size()-1].get();
-    pc->mLifeSpan=creatorLife;
+    pc->mLifeSpanMax=creatorLife;
+	pc->mLifeSpan = creatorLife;
     pc->myPos=myPos;
     return pc;
 }
-void             ComponentParticle::DeleteParticleCreators(){
-
+void ComponentParticle::DeleteParticleCreators(){
+	mParticleCreators.clear();
 }
 
 //////////////////////////////
