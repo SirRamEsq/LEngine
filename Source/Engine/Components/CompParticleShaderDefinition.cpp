@@ -78,7 +78,7 @@ const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN(float magicNumber){
 	"float rateOfChange = max(";
 	ss << "float(" << magicNumber << ") - abs(initialDistance), 0.1); \n"
 	"float accelValue = rateOfChange * log(timeOffset); \n"
-	"vec2 newAccel = vec2(accelValue*distSin, accelValue*distCos); \n"
+	"vec2 newAccel = vec2(accelValue*distCos, accelValue*distSin); \n"
 	"// calculate the current position of the particle\n"
 	"vec2 particlePosition = position\n"
 				"+ velocity * timeOffset\n"
