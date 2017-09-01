@@ -308,7 +308,7 @@ Matrix4 Matrix4::Inverse () {
 	/* there is no inverse if determinant is zero (not likely unless scale is
 	broken) */
 	if (0.0f == det) {
-		ErrorLog::WriteToFile("WARNING. matrix has no determinant. can not invert\n", ErrorLog::GenericLogFile);
+		//"WARNING. matrix has no determinant. can not invert
 		return IdentityMatrix();
 	}
 	float inv_det = 1.0f / det;

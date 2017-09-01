@@ -301,7 +301,7 @@ void GameState::SetMapLinkEntities(
                     K_ScriptMan.LoadItem(scriptName,scriptName);
                     script=K_ScriptMan.GetItem(scriptName);
                     if(script==NULL){
-                        ErrorLog::WriteToFile("StateManager::SetCurrentMap; Couldn't Load Script Named: " + objectIt->second.script, ErrorLog::GenericLogFile);
+                        K_Log.Write("StateManager::SetCurrentMap; Couldn't Load Script Named: " + objectIt->second.script);
                     }
                 }
                 if(script!=NULL){
@@ -323,7 +323,7 @@ void GameState::SetMapLinkEntities(
                     std::stringstream ss;
                     ss << "[Map Loader: " << mCurrentMap->GetMapName() << "]" << " Couldn't listen to event from TiledID " << *eventSource
                         << "     Listener TiledID is: " << objectIt->first;
-                    ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+                    K_Log.Write(ss.str());
                     continue;
                 }
                 senderScript->EventLuaAddObserver(listenerScript);
@@ -364,7 +364,7 @@ EID GameState::GetEIDFromName(const std::string& name) const{
 
 bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
     if(m == NULL){
-        ErrorLog::WriteToFile("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer", ErrorLog::GenericLogFile);
+        K_Log.Write("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer");
         return false;
     }
 

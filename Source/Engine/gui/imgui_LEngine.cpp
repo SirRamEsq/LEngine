@@ -175,7 +175,7 @@ void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, 
 	catch(LEngineException e){
 		std::stringstream ss;
 		ss << "Error Occured in CalculateUV " << e.what();
-		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
+		K_Log.Write(ss.str(), Log::SEVERITY::ERROR, Log::typeDefault);
 	}
 	*/
 }

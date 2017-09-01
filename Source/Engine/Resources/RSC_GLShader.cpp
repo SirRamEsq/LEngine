@@ -1,4 +1,5 @@
 #include "RSC_GLShader.h"
+#include "../Kernel.h"
 #include <math.h>
 #include <memory>
 
@@ -18,8 +19,7 @@ std::string RSC_GLShader::LoadShaderFromFile(const std::string& filepath){
 
     std::ifstream file;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    ErrorLog::WriteToFile("L_GL_SHADER: LOADSHADERFROMFILE, reads files directly, may want it to use some kind of abstract file loader",
-                        ErrorLog::GenericLogFile);
+    K_Log.Write("L_GL_SHADER: LOADSHADERFROMFILE, reads files directly, may want it to use some kind of abstract file loader");
     try{
         //open files
         file.open(filepath.c_str());
@@ -34,7 +34,7 @@ std::string RSC_GLShader::LoadShaderFromFile(const std::string& filepath){
         fileString =   ss.str();
     }
     catch (std::ifstream::failure e){
-        ErrorLog::WriteToFile("[C++] L_GL_SHADER(); FILE_NOT_SUCCESFULLY_READ", ErrorLog::GenericLogFile);
+        K_Log.Write("[C++] L_GL_SHADER(); FILE_NOT_SUCCESFULLY_READ");
         return "";
     }
     return fileString;
@@ -61,7 +61,7 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
 		std::stringstream ss;
 		ss << "Shader '" << mHandleID << "' of type '" << mShaderType << "' is unusable\n"
 			<< "Source Code;\n" << glslCode; 
-		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR);
+		K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
 	}
 }
 
@@ -93,7 +93,7 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
 			ss
             << infoLog
             << "\n| -- --------------------------------------------------- -- |" << std::endl;
-            ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+            K_Log.Write(ss.str());
             return false;
         }
     }
@@ -104,7 +104,7 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
             std::stringstream ss;
             ss << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
-            ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+            K_Log.Write(ss.str());
             return false;
         }
     }
@@ -127,7 +127,7 @@ RSC_GLProgram::~RSC_GLProgram(){
 
 bool RSC_GLProgram::AddShader(const RSC_GLShader* shader){
     if(shader->GetShaderID()==0){
-        ErrorLog::WriteToFile("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0", ErrorLog::GenericLogFile);
+        K_Log.Write("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0");
         return false;
     }
     switch (shader->GetShaderType()){
@@ -189,7 +189,7 @@ bool RSC_GLProgram::LinkProgram(){
                 std::unique_ptr<char> infoLog( new char[infoLength] );
                 glGetShaderInfoLog(shader->GetShaderID(), infoLength, NULL, infoLog.get());
                 std::string str(infoLog.get(), infoLength);
-                ErrorLog::WriteToFile(str, ErrorLog::GenericLogFile);
+                K_Log.Write(str);
             }
         }
     }
@@ -211,7 +211,7 @@ GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name) const{
         std::stringstream ss;
         ss << "[C++] RSC_GLProgram::GetUniformBlockHandle; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Block named " << name;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::INFO, ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str(), Log::SEVERITY::INFO, Log::typeDefault);
         throw LEngineShaderProgramException(ss.str(), this);
     }
     return returnVal;
@@ -223,7 +223,7 @@ GLint RSC_GLProgram::GetUniformLocation(const std::string& name) const {
         std::stringstream ss;
         ss << "[C++] RSC_GLProgram::GetUniformLocation; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Location named '" << name << "'";
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
         throw LEngineShaderProgramException(ss.str(), this);
     }
     return returnVal;

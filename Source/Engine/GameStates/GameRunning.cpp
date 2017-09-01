@@ -44,7 +44,7 @@ void GameRunningState::Init(const RSC_Script* stateScript){
     mapData=RSC_MapImpl::LoadResource(mapName);
 
     if(mapData==NULL){
-        ErrorLog::WriteToFile("Couldn't load map named: " + mapName, ErrorLog::GenericLogFile);
+        K_Log.Write("Couldn't load map named: " + mapName);
         countdown=0;
     }
     K_MapMan.LoadItem(mapName,  mapData);
@@ -55,7 +55,7 @@ void GameRunningState::Init(const RSC_Script* stateScript){
     t->SetColorI(0,100,50);
     t->SetDepth(-1000);
 
-    ErrorLog::WriteToFile("Done Loading", ErrorLog::GenericLogFile);
+    K_Log.Write("Done Loading");
 
     timeCount=SDL_GetTicks();
 }
@@ -97,15 +97,15 @@ void GameRunningState::HandleEvent(const Event* event){
         if(newMap==NULL){
             std::unique_ptr<const RSC_Map> loadNewMap (LoadMAP(mapName));
             if(loadNewMap.get()==NULL){
-                ErrorLog::WriteToFile("Bad Map Name Passed", ErrorLog::GenericLogFile);
-                ErrorLog::WriteToFile(mapName, ErrorLog::GenericLogFile);
+                K_Log.Write("Bad Map Name Passed", Log::typeDefault);
+                K_Log.Write(mapName, Log::typeDefault);
                 return;
             }
             newMap=loadNewMap.get();
             K_MapMan.LoadItem(mapName,  loadNewMap);
         }
         DEBUGrepeat+=1;
-        //ErrorLog::WriteToFile("Setting to true; DEBUGREPEAT= ", DEBUGrepeat);
+        //K_Log.Write("Setting to true; DEBUGREPEAT= ", DEBUGrepeat);
 
         changeMap=true;
         changeMapM=newMap;

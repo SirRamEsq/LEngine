@@ -16,7 +16,7 @@ void CopyPropertyMap(const PropertyMap& source, PropertyMap& destination){
 
 GIDEnabled::GIDEnabled(GIDManager* man, GID first, GID last)
     : manager(man), firstGID(first), lastGID(last){
-    if(firstGID>lastGID){ErrorLog::WriteToFile("[C++] GIDEnabled Constructor: lowest gid passed is greater than highest GID passed", ErrorLog::GenericLogFile);}
+    if(firstGID>lastGID){K_Log.Write("[C++] GIDEnabled Constructor: lowest gid passed is greater than highest GID passed");}
 
     manager->NewRange(first, last, this);
 }
@@ -64,11 +64,11 @@ void TiledSet::Init(GID first, GIDManager* man){
     catch(LEngineFileException fe){
         std::stringstream ss;
         ss << fe.what() << "\n Filename is " << fe.fileName;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
         initializationOK=false;
         return;
     }
-    if(texture==NULL){ErrorLog::WriteToFile("[C++; TiledSet Constructor] Couldn't load texture from name " + textureName, ErrorLog::GenericLogFile);}
+    if(texture==NULL){K_Log.Write("[C++; TiledSet Constructor] Couldn't load texture from name " + textureName);}
 
     tilesWide  = texture->GetWidth()  / tileWidth;
     tilesHigh  = texture->GetHeight() / tileHeight;
@@ -96,7 +96,7 @@ void TiledSet::LoadTexture(){
         K_TextureMan.LoadItem(textureName, textureName);
         texture=K_TextureMan.GetItem(textureName);
         if(texture==NULL){
-            throw LEngineFileException("Couldn't load texture" + textureName, ErrorLog::GenericLogFile);
+            throw LEngineFileException("Couldn't load texture" + textureName, Log::typeDefault);
         }
     }
 }
@@ -182,7 +182,7 @@ void TiledSet::LoadHeightMaps(GID id){
     for (; xit<coord.GetRight(); xit++){
         //std::stringstream ss;
         //ss << "Right: " << coord.GetRight() <<  "Left: " << coord.GetLeft() <<  "Top: " << coord.GetTop() <<  "Bottom: " << coord.GetBottom();
-        //ErrorLog::WriteToFile(ss.str());
+        //K_Log.Write(ss.str());
         if(texture->GetPixelAlpha(xit,coord.GetTop())==255){ //top of image
            topsolid+=1;
            topHit=true;
@@ -589,7 +589,7 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer){
             ss << "Couldn't add TileLayer named: " << layer->layerName
             << "\n    With Depth of: " << depth
             << "\n    Depth already taken";
-            ErrorLog::WriteToFile(ss.str());
+            K_Log.Write(ss.str());
             return false;
         }
 
@@ -714,8 +714,8 @@ void TiledData::TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, Attri
     for (xml_attribute<> *attr = rootAttributeNode->first_attribute(); attr; attr = attr->next_attribute()){
         key=attr->name();
         value=attr->value();
-        //ErrorLog::WriteToFile("Key is ");
-        //ErrorLog::WriteToFile(key);
+        //K_Log.Write("Key is ");
+        //K_Log.Write(key);
 
         //If the attribute map passed in is empty, simply fill it with every attribute found
         if(emptyMap){
@@ -880,12 +880,12 @@ std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
             rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
         catch(RSC_Map::Exception e){
-            ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+            K_Log.Write(e.what());
             throw e;
         }
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
         throw e;
     }
 
@@ -904,7 +904,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     std::stringstream mapInitializeDebugMessage;
     mapInitializeDebugMessage << "[C++; RSC_MapImpl:LoadTMX] Filename is: " << TMXname;
 
-    ErrorLog::WriteToFile(mapInitializeDebugMessage.str(), ErrorLog::GenericLogFile);
+    K_Log.Write(mapInitializeDebugMessage.str());
     using namespace rapidxml;
     xml_document<> doc;    // character type defaults to char
     AttributeMap attributes; //this will contain all of the attributes of a given part of the map as the function goes on
@@ -941,7 +941,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
         std::stringstream ss;
         ss << "Couldn't load map named: " << TMXname
         << "\n    Tile width and height are not 16 pixels";
-        ErrorLog::WriteToFile(ss.str());
+        K_Log.Write(ss.str());
     }
 
     //Translate background color from string to int
@@ -956,7 +956,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     //Main loop, gets all of <map> children
     for(; node!=0; node=node->next_sibling()){
         std::string nn(node->name());
-        ErrorLog::WriteToFile(nn);
+        K_Log.Write(nn);
 
         if(nn=="properties"){ //Map properties; only one of these in the whole map file; specifies the global script and what entities it listens to
             std::string listenString="";
@@ -998,8 +998,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
 
                     file.reset( LoadGenericFile(externalTilesetFilePath.str()).release() );
 
-                    if(file.get()->length==0){ErrorLog::WriteToFile("File Length is null", ErrorLog::GenericLogFile);}
-                    if(file.get()->GetData()==NULL){ErrorLog::WriteToFile("Data is null", ErrorLog::GenericLogFile);}
+                    if(file.get()->length==0){K_Log.Write("File Length is null");}
+                    if(file.get()->GetData()==NULL){K_Log.Write("Data is null");}
 
                     xmlFile = std::string(file->GetData(),file->length);
                     tileSetDoc.parse<0>((char*)xmlFile.c_str());
@@ -1009,13 +1009,13 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
                 catch(rapidxml::parse_error e){
                     std::stringstream ss;
                     ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a rapidxml::parse error" << "\n    What is: " << e.what();
-                    ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+                    K_Log.Write(ss.str());
 
                 }
                 catch(LEngineFileException e){
                     std::stringstream ss;
                     ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a fileException error" << "\n    What is: " << e.what();
-                    ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+                    K_Log.Write(ss.str());
                 }
             }
             //External Tilesets don't have their first gid included in their file, only the actual map assigns gids
@@ -1068,7 +1068,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
                     }
                 }
                 if(engineRange==NULL){
-                    //ErrorLog::WriteToFile("Oh Noes");
+                    //K_Log.Write("Oh Noes");
                     break;
                 }
 
@@ -1137,7 +1137,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     GID id=0;
     for(subnode=subnode->first_node(); subnode; subnode=subnode->next_sibling()){
         valueString=subnode->first_attribute("gid")->value();
-        //ErrorLog::WriteToFile("ValueString is: ", valueString);
+        //K_Log.Write("ValueString is: ", valueString);
         id=strtol( valueString.c_str(), NULL, 10);
 
         data.push_back(id);
@@ -1166,7 +1166,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
         }
     }
     tileLayer->animatedRefreshRate=animationRate; //if zero, no animation will occur
-    //ErrorLog::WriteToFile(TMXname, ErrorLog::GenericLogFile);
+    //K_Log.Write(TMXname, Log::typeDefault);
 
     return tileLayer;
 }
@@ -1282,7 +1282,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer (rapidxml::
             TMXProcessEventListeners(listenString,newObj.eventSources);
 
             //Process more complicated properties
-            ErrorLog::WriteToFile(newObj.type, ErrorLog::GenericLogFile);
+            K_Log.Write(newObj.type);
             if(newObj.type!=""){
                 if(newObj.type==global_TiledStrings[TILED_EVT_MAP_ENTRANCE]){
                     MapEntrance e;
@@ -1344,7 +1344,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
         if(texture==NULL){
             std::stringstream ss;
             ss << "Couldn't load texture for Image Layer " << texturePath;
-            ErrorLog::WriteToFile(ss.str());
+            K_Log.Write(ss.str());
             return NULL;
         }
     }
@@ -1473,10 +1473,9 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(rapidxml::xml_node<>* tiled
                         ts->tileAnimations[tilePropertyID]   = animation;
                     }
                     else{
-                        ErrorLog::WriteToFile("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name
+                        K_Log.Write("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name
                                               + ": Animation named " + animationName + " in Sprite " + spriteName
-                                              + " cannot be loaded as it was not defined using an 'animationSequence' tag",
-                                              ErrorLog::GenericLogFile);
+                                              + " cannot be loaded as it was not defined using an 'animationSequence' tag");                                              
                     }
                 }
             }

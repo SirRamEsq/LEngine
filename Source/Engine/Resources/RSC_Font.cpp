@@ -42,7 +42,7 @@ std::unique_ptr<RSC_Font> RSC_Font::LoadResource(const std::string& fname){
         font = make_unique<RSC_Font>(fname, std::move(data));
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what(), Log::SEVERITY::ERROR);
     }
 
     return font;

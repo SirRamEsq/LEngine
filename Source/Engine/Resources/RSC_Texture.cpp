@@ -1,5 +1,6 @@
 #include "RSC_Texture.h"
 
+#include "../Kernel.h"
 #include "ResourceLoading.h"
 #include "../Defines.h"
 #include <cstring>
@@ -95,7 +96,7 @@ bool RSC_Texture::ExportTexture(const char* path) const {
     if(SOIL_save_image(path,SOIL_SAVE_TYPE_BMP,mTexData.width,mTexData.height,mBytesPerPixel,mTexData.data.get())==0){
         std::string pathString (path);
         std::string errorString = "Texture Write to Disk Failed @ Path: " + pathString;
-        ErrorLog::WriteToFile(errorString, ErrorLog::GenericLogFile);
+        K_Log.Write(errorString);
         throw Exception(errorString);
     }
 }
@@ -189,7 +190,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
         ss << "[C++] RSC_Texture:GetPixelAlpha; Texture X index out of bounds" <<
                 "\n    X is: " << x <<
                 "\n    W is: " << mTexData.width;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
 
     }
     else if(y>=mTexData.height){
@@ -197,7 +198,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
         ss << "[C++] RSC_Texture:GetPixelAlpha; Texture Y index out of bounds" <<
                 "\n    Y is: " << y <<
                 "\n    H is: " << mTexData.height;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
     }
     else{
         int index=(x+(y*mTexData.width)) * 4; //get Correct pixel index
@@ -221,7 +222,7 @@ int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, L
 
     GLint errorcode=glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(errorcode != GL_FRAMEBUFFER_COMPLETE){
-        ErrorLog::WriteToFile("ERROR: Framebuffer not complete, error code: " + errorcode, ErrorLog::GenericLogFile);
+        K_Log.Write("ERROR: Framebuffer not complete, error code: " + errorcode);
         return false;
     }
 
@@ -279,14 +280,14 @@ std::unique_ptr<RSC_Texture> RSC_Texture::LoadResource(const std::string& fname)
         if(data.get()->GetData()==NULL){
             std::stringstream ss;
             ss << "Texture " << fullPath << " couldn't be found.";
-            ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::ERROR, ErrorLog::GenericLogFile);
+            K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
             return NULL;
         }
         texture = make_unique<RSC_Texture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
         texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
         throw e;
     }
 

@@ -44,7 +44,9 @@ RenderSpriteBatch::RenderSpriteBatch(RenderManager* rm, const std::string& tex, 
     currentSize=0;
 	//this dependency on the Kernel is ok, this is just to grab a resource
 	texture=K_TextureMan.GetItem(textureName);
-	if(texture==NULL){ErrorLog::WriteToFile("ERROR: RenderSpriteBatch; Couldn't find texture named: ", textureName);}
+	std::stringstream ss;
+	ss << "ERROR: RenderSpriteBatch; Couldn't find texture named: " << textureName;
+	if(texture==NULL){K_Log.Write(ss.str());}
 	AddToRenderManager();
 }
 

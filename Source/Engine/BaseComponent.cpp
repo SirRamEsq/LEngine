@@ -1,4 +1,5 @@
 #include "BaseComponent.h"
+#include "Kernel.h"
 #include "Errorlog.h"
 
 BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* p)
@@ -33,7 +34,7 @@ void BaseComponent::SetParentEID(EID p){
 	if(mManager->HasComponent(p)==false){
 		std::stringstream ss;
 		ss << "Parent with eid " << p << " Doesn't Exist";
-		ErrorLog::WriteToFile(ss.str());
+		K_Log.Write(ss.str());
 		SetParent(NULL);
 		return;
 	}

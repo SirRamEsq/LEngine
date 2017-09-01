@@ -1,6 +1,8 @@
 #include "RSC_Sound.h"
 #include "../Defines.h"
 #include "ResourceLoading.h"
+#include "../Kernel.h"
+
 //////////
 //LSOUND//
 //////////
@@ -35,7 +37,7 @@ std::unique_ptr<RSC_Sound> RSC_Sound::LoadResource(const std::string& fname){
         sound = make_unique<RSC_Sound>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
     }
 
     return sound;
@@ -87,7 +89,7 @@ std::unique_ptr<RSC_Music> RSC_Music::LoadResource(const std::string& fname){
         music = make_unique<RSC_Music>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
     }
 
     return music;

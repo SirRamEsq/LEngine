@@ -1,6 +1,8 @@
 #include "Kernel.h"
 #include "gui/imgui_LEngine.h"
 
+Log 						Kernel::log;
+
 SDLInit*					Kernel::SDLMan;
 InputManager				Kernel::inputMan;
 CommandLineArgs				Kernel::commandLine;
@@ -55,10 +57,8 @@ void ImGuiState::Reset(){
 }
 
 void Kernel::Close(){
-	ErrorLog::WriteToFile("Closing...", ErrorLog::GenericLogFile);
-
+	K_Log.Write("Closing");
 	stateMan.Close();
-	ErrorLog::CloseFiles();
 	SDLMan->CloseSDL();
 
 	rscTexMan	 .Clear();
@@ -81,9 +81,7 @@ void Kernel::Inst(){
 	Kernel::Inst(argc, argv);
 }
 void Kernel::Inst(int argc, char *argv[]){
-	ErrorLog::Inst();
-	ErrorLog::OpenFile(ErrorLog::GenericLogFile);
-	ErrorLog::WriteToFile("Starting up...", ErrorLog::GenericLogFile);
+	K_Log.Write("Starting up...");
 
 	PHYSFS_init(NULL);
 	std::string searchPath="Data/";
@@ -93,11 +91,13 @@ void Kernel::Inst(int argc, char *argv[]){
     if(physfsError!=NULL){
         std::stringstream ss;
         ss << "Physfs Error in Kernel Inst; Error: " << physfsError;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
     }
 
-	debugMode = (commandLine.Exists(L_CMD_DEBUG) == true);
+	commandLine.ParseArgs(argc, argv);
 
+	debugMode = (commandLine.GetValue(L_CMD_DEBUG) == "true");
+	K_Log.Write( commandLine.GetValue(L_CMD_DEBUG));
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
 	/// \TODO remove this, have InitSDL intialize everything
@@ -111,7 +111,13 @@ void Kernel::Inst(int argc, char *argv[]){
 	rscMapMan		.SetLoadFunction(&RSC_MapImpl::LoadResource   );
 	rscFontMan		.SetLoadFunction(&RSC_Font::LoadResource   );
 
-	commandLine.ParseArgs(argc, argv);
+	rscTexMan		.SetLog(&log);
+	rscSpriteMan	.SetLog(&log);
+	rscMusicMan		.SetLog(&log);
+	rscSoundMan		.SetLog(&log);
+	rscScriptMan	.SetLog(&log);
+	rscMapMan		.SetLog(&log);
+	rscFontMan		.SetLog(&log);
 
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
@@ -124,12 +130,31 @@ bool Kernel::DEBUG_MODE(){
 	return debugMode;
 }
 
+void Kernel::DEBUG_DebugWindowBegin(){
+	ImGui::Begin("DEBUG");
+}
+
+void Kernel::DEBUG_DebugWindowEnd(){
+	ImGui::End();
+}
+
+void Kernel::DEBUG_DisplayLog(){
+	auto entries = log.GetEntries();
+	ImGui::CollapsingHeader("Log");
+	
+	for(auto i = entries.begin(); i != entries.end(); i++){
+		ImGui::Text((*i)->ToString().c_str());
+	}
+}
+
 bool Kernel::Update(){
     inputManager.HandleInput();
 	ImGuiNewFrame(SDLMan->mMainWindow);
 
 	if(debugMode){
-		ImGui::ShowMetricsWindow();
+		DEBUG_DebugWindowBegin();
+		DEBUG_DisplayLog();
+		DEBUG_DebugWindowEnd();
 	}
 
 	nextGameTick = SDL_GetTicks() + SKIP_TICKS;
@@ -205,11 +230,11 @@ void Kernel::ImGuiCreateDeviceObjects(){
 		guiState.shaderHandle = make_unique<RSC_GLProgram>();
 
 		if(guiState.vertHandle->IsUsable() == false){
-			ErrorLog::WriteToFile("Couldn't load ImGui Vertex Shader", ErrorLog::GenericLogFile);
+			K_Log.Write("Couldn't load ImGui Vertex Shader");
 			throw LEngineException("Imgui No Vertex Shader");
 		}
 		if(guiState.fragHandle->IsUsable() == false){
-			ErrorLog::WriteToFile("Couldn't load ImGui Fragment Shader", ErrorLog::GenericLogFile);
+			K_Log.Write("Couldn't load ImGui Fragment Shader");
 			throw LEngineException("Imgui No Fragment Shader");
 		}
 		

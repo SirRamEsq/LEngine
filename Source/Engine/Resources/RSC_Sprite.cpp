@@ -251,7 +251,7 @@ bool RSC_Sprite::LoadFromXML(const char* dat, unsigned int fsize){
         else{
             std::stringstream ss;
             ss << "[C++] RSC_Sprite::LoadFromXML, couldn't load xml tag named " << animationNode->name() << " For sprite " << spriteName;
-            ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+            K_Log.Write(ss.str());
             continue;
         }
 
@@ -350,12 +350,12 @@ std::unique_ptr<RSC_Sprite> RSC_Sprite::LoadResource(const std::string& fname){
         }
         sprite = make_unique<RSC_Sprite>(fname);
         if(sprite->LoadFromXML(data.get()->GetData(), data.get()->length)==false){
-            ErrorLog::WriteToFile("Couldn't parse XML Sprite Data for sprite " + fname, ErrorLog::GenericLogFile);
+            K_Log.Write("Couldn't parse XML Sprite Data for sprite " + fname);
             return NULL;
         }
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
     }
 
     return sprite;
