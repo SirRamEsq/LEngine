@@ -65,7 +65,7 @@ ComponentCollision::ColBox::ColBox(CRect r, int i, ComponentPosition* pos, uint8
     if(r.w==0){r.w=1;}
     if(r.h==0){r.h=1;}
     if(myPos == NULL){
-        ErrorLog::WriteToFile("NULL");
+        K_Log.Write("NULL");
     }
     rect=r;
     id=i;
@@ -93,7 +93,7 @@ void ComponentCollision::SetPrimaryCollisionBox(int boxid, bool ntile){
     else{
         std::stringstream ss;
         ss << "Couldn't find box id: " <<  boxid;
-        ErrorLog::WriteToFile(ss.str(), logFileName);
+        K_Log.Write(ss.str());
         return;
     }
     OrderList();

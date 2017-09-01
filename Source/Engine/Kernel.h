@@ -80,6 +80,7 @@ class Kernel{
 		static GenericContainer<RSC_GLProgram>	rscShaderProgramMan;
 
 		static InputManager inputManager;
+		static Log log;
 
 		static ImGuiState guiState;
 
@@ -89,6 +90,7 @@ class Kernel{
 		static void ImGuiInvalidateFontTexture();
 
 		static Coord2df GetResolution();
+
 	private:
 		static bool debugMode;
 
@@ -106,6 +108,11 @@ class Kernel{
 		static int returnValue;
 		static SDLInit* SDLMan;
 
+		static void DEBUG_DebugWindowBegin();
+		static void DEBUG_DisplayLog();
+		static void DEBUG_DebugWindowEnd();
+
+
 };
 
 //for more laconic access
@@ -122,5 +129,7 @@ class Kernel{
 #define K_FontMan		Kernel::rscFontMan
 #define K_ShaderMan		Kernel::rscShaderMan
 #define K_ShaderProgramMan		Kernel::rscShaderProgramMan
+
+#define K_Log			Kernel::log
 
 #endif

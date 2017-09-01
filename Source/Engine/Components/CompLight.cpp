@@ -33,7 +33,7 @@ void ComponentLight::Update(){}
 /*
 void ComponentLight::Render(const CRect& drawArea){
     RSC_Texture* texture=K_TextureMan.GetItem("SpotLight.png");
-    if(texture==NULL){ErrorLog::WriteToFile("CARP"); return;}
+    if(texture==NULL){K_Log.Write("CARP"); return;}
     //texture->BlitArea(CRect(32,0,texture->GetWidth(),texture->GetHeight()), L_ORIGIN_CENTER);
     texture->Bind();
 

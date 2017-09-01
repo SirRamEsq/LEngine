@@ -198,7 +198,7 @@ RenderManager::RenderManager()
 		if(defaultProgramSprite == NULL){ ss << "\n -Sprite shader program could not be loaded";}
 		if(defaultProgramLight == NULL){ ss << "\n -Light shader program could not be loaded";}
 		if(defaultProgramImage == NULL){ ss << "\n -Image shader program could not be loaded";}
-		ErrorLog::WriteToFile(ss.str(), ErrorLog::SEVERITY::FATAL);
+		K_Log.Write(ss.str(), Log::SEVERITY::FATAL);
 		throw LEngineException(ss.str());
 	}
 }

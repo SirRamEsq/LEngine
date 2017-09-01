@@ -1,4 +1,5 @@
 #include "ResourceLoading.h"
+#include "../Kernel.h"
 
 /*
 LEvent* LoadEVENT(const std::string& fname){
@@ -9,7 +10,7 @@ LEvent* LoadEVENT(const std::string& fname){
         std::stringstream ss;
         ss << "Couldn't find event file: " << strfname.c_str() << "\n"
         << "Physfs Error: " << PHYSFS_getLastError();
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str(), Log::typeDefault);
         return NULL;
     }
 
@@ -25,7 +26,7 @@ LEvent* LoadEVENT(const std::string& fname){
     PHYSFS_seek(pfile, 0);
     uint32_t fileSize=PHYSFS_fileLength(pfile);
     if(fileSize<0){
-        ErrorLog::WriteToFile("Couldn't Load event", ErrorLog::GenericLogFile);
+        K_Log.Write("Couldn't Load event", Log::typeDefault);
         return NULL;
     }
     file=new char[fileSize];
@@ -100,7 +101,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     if(physfsError!=NULL){
         std::stringstream ss;
         ss << "Physfs Error in Generic File '" << fileName << "' Error: " << physfsError;
-        ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+        K_Log.Write(ss.str());
 		throw LEngineFileException(ss.str(), fileName);
     }
 

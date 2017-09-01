@@ -7,5 +7,5 @@ colormake --file ./Makefile
 #if file exists, clear output and run
 if [ -f ./bin/LEngine ]; then
 	clear
-	./bin/LEngine -map MAP1.tmx
+	./bin/LEngine -debug true
 fi

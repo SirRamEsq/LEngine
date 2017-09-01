@@ -78,7 +78,7 @@ enum L_CMD_ENUM {
     L_CMD_RESOLUTION_W=1,
     L_CMD_RESOLUTION_H=2,
 	L_CMD_DEBUG=3,
-    L_CMD_LAST=3
+    L_CMD_LAST=4
 };
 
 //Origin of a drawn image

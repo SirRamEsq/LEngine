@@ -33,7 +33,7 @@ RSC_Background::RSC_Background(std::string spr, std::string ani, int xx, int yy,
 
     const RSC_Sprite* sprite=K_SpriteMan.GetItem(spr);
     if(sprite!=NULL){
-        ErrorLog::WriteToFile(spr, ani);
+        K_Log.Write(spr);
         //width=sprite->GetWidth();
         //height=sprite->GetHeight();
     }

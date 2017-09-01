@@ -1,20 +1,87 @@
 #include "Errorlog.h"
 #include "Defines.h"
+#include "SDLInit.h"
 #include <exception>
 
+/////////
+//Entry//
+/////////
+Log::Entry::Entry(const std::string& text, Log::SEVERITY s, const std::string& ty, uint32_t time)
+	: message(text), severity(s), type(ty), timeStamp(time){
+
+}
+
+std::string Log::Entry::ToString() const{
+	std::stringstream ss;
+	ss << "[" <<  Log::SEVERITY_STR[severity] << "] "
+		<< message;
+	return ss.str();
+}
+
+///////
+//Log//
+///////
+std::map<Log::SEVERITY, std::string> Log::SEVERITY_STR = {
+    {Log::SEVERITY::FATAL, "[FATAL] "},
+    {Log::SEVERITY::ERROR, "[ERROR] "},
+    {Log::SEVERITY::WARN,  "[WARN]  "},
+    {Log::SEVERITY::INFO,  "[INFO]  "},
+    {Log::SEVERITY::DEBUG, "[DEBUG] "},
+    {Log::SEVERITY::TRACE, "[TRACE] "}
+};
+const std::string Log::logPath       = "Logs/";
+const std::string Log::typeDefault   = "DEFAULT";
+const std::string Log::fileExtension = ".txt" ;
+
+Log::Log(){
+	entryFilter = NULL;
+}
+
+Log::~Log(){
+
+}
+
+void Log::SetEntryFilter(fp_EntryFilter filter){
+	entryFilter = filter;
+}
+
+std::vector<const Log::Entry*> Log::GetEntries() const{
+	std::vector<const Entry*> returnEntries;	
+	for(auto i = entries.begin(); i != entries.end(); i++){
+		if(entryFilter != NULL){
+			//ignore entry if returns false
+			if(not entryFilter(*i)){
+				continue;
+			}
+		}
+
+		returnEntries.push_back( &(*i) );
+	}
+	return returnEntries;
+}
+
+void Log::Write(const std::string& text, Log::SEVERITY severity, const std::string& type) const{
+	entries.push_back(Entry(text,severity,type,SDL_GetTicks()));
+}
+
+void Log::WriteToFile(const std::vector<const Entry*> _entries, const std::string& fileName) const{
+
+}
+
+/*
 std::map<std::string, std::unique_ptr<std::ofstream> > ErrorLog::errorFiles;
-std::map<ErrorLog::SEVERITY, std::string> ErrorLog::SEVERITY_TAGS = {
-    {ErrorLog::SEVERITY::FATAL, "[FATAL] "},
-    {ErrorLog::SEVERITY::ERROR, "[ERROR] "},
-    {ErrorLog::SEVERITY::WARN,  "[WARN]  "},
-    {ErrorLog::SEVERITY::INFO,  "[INFO]  "},
-    {ErrorLog::SEVERITY::DEBUG, "[DEBUG] "},
-    {ErrorLog::SEVERITY::TRACE, "[TRACE] "}
+std::map<Log::SEVERITY, std::string> Log::SEVERITY_TAGS = {
+    {Log::SEVERITY::FATAL, "[FATAL] "},
+    {Log::SEVERITY::ERROR, "[ERROR] "},
+    {Log::SEVERITY::WARN,  "[WARN]  "},
+    {Log::SEVERITY::INFO,  "[INFO]  "},
+    {Log::SEVERITY::DEBUG, "[DEBUG] "},
+    {Log::SEVERITY::TRACE, "[TRACE] "}
 };
 ErrorLog* ErrorLog::pointertoself=NULL;
 ErrorLog::ErrorLog(){}
 const std::string ErrorLog::logPath         = "Logs/";
-const std::string ErrorLog::GenericLogFile  = "Error";
+const std::string Log::typeDefault  = "Error";
 const std::string ErrorLog::fileExtension   = ".txt" ;
 bool ErrorLog::noThrow   = true ;
 
@@ -62,14 +129,15 @@ std::ofstream* ErrorLog::GetFilePointer(const std::string& fname){
     return filePointerIt->second.get();
 }
 
-void ErrorLog::WriteToFile(const std::string& text, SEVERITY severity, const std::string& fname){
+void K_Log.Write(const std::string& text, SEVERITY severity, const std::string& fname){
     std::string newText = SEVERITY_TAGS[severity] + text;
     WriteToFile(newText, fname);
 }
 
-void ErrorLog::WriteToFile(const std::string& text, const std::string& fname){
+void K_Log.Write(const std::string& text, const std::string& fname){
     std::ofstream* filePointer=GetFilePointer(fname);
     if(filePointer==NULL){return;}
     *filePointer << "\n" << text;
     filePointer->flush();
 }
+*/

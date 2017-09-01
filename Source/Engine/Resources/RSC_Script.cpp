@@ -1,6 +1,7 @@
 #include "RSC_Script.h"
 #include "../Defines.h"
 #include "ResourceLoading.h"
+#include "../Kernel.h"
 
 RSC_Script::RSC_Script(std::string sname, const char* dat, unsigned int fsize)
  : scriptName(sname), script(dat,fsize){}
@@ -19,7 +20,7 @@ RSC_Script::RSC_Script(std::string sname, const char* dat, unsigned int fsize)
         script = make_unique<RSC_Script>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
-        ErrorLog::WriteToFile(e.what(), ErrorLog::GenericLogFile);
+        K_Log.Write(e.what());
     }
 
     return script;

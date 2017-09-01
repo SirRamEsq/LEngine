@@ -1,4 +1,4 @@
-
+#include "../Kernel.h"
 #include "RenderPrimitives.h"
 #include "../Resources/RSC_Texture.h"
 
@@ -36,12 +36,12 @@ void RenderText::Render(const RenderCamera* camera, const RSC_GLProgram* program
         del=false;
     }
     if(defaultFont==NULL){
-            ErrorLog::WriteToFile("Font is NULL", ErrorLog::GenericLogFile);
+            K_Log.Write("Font is NULL", Log::SEVERITY::ERROR);
     }
     if(mTexture==NULL){
         SDL_Surface* surface= TTF_RenderUTF8_Blended( defaultFont, text.c_str(), color );
         if(surface==NULL){
-            ErrorLog::WriteToFile("Text's SDL Surface is NULL", ErrorLog::GenericLogFile);
+            K_Log.Write("Text's SDL Surface is NULL", Log::SEVERITY::ERROR);
         }
         w=surface->w;
         h=surface->h;

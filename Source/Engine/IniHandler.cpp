@@ -1,4 +1,5 @@
 #include "IniHandler.h"
+#include "Kernel.h"
 
 IniHandler::IniHandler(){}
 
@@ -11,7 +12,7 @@ bool IniHandler::OpenReadFile(const std::string& fname){
     if(iniRead.is_open()){CloseReadFile();}
     iniRead.open(fname.c_str());
     if(!iniRead.good()){
-        ErrorLog::WriteToFile("IniHandler::OpenReadFile file isn't good", ErrorLog::GenericLogFile);
+        K_Log.Write("IniHandler::OpenReadFile file isn't good", Log::SEVERITY::ERROR);
         return false;
     }
     return true;
@@ -21,7 +22,7 @@ bool IniHandler::OpenWriteFile(const std::string& fname){
     if(iniWrite.is_open()){CloseWriteFile();}
     iniWrite.open(fname.c_str());
     if(!iniWrite.good()){
-        ErrorLog::WriteToFile("IniHandler::OpenWriteFile file isn't good", ErrorLog::GenericLogFile);
+        K_Log.Write("IniHandler::OpenWriteFile file isn't good", Log::SEVERITY::ERROR);
         return false;
     }
     return true;

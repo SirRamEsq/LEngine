@@ -19,6 +19,7 @@ class GenericContainer{
         ~GenericContainer();
 
         void SetLoadFunction(LoadFunction func);
+		void SetLog(const Log* l);
 
         const T*           GetItem      (const std::string& name);
         std::unique_ptr<T> GetItemCopy  (const std::string& name);
@@ -41,6 +42,8 @@ class GenericContainer{
     private:
         tMap items;
         LoadFunction function;
+		const Log* log;
+		Log defaultLog;
 };
 
 template <class T>
@@ -49,8 +52,14 @@ void GenericContainer<T>::SetLoadFunction(LoadFunction func){
 }
 
 template <class T>
+void GenericContainer<T>::SetLog(const Log* l){
+   log = l;
+}
+
+template <class T>
 GenericContainer<T>::GenericContainer(){
     function=NULL;
+	log = &defaultLog;
 }
 
 template <class T>
@@ -91,8 +100,10 @@ template <class T>
 bool GenericContainer<T>::LoadItem(const std::string& name, std::unique_ptr<const T>& item){
     mapIt i=items.find(name);
     if(i!=items.end()){
-       ErrorLog::WriteToFile("Generic Container already contains an item called", name);
-       return false;
+		std::stringstream ss;
+		ss << "Generic Container already contains an item called" << name;
+		log->Write(ss.str());
+		return false;
     }
 
     items[name]=std::unique_ptr<const T>(item.release());
@@ -103,18 +114,24 @@ template <class T>
 bool GenericContainer<T>::LoadItem(const std::string& name, const std::string& fname){
     mapIt i=items.find(name);
     if(i!=items.end()){
-       ErrorLog::WriteToFile("Generic Container already contains an item called ", name);
+		std::stringstream ss;
+		ss << "Generic Container already contains an item called" << name;
+		log->Write(ss.str());
        return false;
     }
 
     if(function==NULL){
-        ErrorLog::WriteToFile("Generic Container doesn't have a function specified to load the resource ", name);
+		std::stringstream ss;
+		ss <<  "Generic Container doesn't have a function specified to load the resource "<< name;
+		log->Write(ss.str());
         return false;
     }
 
     std::unique_ptr<const T> newItem (function(fname));
     if(newItem.get()==NULL){
-        ErrorLog::WriteToFile("Couldn't find resource named: ", name);
+		std::stringstream ss;
+		ss <<  "Couldn't find resource named "<< name;
+		log->Write(ss.str());
         return false;
     }
 
@@ -146,7 +163,7 @@ const T* GenericContainer<T>::GetLoadItem   (const std::string& name, const std:
         if(LoadItem(name,fname)==false){
 			std::stringstream ss;
 			ss << "Could not get or load item named " << name << " At path " << fname;
-            ErrorLog::WriteToFile(ss.str(), ErrorLog::GenericLogFile);
+            log->Write(ss.str());
 			
 			//throw LEngineException(ss.str());
 			return NULL;
