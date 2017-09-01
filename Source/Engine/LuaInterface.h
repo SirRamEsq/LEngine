@@ -155,11 +155,14 @@ class LuaInterface{
 	protected:
 		lua_State* GetState() {return lState;}
 
+		///Creates 'CPP' table in the global table
+		void ExposeCPP();
+
 	private:
 		int GetTypeFunction(const std::string& type);
 
 		ErrorCallback errorCallbackFunction;
-		//All entities derive from this
+		///All entities derive from this
 		const RSC_Script* baseScript;
 		int baseLuaClass;
 		///Map type names to lua generator functions
@@ -169,16 +172,13 @@ class LuaInterface{
 		int RunScriptLoadFromChunk(const RSC_Script* script);
 		int RunScriptGetChunk(const RSC_Script* script);
 
-		//Creates 'CPP' table in the global table
-		void ExposeCPP();
-
-		//used to access component managers
+		///used to access component managers
 		GameState* parentState;
 
-		//this class is the owner of the lua state for the current gamestate
+		///this class is the owner of the lua state for the current gamestate
 		lua_State* lState;
 
-		//Map of scripts to (a reference of) their lua functions that return a new instance.
+		///Map of scripts to (a reference of) their lua functions that return a new instance.
 		std::map<const RSC_Script*, int> classes;
 };
 

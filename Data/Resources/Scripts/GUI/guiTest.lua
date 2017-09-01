@@ -1,4 +1,4 @@
---- ImGui TestBed
+-- ImGui TestBed
 -- Use this for a reference as to how to use the CPP.ImGui api
 
 local result=0;
@@ -51,7 +51,7 @@ function container.NewGui(baseclass)
 		gui.frameCounterMax=200
 		gui.frameCounter=0
 		gui.noBG=false
-		gui.translateY = 150
+		gui.translateY = 200
 		gui.simulateKeyPress = true
 
 		gui.font = "ebFonts/wisdom.ttf"
@@ -115,7 +115,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
 
-		gui.particleTimerMax = 30
+		gui.particleTimerMax = 500
 		gui.particleTimer = gui.particleTimerMax
 	end
 
