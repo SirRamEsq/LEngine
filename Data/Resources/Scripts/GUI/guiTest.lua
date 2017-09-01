@@ -107,13 +107,16 @@ function container.NewGui(baseclass)
 		--gui.particleCreator:SetAnimationFrame(0)
 		gui.particleCreator:SetUsePoint(true)
 		gui.particleCreator:SetPoint(CPP.Coord2df(xPos,yPos-1))
-		gui.particleCreator:SetPointIntensity(55)
+		gui.particleCreator:SetPointIntensity(15)
 		gui.particleCreator:SetRandomUV(false)
 		gui.particleCreator:SetWarpQuads(false)
 		
 		gui.particleCreator:SetShape(4);
 		gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
+
+		gui.particleTimerMax = 200
+		gui.particleTimer = gui.particleTimerMax
 	end
 
 	function gui.Update()
@@ -241,6 +244,12 @@ function container.NewGui(baseclass)
 			if(popFont)then
 				CPP.ImGui.PopFont(1)
 			end
+		end
+
+		gui.particleTimer = gui.particleTimer - 1
+		if(gui.particleTimer <= 0 )then
+			gui.particleTimer = gui.particleTimerMax;
+			gui.particleCreator:Start()
 		end
 	end
 

@@ -105,6 +105,7 @@ class ParticleCreator : public RenderableObjectWorld{
 
         unsigned int mParticleLifeSpan; //Time until particles end
         unsigned int mLifeSpan;         //Time until particle Creator end
+		unsigned int mLifeSpanMax;		//Max time for life span
 
         const RSC_Sprite* mSprite;
 		const LAnimation* mAnimation;
