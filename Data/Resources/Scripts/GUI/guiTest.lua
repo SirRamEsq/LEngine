@@ -107,6 +107,7 @@ function container.NewGui(baseclass)
 		--gui.particleCreator:SetAnimationFrame(0)
 		gui.particleCreator:SetUsePoint(true)
 		gui.particleCreator:SetPoint(CPP.Coord2df(xPos,yPos-1))
+		gui.particleCreator:SetPointIntensity(55)
 		gui.particleCreator:SetRandomUV(false)
 		gui.particleCreator:SetWarpQuads(false)
 		

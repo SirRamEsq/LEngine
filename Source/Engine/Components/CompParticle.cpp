@@ -36,6 +36,7 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
 
 	mUsePoint = false;
 	mPointCoordinates = Coord2df(0.0, 0.0);
+	mPointIntensity = 18.0;
 
     mParticlesToRender=0;
     mRandom.SetSeed(mRandom.GenerateSeed());
@@ -48,6 +49,7 @@ ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particle
 
     mParticleBufferReadLocation=0;
     mParticleBufferWriteLocation=0;
+
     AddToRenderManager();
 }
 
@@ -57,6 +59,10 @@ ParticleCreator::~ParticleCreator(){
 
 void ParticleCreator::SetUsePoint(bool value){
 	mUsePoint = value;
+}
+
+void ParticleCreator::SetPointIntensity(float value){
+	mPointIntensity = value;
 }
 
 void ParticleCreator::SetPoint(const Coord2df& v){
@@ -238,7 +244,7 @@ RSC_GLShader* ParticleCreator::GenerateVertexShader(){
     ss
     << PARTICLE_SHADER_VERTEX_DECLARATIONS;
 	if(mUsePoint){
-		ss << PARTICLE_SHADER_VERTEX_POINT_BEGIN;
+		ss << PARTICLE_SHADER_VERTEX_POINT_BEGIN(mPointIntensity);
 	}
 	else{
 		ss << PARTICLE_SHADER_VERTEX_MAIN_BEGIN;

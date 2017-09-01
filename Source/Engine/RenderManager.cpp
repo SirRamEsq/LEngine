@@ -230,10 +230,9 @@ void RenderManager::Render(){
 	}
 
 	glLoadIdentity();
-	//New Rendering
 
 	if(!(mCameras).empty()){
-		//World objects are rendered after the camera sets its matrix (this includes sprite batches)
+		//World objects are rendered after the camera sets its matrix 
 		auto currentCamera = mCameras.begin();
 		(*currentCamera)->Bind(GlobalCameraUBO);
 		for(auto i=objectsWorld.begin(); i!=objectsWorld.end(); i++){
@@ -441,7 +440,7 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
 
 std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(const std::string& vertName, const std::string& fragName){
 	std::unique_ptr<const RSC_GLShader> fragShader(make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(fragName), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> vertShader(new RSC_GLShader(RSC_GLShader::LoadShaderFromFile(vertName),   SHADER_VERTEX ));
+	std::unique_ptr<const RSC_GLShader> vertShader(make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(vertName), SHADER_VERTEX  ));
 
 	if(fragShader->GetShaderID()!=0){K_ShaderMan.LoadItem(fragName, fragShader);}
 	if(vertShader->GetShaderID()!=0){K_ShaderMan.LoadItem(vertName, vertShader);}
