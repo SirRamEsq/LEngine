@@ -588,14 +588,14 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
 
     if(mState==PARTICLE_CREATOR_STOPPING){
         if((mParticleBufferReadLocation + mParticlesToRender > mMaxParticles)){
-            int headRenderStart= mParticleBufferReadLocation;
-            int headRenderSize = mMaxParticles - mParticleBufferReadLocation;
+            int headRenderStart = mParticleBufferReadLocation;
+            int headRenderSize  = mMaxParticles - mParticleBufferReadLocation;
 
-            int tailRenderStart= 0;
-            int tailRenderSize = mParticlesToRender - headRenderSize;
+            int tailRenderStart = 0;
+            int tailRenderSize  = mParticlesToRender - headRenderSize;
 
-            glDrawArrays (GL_QUADS, headRenderStart, headRenderSize*4);
-            glDrawArrays (GL_QUADS, tailRenderStart, tailRenderSize*4);
+            glDrawArrays (GL_QUADS, headRenderStart*4, headRenderSize*4);
+            glDrawArrays (GL_QUADS, tailRenderStart*4, tailRenderSize*4);
 
 			return;
         }
@@ -603,7 +603,7 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
             int renderStart= mParticleBufferReadLocation;
             int renderSize = mParticlesToRender;
 
-            glDrawArrays (GL_QUADS, renderStart, renderSize*4);
+            glDrawArrays (GL_QUADS, renderStart*4, renderSize*4);
 
 			return;
 		}
@@ -629,8 +629,10 @@ ComponentParticle::~ComponentParticle(){
 }
 
 void ComponentParticle::Update(){
-    for(int i=0; i!=mParticleCreators.size(); i++){
-        auto pCreator=(mParticleCreators[i]).get();
+	//use while loop so elements can be deleted mid loop
+	auto i = mParticleCreators.begin();
+    while(i != mParticleCreators.end()){
+        auto pCreator = (i->get());
 
 		//update
         pCreator->Update();
@@ -642,7 +644,10 @@ void ComponentParticle::Update(){
 
         if(pCreator->mLifeSpan==1){
             if(pCreator->mState==PARTICLE_CREATOR_STOPPED){
-				//Delete
+				//returns item after the one erased, can be container::end
+				i = mParticleCreators.erase(i);
+				//continue, do not increment, i already points to next element 
+				continue;
             }
             else if(pCreator->mState==PARTICLE_CREATOR_STOPPING){
 				//ignore
@@ -652,6 +657,8 @@ void ComponentParticle::Update(){
 		else{
 			pCreator->mLifeSpan--;
 		}
+		//iterate
+		i++;
     }
 }
 
