@@ -115,7 +115,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetEffect(2);
 		gui.particleCreator:Start();
 
-		gui.particleTimerMax = 200
+		gui.particleTimerMax = 30
 		gui.particleTimer = gui.particleTimerMax
 	end
 

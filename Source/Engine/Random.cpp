@@ -10,7 +10,7 @@ RandomGenerator::~RandomGenerator(){
 }
 
 int RandomGenerator::GenerateSeed(){
-    return ( SDL_GetTicks() % sizeof(int) );
+    return ( SDL_GetTicks() % 65535 );
 }
 
 void RandomGenerator::SetSeed(int seed){
