@@ -28,32 +28,6 @@ function container.NewBoxBreak(baseclass)
 		-----------------------
 		--C++ Interface setup--
 		-----------------------
-		--[[
-		box.depth		= box.LEngineData.depth;
-		box.parent		= box.LEngineData.parent;
-		box.EID			= box.LEngineData.entityID;
-		box.boxType = box.LEngineData.InitializationTable.boxType or 0
-		local EID = box.EID
-
-		box.mySpriteComp		= CPP.interface:GetSpriteComponent		(EID);
-		box.myPositionComp	= CPP.interface:GetPositionComponent (EID);
-		box.myParticleComp	= CPP.interface:GetParticleComponent (EID);
-
-		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
-
-		box.timerMax = 200
-		box.timer = 200
-		box.animation = "box";
-
-		if(boxType == 0)then
-			box.animation = "box";
-		end
-		box.sprite	 = CPP.interface:LoadSprite("SpriteLouie.xml");
-		box.animation = "Stand";
-		--]]
-		-----------------------
-		--C++ Interface setup--
-		-----------------------
 		box.depth			= box.LEngineData.depth;
 		box.parent		= box.LEngineData.parent;
 		box.CPPInterface	= CPP.interface
@@ -65,8 +39,6 @@ function container.NewBoxBreak(baseclass)
 		box.myParticleComp	= box.CPPInterface:GetParticleComponent (EID);
 
 
-		--box.sprite	 = CPP.interface:LoadSprite("SpriteLouie.xml");
-		--box.animation = "Stand";
 		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
 
 		box.timerMax = 200
@@ -76,14 +48,12 @@ function container.NewBoxBreak(baseclass)
 		--Particle Effects--
 		--------------------
 		Vec2d = box.myPositionComp:GetPositionLocal();
-		xPos = Vec2d.x;
-		yPos = Vec2d.y+10;
 		box.particleLifetime = 40;
 
 		box.particleCreator = box.myParticleComp:AddParticleCreator(5, box.particleLifetime);
 
-		local particlePositionMin = CPP.Coord2df(-2, -1);
-		local particlePositionMax = CPP.Coord2df( 2,	1);
+		local particlePositionMin = CPP.Coord2df(-8, -8);
+		local particlePositionMax = CPP.Coord2df( 8,  8);
 
 		local particleVelocityMin = CPP.Coord2df(-2.25, -0.25);
 		local particleVelocityMax = CPP.Coord2df(2.75,  0.25);
@@ -95,7 +65,7 @@ function container.NewBoxBreak(baseclass)
 
 		box.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		box.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
-		box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
+		--box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
 		box.particleCreator:SetParticlesPerFrame(10);
 		box.particleCreator:SetScalingX(2,1);
 		box.particleCreator:SetScalingY(2,1);
@@ -108,6 +78,8 @@ function container.NewBoxBreak(baseclass)
 		box.particleCreator:SetSprite(box.sprite)
 		box.particleCreator:SetAnimation(box.animation)
 		box.particleCreator:SetAnimationFrame(0)
+		gui.particleCreator:SetUsePoint(true)
+		gui.particleCreator:SetPoint(CPP.Coord2df(4,4))
 		box.particleCreator:SetRandomUV(true)
 		box.particleCreator:SetWarpQuads(true)
 		
