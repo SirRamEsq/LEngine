@@ -645,7 +645,10 @@ void ComponentParticle::Update(){
 		//decrease lifespan
 		//
 		//if lifespan is 0, live forever
-		if (pCreator->mLifeSpan == 0){continue;}
+		if (pCreator->mLifeSpan == 0){
+			i++;
+			continue;
+		}
 
         if(pCreator->mLifeSpan==1){
             if(pCreator->mState==PARTICLE_CREATOR_STOPPED){

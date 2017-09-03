@@ -155,24 +155,25 @@ void Kernel::DEBUG_DebugWindowEnd(){
 }
 
 void Kernel::DEBUG_DisplayLog(){
-	int newFlags = 0;
-	int index =0;
-	for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
-		bool pressed = debugLogFlags[index];
-		ImGui::Checkbox(i->second.c_str(), &pressed);
-		debugLogFlags[index]=pressed;
-		if(pressed){
-			newFlags += i->first;	
+	if(	ImGui::CollapsingHeader("Log")){
+		int newFlags = 0;
+		int index =0;
+		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
+			bool pressed = debugLogFlags[index];
+			ImGui::Checkbox(i->second.c_str(), &pressed);
+			debugLogFlags[index]=pressed;
+			if(pressed){
+				newFlags += i->first;	
+			}
+			index++;
 		}
-		index++;
-	}
 
-	log.SetEntryFilterFlags(newFlags);
-	auto entries = log.GetEntries();
-	ImGui::CollapsingHeader("Log");
-	
-	for(auto i = entries.begin(); i != entries.end(); i++){
-		ImGui::Text((*i)->ToString().c_str());
+		log.SetEntryFilterFlags(newFlags);
+		auto entries = log.GetEntries();
+
+		for(auto i = entries.begin(); i != entries.end(); i++){
+			ImGui::Text((*i)->ToString().c_str());
+		}
 	}
 }
 
