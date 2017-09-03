@@ -31,21 +31,17 @@ function NewCamera(baseclass)
 		camera.EID			= camera.LEngineData.entityID;
 		camera.pos			= CPP.Coord2df(camera.localDefault.x,camera.localDefault.y);
 
-		CPP.interface:WriteError(camera.EID, "EID is " .. tostring(camera.EID))
-		CPP.interface:WriteError(camera.EID, "Parent is " .. tostring(camera.parent))
 		camera.myPositionComp=CPP.interface:GetPositionComponent(camera.EID);
 		camera.myCameraComp	= CPP.interface:GetCameraComponent (camera.EID);
 		--just for giggles
-		local resolution = CPP.interface:GetResolution()
-		camera.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
+		--local resolution = CPP.interface:GetResolution()
+		--camera.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
 
 		--Set parent for All Component Managers (That have been added thus far: position and script)
 		--This will ensure that the parent script will be updated before this script
 		--Therefore, the entity the camera is following will move before the camera does
 		--This will ensure that the camera will always follow an up-to-date position and not lag behind
-		CPP.interface:WriteError(camera.EID, "Attempting to set Parent");
 		CPP.interface:SetParent(camera.EID, camera.parent)
-		CPP.interface:WriteError(camera.EID, "Parent set");
 
 		--instead of the component managing the position, the camera will manage on its own
 		--camera.myPositionComp:SetParent(0);
@@ -85,11 +81,7 @@ function NewCamera(baseclass)
 			if(newPos.y < 0)then newPos.y = 0 end
 			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight - camera.h end
 
-			CPP.interface:WriteError(camera.EID, "ParentX " .. parentPos.x);
-			CPP.interface:WriteError(camera.EID, "ParentY " .. parentPos.y);
 
-			CPP.interface:WriteError(camera.EID, "CameraX " .. newPos.x);
-			CPP.interface:WriteError(camera.EID, "CameraY " .. newPos.y);
 			camera.myPositionComp:SetPositionWorld(newPos)
 		end
 	end
