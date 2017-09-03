@@ -943,11 +943,13 @@ function container.NewLouie(baseclass)
 		tileID = layer:GetTile(tx,ty)
 		local hm = layer:UsesHMaps();
 		local isBox = layer:GetTileProperty(tileID, "isBox")
+		local boxType1 = 0
 
 		if(isBox == "true")then
 			local isBoxHat = layer:GetTileProperty(tileID, "isBoxHat")
 
 			if(isBoxHat == "true")then
+				boxType1 = 1
 				louie.GetHat()
 			end
 
@@ -956,7 +958,8 @@ function container.NewLouie(baseclass)
 			layer:UpdateRenderArea(CPP.CRect(tx,ty, 0,0))
 
 			--Display box break effect
-			CPP.interface:EntityNew('Effects/boxBreak.lua',tx*16,ty*16, louie.depth, 0, "BOXBREAK", "", {})
+			CPP.interface:EntityNew('Effects/boxBreak.lua',tx*16,ty*16, louie.depth, 0, "BOXBREAK", "",
+									{boxType = boxType1})
 
 			--Return true, indicating box was broken
 			return true

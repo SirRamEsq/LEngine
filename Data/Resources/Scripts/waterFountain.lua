@@ -38,8 +38,8 @@ function NewFountain(baseclass)
 		water.myParticleComp	= water.CPPInterface:GetParticleComponent (EID);
 
 
-		water.sprite	 = CPP.interface:LoadSprite("SpriteLouie.xml");
-		water.animation = "Stand";
+		--water.sprite	 = CPP.interface:LoadSprite("SpriteLouie.xml");
+		--water.animation = "Stand";
 		--------------------
 		--Particle Effects--
 		--------------------
@@ -75,16 +75,16 @@ function NewFountain(baseclass)
 		water.particleCreator:SetScalingX(6,8);
 		water.particleCreator:SetScalingY(6,8);
 		water.particleCreator:SetDepth(water.depth);
-		--water.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
-		water.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
+		water.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
+		--water.particleCreator:SetColor(1, 1, 1, 1,	1, 1, 1, 1);
 		--water.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
 		--water.particleCreator:SetFragmentShaderCode(particleShaderCode);
 		
-		water.particleCreator:SetSprite(water.sprite)
-		water.particleCreator:SetAnimation(water.animation)
-		water.particleCreator:SetAnimationFrame(0)
-		water.particleCreator:SetRandomUV(true)
-		water.particleCreator:SetWarpQuads(true)
+		--water.particleCreator:SetSprite(water.sprite)
+		--water.particleCreator:SetAnimation(water.animation)
+		--water.particleCreator:SetAnimationFrame(0)
+		--water.particleCreator:SetRandomUV(true)
+		--water.particleCreator:SetWarpQuads(true)
 		
 		water.particleCreator:SetShape(4);
 		water.particleCreator:SetEffect(2);

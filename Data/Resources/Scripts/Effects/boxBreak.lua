@@ -38,17 +38,20 @@ function container.NewBoxBreak(baseclass)
 		box.myPositionComp	= box.CPPInterface:GetPositionComponent (EID);
 		box.myParticleComp	= box.CPPInterface:GetParticleComponent (EID);
 
+		box.boxType = box.LEngineData.boxType or 0
+
 
 		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
 
 		box.timerMax = 200
 		box.timer = 200
-		box.animation = "box";
+		box.animation = "box"
+		if(box.boxType == 1)then box.animation = "boxHat" end
 		--------------------
 		--Particle Effects--
 		--------------------
 		Vec2d = box.myPositionComp:GetPositionLocal();
-		box.particleLifetime = 40;
+		box.particleLifetime = 30;
 
 		box.particleCreator = box.myParticleComp:AddParticleCreator(5, box.particleLifetime);
 
@@ -66,12 +69,12 @@ function container.NewBoxBreak(baseclass)
 		box.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		box.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		--box.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		box.particleCreator:SetParticlesPerFrame(10);
-		box.particleCreator:SetScalingX(2,1);
-		box.particleCreator:SetScalingY(2,1);
+		box.particleCreator:SetParticlesPerFrame(8);
+		box.particleCreator:SetScalingX(1,.5);
+		box.particleCreator:SetScalingY(1,.5);
 		box.particleCreator:SetDepth(box.depth);
 		--box.particleCreator:SetColor(0.1, 0.6, 0.7, 0.1,	0.2, 0.8, 0.9, 1.0);
-		box.particleCreator:SetColor(0.75, 0.75, 0.75, 0.75,	1, 1, 1, 1);
+		box.particleCreator:SetColor(0.9, 0.9, 0.9, 1,	1, 1, 1, 1);
 		--box.particleCreator:SetColor(0.0, 0.0, 0.0, 1.0,	1.0, 1.0, 1.0, 1.0);
 		--box.particleCreator:SetFragmentShaderCode(particleShaderCode);
 		

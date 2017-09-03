@@ -3,4 +3,7 @@
 	<animation name="box" speed="1.0">
 		<image x="0" y="80" w="16" h="16"/>
 	</animation>
+	<animation name="boxHat" speed="1.0">
+		<image x="48" y="80" w="16" h="16"/>
+	</animation>
 </sprite>
