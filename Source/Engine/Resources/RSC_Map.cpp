@@ -1348,7 +1348,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
             return NULL;
         }
     }
-    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(mapTilesW, mapTilesH,name,depth, &gidManager, texture));
+
 
     float paralaxX, paralaxY;
 	paralaxX = 1.0f;
@@ -1359,6 +1359,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
 	bool stretchX = false;
 	bool stretchY = false;
 
+    PropertyMap properties;
     attributes.clear();
     attributes["PARALLAX_X"]  = Attribute("float", &paralaxX);
     attributes["PARALLAX_Y"]  = Attribute("float", &paralaxY);
@@ -1366,15 +1367,18 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
     attributes["STRETCH_TO_MAP_Y"]  = Attribute("bool", &stretchY);
     attributes["REPEAT_X"]      = Attribute("bool",  &repeatX  );
     attributes["REPEAT_Y"]      = Attribute("bool",  &repeatY  );
-    TMXLoadProperties(subNodeProperties,imageLayer->properties);
-    TMXLoadAttributesFromProperties(&imageLayer->properties, attributes);
+    attributes["DEPTH"] = Attribute("int", &depth);
+    TMXLoadProperties(subNodeProperties,properties);
+    TMXLoadAttributesFromProperties(&properties, attributes);
 
+    std::unique_ptr<TiledImageLayer> imageLayer (new TiledImageLayer(mapTilesW, mapTilesH,name,depth, &gidManager, texture));
 	imageLayer->SetParallax( Coord2df(paralaxX, paralaxY) );
 	imageLayer->SetAlpha(alpha);
 	imageLayer->SetRepeatX(repeatX);
 	imageLayer->SetRepeatY(repeatY);
 	imageLayer->SetStretchToMapX(stretchX);
 	imageLayer->SetStretchToMapY(stretchY);
+	imageLayer->properties = properties;
 
     return imageLayer;
 }
