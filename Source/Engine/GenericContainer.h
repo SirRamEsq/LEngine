@@ -100,10 +100,7 @@ template <class T>
 bool GenericContainer<T>::LoadItem(const std::string& name, std::unique_ptr<const T>& item){
     mapIt i=items.find(name);
     if(i!=items.end()){
-		std::stringstream ss;
-		ss << "Generic Container already contains an item called" << name;
-		log->Write(ss.str());
-		return false;
+		return true;
     }
 
     items[name]=std::unique_ptr<const T>(item.release());
@@ -114,10 +111,7 @@ template <class T>
 bool GenericContainer<T>::LoadItem(const std::string& name, const std::string& fname){
     mapIt i=items.find(name);
     if(i!=items.end()){
-		std::stringstream ss;
-		ss << "Generic Container already contains an item called" << name;
-		log->Write(ss.str());
-       return false;
+       return true;
     }
 
     if(function==NULL){

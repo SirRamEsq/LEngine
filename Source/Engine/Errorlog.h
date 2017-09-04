@@ -34,7 +34,7 @@ class Log{;
 		};
 
 		///Signature of function used to determine if an entry is filtered or not
-		typedef bool (*fp_EntryFilter)(const Entry& entry, int flags);
+		typedef bool (*fp_EntryFilter)(const Entry& entry, int flags, int itemCount);
 
 
 		Log();

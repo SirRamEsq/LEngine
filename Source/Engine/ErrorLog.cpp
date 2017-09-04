@@ -49,15 +49,18 @@ void Log::SetEntryFilterFlags(int flags){
 
 std::vector<const Log::Entry*> Log::GetEntries() const{
 	std::vector<const Entry*> returnEntries;	
-	for(auto i = entries.begin(); i != entries.end(); i++){
+	int processed = 0;
+	//Reverse iterator, start with ewest first
+	for(auto i = entries.rbegin(); i != entries.rend(); i++){
 		if(entryFilter != NULL){
 			//ignore entry if returns false
-			if(not entryFilter(*i, filterFlags)){
+			if(not entryFilter(*i, filterFlags, processed)){
 				continue;
 			}
 		}
 
 		returnEntries.push_back( &(*i) );
+		processed++;
 	}
 	return returnEntries;
 }
