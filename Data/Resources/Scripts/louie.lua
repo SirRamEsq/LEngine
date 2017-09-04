@@ -620,10 +620,18 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.ChangeState(newState)
+		louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
+		louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
+		louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT)
+		louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT)
 		if(newState == louie.c.STATE_NORMAL) then
 			louie.UnlockInput();
 
 		elseif(newState == louie.c.STATE_ROLL) then
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
+			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT)
+			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT)
 			louie.LockInput(louie.c.ROLL_TIMER);
 
 		elseif(newState==louie.c.STATE_WALLSLIDE) then

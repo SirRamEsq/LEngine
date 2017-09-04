@@ -102,8 +102,12 @@ void Kernel::Inst(int argc, char *argv[]){
 		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
 			debugLogFlags.push_back(true);
 		}
-		auto *fp = static_cast<bool (*)(const Log::Entry&, int)>(
-			[] (const Log::Entry& entry, int flags){
+		auto *fp = static_cast<bool (*)(const Log::Entry&, int, int)>(
+			[] (const Log::Entry& entry, int flags, int count){
+			//Cut down on rendering, only display the most recent 200 messages
+				if(count > 200){
+					return false;
+				}
 				if((flags & entry.severity) == 0){
 					return false;
 				}	
