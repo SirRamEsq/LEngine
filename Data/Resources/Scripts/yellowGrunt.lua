@@ -109,7 +109,7 @@ function yellowGrunt.OnShoot()
   local position=yellowGrunt.myPositionComp:GetPositionWorld();
   yellowGrunt.arrowsFired=yellowGrunt.arrowsFired+1;
 
-  entityArrow=yellowGrunt.CPPInterface:EntityNew("Items/Projectiles/arrow.lua", position.x, position.y, yellowGrunt.depth, 0, "PREFAB_ARROW", "TYPE_PROJECTILE",
+  entityArrow=yellowGrunt.CPPInterface:EntityNew("Items/Projectiles/arrow.lua", position.x, position.y, yellowGrunt.depth, 0, "PREFAB_ARROW", "",
                                       {direction=yellowGrunt.DIRECTION, shooterEID=yellowGrunt.EID});
   yellowGrunt.CPPInterface:EventLuaObserveEntity(yellowGrunt.EID, entityArrow);
 

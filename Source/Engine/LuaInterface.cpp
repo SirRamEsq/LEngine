@@ -869,6 +869,8 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("SetOrigin", &RSC_Sprite::SetOrigin)
 				.addFunction("SetColorKey", &RSC_Sprite::SetColorKey)
 				.addFunction("GetName", &RSC_Sprite::GetName)
+				.addFunction("Width", &RSC_Sprite::GetWidth)
+				.addFunction("Height", &RSC_Sprite::GetHeight)
 			.endClass()
 
 			.beginClass<TColPacket>("TColPacket")

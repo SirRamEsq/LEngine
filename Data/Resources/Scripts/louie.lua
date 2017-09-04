@@ -1050,6 +1050,11 @@ function container.NewLouie(baseclass)
 		louie.LockInput(30);
 
 		louie.health = louie.health-hitpoints;
+		if (louie.health == 1) then
+			local pos = louie.CompPosition:GetPositionWorld()
+			CPP.interface:EntityNew('Effects/fallingHat.lua', pos.x, pos.y, louie.depth, 0,"FALLING_HAT", "",
+									{direction = louie.facingDir * -1})
+		end
 	end
 
 	function louie.Attacked(damage)
