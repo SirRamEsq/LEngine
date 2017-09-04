@@ -108,7 +108,7 @@ void SDLInit::InitSDL(){
 
     mMainWindow= SDL_CreateWindow(   "LEngine", //name
                                     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_W, SCREEN_H, //x,y,w,h
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS); //flags
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED ); //flags
 
     mMainContextGL = SDL_GL_CreateContext(mMainWindow);
 
