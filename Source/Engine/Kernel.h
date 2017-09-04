@@ -92,6 +92,8 @@ class Kernel{
 
 	private:
 		static bool debugMode;
+		static bool debugPause;
+		static bool debugNextFrame;
 
 		Kernel();
 		~Kernel();
