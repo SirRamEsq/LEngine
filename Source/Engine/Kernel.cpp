@@ -14,6 +14,8 @@ int			 Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int			 Kernel::returnValue;
 bool 		Kernel::debugMode;
+bool 		Kernel::debugNextFrame;
+bool 		Kernel::debugPause;
 std::vector<bool> Kernel::debugLogFlags;
 
 GenericContainer<RSC_Sprite>	Kernel::rscSpriteMan;
@@ -117,6 +119,7 @@ void Kernel::Inst(int argc, char *argv[]){
 		);
 		log.SetEntryFilter(fp);
 	}
+	debugPause = false;
 	K_Log.Write( commandLine.GetValue(L_CMD_DEBUG));
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
@@ -152,6 +155,15 @@ bool Kernel::DEBUG_MODE(){
 
 void Kernel::DEBUG_DebugWindowBegin(){
 	ImGui::Begin("DEBUG");
+	debugNextFrame = false;
+	if(ImGui::Button("Pause")){
+		debugPause = not debugPause;
+	}
+	ImGui::SameLine();
+	if(ImGui::Button("NextFrame")){
+		debugNextFrame = true;
+	}
+
 }
 
 void Kernel::DEBUG_DebugWindowEnd(){
@@ -159,7 +171,7 @@ void Kernel::DEBUG_DebugWindowEnd(){
 }
 
 void Kernel::DEBUG_DisplayLog(){
-	if(	ImGui::CollapsingHeader("Log")){
+	if(	ImGui::CollapsingHeader("Log") ){
 		int newFlags = 0;
 		int index =0;
 		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
@@ -176,7 +188,7 @@ void Kernel::DEBUG_DisplayLog(){
 		auto entries = log.GetEntries();
 
 		for(auto i = entries.begin(); i != entries.end(); i++){
-			ImGui::Text((*i)->ToString().c_str());
+			ImGui::TextWrapped((*i)->ToString().c_str());
 		}
 	}
 }
@@ -192,7 +204,9 @@ bool Kernel::Update(){
 	}
 
 	nextGameTick = SDL_GetTicks() + SKIP_TICKS;
-	returnValue=stateMan.Update();
+	if( (not debugPause) or (debugNextFrame) ){
+		returnValue=stateMan.Update();
+	}
 
 	//Audio subsystem can be put on a different thread
 	audioSubsystem.ProcessEvents();
