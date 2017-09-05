@@ -597,7 +597,7 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.BoxJump()
-		louie.yspd = louie.c.JUMPHEIGHT;
+		louie.yspd = math.min(louie.c.JUMPHEIGHT, louie.yspd * -1)
 		if(not louie.input.key[louie.c.K_UP])then
 			louie.yspd = -3
 		end

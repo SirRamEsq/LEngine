@@ -38,7 +38,7 @@ function container.NewBoxBreak(baseclass)
 		box.myPositionComp	= box.CPPInterface:GetPositionComponent (EID);
 		box.myParticleComp	= box.CPPInterface:GetParticleComponent (EID);
 
-		box.boxType = box.LEngineData.boxType or 0
+		box.boxType = box.LEngineData.InitializationTable.boxType or 0
 
 
 		box.sprite	 = CPP.interface:LoadSprite("SpriteBox.xml");
