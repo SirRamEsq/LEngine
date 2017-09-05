@@ -479,10 +479,12 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		}
 	}
 
-	if(initTable!=NULL){
-		LuaRef returnedTable=getGlobal(lState, returnedTableName.str().c_str());
-		LuaRef lengineData = returnedTable["LEngineData"];
-		lengineData["InitializationTable"] = (*initTable);
+	if(initTable !=NULL){
+		if(initTable->isNil() == false){
+			LuaRef returnedTable=getGlobal(lState, returnedTableName.str().c_str());
+			LuaRef lengineData = returnedTable["LEngineData"];
+			lengineData["InitializationTable"] = (*initTable);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////

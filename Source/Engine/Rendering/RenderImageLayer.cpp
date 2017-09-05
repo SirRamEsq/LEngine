@@ -1,4 +1,5 @@
 #include "RenderImageLayer.h"
+#include "../Kernel.h"
 #include "../RenderManager.h"
 
 
@@ -101,7 +102,6 @@ void RenderImageLayer::BuildVAO(CRect camera){
     color.z=1.0f;
     color.w=layer->GetAlpha();
 
-	//This returns garbage?
 	auto parallax = layer->GetParallax();
 	float parallaxX = parallax.x;
 	float parallaxY = parallax.y;
@@ -156,8 +156,8 @@ void RenderImageLayer::BuildVAO(CRect camera){
 
 	vao.GetTextureArray()[vertexIndex]     = topLeftTex;
 	vao.GetTextureArray()[vertexIndex + 1] = topRightTex;
-	vao.GetTextureArray()[vertexIndex + 2] = bottomLeftTex;
-	vao.GetTextureArray()[vertexIndex + 3] = bottomRightTex;
+	vao.GetTextureArray()[vertexIndex + 2] = bottomRightTex;
+	vao.GetTextureArray()[vertexIndex + 3] = bottomLeftTex;
 
 	vao.GetColorArray()[vertexIndex]     = color;
 	vao.GetColorArray()[vertexIndex + 1] = color;
