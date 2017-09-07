@@ -65,11 +65,12 @@ VAOWrapperTile::VAOWrapperTile(const unsigned int& maxSize)
 
 void VAOWrapperTile::UpdateGPU(){
     //upload vertexTexture array along with any changed data
-    glBindBuffer (GL_ARRAY_BUFFER, vboVertex);
-    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboVertexSize, vboVertexArray.get());
 
     glBindBuffer (GL_ARRAY_BUFFER, vboTexture);
     glBufferSubData(GL_ARRAY_BUFFER,    0,      vboTextureSize, vboTextureArray.get());
+
+    glBindBuffer (GL_ARRAY_BUFFER, vboVertex);
+    glBufferSubData(GL_ARRAY_BUFFER,    0,      vboVertexSize, vboVertexArray.get());
 
     glBindBuffer (GL_ARRAY_BUFFER, vboColor);
     glBufferSubData(GL_ARRAY_BUFFER,    0,      vboColorSize, vboColorArray.get());
@@ -177,8 +178,8 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
 }
 
 void RenderTileLayer::BuildVAO(){
-    for(unsigned int x=0; x!=layer->tileWidth; x++){
-        for(unsigned int y=0; y!=layer->tileHeight; y++){
+    for(unsigned int x=0; x<layer->tileWidth; x++){
+        for(unsigned int y=0; y<layer->tileHeight; y++){
             BuildVAOTile(x,y);
         }
     }

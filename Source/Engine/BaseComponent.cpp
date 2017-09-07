@@ -16,10 +16,11 @@ void BaseComponent::SetEventCallbackFunction(EventFunction f){
 }
 
 void BaseComponent::HandleEvent(const Event* event){
+	//If parent was deleted, set parent to NULL
 	if(event->message == Event::MSG::ENTITY_DELETED){
 		if(parent != NULL){
 			if(event->sender == parent->GetEID()){
-				SetParent(0);
+				SetParent(NULL);
 			}
 		}
 	}

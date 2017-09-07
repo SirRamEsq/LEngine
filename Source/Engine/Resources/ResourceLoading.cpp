@@ -1,78 +1,6 @@
 #include "ResourceLoading.h"
 #include "../Kernel.h"
 
-/*
-LEvent* LoadEVENT(const std::string& fname){
-    std::string strfname;
-    //Look in the "Resources" folder in the zip file
-    strfname="Resources/"+fname;
-    if(PHYSFS_exists(strfname.c_str())==0){
-        std::stringstream ss;
-        ss << "Couldn't find event file: " << strfname.c_str() << "\n"
-        << "Physfs Error: " << PHYSFS_getLastError();
-        K_Log.Write(ss.str(), Log::typeDefault);
-        return NULL;
-    }
-
-    std::string eventScriptName;
-    int32_t flags, dataInt;
-    char *strSize, *str, *file;
-    int pointer=0;
-    bool convert;
-    if(GET_ENDIAN()==LENGINE_DEF_LITTLE_ENDIAN){convert=true;}
-    else{convert=false;}
-
-    PHYSFS_File *pfile= PHYSFS_openRead(strfname.c_str());
-    PHYSFS_seek(pfile, 0);
-    uint32_t fileSize=PHYSFS_fileLength(pfile);
-    if(fileSize<0){
-        K_Log.Write("Couldn't Load event", Log::typeDefault);
-        return NULL;
-    }
-    file=new char[fileSize];
-    int lengthRead=PHYSFS_read(pfile, file, fileSize, 1);
-    if(lengthRead==-1){//read file into memory
-        return NULL;
-    }
-
-    //fname.resize(fname.size () - 6);//Get rid of the .rlevt extension
-
-    ////////////////////////////////////////////////////////
-
-    strSize=(char*) &dataInt;
-
-    strSize[0]=file[pointer]; pointer++; //Get size of scriptname string
-    strSize[1]=file[pointer]; pointer++;
-    strSize[2]=file[pointer]; pointer++;
-    strSize[3]=file[pointer]; pointer++;
-
-    if(convert==true){
-        dataInt=INT32_REVERSE_BYTES((int32_t)dataInt);
-    }
-    str= new char[dataInt];
-    for(int i=0; i!=dataInt; i++){str[i]=file[pointer]; pointer++;} //get scriptname string
-    eventScriptName=std::string(str);
-    delete [] str;
-
-    /////////////////////////////////////////////////////////
-
-    strSize=(char*) &dataInt;
-
-    strSize[0]=file[pointer]; pointer++; //Get eventflags
-    strSize[1]=file[pointer]; pointer++;
-    strSize[2]=file[pointer]; pointer++;
-    strSize[3]=file[pointer]; pointer++;
-
-    if(convert==true){
-        dataInt=INT32_REVERSE_BYTES((int32_t)dataInt);
-    }
-    flags=dataInt;
-
-    delete [] file;
-    PHYSFS_close(pfile);
-
-    return new LEvent(eventScriptName, flags);
-}*/
 
 std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     if(PHYSFS_exists(fileName.c_str())==0){
@@ -111,7 +39,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
 }
 
 FileData::FileData(unsigned int len) : length(len){
-    if(length==0){data=NULL;}
+    if(length<=0){data=NULL;}
     else{
         data = new char [length];
     }

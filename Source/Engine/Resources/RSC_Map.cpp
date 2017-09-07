@@ -1106,7 +1106,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     bool propertyCollision=false;
     bool propertyDestructible=false;
     bool propertyHMap=false;
-    float friction;
     std::map<std::string, std::string>  extraProperties;
 
 
@@ -1115,8 +1114,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
 
     attributes.clear();
     attributes["DEPTH"]         = Attribute("int",  &depth);
-    attributes["FRICTION"]      = Attribute("float",&friction);
-    attributes["DESTRUCTIBLE"]  = Attribute("bool", &propertyDestructible);
     attributes["COLLISION"]     = Attribute("bool", &propertyCollision);
     attributes["USEHMAP"]       = Attribute("bool", &propertyHMap);
     attributes["ANIMATIONSPEED"]= Attribute("unsigned int",  &animationRate);
@@ -1124,7 +1121,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
 
     std::unique_ptr<TiledTileLayer> tileLayer(new TiledTileLayer(width, height, name, depth, &gidManager));
     tileLayer->layerFlags=0;
-    tileLayer->friction=friction;
     tileLayer->layerOpacity=alpha;
     CopyPropertyMap(properties, tileLayer->properties);
 
