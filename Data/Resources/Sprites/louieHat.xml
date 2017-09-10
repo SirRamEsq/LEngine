@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sprite width and height is used to calculate where the origin is-->
+<sprite origin="center" width="18" height="16" transparentColor="ff00ff" textureName="items.png">
+	<animation name="hat" speed="0">
+		<image x="0" y="96" w="18" h="16"/>
+	</animation>
+</sprite>
