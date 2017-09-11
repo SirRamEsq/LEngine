@@ -1,6 +1,7 @@
 #include "RSC_GLShader.h"
 #include "../Kernel.h"
 #include <math.h>
+#include <iostream>
 #include <memory>
 
 LEngineShaderException::LEngineShaderException(const std::string& w, const RSC_GLShader* shad)
@@ -49,10 +50,10 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
 
     //Define memory locations for these two variables so that glShaderSource can take their addresses
     const GLchar* code   = glslCode.c_str();
-    const GLint   length = glslCode.length();
+    const GLint   leng = glslCode.length();
 
     //Compile
-    glShaderSource(mHandleID, 1, &code, NULL);
+    glShaderSource(mHandleID, 1, &code, &leng);
     glCompileShader(mHandleID);
 
     //Check if Usable
