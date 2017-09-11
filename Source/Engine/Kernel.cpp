@@ -85,6 +85,9 @@ void Kernel::Inst(){
 }
 void Kernel::Inst(int argc, char *argv[]){
 	K_Log.Write("Starting up...");
+	ASSERT_CONTINUE( 1 == 2);
+	ASSERT_CONTINUE( 2 == 2);
+	ASSERT_CONTINUE( 3 == 2);
 
 	PHYSFS_init(NULL);
 	std::string searchPath="Data/";

@@ -337,6 +337,11 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits);
 		else 			\
 			_ASSERT(__FILE__, __LINE__, #f, false)
 
+	void* operator new(size_t size) throw(std::bad_alloc);
+	void* operator new[](size_t size) throw(std::bad_alloc);
+	void  operator delete(void* p) throw();
+	void  operator delete[](void* p) throw();
+
 #else
 	#define ASSERT(f)
 	#define ASSERT_CONTINUE(f)	

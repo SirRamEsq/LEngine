@@ -1,5 +1,6 @@
 #include "Defines.h"
 
+#include <iostream>
 #include <sstream>
 
 const std::string BLANK_TILE_NAME="BLANK_TILE";
@@ -204,14 +205,32 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits)
 
 #ifdef DEBUG_MODE
 	void _ASSERT(char const* file, unsigned int line, char const* assertion, bool stop){
-		fflush(NULL);
+		std::cout << std::endl << "Assertion failed: " << file << ", line " << line << std::endl 
+		   << "Assertion: '" << assertion << "'" << std::endl;
 
-		fprintf(stderr, "\nAssertion failed: %s, line %u\n  Assertion: '%s'\n",
-				file,line,assertion);
-
-		fflush(stderr);
 		if(stop){
 			abort();	
 		}
+	}
+
+	void* operator new(size_t size) {
+		void* ptr = malloc(size);
+		if(!ptr){
+			throw std::bad_alloc();
+		}
+		return ptr;
+	}
+	void* operator new[](size_t size){
+		void* ptr = malloc(size);
+		if(!ptr){
+			throw std::bad_alloc();
+		}
+		return ptr;
+	}
+	void operator delete(void* p)throw(){
+		free(p);
+	}
+	void operator delete[](void* p)throw(){
+		free(p);
 	}
 #endif
