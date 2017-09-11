@@ -321,17 +321,25 @@ uint64_t pack754(long double f, unsigned bits, unsigned expbits);
 long double unpack754(uint64_t i, unsigned bits, unsigned expbits);
 
 
+//custom assert function 'ASSERT'
 #ifdef DEBUG_MODE
-	void _ASSERT(char* file, unsigned int line);
+	void _ASSERT(char const* file, unsigned int line, char const* assertion, bool stop);
 
 	#define ASSERT(f)	\
 		if (f)			\
 			{}			\
 		else 			\
-			_ASSERT(__FILE__, __LINE__)
+			_ASSERT(__FILE__, __LINE__, #f, true)
+
+	#define ASSERT_CONTINUE(f)	\
+		if (f)			\
+			{}			\
+		else 			\
+			_ASSERT(__FILE__, __LINE__, #f, false)
 
 #else
 	#define ASSERT(f)
+	#define ASSERT_CONTINUE(f)	
 
 #endif
 
