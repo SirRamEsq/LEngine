@@ -83,7 +83,7 @@ class Kernel{
 
 		static ImGuiState guiState;
 
-		static bool DEBUG_MODE();
+		static bool IsInDebugMode();
 
 		static void ImGuiCreateFontsTexture();
 		static void ImGuiInvalidateFontTexture();

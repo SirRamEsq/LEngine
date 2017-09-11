@@ -201,3 +201,12 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits)
 
     return result;
 }
+
+#ifdef DEBUG_MODE
+	void _ASSERT(char* file, unsigned int line){
+		fflush(NULL);
+		fprintf(stderr, "\nAssertion failed: %s, line %u\n", file, line);
+		fflush(stderr);
+		abort();	
+	}
+#endif
