@@ -117,7 +117,7 @@ RenderTileLayer::~RenderTileLayer(){
 }
 
 void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y){
-    unsigned int vertexIndex = ( (x * layer->tileWidth) + y) * 4;
+    unsigned int vertexIndex = ( (y * layer->tileWidth) + x) * 4;
     Vec2 translate;
 
     Vec2 topLeftVertex      ( 0.0f,  0.0f);

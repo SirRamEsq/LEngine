@@ -100,7 +100,7 @@ void Kernel::Inst(int argc, char *argv[]){
         K_Log.Write(ss.str());
     }
 
-	commandLine.ParseArgs(argc, argv);
+	//commandLine.ParseArgs(argc, argv);
 
 #ifndef DEBUG_MODE
 	debugMode = false;
@@ -128,7 +128,6 @@ void Kernel::Inst(int argc, char *argv[]){
 		log.SetEntryFilter(fp);
 	}
 	debugPause = false;
-	K_Log.Write( commandLine.GetValue(L_CMD_DEBUG));
 	SDLMan=SDLInit::Inst();
 	SDLMan->InitSDL();
 	/// \TODO remove this, have InitSDL intialize everything
