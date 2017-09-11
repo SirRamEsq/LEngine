@@ -52,7 +52,7 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
     const GLint   length = glslCode.length();
 
     //Compile
-    glShaderSource(mHandleID, 1, &code, &length);
+    glShaderSource(mHandleID, 1, &code, NULL);
     glCompileShader(mHandleID);
 
     //Check if Usable

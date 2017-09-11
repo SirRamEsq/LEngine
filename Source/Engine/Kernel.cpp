@@ -99,7 +99,12 @@ void Kernel::Inst(int argc, char *argv[]){
 
 	commandLine.ParseArgs(argc, argv);
 
-	debugMode = (commandLine.GetValue(L_CMD_DEBUG) == "true");
+#ifndef DEBUG_MODE
+	debugMode = false;
+#else
+	debugMode = true;
+#endif
+
 	if(debugMode){
 		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
 			debugLogFlags.push_back(true);
@@ -149,7 +154,7 @@ void Kernel::Inst(int argc, char *argv[]){
 	Kernel::stateMan.PushNextState();
 }
 
-bool Kernel::DEBUG_MODE(){
+bool Kernel::IsInDebugMode(){
 	return debugMode;
 }
 

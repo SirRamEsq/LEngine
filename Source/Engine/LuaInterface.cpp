@@ -441,7 +441,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		LuaRef engineRef=getGlobal(lState,"NewLEngine");
 		LuaRef engineTableRef = engineRef();
 
-		engineTableRef["Initialize"](id, name, type, depth, parent, Kernel::DEBUG_MODE());
+		engineTableRef["Initialize"](id, name, type, depth, parent, Kernel::IsInDebugMode());
 
 			engineTableRef["RESOLUTION_X"]	= RESOLUTION_X;
 			engineTableRef["RESOLUTION_Y"]	= RESOLUTION_Y;

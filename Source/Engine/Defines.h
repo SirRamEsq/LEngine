@@ -320,4 +320,20 @@ std::unique_ptr<T> make_unique( Args&& ...args ){
 uint64_t pack754(long double f, unsigned bits, unsigned expbits);
 long double unpack754(uint64_t i, unsigned bits, unsigned expbits);
 
+
+#ifdef DEBUG_MODE
+	void _ASSERT(char* file, unsigned int line);
+
+	#define ASSERT(f)	\
+		if (f)			\
+			{}			\
+		else 			\
+			_ASSERT(__FILE__, __LINE__)
+
+#else
+	#define ASSERT(f)
+
 #endif
+
+#endif
+
