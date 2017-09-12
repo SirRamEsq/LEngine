@@ -85,13 +85,11 @@ void Kernel::Inst(){
 }
 void Kernel::Inst(int argc, char *argv[]){
 	K_Log.Write("Starting up...");
-	ASSERT_CONTINUE( 1 == 2);
-	ASSERT_CONTINUE( 2 == 2);
-	ASSERT_CONTINUE( 3 == 2);
 
 	PHYSFS_init(NULL);
 	std::string searchPath="Data/";
 	PHYSFS_addToSearchPath(searchPath.c_str(), 0);
+	PHYSFS_setWriteDir("Data/");
 
     const char * physfsError = PHYSFS_getLastError();
     if(physfsError!=NULL){

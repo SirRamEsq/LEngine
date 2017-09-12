@@ -1,6 +1,7 @@
 #include "Errorlog.h"
 #include "Defines.h"
 #include "SDLInit.h"
+#include "physfs.h"
 #include <exception>
 
 /////////
@@ -13,7 +14,7 @@ Log::Entry::Entry(const std::string& text, Log::SEVERITY s, const std::string& t
 
 std::string Log::Entry::ToString() const{
 	std::stringstream ss;
-	ss << Log::SEVERITY_STR[severity] << message;
+	ss << Log::SEVERITY_STR[severity] << message << std::endl;
 	return ss.str();
 }
 
@@ -70,79 +71,23 @@ void Log::Write(const std::string& text, Log::SEVERITY severity, const std::stri
 }
 
 void Log::WriteToFile(const std::vector<const Entry*> _entries, const std::string& fileName) const{
+	time_t rawTime;
+	time(&rawTime);		
+	tm* timeInfo = localtime(&rawTime);
 
+	int bufSize = 100;
+	char timeStringBuffer[bufSize];
+	//Format 08-16-2017_11-30PM
+	strftime(timeStringBuffer, bufSize, "%m-%d-%Y_%I-%M%p", timeInfo);
+
+	//Assumes that PHYSFS_init has been called and that a write directory has been set
+	std::stringstream fPath;
+	auto currentDate = std::string(timeStringBuffer);
+	fPath << "Logs/" << fileName << "_" << currentDate << ".txt";
+
+	auto fileHandle = PHYSFS_openWrite(fPath.str().c_str());
+	for(auto i = _entries.begin(); i != _entries.end(); i++){
+		auto str = (*i)->ToString();
+		PHYSFS_write(fileHandle, str.c_str(), str.size(), 1);
+	}
 }
-
-/*
-std::map<std::string, std::unique_ptr<std::ofstream> > ErrorLog::errorFiles;
-std::map<Log::SEVERITY, std::string> Log::SEVERITY_TAGS = {
-    {Log::SEVERITY::FATAL, "[FATAL] "},
-    {Log::SEVERITY::ERROR, "[ERROR] "},
-    {Log::SEVERITY::WARN,  "[WARN]  "},
-    {Log::SEVERITY::INFO,  "[INFO]  "},
-    {Log::SEVERITY::DEBUG, "[DEBUG] "},
-    {Log::SEVERITY::TRACE, "[TRACE] "}
-};
-ErrorLog* ErrorLog::pointertoself=NULL;
-ErrorLog::ErrorLog(){}
-const std::string ErrorLog::logPath         = "Logs/";
-const std::string Log::typeDefault  = "Error";
-const std::string ErrorLog::fileExtension   = ".txt" ;
-bool ErrorLog::noThrow   = true ;
-
-ErrorLog* ErrorLog::Inst(){
-    pointertoself=new ErrorLog();
-    return pointertoself;
-}
-
-void ErrorLog::OpenFile(const std::string& fname){
-    auto fpIterator = errorFiles.find(fname);
-    std::string fullPath = logPath + fname + fileExtension;
-    if(fpIterator == errorFiles.end()){
-        std::unique_ptr<std::ofstream> newFP = make_unique<std::ofstream>(fullPath.c_str());
-
-        if(newFP->good() == false){return;}
-        if(newFP->is_open() == false){return;}
-
-        *newFP.get() << "Initialized";
-        errorFiles[fname] = std::move(newFP);
-    }
-}
-
-void ErrorLog::CloseFiles(){
-    std::ofstream* filePointer=NULL;
-    for(auto i=errorFiles.begin(); i!=errorFiles.end(); i++){
-        filePointer = i->second.get();
-        if(filePointer!=NULL){filePointer->close();}
-    }
-    errorFiles.clear();
-}
-
-std::ofstream* ErrorLog::GetFilePointer(const std::string& fname){
-    auto filePointerIt = errorFiles.find(fname);
-    if(filePointerIt == errorFiles.end()){
-        OpenFile(fname);
-        filePointerIt=errorFiles.find(fname);
-        if(noThrow){
-            return NULL;
-        }
-        if(filePointerIt == errorFiles.end()){
-            throw Exception("Couldn't create file for errorlog named " + fname);
-        }
-    }
-
-    return filePointerIt->second.get();
-}
-
-void K_Log.Write(const std::string& text, SEVERITY severity, const std::string& fname){
-    std::string newText = SEVERITY_TAGS[severity] + text;
-    WriteToFile(newText, fname);
-}
-
-void K_Log.Write(const std::string& text, const std::string& fname){
-    std::ofstream* filePointer=GetFilePointer(fname);
-    if(filePointer==NULL){return;}
-    *filePointer << "\n" << text;
-    filePointer->flush();
-}
-*/
