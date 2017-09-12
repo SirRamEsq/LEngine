@@ -2,6 +2,7 @@
 #define RY_ERRORLOG
 
 #include "Exceptions.h"
+#include "physfs.h"
 
 #include <fstream>
 #include <string>
@@ -55,8 +56,9 @@ class Log{;
 		 */
         void Write (const std::string& text, SEVERITY severity = SEVERITY::INFO, const std::string& type = Log::typeDefault) const;
 
-		///Will write the entries to a file
-		void WriteToFile(const std::vector<const Entry*> _entries, const std::string& fileName) const;
+		///If called, all entries will henceforth be written to this file
+		void WriteToFile(const std::string& fileName);
+
 
 		///Default value for Entry::type
         static const std::string typeDefault;
@@ -67,6 +69,8 @@ class Log{;
 
 		///Stores string reprentation of different severity levels
         static std::map<SEVERITY, std::string> SEVERITY_STR;
+		///Will write the entries to a file
+		static void WriteEntriesToFile(const std::vector<const Entry*> _entries, const std::string& fileName);
     protected:
 		///All entries written to this log
 		mutable std::vector<Entry> entries;
@@ -77,6 +81,13 @@ class Log{;
 		int filterFlags;
         std::ofstream* GetFilePointer(const std::string& fname);
 
+		PHYSFS_File* fileHandle; 
+
+		///Closes currently opened file
+		void CloseFileHandle();
+
+		///Returns the date formated specially for fileNames
+		static std::string GetDateString();
 };
 
 #endif
