@@ -109,6 +109,11 @@ uint64_t INT64_MAKE_BIG_ENDIAN(uint64_t i);
 uint64_t INT64_MAKE_LITTLE_ENDIAN(uint64_t i);
 uint64_t INT64_REVERSE_BYTES(uint64_t i);
 
+//Time functions
+std::string GetDate();
+std::string GetTime();
+std::string GetDateTime();
+
 class Color4f{
     public:
         Color4f(){

@@ -248,7 +248,7 @@ LuaRef ComponentScript::GetEntityInterface(){
 }
 
 void ComponentScript::RunFunction(const std::string& fname){
-    //try{
+    try{
         //get function from instance table
         LuaRef fN = scriptPointer[fname.c_str()];
         if (fN.isNil()) {
@@ -262,15 +262,20 @@ void ComponentScript::RunFunction(const std::string& fname){
             return;
         }
         fN();
-		/*
+		
     }
     catch (const LuaException& e){
         std::stringstream ss;
         ss << "Lua Exception: " << e.what ()
         << "\nScript Name is " << scriptName;
-        K_Log.Write(ss.str(), logFileName);
+        K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+
+		#ifdef DEBUG_MODE
+			std::cout << ss.str() << std::endl;
+			throw e;
+		#endif	
     }
-	*/
+	
 }
 
 //////////////////////////

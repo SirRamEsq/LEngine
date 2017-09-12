@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 const std::string BLANK_TILE_NAME="BLANK_TILE";
 const std::string BLANK_ANIMATION_NAME="BLANK_ANIMATION";
@@ -201,6 +202,45 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits)
     result *= (i>>(bits-1))&1? -1.0: 1.0;
 
     return result;
+}
+
+std::string GetDate(){
+	time_t rawTime;
+	time(&rawTime);		
+	tm* timeInfo = localtime(&rawTime);
+
+	int bufSize = 32;
+	char timeStringBuffer[bufSize];
+	//Format 08-16-2017
+	strftime(timeStringBuffer, bufSize, "%m-%d-%Y", timeInfo);
+
+	return std::string(timeStringBuffer);
+}
+
+std::string GetTime(){
+	time_t rawTime;
+	time(&rawTime);		
+	tm* timeInfo = localtime(&rawTime);
+
+	int bufSize = 32;
+	char timeStringBuffer[bufSize];
+	//Format 11:30PM
+	strftime(timeStringBuffer, bufSize, "%I:%M%p", timeInfo);
+
+	return std::string(timeStringBuffer);
+}
+
+std::string GetDateTime(){
+	time_t rawTime;
+	time(&rawTime);		
+	tm* timeInfo = localtime(&rawTime);
+
+	int bufSize = 100;
+	char timeStringBuffer[bufSize];
+	//Format 08-16-2017 11:30PM
+	strftime(timeStringBuffer, bufSize, "%m-%d-%Y_%I:%M%p", timeInfo);
+
+	return std::string(timeStringBuffer);
 }
 
 #ifdef DEBUG_MODE
