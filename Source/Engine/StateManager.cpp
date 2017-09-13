@@ -267,9 +267,16 @@ std::map<EID,EID> GameState::SetMapCreateEntitiesFromLayers(const std::vector<st
 
 void GameState::SetMapLinkEntities(
     const std::vector<std::unique_ptr<TiledObjectLayer> >& layers,
-    const std::map<EID,EID>& tiledIDtoEntityID,
+    std::map<EID,EID>& tiledIDtoEntityID,
     const std::vector<EID>& objectsUsingEntrance
 ){
+	/*
+	 * If a parent tiled ID is '0' then it doesn't have a parent
+	 * This mapping allows the algorithim to work without checking for '0' as a special case
+	 * Naturally, this also means that there cannot be any entities with a tileID of '0'
+	 */
+	tiledIDtoEntityID[0]=0;
+
 
     MapEntrance* correctEntrance=NULL;
     int correctEntranceX=0;
@@ -282,10 +289,12 @@ void GameState::SetMapLinkEntities(
         EID parentEID=0;
         EID child=0;
         for(auto objectIt=(*ii)->objects.begin(); objectIt!=(*ii)->objects.end(); objectIt++){
-
             parent      =   objectIt->second.parent;
             child       =   tiledIDtoEntityID.find(objectIt->first)->second;
             parentEID   =   tiledIDtoEntityID.find(parent)->second;
+
+			ASSERT(tiledIDtoEntityID.find(objectIt->first) != tiledIDtoEntityID.end());
+			ASSERT(tiledIDtoEntityID.find(parent) != tiledIDtoEntityID.end());
 
             //Initialize Script
             std::string& scriptName = objectIt->second.script;

@@ -39,7 +39,7 @@ function container.NewArrow(baseclass)
 		arrow.myPositionComp=nil;
 		arrow.EID=0;
 		arrow.depth=0;
-		arrow.parent=0;
+		arrow.parentEID=0;
 
 
 function arrow.Initialize()
@@ -48,7 +48,7 @@ function arrow.Initialize()
 	-----------------------
 
 	arrow.depth				= arrow.LEngineData.depth;
-	arrow.parent			= arrow.LEngineData.parent;
+	arrow.parentEID			= arrow.LEngineData.parentEID;
 	arrow.CPPInterface 		= CPP.interface
 	arrow.EID				= arrow.LEngineData.entityID;
 	local EID = arrow.EID

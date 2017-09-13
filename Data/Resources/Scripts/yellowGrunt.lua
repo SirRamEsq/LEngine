@@ -50,7 +50,7 @@ function NewYellowGrunt(baseclass)
     yellowGrunt.myPositionComp=nil;
 		yellowGrunt.EID=0;
 		yellowGrunt.depth=0;
-		yellowGrunt.parent=0;
+		yellowGrunt.parentEID=0;
 
 
 function yellowGrunt.Initialize()
@@ -59,7 +59,7 @@ function yellowGrunt.Initialize()
 	-----------------------
 
 	yellowGrunt.depth        = yellowGrunt.LEngineData.depth;
-	yellowGrunt.parent       = yellowGrunt.LEngineData.parent;
+	yellowGrunt.parentEID       = yellowGrunt.LEngineData.parentEID;
 	yellowGrunt.CPPInterface = CPP.interface
 	yellowGrunt.EID          = yellowGrunt.LEngineData.entityID;
 

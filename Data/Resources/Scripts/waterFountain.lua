@@ -17,7 +17,7 @@ function NewFountain(baseclass)
 	water.myParticleComp=nil;
 	water.EID=0;
 	water.depth=0;
-	water.parent=0;
+	water.parentEID=0;
 
 	water.particleCreator=nil;
 	water.particleVelocitySuperMin = nil;
@@ -28,7 +28,7 @@ function NewFountain(baseclass)
 		--C++ Interface setup--
 		-----------------------
 		water.depth			= water.LEngineData.depth;
-		water.parent		= water.LEngineData.parent;
+		water.parentEID		= water.LEngineData.parentEID;
 		water.CPPInterface	= CPP.interface
 		water.EID			= water.LEngineData.entityID;
 		local EID = water.EID

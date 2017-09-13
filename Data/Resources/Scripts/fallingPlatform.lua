@@ -46,7 +46,7 @@ function NewFallingPlatform(baseclass)
         -----------------------
 
         platform.depth        = platform.LEngineData.depth;
-        platform.parent       = platform.LEngineData.parent;
+        platform.parentEID       = platform.LEngineData.parentEID;
         platform.CPPInterface = CPP.interface
         platform.EID          = platform.LEngineData.entityID;
 

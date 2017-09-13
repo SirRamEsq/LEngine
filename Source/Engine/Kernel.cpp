@@ -91,8 +91,10 @@ void Kernel::Inst(int argc, char *argv[]){
 
 #ifndef DEBUG_MODE
 	K_Log.WriteToFile("Log");
+	debugMode = false;
 #else
 	K_Log.WriteToFile("Log_DEBUG");
+	debugMode = true;
 #endif
 	K_Log.Write("Starting up...");
 
@@ -104,12 +106,6 @@ void Kernel::Inst(int argc, char *argv[]){
     }
 
 	//commandLine.ParseArgs(argc, argv);
-
-#ifndef DEBUG_MODE
-	debugMode = false;
-#else
-	debugMode = true;
-#endif
 
 	if(debugMode){
 		for(auto i = Log::SEVERITY_STR.begin(); i!= Log::SEVERITY_STR.end(); i++){
@@ -173,7 +169,6 @@ void Kernel::DEBUG_DebugWindowBegin(){
 	if(ImGui::Button("NextFrame")){
 		debugNextFrame = true;
 	}
-
 }
 
 void Kernel::DEBUG_DebugWindowEnd(){

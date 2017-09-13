@@ -34,7 +34,7 @@ function NewGrunt(baseclass)
         grunt.myPositionComp=nil;
 		grunt.EID=0;
 		grunt.depth=0;
-		grunt.parent=0;
+		grunt.parentEID=0;
 
 
 function grunt.Initialize()
@@ -43,7 +43,7 @@ function grunt.Initialize()
 	-----------------------
 
 	grunt.depth          = grunt.LEngineData.depth;
-	grunt.parent         = grunt.LEngineData.parent;
+	grunt.parentEID         = grunt.LEngineData.parentEID;
 	grunt.CPPInterface   = CPP.interface
 	grunt.EID            = grunt.LEngineData.entityID;
     local EID = grunt.EID

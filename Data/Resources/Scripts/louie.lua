@@ -138,7 +138,7 @@ function container.NewLouie(baseclass)
 
 			louie.EID=0;
 			louie.depth=0;
-			louie.parent=0;
+			louie.parentEID=0;
 			louie.currentMap = nil
 
 		--Height Maps
@@ -174,10 +174,11 @@ function container.NewLouie(baseclass)
 		--C++ Interface setup--
 		-----------------------
 		louie.depth	= louie.LEngineData.depth;
-		louie.parent= louie.LEngineData.parent;
+		louie.parentEID= louie.LEngineData.parentEID;
 		louie.EID	= louie.LEngineData.entityID;
 		louie.name = louie.LEngineData.name
 		louie.objType = louie.LEngineData.objType
+		CPP.interface:WriteError(louie.EID, "parent ID is: " .. tostring(louie.parentEID))
 
 		local EID = louie.EID
 		CPP.interface:ListenForInput(EID, louie.c.K_UP);
@@ -832,7 +833,7 @@ function container.NewLouie(baseclass)
 		if(louie.tileCollision.groundTouch==false)then
 			louie.xspd = louie.xspd --+ louie.platformVelocityX;
 			louie.yspd = louie.yspd --+ louie.platformVelocityY;
-			louie.CompPosition:SetParent(louie.parent);
+			louie.CompPosition:SetParent(louie.parentEID);
 			platformVelocityX=0;
 			platformVelocityY=0;
 		end
@@ -897,6 +898,7 @@ function container.NewLouie(baseclass)
 
 	function louie.OnEntityCollision(entityID, packet)
 		--Need to get height and collision type
+		CPP.interface:WriteError(louie.EID, "entity ID is: " .. tostring(entityID))
 		local leeway=10;
 		local myBoxID=packet:GetID();
 		local objectType=packet:GetType();
@@ -997,7 +999,7 @@ function container.NewLouie(baseclass)
 		louie.angle=newAngle;
 		louie.debug_tcolx=tx;
 		louie.debug_tcoly=ty;
-		louie.CompPosition:SetParent(louie.parent);
+		louie.CompPosition:SetParent(louie.parentEID);
 		louie.platformVelocityX=0;
 		louie.platformVelocityY=0;
 	end

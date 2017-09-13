@@ -8,9 +8,13 @@ container.NewLEngine = function ()
 
 	debugMode	  = false,
     depth         = 0,
-    parent        = nil,
+	--parent EID
+    parentEID      = 0,
+	--This entity's ID
     entityID      = 0,
+	--This entity's name
     name          = "",
+	--This entity's type
     objType       = "",
 
     InitializationTable = {} --This table holds all the data that is set at instantiation
@@ -18,7 +22,7 @@ container.NewLEngine = function ()
 
   --This function is run before anything else is run in the script
   LEngine.Initialize= function (id, name, objType, depth, parent, debug)
-    LEngine.parent     =parent;
+    LEngine.parentEID  =parent;
     LEngine.depth      =depth;
     LEngine.entityID   =id;
     LEngine.objType    =objType;
