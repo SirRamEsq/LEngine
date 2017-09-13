@@ -77,6 +77,8 @@ class ComponentScript : public BaseComponent{
 		 */
         bool EventLuaRemoveObserver (EID id);
 
+		void EventLuaRemoveAllObservers();
+
 		///*DEPRECIATED*
         RenderText* RenderObjectText    (int x, int y, const std::string& text, bool abss=true);
 		///*DEPRECIATED*
@@ -110,6 +112,7 @@ class TiledObject;
 class ComponentScriptManager : public BaseComponentManager{
     public:
         ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
+		~ComponentScriptManager();
 
         void AddComponent(EID id, EID parent=0);
 		void SetDependencies(RenderManager* rm);

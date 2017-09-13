@@ -60,6 +60,9 @@ bool  ComponentScript::EventLuaRemoveObserver (EID id){
     }
 	return false;
 }
+void ComponentScript::EventLuaRemoveAllObservers(){
+	mEventLuaObservers.clear();
+}
 
 RenderText* ComponentScript::RenderObjectText(int x, int y, const std::string& text, bool abss){
     RenderText* rt= new RenderText(dependencyRenderManager, x,y,text, abss);
@@ -281,6 +284,20 @@ void ComponentScript::RunFunction(const std::string& fname){
 //////////////////////////
 //ComponentScriptManager//
 //////////////////////////
+
+ComponentScriptManager::~ComponentScriptManager(){
+	/**
+	When a state is being deleted, component scripts send out events, which the 
+	event manager recieves, which is sent out to component managers which
+	may have been deleted
+
+	to prevent this, all listeners are removed before deletion
+	*/
+
+	for(auto i = componentList.begin(); i != componentList.end(); i++){
+		((ComponentScript*)(i->second.get()))->EventLuaRemoveAllObservers();
+	}
+}
 
 ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e)
     : BaseComponentManager("LOG_COMP_SCRIPT", e), lState(state), lInterface(interface){
