@@ -74,6 +74,7 @@ void ParticleCreator::SetRandomUV(bool value){
 }
 
 bool ParticleCreator::Start(){
+	//Find way to check if the shader should be recompiled
 	if(mState == PARTICLE_CREATOR_STOPPING){return false;}
     mTime=0;
 	mLifeSpan = mLifeSpanMax;
@@ -268,6 +269,7 @@ std::unique_ptr<RSC_GLShader> ParticleCreator::GenerateVertexShader(){
 }
 
 void ParticleCreator::SetParticlesPerFrame(const float& particles){
+	/// \TODO bad things will happen if this is changed while the particle creator is running
     if(particles>0){
         mParticlesPerFrame=particles;
         return;
@@ -353,7 +355,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
     This is especially noticable if the particles are especially large or slow
     */
 
-    unsigned int writeLocationVertex = writeLocation * 4; //translate particle to actual vertex index
+    unsigned int writeLocationVertex = writeLocation * 4; //convert to actual vertex index
     unsigned int writeSizeVertex = writeSize * 4;
     unsigned int maxParticlesVertex = mMaxParticles * 4;
 
