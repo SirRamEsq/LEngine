@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 
+class GameStateManager;
 
 /**
  * Manages Entity IDs (EIDs), Component Managers, and ensures that deleted entities are fully deleted at the appropriate time
@@ -30,11 +31,7 @@ class EntityManager{
             SPRITE      = 80
         };
 
-        EntityManager(){
-			entityNumber=EID_MIN;
-			mFlagDeleteAll=false;
-			entityCount = 0;
-		}
+        EntityManager(GameStateManager* manager);
 
         /**
 		 * Creates a New Entity
@@ -99,6 +96,7 @@ class EntityManager{
         EID entityNumber;
 		unsigned int entityCount;
         bool mFlagDeleteAll;
+		GameStateManager* mStateManager;
 
         std::vector<EID> deadEntities;
 

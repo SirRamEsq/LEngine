@@ -1,5 +1,12 @@
 #include "EntityManager.h"
-#include "Kernel.h"
+#include "StateManager.h"
+
+EntityManager::EntityManager(GameStateManager* gsm) : mStateManager(gsm){
+	ASSERT(gsm != NULL);
+	entityNumber=EID_MIN;
+	mFlagDeleteAll=false;
+	entityCount = 0;
+}
 
 void EntityManager::DeleteEntity(EID id){
     deadEntities.push_back(id);
@@ -18,7 +25,7 @@ void EntityManager::DispatchEvent(const Event* event){
 
 void EntityManager::BroadcastEvent(const Event* event){
 	//Send to state
-	Kernel::stateMan.HandleEvent(event);
+	mStateManager->HandleEvent(event);
     for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
         i->second->BroadcastEvent(event);
     }
