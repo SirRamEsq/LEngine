@@ -13,7 +13,9 @@ GameState::GameState(GameStateManager* gsm)
     comCollisionMan(&eventDispatcher),
     comParticleMan(&eventDispatcher),
     comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher),
-	comLightMan(&eventDispatcher){
+	comLightMan(&eventDispatcher),
+
+	entityMan(gsm){
 
     mCurrentMap=NULL;
     SetDependencies();

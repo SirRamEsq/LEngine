@@ -945,10 +945,10 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     }
 
     //Translate background color from string to int
-    const char* pointer=valueString.c_str();
-    pointer++; //Skip over the "#" character
-    tiledData->bgColor  =strtol( pointer, NULL, 16 );//base 16
-    pointer=NULL;
+    //const char* pointer=valueString.c_str();
+    //pointer++; //Skip over the "#" character
+    //tiledData->bgColor  =strtol( pointer, NULL, 16 );//base 16
+    //pointer=NULL;
 
     node=node->first_node(); //point to the first child of <map>
     xml_node<> *subnode;
