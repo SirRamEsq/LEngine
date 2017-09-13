@@ -86,8 +86,13 @@ bool ParticleCreator::Start(){
     //Generate and set shader program
     mShaderProgram.reset(new RSC_GLProgram);
 
-    mShaderProgram->AddShader( GenerateVertexShader() );
-    mShaderProgram->AddShader( GenerateFragmentShader() );
+	mShaderVertex.reset(NULL);
+	mShaderVertex = std::move(GenerateVertexShader());
+	mShaderFragment.reset(NULL);
+	mShaderFragment = std::move(GenerateFragmentShader());
+
+    mShaderProgram->AddShader( mShaderVertex.get() );
+    mShaderProgram->AddShader( mShaderFragment.get() );
 
     mShaderProgram->LinkProgram();
     mShaderProgram->Bind();
@@ -190,7 +195,7 @@ void ParticleCreator::SetEffect(const PARTICLE_EFFECT& effect){
     mEffect=effect;
 }
 
-RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
+std::unique_ptr<RSC_GLShader> ParticleCreator::GenerateFragmentShader(){
     //Particle Shape
     //default is square
     std::string particleShape=PARTICLE_SHADER_FRAGMENT_MAIN_LUASTRING_SHAPE_SQUARE;
@@ -235,10 +240,10 @@ RSC_GLShader* ParticleCreator::GenerateFragmentShader(){
     ss << "\n\n\n";
     K_Log.Write(ss.str());
 
-    return shader.release();
+    return shader;
 }
 
-RSC_GLShader* ParticleCreator::GenerateVertexShader(){
+std::unique_ptr<RSC_GLShader> ParticleCreator::GenerateVertexShader(){
     std::stringstream ss;
     ss
     << PARTICLE_SHADER_VERTEX_DECLARATIONS;
@@ -259,7 +264,7 @@ RSC_GLShader* ParticleCreator::GenerateVertexShader(){
     ss << "\n\n\n";
     K_Log.Write(ss.str());
 
-    return shader.release();
+    return shader;
 }
 
 void ParticleCreator::SetParticlesPerFrame(const float& particles){

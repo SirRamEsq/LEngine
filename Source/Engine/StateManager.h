@@ -106,7 +106,7 @@ class GameState{
 		std::vector<EID> SetMapGetEntitiesUsingEntrances(const std::vector<std::unique_ptr<TiledObjectLayer> >& layers);
 		void SetMapLinkEntities(
 				const std::vector<std::unique_ptr<TiledObjectLayer> >& layers,
-				const std::map<EID,EID>& tiledIDtoEntityID,
+				std::map<EID,EID>& tiledIDtoEntityID,
 				const std::vector<EID>& objectsUsingEntrance
 		);
 

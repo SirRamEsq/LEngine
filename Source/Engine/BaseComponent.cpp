@@ -44,6 +44,7 @@ void BaseComponent::SetParentEID(EID p){
 		ss << "Parent with eid " << p << " Doesn't Exist";
 		K_Log.Write(ss.str());
 		SetParent(NULL);
+		ASSERT(false);
 		return;
 	}
 	SetParent(mManager->GetComponent(p));

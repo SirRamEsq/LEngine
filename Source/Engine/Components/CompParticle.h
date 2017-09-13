@@ -97,10 +97,12 @@ class ParticleCreator : public RenderableObjectWorld{
         PARTICLE_SHAPE         mShape;
         PARTICLE_EFFECT        mEffect;
 
-        RSC_GLShader* GenerateVertexShader  ();
-        RSC_GLShader* GenerateFragmentShader();
+		std::unique_ptr<RSC_GLShader> GenerateVertexShader  ();
+		std::unique_ptr<RSC_GLShader> GenerateFragmentShader();
 
         std::unique_ptr<RSC_GLProgram> mShaderProgram;
+		std::unique_ptr<RSC_GLShader> mShaderVertex;
+		std::unique_ptr<RSC_GLShader> mShaderFragment;
         RandomGenerator mRandom;
 
         unsigned int mParticleLifeSpan; //Time until particles end

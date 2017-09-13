@@ -291,6 +291,7 @@ void ComponentScriptManager::AddComponent(EID id, EID parent){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
     auto script = make_unique<ComponentScript>(id, lState, eventDispatcher, lInterface, dependencyRenderManager, logFileName);
+	script->mManager = this;
     componentList[id] = std::move(script);
 }
 
