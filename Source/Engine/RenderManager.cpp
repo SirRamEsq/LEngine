@@ -256,6 +256,23 @@ void RenderManager::Render(){
 
 	ImGui::Render();
 	ImGuiRender( ImGui::GetDrawData() );
+
+	//Check for errors
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR){
+		std::stringstream ss;
+		std::string errorString;
+		switch(err){
+			case GL_INVALID_OPERATION: 	errorString = "GL_INVALID_OPERATION"; break;
+			case GL_INVALID_ENUM:		errorString = "GL_INVALID_ENUM"; break;
+			case GL_OUT_OF_MEMORY:		errorString = "GL_OUT_OF_MEMORY"; break;
+			case GL_INVALID_VALUE:		errorString = "GL_INVALID_VALUE"; break;
+			case GL_INVALID_FRAMEBUFFER_OPERATION:	errorString = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+			default: errorString = "?";
+		}
+		ss << "GL Error: " << errorString << std::endl;
+		K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+	}
 }
 
 void RenderManager::AssignCameraUBO(RSC_GLProgram* program){
