@@ -6,7 +6,7 @@ cppTest.create = function (baseclass)
 
 	function test.Initialize()
 		test.depth        = test.LEngineData.depth;
-		test.parent       = test.LEngineData.parent;
+		test.parentEID       = test.LEngineData.parentEID;
 		test.CPPInterface = CPP.interface; 
 		test.name=			test.LEngineData.name
 		test.objType=test.LEngineData.objType
@@ -53,7 +53,7 @@ cppTest.create = function (baseclass)
 		CPP.interface:WriteError(test.EID, tostring(test.depth))
 	end
 	function test.PrintParent()
-		CPP.interface:WriteError(test.EID, tostring(test.parent))
+		CPP.interface:WriteError(test.EID, tostring(test.parentEID))
 	end
 	function test.PrintEID()
 		CPP.interface:WriteError(test.EID, tostring(test.EID))

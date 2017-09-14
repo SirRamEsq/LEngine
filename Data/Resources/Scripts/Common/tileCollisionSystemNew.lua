@@ -57,6 +57,12 @@ collision.cComp=nil;
 		collision.coordinates.LEFT_H_OFFSET		=  8;
 		collision.coordinates.LEFT_ORDER		=  15;
 
+		collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  11
+		collision.coordinates.RIGHT_SHORT_H_OFFSET	=  4;
+
+		collision.coordinates.LEFT_SHORT_Y_OFFSET	=  11;
+		collision.coordinates.LEFT_SHORT_H_OFFSET	=  4;
+
 		collision.coordinates.UP_Y_OFFSET		=  0;
 		collision.coordinates.UP_H_OFFSET		=  -1;
 		collision.coordinates.UP_W_OFFSET		=  2;
@@ -97,8 +103,8 @@ function collision.Init(w, h, iface, component, eid)
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
 	collision.boxTileRight= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
 	collision.boxTileLeft=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
-	collision.boxTileRightShort= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET + coords.RIGHT_H_OFFSET/2,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET/2);
-	collision.boxTileLeftShort=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET + coords.RIGHT_H_OFFSET/2,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET/2 );
+	collision.boxTileRightShort= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
+	collision.boxTileLeftShort=	 CPP.CRect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
 	collision.boxTileUp=		 CPP.CRect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
 
 	collision.boxTileDownR= CPP.CRect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
@@ -131,10 +137,11 @@ function collision.Init(w, h, iface, component, eid)
 end
 
 function collision.SetWidthHeight(w, h)
+	--louie is 18,32
 	collision.WIDTH=w;
 	collision.HEIGHT=h;
-	collision.coordinates.GROUND_R_X_OFFSET =  w-2
-	collision.coordinates.GROUND_L_X_OFFSET =  2;
+	collision.coordinates.GROUND_R_X_OFFSET 	=  w-2
+	collision.coordinates.GROUND_L_X_OFFSET 	=  2;
 	collision.coordinates.GROUND_Y_OFFSET		=  h-collision.FEET_OFFSET;
 	collision.coordinates.GROUND_H_OFFSET		=  1+collision.FEET_OFFSET;
 	collision.coordinates.GROUND_ORDER			=  5;
@@ -150,19 +157,25 @@ function collision.SetWidthHeight(w, h)
 	collision.coordinates.RIGHT_Y_OFFSET		=  9
 	collision.coordinates.RIGHT_W_OFFSET		=  1
 	collision.coordinates.RIGHT_H_OFFSET		=  h-14;
-	collision.coordinates.RIGHT_ORDER				=  15;
+	collision.coordinates.RIGHT_ORDER			=  15;
 
 	collision.coordinates.LEFT_X_OFFSET			=  0;
 	collision.coordinates.LEFT_Y_OFFSET			=  9
 	collision.coordinates.LEFT_W_OFFSET			=  -1;
 	collision.coordinates.LEFT_H_OFFSET			=  h-14;
-	collision.coordinates.LEFT_ORDER				=  15;
+	collision.coordinates.LEFT_ORDER			=  15;
 
-	collision.coordinates.UP_Y_OFFSET				=  8;
-	collision.coordinates.UP_H_OFFSET				=  1;
-	collision.coordinates.UP_W_OFFSET				=  (w/2);
-	collision.coordinates.UP_X_OFFSET				=  (w/4);
-	collision.coordinates.UP_ORDER					=  10;
+	collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  math.floor(h/2) - 1
+	collision.coordinates.RIGHT_SHORT_H_OFFSET	=  math.floor(h/4)
+
+	collision.coordinates.LEFT_SHORT_Y_OFFSET	=  9
+	collision.coordinates.LEFT_SHORT_H_OFFSET	=  h-14;
+
+	collision.coordinates.UP_Y_OFFSET			=  8;
+	collision.coordinates.UP_H_OFFSET			=  1;
+	collision.coordinates.UP_W_OFFSET			=  math.floor(w/2);
+	collision.coordinates.UP_X_OFFSET			=  math.floor(w/4);
+	collision.coordinates.UP_ORDER				=  10;
 end
 
 function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
