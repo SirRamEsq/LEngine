@@ -211,10 +211,12 @@ void VAOWrapperSprite::UpdateGPU(){
 }
 
 VAOWrapperSprite::~VAOWrapperSprite(){
-    glDeleteVertexArrays(1, &vboVertex );
-    glDeleteVertexArrays(1, &vboTexture);
-    glDeleteVertexArrays(1, &vboColor  );
-    glDeleteVertexArrays(1, &vboScalingRotation);
-    glDeleteVertexArrays(1, &vboTranslate);
+    glDeleteBuffers(1, &vboVertex );
+    glDeleteBuffers(1, &vboTexture);
+    glDeleteBuffers(1, &vboColor  );
+    glDeleteBuffers(1, &vboScalingRotation);
+    glDeleteBuffers(1, &vboTranslate);
+
+	glDeleteVertexArrays(1, &vao);
 }
 

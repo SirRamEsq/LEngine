@@ -109,7 +109,6 @@ bool ParticleCreator::Start(){
 
     glUniform1f(mTimeUniformLocation, ((float)(mTime)) );
 
-
 	//Set up Camera UBO
 	try{
 		dependencyRenderManager->AssignCameraUBO(mShaderProgram.get());
@@ -311,7 +310,6 @@ void ParticleCreator::SetColor(const float& rMin, const float& gMin, const float
 /*void ParticleCreator::SetShape(PARTICLE_SHAPE shape){
     mShape=shape;
 }
-
 */
 
 void ParticleCreator::SetPosition(const Coord2df& positionMin, const Coord2df& positionMax){

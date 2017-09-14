@@ -257,6 +257,7 @@ void RenderManager::Render(){
 	ImGui::Render();
 	ImGuiRender( ImGui::GetDrawData() );
 
+#ifdef DEBUG_MODE
 	//Check for errors
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR){
@@ -273,6 +274,7 @@ void RenderManager::Render(){
 		ss << "GL Error: " << errorString << std::endl;
 		K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
 	}
+#endif
 }
 
 void RenderManager::AssignCameraUBO(RSC_GLProgram* program){

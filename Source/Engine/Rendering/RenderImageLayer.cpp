@@ -70,9 +70,11 @@ void VAOWrapper::UpdateGPU(){
 }
 
 VAOWrapper::~VAOWrapper(){
-    glDeleteVertexArrays(1, &vboVertex );
-    glDeleteVertexArrays(1, &vboColor  );
-    glDeleteVertexArrays(1, &vboTexture);
+    glDeleteBuffers(1, &vboVertex );
+    glDeleteBuffers(1, &vboColor  );
+    glDeleteBuffers(1, &vboTexture);
+
+	glDeleteVertexArrays(1, &vao);
 }
 
 ///////////////////
