@@ -1,4 +1,5 @@
 #include "RSC_GLShader.h"
+#include "ResourceLoading.h"
 #include "../Kernel.h"
 #include <math.h>
 #include <iostream>
@@ -15,30 +16,18 @@ LEngineShaderProgramException::LEngineShaderProgramException(const std::string& 
 }
 
 std::string RSC_GLShader::LoadShaderFromFile(const std::string& filepath){
-    std::string   filePath;
-    std::string   fileString;
-
-    std::ifstream file;
-    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    K_Log.Write("L_GL_SHADER: LOADSHADERFROMFILE, reads files directly, may want it to use some kind of abstract file loader");
     try{
-        //open files
-        file.open(filepath.c_str());
-        std::stringstream ss;
-
-        //read the file buffer's contents into the string stream
-        ss << file.rdbuf();
-
-        //close the file
-        file.close();
-
-        fileString =   ss.str();
+        std::string fullPath = "Resources/Shaders/"+filepath;
+        auto shaderFile=LoadGenericFile(fullPath);
+        if(shaderFile.get()->GetData()==NULL){
+			throw LEngineFileException("Shader is empty!", fullPath);
+        }
+		return std::string(shaderFile->GetData(), shaderFile->length);
     }
-    catch (std::ifstream::failure e){
-        K_Log.Write("[C++] L_GL_SHADER(); FILE_NOT_SUCCESFULLY_READ");
-        return "";
+    catch(LEngineFileException e){
+        K_Log.Write(e.what());
+		return "";
     }
-    return fileString;
 }
 
 RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
