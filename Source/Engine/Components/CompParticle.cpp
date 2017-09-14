@@ -12,7 +12,6 @@ Each Particle Creator will have two draw calls, one for the head of the buffer a
 ////////////////////
 //Particle Creator//
 ////////////////////
-
 ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile)
     : RenderableObjectWorld(rm), dependencyRenderManager(rm), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
 

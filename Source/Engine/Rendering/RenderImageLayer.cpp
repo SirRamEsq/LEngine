@@ -2,7 +2,6 @@
 #include "../Kernel.h"
 #include "../RenderManager.h"
 
-
 //////////////
 //VAOWrapper//
 //////////////

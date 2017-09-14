@@ -1,10 +1,12 @@
 #include "../catch.hpp"
 #include "../../Engine/Components/CompCollision.h"
 #include "../mocks/RSC_MapMock.h"
+#include "../mocks/StateManager.h"
 #include "../../Engine/EntityManager.h"
 #include "../../Engine/Event.h"
 #include "../../Engine/Defines.h"
 
+GameStateManager dummyManager;
 TEST_CASE("Test RSC_Map Mock and Tile Layer", "[collision][rsc_map]"){
     RSC_MapMock testMap("TEST", 64, 64);
     REQUIRE(NULL == testMap.GetTileLayerCollision(2, 2, true));
@@ -38,7 +40,7 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
 
 
     EventDispatcher             eventDispatcher;
-    EntityManager               entityMan;
+    EntityManager               entityMan(&dummyManager);
 
     eventDispatcher.SetDependencies(NULL, &entityMan);
 
@@ -175,7 +177,7 @@ TEST_CASE("Entity Collision tests", "[collision]"){
     REQUIRE(0 == callbackValueEntity);
 
     EventDispatcher             eventDispatcher;
-    EntityManager               entityMan;
+    EntityManager               entityMan(&dummyManager);
 
     eventDispatcher.SetDependencies(NULL, &entityMan);
 
