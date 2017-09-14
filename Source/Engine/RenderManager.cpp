@@ -525,8 +525,8 @@ void RenderManager::LoadDefaultShaders(){
 	defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
 
 	if(defaultProgramSprite == NULL){
-		std::string shaderFrag  = "Data/Resources/Shaders/fragmentSpriteMain.glsl";
-		std::string shaderVert    = "Data/Resources/Shaders/vertexSpriteMain.glsl";
+		std::string shaderFrag  = "fragmentSpriteMain.glsl";
+		std::string shaderVert  = "vertexSpriteMain.glsl";
 		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
 		LinkShaderProgram(shaderProgram.get());
 
@@ -537,8 +537,8 @@ void RenderManager::LoadDefaultShaders(){
 	}
 
 	if(defaultProgramTile == NULL){
-		std::string shaderFrag  = "Data/Resources/Shaders/fragmentTileMain.glsl";
-		std::string shaderVert	 = "Data/Resources/Shaders/vertexTileMain.glsl";
+		std::string shaderFrag  = "fragmentTileMain.glsl";
+		std::string shaderVert	 = "vertexTileMain.glsl";
 		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
 		LinkShaderProgram(shaderProgram.get());
 
@@ -549,8 +549,8 @@ void RenderManager::LoadDefaultShaders(){
 	}
 
 	if(defaultProgramImage == NULL){
-		std::string shaderFrag  = "Data/Resources/Shaders/fragmentImage.glsl";
-		std::string shaderVert	 = "Data/Resources/Shaders/vertexImage.glsl";
+		std::string shaderFrag  = "fragmentImage.glsl";
+		std::string shaderVert	 = "vertexImage.glsl";
 		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
 		LinkShaderProgram(shaderProgram.get());
 
@@ -561,8 +561,8 @@ void RenderManager::LoadDefaultShaders(){
 	}
 
 	if(defaultProgramLight == NULL){
-		std::string shaderFrag  = "Data/Resources/Shaders/fragmentLightMain.glsl";
-		std::string shaderVert	 = "Data/Resources/Shaders/vertexLightMain.glsl";
+		std::string shaderFrag  = "fragmentLightMain.glsl";
+		std::string shaderVert	 = "vertexLightMain.glsl";
 		auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
 		LinkShaderProgram(shaderProgram.get());
 

@@ -184,8 +184,8 @@ TEST_CASE("Entity Collision tests", "[collision]"){
     ComponentCollisionManager   collisionManager(&eventDispatcher);
     ComponentPositionManager    positionManager(&eventDispatcher);
 
-    entityMan.RegisterComponentManager(&positionManager,         EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
-    entityMan.RegisterComponentManager(&collisionManager,        EntityManager::DEFAULT_UPDATE_ORDER::COLLISION);
+    entityMan.RegisterComponentManager(&positionManager, EntityManager::DEFAULT_UPDATE_ORDER::POSITION);
+    entityMan.RegisterComponentManager(&collisionManager,EntityManager::DEFAULT_UPDATE_ORDER::COLLISION);
     collisionManager.dependencyPosition = &positionManager;
 
     EID entity = EID_MIN;
