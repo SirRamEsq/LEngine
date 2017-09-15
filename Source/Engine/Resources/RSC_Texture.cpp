@@ -144,6 +144,7 @@ void RSC_Texture::Bind() const {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		// Sets drawing mode to GL_MODULATE
+		// should only be called once
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 		// Finally, generate the texture data in OpenGL.

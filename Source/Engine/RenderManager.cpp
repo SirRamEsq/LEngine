@@ -211,8 +211,6 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 		glTexCoord2f(Left,	Bottom);
 		glVertex3f(screenSpace.GetLeft() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
 	glEnd();
-
-	tex->ExportTexture("tex.png");
 }
 
 

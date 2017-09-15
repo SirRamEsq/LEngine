@@ -15,7 +15,8 @@ DEPEXT		:= d
 OBJEXT		:= o
 
 #Flags, Libraries and Includes
-CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++11 -ggdb3
+CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++11 -ggdb3 -pg
+CFLAGS_LINK	:= -pg
 
 #without efence debug
 LIB		:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lfreetype
@@ -64,7 +65,7 @@ cleaner: clean
 
 #Link
 $(TARGET): $(OBJECTS)
-	$(CC) -o $(TARGETDIR)/$(TARGET) $^ $(LIB)
+	$(CC) -o $(TARGETDIR)/$(TARGET) $^ $(CFLAGS_LINK) $(LIB) 
 
 #Compile
 $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
