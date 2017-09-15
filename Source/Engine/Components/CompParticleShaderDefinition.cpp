@@ -116,8 +116,7 @@ const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND=
 
 const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_END=
 	//z is depth, will be between 0.0 and 1.0
-	//"float depth = min( ((time + lifetime.x) / (lifetime.y)),1.0);\n"
-	"float depth = time / lifetime.y;\n"
+	"float depth = (time - lifetime.x) / (lifetime.y - lifetime.x);\n"
     "vec4 luaOut=projMatrix * vec4(temp, depth, 1.0);\n"
 ;
 

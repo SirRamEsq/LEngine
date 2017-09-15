@@ -10,7 +10,7 @@ function container.NewState(baseclass)
 		state.parent		= state.LEngineData.parent;
 		state.EID		= state.LEngineData.entityID;
 
-		CPP.interface:LoadMap("1.tmx", 0)
+		CPP.interface:LoadMap("MAP1.tmx", 0)
 	end
 
 	function state.Update()

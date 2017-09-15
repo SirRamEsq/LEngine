@@ -77,7 +77,7 @@ bool SDLInit::InitOpenGL(){
     glOrtho(0.0f, SCREEN_W, SCREEN_H, 0, 0, 1); //2D
     //gluPerspective(45.0,(GLfloat)SCREEN_W/(GLfloat)SCREEN_H,0.1,100.0); //3D
 
-    glClearColor( 1.f, 0.f, 1.f, 1.f );
+    glClearColor( 1.0, 0.0, 1.0, 1.0 );
 
     //Initialize modelview matrix
     glMatrixMode(GL_MODELVIEW);
