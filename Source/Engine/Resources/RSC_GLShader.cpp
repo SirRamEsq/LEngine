@@ -37,7 +37,7 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
     mShaderType = type;
     mHandleID   = glCreateShader(mShaderType);
 
-    //Define memory locations for these two variables so that glShaderSource can take their addresses
+    //Define memory location for these two variables so that glShaderSource can take their addresses
     const GLchar* code   = glslCode.c_str();
     const GLint   leng = glslCode.length();
 

@@ -126,9 +126,6 @@ class GIDManager{
         //GIDEnabled items can be lookedup by Range
         std::map<Range,         GIDEnabled*> GIDItems;
 };
-//No more Global GID manager. Each RSC_Map will contain its own set of data to create a map
-//The only reason they were shared before, was in order to share the same spriets
-//Now that these classes don't create sprites, it no longer serves a purpose
 
 //A tiled set defines what tiles are. Each tile set has a texture and also contains special properties of any tiles should have them.
 //Each tile has a unique GID. Each tileSet has a Range of GIDs for each tile it defines
@@ -186,7 +183,6 @@ class TiledSet : public GIDEnabled{
 //A TiledTileLayer defines the make up of a layer of terrain from the TiledSet that it makes use of
 //The TiledTileLayer is, at it's core, a 2d array of GID values from a single TileSet.
 //In addition to the properties outlined in the TiledSet, the TiledTileLayer can override and add to those properties.
-
 class TiledLayerGeneric{
     friend RSC_MapImpl;
     friend TiledData;

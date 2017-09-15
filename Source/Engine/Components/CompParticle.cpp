@@ -350,6 +350,9 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
     when its first created
     It may look like the creator stopped generating particles momentarily
     This is especially noticable if the particles are especially large or slow
+
+	This can be resolved by using a depth buffer
+		and possibly setting depth equal to time that has been alive
     */
 
     unsigned int writeLocationVertex = writeLocation * 4; //convert to actual vertex index
@@ -497,7 +500,8 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
             data.lifeTime.x    = mTime;
             data.lifeTime.y    = mTime + mParticleLifeSpan;
             data.scaling       = scaling;
-        }
+		}
+        
         //advance by 4 ParticleVerticies
         writeLocationVertex+=4;
     }
@@ -528,6 +532,9 @@ void ParticleCreator::Stop(){
 void ParticleCreator::Update(){
     if      (mState==PARTICLE_CREATOR_STOPPED){return;}
 
+    //Increment time
+    mTime++;
+
     //Treat as ring buffer
     if (mCurrentParticleIndex >= mMaxParticles){
         mCurrentParticleIndex -= mMaxParticles;
@@ -546,9 +553,6 @@ void ParticleCreator::Update(){
     if((mState==PARTICLE_CREATOR_STARTING)or(mState==PARTICLE_CREATOR_SUSTAINING)){
         WriteData(mParticleBufferWriteLocation, indexDifference);
     }
-
-    //Increment time
-    mTime++;
 
     //The particle creator will begin generating particles, but this state indicates that
     //it hasn't hit the maximum number of particles yet
@@ -618,10 +622,21 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
 		}
     }
 
+    GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
+	glDepthFunc(GL_GEQUAL);
+	glDepthMask(GL_TRUE);
+
+	glClearDepth(0.0f);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
     //Render starting from buffer start to mParticlesToRender
     glDrawArrays (GL_QUADS, 0, mParticlesToRender*4);
+
+    if (not last_enable_depth_test){
+		glDisable(GL_DEPTH_TEST);
+	}
 }
 
 //////////////////////

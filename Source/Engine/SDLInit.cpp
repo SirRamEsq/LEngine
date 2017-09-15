@@ -66,8 +66,6 @@ bool InitImgGui(SDL_Window* window){
 
 bool SDLInit::InitOpenGL(){
     glViewport(0, 0, SCREEN_W, SCREEN_H);
-    //glClearDepth(1.0f);                         // Depth Buffer Setup
-    //glDepthFunc(GL_LEQUAL);                         // The Type Of Depth Test To Do
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_TEXTURE_2D); //Enable Texture Mapping
@@ -76,10 +74,10 @@ bool SDLInit::InitOpenGL(){
     glLoadIdentity();
 
     //Bottom is the height, Top is 0
-    glOrtho(0.0f, CAMERA_W, CAMERA_H, 0, 1, -1); //2D
+    //glOrtho(0.0f, CAMERA_W, CAMERA_H, 0, 0, 1); //2D
     //gluPerspective(45.0,(GLfloat)SCREEN_W/(GLfloat)SCREEN_H,0.1,100.0); //3D
 
-     glClearColor( 1.f, 0.f, 1.f, 1.f );
+    glClearColor( 1.f, 0.f, 1.f, 1.f );
 
     //Initialize modelview matrix
     glMatrixMode(GL_MODELVIEW);
@@ -104,6 +102,7 @@ void SDLInit::InitSDL(){
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
     mMainWindow= SDL_CreateWindow(   "LEngine", //name
@@ -138,6 +137,7 @@ void SDLInit::InitSDL(){
         K_Log.Write("Couldn't load ttf");
     }
 
+	//why is this here?
     GLenum err = glewInit();
     if (GLEW_OK != err){
         std::stringstream ss;
