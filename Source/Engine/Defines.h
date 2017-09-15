@@ -246,10 +246,10 @@ class FloatRect{
         inline float GetY()           const     {return y;  }
         inline void  SetY(const float& yy)      {y=yy;      }
 
-        inline float GetTop     ()  const;
-        inline float GetBottom  ()  const;
-        inline float GetLeft    ()  const;
-        inline float GetRight   ()  const;
+        float GetTop     ()  const;
+        float GetBottom  ()  const;
+        float GetLeft    ()  const;
+        float GetRight   ()  const;
 
         float x, y, w, h;
 };

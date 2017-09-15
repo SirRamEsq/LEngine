@@ -48,8 +48,11 @@ class RenderCamera{
 
 		CRect GetView()const;
 		void SetView(CRect viewPort);
+		FloatRect GetScreenSpace()const;
+		void SetScreenSpace(FloatRect screen);
 
 		void RenderFrameBufferTextureFinal();
+		void RenderFrameBufferTextureDiffuse();
 
 	protected:
 		///Resolution to display
@@ -59,16 +62,16 @@ class RenderCamera{
 		RSC_Texture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
 
 	private:
+		void RenderFrameBufferTexture(const RSC_Texture* tex);
 		float rotation;
 		float scale;
 
 		MAP_DEPTH nearClippingPlane;
 		MAP_DEPTH farClippingPlane;
 
-		double normalizedViewportX; //between 0.0f and 1.0f
-		double normalizedViewportY; //determines where the FBO will be rendered to.
 		///Coordinates on the screen that the image will be rendered to
-		FloatRect normalizedViewport;
+		///All coordinates normalized between 0.0 and 1.0
+		FloatRect screenSpace;
 
 		///frame buffer object id
 		GLuint FBO; 

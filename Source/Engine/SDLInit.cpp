@@ -74,7 +74,7 @@ bool SDLInit::InitOpenGL(){
     glLoadIdentity();
 
     //Bottom is the height, Top is 0
-    //glOrtho(0.0f, CAMERA_W, CAMERA_H, 0, 0, 1); //2D
+    glOrtho(0.0f, SCREEN_W, SCREEN_H, 0, 0, 1); //2D
     //gluPerspective(45.0,(GLfloat)SCREEN_W/(GLfloat)SCREEN_H,0.1,100.0); //3D
 
     glClearColor( 1.f, 0.f, 1.f, 1.f );
@@ -137,7 +137,7 @@ void SDLInit::InitSDL(){
         K_Log.Write("Couldn't load ttf");
     }
 
-	//why is this here?
+	//why is this glew here? what does it do?
     GLenum err = glewInit();
     if (GLEW_OK != err){
         std::stringstream ss;
