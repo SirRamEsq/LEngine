@@ -246,6 +246,7 @@ int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, L
     glLoadIdentity();
     glOrtho(0.0f, CAMERA_W, CAMERA_H, 0, 1, -1);
     glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
     return true;
 }

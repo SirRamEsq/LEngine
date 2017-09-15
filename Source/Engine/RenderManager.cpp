@@ -17,6 +17,7 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
+	screenSpace = FloatRect(0, 0, 1, 1);
 	rotation=0;
 	SetView(viewPort);
 	//view.x=0;
@@ -85,6 +86,14 @@ CRect RenderCamera::GetView()const {
 
 void RenderCamera::SetView(CRect viewPort){
 	view = viewPort;
+}
+
+FloatRect RenderCamera::GetScreenSpace()const {
+	return screenSpace;
+}
+
+void RenderCamera::SetScreenSpace(FloatRect screen){
+	screenSpace = screen;
 }
 
 void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
@@ -170,6 +179,12 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 }
 
 void RenderCamera::RenderFrameBufferTextureFinal(){
+	RenderFrameBufferTexture(frameBufferTextureFinal.get());
+}
+void RenderCamera::RenderFrameBufferTextureDiffuse(){
+	RenderFrameBufferTexture(frameBufferTextureDiffuse.get());
+}
+void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	RSC_GLProgram::BindNULL();
 	glBindVertexArray (0);
@@ -177,18 +192,27 @@ void RenderCamera::RenderFrameBufferTextureFinal(){
 	//Back to initial viewport
 	glPopAttrib();
 
-	frameBufferTextureFinal.get()->Bind();
+	tex->Bind();
 	float Left=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetWidth();
 	float Right=	1;//(float)SCREEN_W / (float)frameBufferTextureFinal->GetWidth();
 	float Top=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetHeight();
 	float Bottom=	1;//(float)SCREEN_H / (float)frameBufferTextureFinal->GetHeight();
 
 	glBegin(GL_QUADS);
-		glTexCoord2f(Left,	Top);		glVertex3i(0,		 0,		   0);
-		glTexCoord2f(Right, Top);		glVertex3i(CAMERA_W, 0,		   0);
-		glTexCoord2f(Right, Bottom);	glVertex3i(CAMERA_W, CAMERA_H, 0);
-		glTexCoord2f(Left,	Bottom);	glVertex3i(0,		 CAMERA_H, 0);
+		glTexCoord2f(Left,	Top);
+		glVertex3f(screenSpace.GetLeft() * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
+
+		glTexCoord2f(Right, Top);
+		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
+
+		glTexCoord2f(Right, Bottom);
+		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
+
+		glTexCoord2f(Left,	Bottom);
+		glVertex3f(screenSpace.GetLeft() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
 	glEnd();
+
+	tex->ExportTexture("tex.png");
 }
 
 
@@ -269,9 +293,10 @@ void RenderManager::Render(){
 		}
 
 		//Need better way to handle light
-		Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
+		//Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(), (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
 
-		(*currentCamera)->RenderFrameBufferTextureFinal();
+		//(*currentCamera)->RenderFrameBufferTextureFinal();
+		(*currentCamera)->RenderFrameBufferTextureDiffuse();
 	}
 
 	//Screen objects are rendered after others, but do not use the camera's matrix
