@@ -13,8 +13,8 @@
 ////////////////
 
 RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
-	: frameBufferTextureDiffuse(std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
-	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(SCREEN_W, SCREEN_H, 4, GL_RGBA)))
+	: frameBufferTextureDiffuse(std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
+	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
 	rotation=0;
@@ -25,8 +25,41 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	//view.h=CAMERA_H;
 
 	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	//render buffers are a good choice if you don't intend on sampling from the data
+	//the depth buffer is only for the framebuffer, it won't be sampled externally
+	//only the color will
+	glGenRenderbuffers(1, &mDepthRBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO); 
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w, viewPort.h);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthRBO);  
+
+	//unbind
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	//Does the GPU support current FBO configuration?
+	GLenum status;
+	status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	switch(status){
+		case GL_FRAMEBUFFER_COMPLETE: break;
+		default:
+			std::stringstream ss;
+			ss << "RenderCamera framebuffer failed, status: " << status << std::endl;
+			K_Log.Write(ss.str(), Log::SEVERITY::FATAL);
+			break;
+	}
 
 	dependencyRenderManager->AddCamera( this);
+}
+
+RenderCamera::~RenderCamera(){
+	glDeleteTextures(1, &mDepthRBO);
+	glDeleteFramebuffers(1, &FBO);
+	//should this be called? what if this fbo is currently bound?
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	dependencyRenderManager->RemoveCamera(this);
 }
 
 
@@ -79,8 +112,8 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	float leftSide	  = 0;
 	float bottomSide  = 0;
 	float topSide	  = view.h; //CAMERA_H;// - 1.0f;
-	float zFar		  = 1.1f;
-	float zNear		  = 0.1f;
+	float zFar		  = 1.0f;
+	float zNear		  = 0.0f;
 
 	float normalizedDeviceSpaceX =	2.0f / (rightSide  - leftSide);
 	float normalizedDeviceSpaceY =	2.0f / (topSide    - bottomSide);
@@ -136,10 +169,6 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameBufferTextureDiffuse->GetOpenGLID(), 0);
 }
 
-RenderCamera::~RenderCamera(){
-	Kernel::stateMan.GetCurrentState()->renderMan.RemoveCamera(this);
-}
-
 void RenderCamera::RenderFrameBufferTextureFinal(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	RSC_GLProgram::BindNULL();
@@ -149,10 +178,10 @@ void RenderCamera::RenderFrameBufferTextureFinal(){
 	glPopAttrib();
 
 	frameBufferTextureFinal.get()->Bind();
-	float Left=		(float)0.0f		/ (float)frameBufferTextureFinal->GetWidth();
-	float Right=	(float)SCREEN_W / (float)frameBufferTextureFinal->GetWidth();
-	float Top=		(float)0.0f		/ (float)frameBufferTextureFinal->GetHeight();
-	float Bottom=	(float)SCREEN_H / (float)frameBufferTextureFinal->GetHeight();
+	float Left=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetWidth();
+	float Right=	1;//(float)SCREEN_W / (float)frameBufferTextureFinal->GetWidth();
+	float Top=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetHeight();
+	float Bottom=	1;//(float)SCREEN_H / (float)frameBufferTextureFinal->GetHeight();
 
 	glBegin(GL_QUADS);
 		glTexCoord2f(Left,	Top);		glVertex3i(0,		 0,		   0);

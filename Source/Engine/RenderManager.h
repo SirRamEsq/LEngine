@@ -72,6 +72,8 @@ class RenderCamera{
 
 		///frame buffer object id
 		GLuint FBO; 
+		///Frame buffer Depth Buffer ID
+		GLuint mDepthRBO; 
 
 		bool mActive;
 
