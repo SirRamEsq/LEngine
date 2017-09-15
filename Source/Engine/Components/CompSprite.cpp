@@ -75,6 +75,7 @@ void ComponentSprite::Update(){
 
         animation->Update();
 
+		/*
         const CRect coordinateRect = spriteData->GetAnimation(animation->GetAnimation())->GetCRectAtIndex(animation->GetImageIndex());
 
         textureW = renderSprite->textureWidth;
@@ -91,6 +92,54 @@ void ComponentSprite::Update(){
 
         renderSprite->data.texture4.x= (float) coordinateRect.x                     / (float)(textureW); //Bottom Left
         renderSprite->data.texture4.y= (float)(coordinateRect.y + coordinateRect.h) / (float)(textureH);
+
+        //Render Using only full integers for translation to get that pixel-perfect look
+        int xPos= floor (pos.x + renderSprite->offset.x + 0.5f);
+        int yPos= floor (pos.y + renderSprite->offset.y + 0.5f);
+
+        Vec2 temp(0,0);
+        temp.x = renderSprite->data.vertexOrigin1.x;
+        temp.y = renderSprite->data.vertexOrigin1.y;
+        renderSprite->data.vertex1 = temp;
+
+        temp.x = renderSprite->data.vertexOrigin2.x;
+        temp.y = renderSprite->data.vertexOrigin2.y;
+        renderSprite->data.vertex2 = temp;
+
+        temp.x = renderSprite->data.vertexOrigin3.x;
+        temp.y = renderSprite->data.vertexOrigin3.y;
+        renderSprite->data.vertex3 = temp;
+
+        temp.x = renderSprite->data.vertexOrigin4.x;
+        temp.y = renderSprite->data.vertexOrigin4.y;
+        renderSprite->data.vertex4 = temp;
+
+        renderSprite->data.scalingRotation.x = renderSprite->scaleX;
+        renderSprite->data.scalingRotation.y = renderSprite->scaleY;
+        renderSprite->data.scalingRotation.z = renderSprite->rotation;
+
+        renderSprite->data.translate.x = xPos;
+        renderSprite->data.translate.y = yPos;
+		*/
+
+        auto ani = spriteData->GetAnimation(animation->GetAnimation());
+		auto index = animation->GetImageIndex();
+
+		//Top Left
+        renderSprite->data.texture1.x = ani->GetUVLeft(index);
+        renderSprite->data.texture1.y = ani->GetUVTop(index);
+
+		//Top Right
+        renderSprite->data.texture2.x = ani->GetUVRight(index);
+        renderSprite->data.texture2.y = ani->GetUVTop(index);
+
+		//Bottom Right
+        renderSprite->data.texture3.x = ani->GetUVRight(index);
+        renderSprite->data.texture3.y = ani->GetUVBottom(index);
+
+		//Bottom Left
+        renderSprite->data.texture4.x = ani->GetUVLeft(index);
+        renderSprite->data.texture4.y = ani->GetUVBottom(index);
 
         //Render Using only full integers for translation to get that pixel-perfect look
         int xPos= floor (pos.x + renderSprite->offset.x + 0.5f);
