@@ -344,17 +344,6 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
 	if(writeSize == 0){return;}
     bool ringLoop=false; //whether there is one single contiguous memory buffer or two
 
-    /*
-    A weird side effect of using a ring buffer is that buffer[0] is always drawn first
-    That means that if all of the old particles are overlapping it, you won't see buffer[0] (or any other overlapped particle)
-    when its first created
-    It may look like the creator stopped generating particles momentarily
-    This is especially noticable if the particles are especially large or slow
-
-	This can be resolved by using a depth buffer
-		and possibly setting depth equal to time that has been alive
-    */
-
     unsigned int writeLocationVertex = writeLocation * 4; //convert to actual vertex index
     unsigned int writeSizeVertex = writeSize * 4;
     unsigned int maxParticlesVertex = mMaxParticles * 4;
@@ -622,21 +611,28 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
 		}
     }
 
+	/*
+	//depth test disables any alpha blending support
+	//depth test can sort particles by lifetime
     GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_TEST);
 
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
+	//Setting alpha to zero seems to fix the issue
+    glBlendFunc(GL_SRC_ALPHA,GL_ZERO);
 
 	glClearDepth(1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	*/
     //Render starting from buffer start to mParticlesToRender
-    glDrawArrays (GL_QUADS, 0, mParticlesToRender*4);
-
+    glDrawArrays (GL_QUADS, 0, (mParticlesToRender)*4);
+	/*
     if (not last_enable_depth_test){
 		glDisable(GL_DEPTH_TEST);
 	}
+	*/
 }
 
 //////////////////////

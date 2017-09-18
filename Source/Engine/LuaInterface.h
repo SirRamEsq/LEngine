@@ -34,7 +34,7 @@ class LuaInterface{
 		typedef void (*ErrorCallback)(EID id, const std::string& errorMessage);
 
 		//Initializes and exposes the C++ functionality to the luaState
-		LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY);
+		LuaInterface(GameState* state);
 		~LuaInterface();
 
 		bool RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, EID parent, const std::string& name, const std::string& type,
@@ -146,11 +146,6 @@ class LuaInterface{
 		static const std::string DEBUG_LOG;
 		static const std::string BASE_SCRIPT_NAME;
 		static const std::string TYPE_DIR;
-
-		const int& RESOLUTION_X;
-		const int& RESOLUTION_Y;
-		const int& VIEWPORT_X;
-		const int& VIEWPORT_Y;
 
 	protected:
 		lua_State* GetState() {return lState;}

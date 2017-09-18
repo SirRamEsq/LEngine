@@ -17,7 +17,7 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
-	screenSpace = FloatRect(0, 0, 1.1, 1.1);
+	screenSpace = FloatRect(0, 0, 1.0, 1.0);
 	rotation=0;
 	SetView(viewPort);
 	//view.x=0;
@@ -108,8 +108,9 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 
 	//not used yet, should be used
 	Matrix4 modelViewMat = T * R * S;
+	//Will render texture upside down
 	Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(view);
-	projectionMat = projectionMat.RotateZ(180);
+	//projectionMat = projectionMat.RotateZ(180);
 
 	float position[4];
 	//Render Using only full integers for translation to get that pixel-perfect look
@@ -154,14 +155,16 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 	glPopAttrib();
 
 	tex->Bind();
-	float Left=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetWidth();
-	float Right=	1;//(float)SCREEN_W / (float)frameBufferTextureFinal->GetWidth();
-	float Top=		0;//(float)0.0f		/ (float)frameBufferTextureFinal->GetHeight();
-	float Bottom=	1;//(float)SCREEN_H / (float)frameBufferTextureFinal->GetHeight();
+	float Left=		0;
+	float Right=	1;
+	//texture is upside down, invert top and bottom
+	float Top=		0;
+	float Bottom=	1;
+
 
 	glBegin(GL_QUADS);
 		glTexCoord2f(Left,	Top);
-		glVertex3f(screenSpace.GetLeft() * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
+		glVertex3f(screenSpace.GetLeft()  * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
 
 		glTexCoord2f(Right, Top);
 		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
@@ -170,7 +173,7 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
 
 		glTexCoord2f(Left,	Bottom);
-		glVertex3f(screenSpace.GetLeft() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
+		glVertex3f(screenSpace.GetLeft()  * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
 	glEnd();
 }
 
@@ -223,6 +226,7 @@ void RenderManager::OrderOBJs(){
 }
 
 void RenderManager::Render(){
+	glViewport(0, 0, SCREEN_W, SCREEN_H);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	timeElapsed += 1;
@@ -241,7 +245,7 @@ void RenderManager::Render(){
 		 OrderOBJs(); //Sort by Depth
 	}
 
-	glLoadIdentity();
+	//glLoadIdentity();
 
 	if(!(mCameras).empty()){
 		//World objects are rendered after the camera sets its matrix 

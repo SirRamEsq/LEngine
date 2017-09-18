@@ -3,7 +3,7 @@
 
 
 GameState::GameState(GameStateManager* gsm)
-    :gameStateManager(gsm), luaInterface(this, SCREEN_W, SCREEN_H, CAMERA_W, CAMERA_H),
+    :gameStateManager(gsm), luaInterface(this),
     eventDispatcher(),
     comPosMan(&eventDispatcher),
     comCameraMan(&eventDispatcher),

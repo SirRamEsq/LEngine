@@ -131,8 +131,8 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE=
 	"os = { date = os.date, clock = os.clock, difftime = os.difftime, time = os.time },	\n"
 "}																			\n";
 
-LuaInterface::LuaInterface(GameState* state, const int& resX, const int& resY, const int& viewX, const int& viewY)
-						: parentState(state), RESOLUTION_X(resX), RESOLUTION_Y(resY), VIEWPORT_X(viewX), VIEWPORT_Y(viewY){
+LuaInterface::LuaInterface(GameState* state)
+						: parentState(state){
 	lState = luaL_newstate();
 	errorCallbackFunction = NULL;
 
@@ -442,11 +442,6 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		LuaRef engineTableRef = engineRef();
 
 		engineTableRef["Initialize"](id, name, type, depth, parent, Kernel::IsInDebugMode());
-
-			engineTableRef["RESOLUTION_X"]	= RESOLUTION_X;
-			engineTableRef["RESOLUTION_Y"]	= RESOLUTION_Y;
-			engineTableRef["VIEWPORT_X"]	= VIEWPORT_X;
-			engineTableRef["VIEWPORT_Y"]	= VIEWPORT_Y;
 
 		//Assign Instance to generated table
 		LuaRef returnedTable=getGlobal(lState, returnedTableName.str().c_str());
