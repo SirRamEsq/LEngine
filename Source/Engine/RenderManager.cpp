@@ -17,7 +17,7 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
-	screenSpace = FloatRect(0, 0, 1, 1);
+	screenSpace = FloatRect(0, 0, 1.1, 1.1);
 	rotation=0;
 	SetView(viewPort);
 	//view.x=0;
@@ -97,11 +97,6 @@ void RenderCamera::SetScreenSpace(FloatRect screen){
 }
 
 void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
-	//For the purpose of scaling and rotating the viewport, I may want to replace this vec4 with a projection matrix;
-	/*Matrix4 T =translate (identity_mat4 (), vec3 (-view.x, -view.y, 0.0));
-	Matrix4 R = rotate_z_deg (identity_mat4 (), 0.0f);
-	Matrix4 view_mat = R * T;*/
-
 	Matrix4 T= Matrix4::IdentityMatrix();
 	T=T.Translate(Vec3 (-view.x, -view.y, 0.0));
 
@@ -127,7 +122,6 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	glBufferSubData(GL_UNIFORM_BUFFER, 0,				  (sizeof(float)*4),	position);
 	glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(float)*4), (sizeof(float)*16),  	&projectionMat.m);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 
 	//Push viewport bit
 	glPushAttrib(GL_VIEWPORT_BIT);
