@@ -625,10 +625,10 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
     GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_TEST);
 
-	glDepthFunc(GL_GEQUAL);
+	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
 
-	glClearDepth(0.0f);
+	glClearDepth(1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
     //Render starting from buffer start to mParticlesToRender
