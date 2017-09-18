@@ -111,54 +111,21 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	Matrix4 S= Matrix4::IdentityMatrix();
 	S= S.Scale(Vec3(4,4,1));
 
-
-	//Create orthographic matrix
-	// http://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/orthographic-projection-matrix
-
-	//down directions is negative y; up direction is positive y
-	//y gets flipped twice, once here, and once when applying the framebuffer
-	float rightSide   = view.w; //CAMERA_W;// - 1.0f;
-	float leftSide	  = 0;
-	float bottomSide  = 0;
-	float topSide	  = view.h; //CAMERA_H;// - 1.0f;
-	float zFar		  = 1.0f;
-	float zNear		  = 0.0f;
-
-	float normalizedDeviceSpaceX =	2.0f / (rightSide  - leftSide);
-	float normalizedDeviceSpaceY =	2.0f / (topSide    - bottomSide);
-	float normalizedDeviceSpaceZ =	2.0f / (zFar	   - zNear);
-
-	//view_mat is not currentl used, but could be; keep this commented out for now until you know what to do with it
-	//Matrix4 view_mat = T * R * S;
-	Matrix4 proj_mat = Matrix4::IdentityMatrix();
-
-	proj_mat.m[ 0] = normalizedDeviceSpaceX;
-	proj_mat.m[ 5] = normalizedDeviceSpaceY;
-	proj_mat.m[10] = normalizedDeviceSpaceZ;
-	proj_mat.m[12] = -(rightSide+leftSide)/(rightSide-leftSide);
-	proj_mat.m[13] = -(topSide+bottomSide)/(topSide-bottomSide);
-	proj_mat.m[14] = (zNear+zFar)/(zNear-zFar);
-	proj_mat.m[15] = 1.0f;
-
-	/*proj_mat.m[ 0] =	normalizedDeviceSpaceX;
-	proj_mat.m[ 5] =  normalizedDeviceSpaceY;
-	proj_mat.m[10] = -2.0f;
-
-	proj_mat.m[12] = -1.0f;
-	proj_mat.m[13] =  -1.0f;
-	proj_mat.m[14] = 1.0f;
-	proj_mat.m[15] =  1.0f;*/
+	//not used yet, should be used
+	Matrix4 modelViewMat = T * R * S;
+	Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(view);
+	projectionMat = projectionMat.RotateZ(180);
 
 	float position[4];
 	//Render Using only full integers for translation to get that pixel-perfect look
 	position[0]=view.x;
 	position[1]=view.y;
-	position[2]=view.w;//CAMERA_W;
-	position[3]=view.h;//CAMERA_H;
+	position[2]=view.w;
+	position[3]=view.h;
 
 	glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0,				  (sizeof(float)*4),	 position);
-	glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(float)*4), (sizeof(float)*16),  proj_mat.m);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0,				  (sizeof(float)*4),	position);
+	glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(float)*4), (sizeof(float)*16),  	&projectionMat.m);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 

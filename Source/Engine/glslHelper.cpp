@@ -223,6 +223,21 @@ Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Coord2df& displaySize){
 	);
 }
 
+Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const CRect& displayArea){
+	float rightSide   = displayArea.GetRight();
+	float leftSide	  = displayArea.GetLeft();
+	float bottomSide  = displayArea.GetBottom();
+	float topSide	  = displayArea.GetTop();
+	float normailizedX =	2.0f / (rightSide  - leftSide);
+	float normailizedY =	2.0f / (topSide    - bottomSide);
+	return Matrix4 (
+        normailizedX,			0.0f,                   0.0f, 0.0f ,
+        0.0f,                	normailizedY, 			0.0f, 0.0f ,
+        0.0f,                 	0.0f,                  -1.0f, 0.0f ,
+        -1.0f,                 	1.0f,                   0.0f, 1.0f
+	);
+}
+
 Vec4 Matrix4::operator* (const Vec4& rhs) {
 	// 0x + 4y + 8z + 12w
 	float x =

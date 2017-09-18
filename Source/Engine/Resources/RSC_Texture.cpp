@@ -211,7 +211,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
 
 int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, LOrigin origin)const {
     //Use GLtranslate before calling this function to set the x/y values
-
+	return true;
     //Create FBO
     GLuint fbo;
     glGenFramebuffers(1, &fbo);

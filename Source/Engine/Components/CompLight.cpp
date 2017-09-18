@@ -104,6 +104,7 @@ void ComponentLightManager::Update(){
 
 void ComponentLightManager::Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const RSC_GLProgram* shaderProgram){
     //Set framebuffer to clear destination Texture
+	return;
     RSC_GLProgram::BindNULL();
     RSC_Texture::BindNull();
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);

@@ -24,7 +24,7 @@ void ComponentCamera::HandleEvent(const Event* event){
 }
 
 void ComponentCamera::SetViewport(CRect viewport){
-	mCamera.SetView(viewport);	
+	//mCamera.SetView(viewport);	
 }
 
 CRect ComponentCamera::GetViewport(){
