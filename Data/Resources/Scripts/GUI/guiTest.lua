@@ -76,7 +76,7 @@ function container.NewGui(baseclass)
 		Vec2d = gui.myPositionComp:GetPositionLocal();
 		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
-		gui.particleLifetime = 300;
+		gui.particleLifetime = 150;
 
 		gui.particleCreator = gui.myParticleComp:AddParticleCreator(0, gui.particleLifetime);
 
@@ -94,7 +94,7 @@ function container.NewGui(baseclass)
 		gui.particleCreator:SetPosition(particlePositionMin, particlePositionMax);
 		gui.particleCreator:SetVelocity(particleVelocityMin, particleVelocityMax);
 		gui.particleCreator:SetAcceleration(particleAccelMin, particleAccelMax);
-		gui.particleCreator:SetParticlesPerFrame(10);
+		gui.particleCreator:SetParticlesPerFrame(1);
 		gui.particleCreator:SetScalingX(8,8);
 		gui.particleCreator:SetScalingY(8,8);
 		gui.particleCreator:SetDepth(gui.depth);
