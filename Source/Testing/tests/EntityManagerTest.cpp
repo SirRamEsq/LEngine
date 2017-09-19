@@ -84,3 +84,7 @@ TEST_CASE("EntityManager Name Lookup", "[EntityManager]"){
 	testValue = entityMan.GetEIDFromName(entWrong);
 	REQUIRE(eidWrong != testValue);
 }
+
+//TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]"){
+
+//}
