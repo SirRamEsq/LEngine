@@ -101,6 +101,9 @@ EID EntityManager::NewEntity(const std::string& entityName){
 
 void EntityManager::MapNameToEID(EID eid, const std::string& entityName){
     if(entityName!=""){
+		//Stop if in debug mode, this shouldn't happen
+		ASSERT (nameToEID.find(entityName) == nameToEID.end());
+		//Defensive programming if not in debug mode
         if(nameToEID.find(entityName) == nameToEID.end()){
             nameToEID[entityName]	= eid;
             EIDToName[eid] 			= entityName;
