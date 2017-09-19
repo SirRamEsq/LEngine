@@ -52,9 +52,35 @@ TEST_CASE("EntiyManager Creation and Deletion Test", "[EntityManager]"){
 	REQUIRE( compPointer->GetUpdateCount() == 2);
 	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid3));
 	REQUIRE( compPointer->GetUpdateCount() == 2);
-
-	//SECTION("Delete one Entity"){
-
-	//}
 }
 
+TEST_CASE("EntityManager Name Lookup", "[EntityManager]"){
+	GameStateManager_Mock dummyManager(NULL);
+	EventDispatcher eventDispatcher;
+	ComponentTestManager compMan(&eventDispatcher);
+	EntityManager entityMan(&dummyManager);
+	entityMan.RegisterComponentManager(&compMan, 10);
+
+	std::string ent1 = "ent1";
+	std::string ent2 = "ent2";
+	std::string ent3 = "ent3";
+	//same name as ent1
+	std::string entWrong = "ent1";
+
+	EID eid1 = entityMan.NewEntity(ent1);
+	EID eid2 = entityMan.NewEntity(ent2);
+	EID eid3 = entityMan.NewEntity(ent3);
+	EID eidWrong = entityMan.NewEntity(entWrong);
+
+	REQUIRE(entityMan.GetEntityCount() == 4);
+
+	auto testValue = entityMan.GetEIDFromName(ent1);
+	REQUIRE(eid1 == testValue);
+	testValue = entityMan.GetEIDFromName(ent2);
+	REQUIRE(eid2 == testValue);
+	testValue = entityMan.GetEIDFromName(ent3);
+	REQUIRE(eid3 == testValue);
+	//If a name is already taken, it should not be overwritten
+	testValue = entityMan.GetEIDFromName(entWrong);
+	REQUIRE(eidWrong != testValue);
+}
