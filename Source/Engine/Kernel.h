@@ -61,7 +61,7 @@ class Kernel{
 		static void Close();
 
 		static AudioSubsystem				audioSubsystem;
-		static GameStateManager				stateMan;
+		static GameStateManager_Impl		stateMan;
 		static InputManager					inputMan;
 		static CommandLineArgs				commandLine;
 

@@ -8,7 +8,7 @@ InputManager				Kernel::inputMan;
 CommandLineArgs				Kernel::commandLine;
 AudioSubsystem				Kernel::audioSubsystem;
 InputManager 				Kernel::inputManager;
-GameStateManager			Kernel::stateMan(&Kernel::inputManager);
+GameStateManager_Impl		Kernel::stateMan(&Kernel::inputManager);
 
 int			 Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;

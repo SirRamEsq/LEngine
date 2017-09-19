@@ -20,10 +20,10 @@
 
 
 class LuaInterfaceB;
-class GameStateManager;
+class GameStateManager_Impl;
 
 class GameState{
-	friend GameStateManager;
+	friend GameStateManager_Impl;
 	friend EventDispatcher;
 	friend LuaInterface;
 	friend EntityManager;
@@ -110,7 +110,6 @@ class GameState{
 				const std::vector<EID>& objectsUsingEntrance
 		);
 
-
 		//is copy of what is stored in resource manager
 		std::unique_ptr<RSC_Map> mCurrentMap;
 		std::vector<std::unique_ptr<RenderableObjectWorld> > mCurrentMapTileLayers;
@@ -118,9 +117,7 @@ class GameState{
 		std::map<std::string, EID> nameLookupEID;
 };
 
-/**
- * Manages and owns all GameStates
- */
+//Interface
 class GameStateManager{
 	friend Kernel;
 	friend EventDispatcher;
@@ -129,7 +126,7 @@ class GameStateManager{
 
 	public:
 		GameStateManager(InputManager* input);
-		GameState* GetCurrentState(){return mCurrentState;}
+		virtual GameState* GetCurrentState()=0;
 
 		/**
 		 * Prepares to push State Next Frame
@@ -137,27 +134,51 @@ class GameStateManager{
 		 * this class assumes ownership of the state
 		 * Can optionally pass a script to be run
 		 */
-		void PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
+		virtual void PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL)=0;
 
 		/**
 		 * Pops current state and Pushes the new one at the beginning of the next frame
 		 * Acts as a wrapper around 'PushState' that sets swapState to true
 		 */
-		void SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
+		virtual void SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL)=0;
 
 		/**
 		 * State is popped at the start of the next frame 
 		 */
-		void PopState();
-
-		int stackSize(){
-			return mGameStates.size();
-		}
-
-		bool IsEmpty(){
-			return mGameStates.empty();
-		}
+		virtual void PopState()=0;
+		virtual int StackSize()=0;
+		virtual bool IsEmpty()=0;
 		InputManager* inputManager;
+
+	protected:
+		virtual void Close()=0;
+
+		virtual void HandleEvent(const Event* event)=0;
+		virtual bool Update()=0;
+		virtual void Draw()=0;
+
+		virtual void DrawPreviousState(GameState* gs)=0;
+		virtual void PushNextState()=0;
+		virtual void PopTopState()=0;
+};
+
+/**
+ * Manages and owns all GameStates
+ */
+class GameStateManager_Impl : public GameStateManager{
+	friend Kernel;
+	friend EventDispatcher;
+	friend EntityManager;
+	friend GameState;
+	public:
+		GameStateManager_Impl(InputManager* input);
+		GameState* GetCurrentState();
+
+		void PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
+		void SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script = NULL);
+		void PopState();
+		int  StackSize();
+		bool IsEmpty();
 
 	protected:
 		void Close();
@@ -176,6 +197,7 @@ class GameStateManager{
 		///State to push next frame
 		std::shared_ptr<GameState> nextFrameState;
 		const RSC_Script* nextFrameStateScript;
+
 		std::vector<std::shared_ptr<GameState> > mGameStates;
 
 		///Next key to remap

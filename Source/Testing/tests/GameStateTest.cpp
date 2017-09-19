@@ -7,24 +7,24 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	Kernel::Inst();
 
 	SECTION( "Can Push to and Pop from StateManager") {
-		auto stateSize = K_StateMan.stackSize();
+		auto stateSize = K_StateMan.StackSize();
 		REQUIRE(stateSize == 1);
 
 		K_StateMan.PushState(std::move(make_unique<GameStateMock>(&K_StateMan)));
 		//Update stateman, causing the new state to be pushed
 		Kernel::Update();
-		stateSize = K_StateMan.stackSize();
+		stateSize = K_StateMan.StackSize();
 		REQUIRE(stateSize == 2);
 
 		K_StateMan.PopState();
 		//Update stateman, causing the new state to be popped
 		Kernel::Update();
-		stateSize = K_StateMan.stackSize();
+		stateSize = K_StateMan.StackSize();
 		REQUIRE(stateSize == 1);
 
 		K_StateMan.PopState();
 		Kernel::Update();
-		stateSize = K_StateMan.stackSize();
+		stateSize = K_StateMan.StackSize();
 		REQUIRE(stateSize == 0);
 		REQUIRE(K_StateMan.IsEmpty());
 	}
