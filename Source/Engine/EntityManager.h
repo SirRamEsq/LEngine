@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 
 class GameStateManager;
 
@@ -50,12 +51,15 @@ class EntityManager{
         void DeleteEntity   (EID id); 
 		/**
 		 * Calls 'DeleteEntity' on all active eids
+		 * This deletes only the currently existing entities. If you call this function
+		 * then call 'NewEntity' the entity created will not be deleted next frame
 		 * \see DeleteEntity(EID id)
 		 */
         void ClearAllEntities();
 
 		/**
 		 * Deletes all EIDs between first reserved EID and EID_MIN
+		 * \see DeleteEntity(EID id)
 		 */
 		void ClearAllReservedEntities();
 		
@@ -89,23 +93,47 @@ class EntityManager{
 		 */
 		void SetParent(EID child, EID parent);
 
+		///Deactivates all Entities
+		void DeactivateAllEntities();
+		///Deactivates all Entities except the ones specified
+		void DeactivateAllEntitiesExcept(std::vector<EID> entities);
+		///Activates all Entities
+		void ActivateAllEntities();
+		///Activates all Entities except the ones specified
+		void ActivateAllEntitiesExcept(std::vector<EID> entities);
+		///Activate specified entities
+		void Activate(std::vector<EID> entities);
+		///Deactivate specified entities
+		void Deactivate(std::vector<EID> entities);
+
     protected:
+		///Clears out nameToEID and EIDToName
         void ClearNameMappings();
 
     private:
+		void MapNameToEID(EID eid, const std::string& entityName);
+
+		///Current highest EID in use
         EID entityNumber;
+		///Current number of living entities
 		unsigned int entityCount;
+		///Whether or not ClearAllEntities has been called Last Frame
         bool mFlagDeleteAll;
-		GameStateManager* mStateManager;
 
-        std::vector<EID> deadEntities;
+		///Set of entities to be deleted next frame
+        std::set<EID> deadEntities;
+		///container of EIDS that have been deleted and can be reused
+		std::vector<EID> reclaimedEIDs;
 
-        //Map of names to EIDS and an inverse lookup map (this is fine because both the names and EIDs are unique
+        ///Map of names to EIDS and an inverse lookup map (this is fine because both the names and EIDs are unique
         std::map<std::string, EID> nameToEID;
         std::map<EID, std::string> EIDToName;
 
-        //components sorted by priority in ascending order
+        ///Components sorted by priority in ascending order
         std::map<int, BaseComponentManager*, std::less<int>> componentsRegistered;
+
+		///Dependency
+		GameStateManager* mStateManager;
 };
 
 #endif

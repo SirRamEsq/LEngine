@@ -1,48 +1,47 @@
-sudo apt-get install libsdl2-dev
-sudo apt-get install libsdl2-image-dev
-sudo apt-get install libsdl2-ttf-dev
-sudo apt-get install libsdl2-mixer-dev
+================
+--DEPENDENCIES--
+================
+Do one of the following:
+(1) Install each dependency individually
+	sudo apt-get install libsdl2-dev
+	sudo apt-get install libsdl2-image-dev
+	sudo apt-get install libsdl2-ttf-dev
+	sudo apt-get install libsdl2-mixer-dev
 
-sudo apt-get install libglew-dev
-sudo apt-get install freeglut3-dev
-sudo apt-get install libphysfs-dev
-sudo apt-get install libsoil-dev
-sudo apt-get install libfreetype6-dev
+	sudo apt-get install libglew-dev
+	sudo apt-get install freeglut3-dev
+	sudo apt-get install libphysfs-dev
+	sudo apt-get install libsoil-dev
+	sudo apt-get install libfreetype6-dev
 
-sudo apt-get install liblua5.2-dev
-sudo apt-get install lua5.2
+	sudo apt-get install liblua5.2-dev
+	sudo apt-get install lua5.2
 
-One great big command;
-sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev
+- OR -
+
+(2) Use one great big command;
+	sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev
 
 
+NOTES:
+	when compiling luabridge it may shout a compile error
+	need to change pushstring to pushlstring
 =============================================
-when installing luabridge, need to change pushstring to pushlstring
 
-if you can't find the lua library "socket"
-install lua rocks and configure it for 5.2
-$ wget http://luarocks.org/releases/luarocks-2.3.0.tar.gz
-$ tar zxpf luarocks-2.3.0.tar.gz
-$ cd luarocks-2.3.0
+=================
+--LUA LIBRARIES--
+=================
+Install lua rocks and configure it for 5.2
 
-$ ./configure --lua-version=5.2 --versioned-rocks-dir
-$ make build
-$ sudo make install
+	//Download
+	wget http://luarocks.org/releases/luarocks-2.3.0.tar.gz
+	tar zxpf luarocks-2.3.0.tar.gz
+	cd luarocks-2.3.0
 
-===============================================
-Lua Libs:
-Install LuaRocks5.2;
-
-./configure --lua-version=5.2
-make build
-sudo make install
-sudo luarocks install luafilesystem
-sudo luarocks install luasocket
-
-==
-
-Zerobrane Conf and Debug:
-Download and install
-
-
-
+	//Install
+	./configure --lua-version=5.2 --versioned-rocks-dir
+	make build
+	sudo make install
+	sudo luarocks install luafilesystem
+	sudo luarocks install luasocket
+=============================================

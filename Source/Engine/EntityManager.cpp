@@ -9,7 +9,7 @@ EntityManager::EntityManager(GameStateManager* gsm) : mStateManager(gsm){
 }
 
 void EntityManager::DeleteEntity(EID id){
-    deadEntities.push_back(id);
+	deadEntities.insert(id);
 	entityCount -= 1;
 }
 
@@ -41,7 +41,6 @@ void EntityManager::Cleanup(){
 		Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
 		BroadcastEvent(&event);
 
-
         for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
             i->second->DeleteComponent(id);
         }
@@ -51,12 +50,18 @@ void EntityManager::Cleanup(){
             EIDToName.erase(id);
             nameToEID.erase(entityName);
         }
+
+		reclaimedEIDs.push_back(id);
     }
 
     if(mFlagDeleteAll){
-        mFlagDeleteAll=false;
+		reclaimedEIDs.clear();
+		entityNumber 	= EID_MIN;
+		mFlagDeleteAll	= false;
+
         ClearNameMappings();
     }
+
     deadEntities.clear();
 }
 
@@ -66,21 +71,41 @@ void EntityManager::RegisterComponentManager(BaseComponentManager* manager, int 
         ss << "Couldn't register component with order: '" << order << "' order id already taken.";
         throw Exception(ss.str());
     }
+	
+	//Assert that this order not already taken
+	ASSERT( componentsRegistered.find(order) == componentsRegistered.end() );
 
     componentsRegistered[order] = manager;
 }
 
 EID EntityManager::NewEntity(const std::string& entityName){
-    EID newEntityID = entityNumber + 1;
-    if(entityName!=""){
-        if(nameToEID.find(entityName)==nameToEID.end()){
-            nameToEID[entityName]  = newEntityID;
-            EIDToName[newEntityID] = entityName;
-        }
-    }
+	EID newEntityID = 0;
+
+	//First check if there are any reclaimed eids to use
+	if(!reclaimedEIDs.empty()){
+		newEntityID = reclaimedEIDs.back();
+		reclaimedEIDs.pop_back();
+	}
+	//If there are no old eids to use, make a new one
+	else{
+		newEntityID = entityNumber + 1;
+		entityNumber++;
+	}
+
+	MapNameToEID(newEntityID, entityName);
+	//Increment number of living entities
 	entityCount++;
-    entityNumber++;
+
     return newEntityID;
+}
+
+void EntityManager::MapNameToEID(EID eid, const std::string& entityName){
+    if(entityName!=""){
+        if(nameToEID.find(entityName) == nameToEID.end()){
+            nameToEID[entityName]	= eid;
+            EIDToName[eid] 			= entityName;
+        }
+	}
 }
 
 void EntityManager::ClearAllEntities(){
@@ -88,7 +113,6 @@ void EntityManager::ClearAllEntities(){
         DeleteEntity(i);
     }
     mFlagDeleteAll = true;
-    entityNumber = EID_MIN;
 }
 
 void EntityManager::ClearAllReservedEntities(){
@@ -113,4 +137,28 @@ void EntityManager::SetParent(EID child, EID parent){
 	for(auto i = componentsRegistered.begin(); i!= componentsRegistered.end(); i++){
 		i->second->SetParent(child, parent);
 	}
+}
+
+void EntityManager::ActivateAllEntities(){
+
+}
+
+void EntityManager::ActivateAllEntitiesExcept(std::vector<EID> entities){
+	
+}
+
+void EntityManager::DeactivateAllEntitiesExcept(std::vector<EID> entities){
+	
+}
+
+void EntityManager::DeactivateAllEntities(){
+
+}
+
+void Activate(std::vector<EID> entities){
+
+}
+
+void Deactivate(std::vector<EID> entities){
+
 }
