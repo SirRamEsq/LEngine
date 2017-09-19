@@ -6,7 +6,7 @@
 #include "../../Engine/Event.h"
 #include "../../Engine/Defines.h"
 
-GameStateManager dummyManager;
+GameStateManager_Mock dummyManager(NULL);
 TEST_CASE("Test RSC_Map Mock and Tile Layer", "[collision][rsc_map]"){
     RSC_MapMock testMap("TEST", 64, 64);
     REQUIRE(NULL == testMap.GetTileLayerCollision(2, 2, true));

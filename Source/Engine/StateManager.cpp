@@ -82,6 +82,11 @@ void GameState::UpdateComponentManagers(){
 
 GameStateManager::GameStateManager(InputManager* input)
 	: inputManager(input){
+
+}
+
+GameStateManager_Impl::GameStateManager_Impl(InputManager* input)
+	: GameStateManager(input){
 	remapKey="";
 	swapState = false;
    	mCurrentState=NULL;
@@ -89,7 +94,19 @@ GameStateManager::GameStateManager(InputManager* input)
 	nextFrameState.reset();
 }
 
-void GameStateManager::Close(){
+int GameStateManager_Impl::StackSize(){
+	return mGameStates.size();
+}
+
+bool GameStateManager_Impl::IsEmpty(){
+	return mGameStates.empty();
+}
+
+GameState* GameStateManager_Impl::GetCurrentState(){
+	return mCurrentState;
+}
+
+void GameStateManager_Impl::Close(){
     while(mGameStates.empty()==false){
         mGameStates.back()->Close();
         mGameStates.pop_back();
@@ -97,17 +114,17 @@ void GameStateManager::Close(){
  	mCurrentState=NULL;
 }
 
-void GameStateManager::PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
+void GameStateManager_Impl::PushState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
 	nextFrameState = state;
 	nextFrameStateScript = script;
 	swapState = false; }
 
-void GameStateManager::SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
+void GameStateManager_Impl::SwapState(const std::shared_ptr<GameState>& state, const RSC_Script* script){
 	PushState(state, script);
 	swapState = true;
 }
 
-void GameStateManager::PushNextState(){
+void GameStateManager_Impl::PushNextState(){
 	if(nextFrameState.get() != NULL){
 		//Pop current state before pushing the new one
 		if(swapState == true){
@@ -122,11 +139,11 @@ void GameStateManager::PushNextState(){
 	}
 }
 
-void GameStateManager::PopState(){
+void GameStateManager_Impl::PopState(){
 	popState=true;	
 }
 
-void GameStateManager::PopTopState(){
+void GameStateManager_Impl::PopTopState(){
     if(mGameStates.empty()){
         return;
     }
@@ -152,14 +169,14 @@ void GameStateManager::PopTopState(){
 	nextFrameStateScript = NULL;
 }
 
-void GameStateManager::DrawPreviousState(GameState* gs){
+void GameStateManager_Impl::DrawPreviousState(GameState* gs){
     GameState* prev=GetPreviousState(gs);
     if(prev!=NULL){
         prev->Draw();
     }
 }
 
-GameState* GameStateManager::GetPreviousState(GameState* gs){
+GameState* GameStateManager_Impl::GetPreviousState(GameState* gs){
     //reverse iterator, as this function will most likely be called with a pointer to the back of the vector
     for( auto i = mGameStates.rbegin(); i != mGameStates.rend(); i++){
         if(gs==(i->get())){
@@ -169,11 +186,11 @@ GameState* GameStateManager::GetPreviousState(GameState* gs){
     return NULL;
 }
 
-void GameStateManager::HandleEvent(const Event* event){
+void GameStateManager_Impl::HandleEvent(const Event* event){
     if(mCurrentState!=NULL){mCurrentState->HandleEvent(event);}
 }
 
-bool GameStateManager::Update(){
+bool GameStateManager_Impl::Update(){
     mCurrentState->entityMan.Cleanup();
 	if(popState == false){
 		PushNextState();
@@ -197,7 +214,7 @@ bool GameStateManager::Update(){
     return false;
 }
 
-void GameStateManager::Draw(){
+void GameStateManager_Impl::Draw(){
     if(mCurrentState!=NULL){mCurrentState->Draw();}
 }
 
