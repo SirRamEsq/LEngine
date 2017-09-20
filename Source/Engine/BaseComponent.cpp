@@ -67,9 +67,6 @@ void BaseComponentManager::DeleteComponent(EID id){
     auto comp=componentList.find(id);
     if(comp==componentList.end()){return;}
 
-	Event event (id, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "[DELETED]");
-	BroadcastEvent(&event);
-
 	componentList.erase(id);
 }
 
