@@ -1,5 +1,6 @@
 #include "EntityManager.h"
 #include "StateManager.h"
+#include "Kernel.h"
 
 EntityManager::EntityManager(GameStateManager* gsm) : mStateManager(gsm){
 	ASSERT(gsm != NULL);
@@ -32,7 +33,10 @@ void EntityManager::BroadcastEvent(const Event* event){
 }
 
 void EntityManager::Cleanup(){
-    if(deadEntities.empty()){return;}
+    if(deadEntities.empty()){
+		mFlagDeleteAll = false;
+		return;
+	}
 
     for(auto i = deadEntities.begin(); i!=deadEntities.end(); i++){
         EID id=*i;
@@ -58,6 +62,10 @@ void EntityManager::Cleanup(){
 		reclaimedEIDs.clear();
 		entityNumber 	= EID_MIN;
 		mFlagDeleteAll	= false;
+		std::stringstream ss;
+		ss << "Delete All EID" << std::endl;
+		ss << "Ent man is: " << this;
+		K_Log.Write(ss.str(), Log::SEVERITY::TRACE);
 
         ClearNameMappings();
     }
@@ -82,19 +90,23 @@ EID EntityManager::NewEntity(const std::string& entityName){
 	EID newEntityID = 0;
 
 	//First check if there are any reclaimed eids to use
-	if(!reclaimedEIDs.empty()){
-		newEntityID = reclaimedEIDs.back();
-		reclaimedEIDs.pop_back();
-	}
+	//if(!reclaimedEIDs.empty()){
+		//newEntityID = reclaimedEIDs.back();
+		//reclaimedEIDs.pop_back();
+	//}
 	//If there are no old eids to use, make a new one
-	else{
-		newEntityID = entityNumber + 1;
+	//else{
 		entityNumber++;
-	}
+		newEntityID = entityNumber;
+	//}
 
 	MapNameToEID(newEntityID, entityName);
 	//Increment number of living entities
 	entityCount++;
+	std::stringstream ss;
+	ss << "New EID is: " << newEntityID << std::endl;
+	ss << "Ent man is: " << this;
+	K_Log.Write(ss.str(), Log::SEVERITY::TRACE);
 
     return newEntityID;
 }
