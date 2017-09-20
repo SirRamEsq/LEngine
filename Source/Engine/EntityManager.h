@@ -117,8 +117,6 @@ class EntityManager{
         EID entityNumber;
 		///Current number of living entities
 		unsigned int entityCount;
-		///Whether or not ClearAllEntities has been called Last Frame
-        bool mFlagDeleteAll;
 
 		///Set of entities to be deleted next frame
         std::set<EID> deadEntities;
