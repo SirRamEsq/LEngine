@@ -158,8 +158,8 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 	float Left=		0;
 	float Right=	1;
 	//texture is upside down, invert top and bottom
-	float Top=		0;
-	float Bottom=	1;
+	float Top=		1;
+	float Bottom=	0;
 
 
 	glBegin(GL_QUADS);
