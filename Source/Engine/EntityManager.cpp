@@ -5,7 +5,6 @@
 EntityManager::EntityManager(GameStateManager* gsm) : mStateManager(gsm){
 	ASSERT(gsm != NULL);
 	entityNumber=EID_MIN;
-	mFlagDeleteAll=false;
 	entityCount = 0;
 }
 
@@ -33,10 +32,7 @@ void EntityManager::BroadcastEvent(const Event* event){
 }
 
 void EntityManager::Cleanup(){
-    if(deadEntities.empty()){
-		mFlagDeleteAll = false;
-		return;
-	}
+    if(deadEntities.empty()){return;}
 
     for(auto i = deadEntities.begin(); i!=deadEntities.end(); i++){
         EID id=*i;
@@ -56,18 +52,6 @@ void EntityManager::Cleanup(){
         }
 
 		reclaimedEIDs.push_back(id);
-    }
-
-    if(mFlagDeleteAll){
-		reclaimedEIDs.clear();
-		entityNumber 	= EID_MIN;
-		mFlagDeleteAll	= false;
-		std::stringstream ss;
-		ss << "Delete All EID" << std::endl;
-		ss << "Ent man is: " << this;
-		K_Log.Write(ss.str(), Log::SEVERITY::TRACE);
-
-        ClearNameMappings();
     }
 
     deadEntities.clear();
@@ -127,7 +111,6 @@ void EntityManager::ClearAllEntities(){
     for(EID i = EID_MIN; i < entityNumber; i++){
         DeleteEntity(i);
     }
-    mFlagDeleteAll = true;
 }
 
 void EntityManager::ClearAllReservedEntities(){
