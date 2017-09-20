@@ -154,6 +154,12 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 	//Back to initial viewport
 	glPopAttrib();
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, SCREEN_W, SCREEN_H, 0, 0, 1); //2D
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
 	tex->Bind();
 	float Left=		0;
 	float Right=	1;
@@ -164,16 +170,16 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 
 	glBegin(GL_QUADS);
 		glTexCoord2f(Left,	Top);
-		glVertex3f(screenSpace.GetLeft()  * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
+		glVertex3i(0,0,0);
 
 		glTexCoord2f(Right, Top);
-		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetTop() * SCREEN_H, 0);
+		glVertex3i(SCREEN_W,0,0);
 
 		glTexCoord2f(Right, Bottom);
-		glVertex3f(screenSpace.GetRight() * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
+		glVertex3i(SCREEN_W,SCREEN_H,0);
 
 		glTexCoord2f(Left,	Bottom);
-		glVertex3f(screenSpace.GetLeft()  * SCREEN_W, screenSpace.GetBottom() * SCREEN_H, 0);
+		glVertex3i(0,SCREEN_H,0);
 	glEnd();
 }
 
