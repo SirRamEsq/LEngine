@@ -106,7 +106,6 @@ void RenderCamera::Bind(const GLuint& GlobalCameraUBO){
 	Matrix4 modelViewMat = T * R * S;
 	//Will render texture upside down
 	Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(view);
-	//projectionMat = projectionMat.RotateZ(180);
 
 	float position[4];
 	//Render Using only full integers for translation to get that pixel-perfect look

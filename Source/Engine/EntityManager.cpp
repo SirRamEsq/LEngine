@@ -74,23 +74,19 @@ EID EntityManager::NewEntity(const std::string& entityName){
 	EID newEntityID = 0;
 
 	//First check if there are any reclaimed eids to use
-	//if(!reclaimedEIDs.empty()){
-		//newEntityID = reclaimedEIDs.back();
-		//reclaimedEIDs.pop_back();
-	//}
+	if(!reclaimedEIDs.empty()){
+		newEntityID = reclaimedEIDs.back();
+		reclaimedEIDs.pop_back();
+	}
 	//If there are no old eids to use, make a new one
-	//else{
+	else{
 		entityNumber++;
 		newEntityID = entityNumber;
-	//}
+	}
 
 	MapNameToEID(newEntityID, entityName);
 	//Increment number of living entities
 	entityCount++;
-	std::stringstream ss;
-	ss << "New EID is: " << newEntityID << std::endl;
-	ss << "Ent man is: " << this;
-	K_Log.Write(ss.str(), Log::SEVERITY::TRACE);
 
     return newEntityID;
 }

@@ -130,7 +130,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 		luaInterface->EventLuaSendToObservers(newEID, eventDescription2);
 		REQUIRE(lastError == ss2.str());
 
-		//Tell newScript that the first was has been deleted, this will cause the newScript to no longer broadcast events the the first script
+		//Tell newScript that the first was has been deleted, this will cause the newScript to no longer broadcast events to the first script
 		Event event (eid, EID_ALLOBJS, Event::MSG::ENTITY_DELETED, "DELETED");
 		state->GetEventDispatcher()->DispatchEvent(event);
 
