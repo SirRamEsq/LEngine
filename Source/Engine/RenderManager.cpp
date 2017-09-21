@@ -20,17 +20,13 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	screenSpace = FloatRect(0, 0, 1.0, 1.0);
 	rotation=0;
 	SetView(viewPort);
-	//view.x=0;
-	//view.y=0;
-	//view.w=CAMERA_W;
-	//view.h=CAMERA_H;
 
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-	//render buffers are a good choice if you don't intend on sampling from the data
+	//render buffers are a good choice when not intending on sampling from the data
 	//the depth buffer is only for the framebuffer, it won't be sampled externally
-	//only the color will
+	//only the color will be sampled externally
 	glGenRenderbuffers(1, &mDepthRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO); 
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w, viewPort.h);
@@ -56,8 +52,8 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 }
 
 RenderCamera::~RenderCamera(){
-	glDeleteTextures(1, &mDepthRBO);
 	glDeleteFramebuffers(1, &FBO);
+	glDeleteRenderbuffers(1, &mDepthRBO);
 	//should this be called? what if this fbo is currently bound?
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	dependencyRenderManager->RemoveCamera(this);
