@@ -44,7 +44,7 @@ class ComponentParticle;
 class ParticleCreator : public RenderableObjectWorld{
     friend ComponentParticle;
     public:
-        ParticleCreator (RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile);
+        ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite);
         ~ParticleCreator();
 
         void Render(const RenderCamera* camera, const RSC_GLProgram* program);
@@ -163,15 +163,13 @@ class ParticleCreator : public RenderableObjectWorld{
         std::string mScriptShaderCodeFragment;
         std::string mScriptShaderCodeVertex;
 
-        //For Error Log
-        const std::string logFileName;
-
 		RenderManager* 	dependencyRenderManager;
 };
 
+class ComponentParticleManager;
 class ComponentParticle : public BaseComponent{
     public:
-         ComponentParticle(EID id,  ComponentPosition* pos, RenderManager* rm,  const std::string& logFile);
+         ComponentParticle(EID id,  ComponentPosition* pos, RenderManager* rm,  ComponentParticleManager* manager);
         ~ComponentParticle();
 
         void Update     ();
@@ -192,7 +190,7 @@ class ComponentParticleManager : public BaseComponentManager_Impl<ComponentParti
         ComponentParticleManager(EventDispatcher* e);
         ~ComponentParticleManager();
 
-        void AddComponent(EID id, EID parent = 0);
+		std::unique_ptr<ComponentParticle> ConstructComponent (EID id, ComponentParticle* parent);
 
 		void SetDependencies(RenderManager* rm, ComponentPositionManager* pos);
 

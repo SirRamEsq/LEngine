@@ -16,7 +16,8 @@ LightSource::LightSource(const float& iStart, const float& iEnd, const float& ra
 //ComponentLight//
 //////////////////
 
-ComponentLight::ComponentLight (EID id, ComponentPosition* pos, const std::string& logName) : BaseComponent(id, logName){
+ComponentLight::ComponentLight (EID id, ComponentPosition* pos, ComponentLightManager* manager)
+	: BaseComponent(id, manager){
     myPos = pos;
     numberOfLoadedLights=0;
 
@@ -75,18 +76,9 @@ int ComponentLight::NewLightSource (const float& intensityStart, const float& in
 //ComponentLightManager//
 //////////////////////////
 
-ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_LIGHT", e), vao(MAX_LIGHTS) {
+ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponentManager_Impl(e), vao(MAX_LIGHTS) {
     glGenFramebuffers(1, &FBO);
     BuildVAOFirst();
-}
-
-std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(EID id, ComponentLight* parent){
-    auto i=componentList.find(id);
-    if(i!=componentList.end()){return;}
-
-    auto light = make_unique<ComponentLight>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
-
-    return std::move(light);
 }
 
 
@@ -251,3 +243,8 @@ void ComponentLightManager::BuildVAO(){
     vao.UpdateGPU();
 }
 
+std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(EID id, ComponentLight* parent){
+    auto light = make_unique<ComponentLight>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), this);
+
+    return std::move(light);
+}

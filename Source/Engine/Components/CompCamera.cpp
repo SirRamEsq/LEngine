@@ -5,8 +5,8 @@
 ///////////////////
 //ComponentCamera//
 ///////////////////
-ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile)
-	: BaseComponent(id, logFile), mCamera(rm, CRect(0,0, CAMERA_W, CAMERA_H)){
+ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, ComponentCameraManager* manager)
+	: BaseComponent(id, manager), mCamera(rm, CRect(0,0, CAMERA_W, CAMERA_H)){
     mPosition= pos;
 }
 ComponentCamera::~ComponentCamera(){
@@ -35,17 +35,15 @@ CRect ComponentCamera::GetViewport(){
 //////////////////////////
 //ComponentCameraManager//
 //////////////////////////
-ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_CAMERA", e){
+ComponentCameraManager::ComponentCameraManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 }
 
 ComponentCameraManager::~ComponentCameraManager(){
 }
 
-void ComponentCameraManager::AddComponent(EID id, EID parent){
-    auto i=componentList.find(id);
-    if(i!=componentList.end()){return;}
-    auto cam = make_unique<ComponentCamera>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
-    componentList[id] = std::move(cam);
+std::unique_ptr<ComponentCamera> ComponentCameraManager::ConstructComponent	(EID id, ComponentCamera* parent){
+    auto cam = make_unique<ComponentCamera>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
+	return std::move(cam);
 }
 
 void ComponentCameraManager::SetDependencies(ComponentPositionManager* pos, RenderManager* rm){

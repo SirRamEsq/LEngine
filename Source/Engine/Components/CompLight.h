@@ -41,7 +41,7 @@ class ComponentLight : public BaseComponent{
     friend class ComponentLightManager;
 
     public:
-         ComponentLight (EID id, ComponentPosition* pos, const std::string& logFile);
+         ComponentLight (EID id, ComponentPosition* pos, ComponentLightManager* manager);
         ~ComponentLight ();
 
         bool LightExists(const int& id);

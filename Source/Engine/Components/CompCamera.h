@@ -6,9 +6,10 @@
 #include "../RenderManager.h"
 #include "CompPosition.h"
 
+class ComponentCameraManager;
 class ComponentCamera : public BaseComponent{
     public:
-        ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logFile);
+        ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, ComponentCameraManager* manager);
         ~ComponentCamera();
 
         void Update();
@@ -29,7 +30,7 @@ class ComponentCameraManager : public BaseComponentManager_Impl<ComponentCamera>
         ComponentCameraManager(EventDispatcher* e);
         ~ComponentCameraManager();
 
-        void AddComponent(EID id, EID parent = 0);
+		std::unique_ptr<ComponentCamera> ConstructComponent	(EID id, ComponentCamera* parent);
 		void SetDependencies(ComponentPositionManager* pos, RenderManager* rm);
 
 		ComponentPositionManager* dependencyPosition;

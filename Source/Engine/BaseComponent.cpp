@@ -2,10 +2,12 @@
 #include "Kernel.h"
 #include "Errorlog.h"
 
-BaseComponent::BaseComponent(EID id, const std::string& logName, BaseComponent* p)
-	: mEntityID(id), logFileName(logName), parent(p){
+BaseComponent::BaseComponent(EID id, BaseComponentManager* manager)
+	: mManager(manager), mEntityID(id){
+		ASSERT( mManager != NULL);
 		eventCallback = NULL;
 		updatedThisFrame = false;
+		parent = NULL;
 }
 
 BaseComponent::~BaseComponent(){
@@ -31,6 +33,10 @@ void BaseComponent::HandleEvent(const Event* event){
 
 void BaseComponent::SetParent(BaseComponent* p){
 	parent = p;
+}
+
+void BaseComponent::SetParentEID(EID id){
+	mManager->SetParent(mEntityID, id);
 }
 
 BaseComponent* BaseComponent::GetParent(){

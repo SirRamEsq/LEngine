@@ -1,6 +1,7 @@
 #ifndef LENGINE_BASE_COMP_MAN
 #define LENGINE_BASE_COMP_MAN
 
+#include "Defines.h"
 #include "BaseComponent.h"
 
 class BaseComponentManager{
@@ -45,12 +46,12 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 		BaseComponentManager_Impl(EventDispatcher* e);
 
 	   	///Create a new component with the specified ID
-        void    AddComponent        (EID id, EID parent=0)=0;
+        void    AddComponent        (EID id, EID parent=0);
  		///Add an instantiated component 
-		void    AddComponent        (std::unique_ptr<T> comp)=0;
+		void    AddComponent        (std::unique_ptr<T> comp);
 
 		///How Component 'T' is actually instantiated 
-		virtual std::unique_ptr<T> ConstructComponent	(EID id, T* parent)=0;
+		virtual std::unique_ptr<T> ConstructComponent (EID id, T* parent)=0;
 
 		void      	DeleteAllComponents () final;
         void      	DeleteComponent     (EID id) final;
