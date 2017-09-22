@@ -70,7 +70,16 @@ void BaseComponentManager_Impl<T>::HandleEvent(const Event* event){
     BaseComponent* comp=GetComponent(recieverEID);
     if(comp==NULL){return;}
 
+	ProcessEvent(event);
+
     comp->HandleEvent(event);
+}
+template <class T>
+void BaseComponentManager_Impl<T>::ProcessEvent(const Event* event){
+	EID recieverEID = event->reciever;
+	if(recieverEID == EID_ALLOBJS){return;}
+    BaseComponent* comp=GetComponent(recieverEID);
+    if(comp==NULL){return;}
 
 	if(event->message == Event::MSG::ENTITY_DELETED){
 		//if component has a parent, it needs to be changed if the parent was deleted
@@ -86,6 +95,7 @@ void BaseComponentManager_Impl<T>::HandleEvent(const Event* event){
 
 template <class T>
 void BaseComponentManager_Impl<T>::BroadcastEvent(const Event* event){
+	ProcessEvent(event);
     for(auto i = componentList.begin(); i != componentList.end(); i++){
 		if(i->second->GetEID() != event->sender){
 			i->second->HandleEvent(event);
