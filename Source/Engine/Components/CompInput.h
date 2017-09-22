@@ -2,6 +2,7 @@
 #define L_COMPINPUT
 
 #include "CompScript.h"
+#include "../BaseComponentManager.h"
 #include "../Input.h"
 #include <string>
 
@@ -22,7 +23,7 @@ class ComponentInput : public BaseComponent{
         InputManager::KeyMapping* keyMapping;
 };
 
-class ComponentInputManager : public BaseComponentManager{
+class ComponentInputManager : public BaseComponentManager_Impl<ComponentInput>{
     public:
         ComponentInputManager(EventDispatcher* e);
         void SetDependency(std::shared_ptr<InputManager::KeyMapping> keys);

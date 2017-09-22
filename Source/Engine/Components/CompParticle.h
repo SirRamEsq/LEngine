@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include "../Defines.h"
 #include "../Resources/RSC_Sprite.h"
 #include "../RenderManager.h"
@@ -187,7 +187,7 @@ class ComponentParticle : public BaseComponent{
 		RenderManager* dependencyRenderManager;
 };
 
-class ComponentParticleManager : public BaseComponentManager{
+class ComponentParticleManager : public BaseComponentManager_Impl<ComponentParticle>{
     public:
         ComponentParticleManager(EventDispatcher* e);
         ~ComponentParticleManager();

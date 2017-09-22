@@ -1,7 +1,7 @@
 #ifndef L_POSCOMP
 #define L_POSCOMP
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include <set>
 
 //Forward-Declare for MapNode
@@ -118,7 +118,7 @@ class ComponentPosition : public BaseComponent{
         MapNode mNode;
 };
 
-class ComponentPositionManager : public BaseComponentManager{
+class ComponentPositionManager : public BaseComponentManager_Impl<ComponentPosition>{
     public:
         ComponentPositionManager(EventDispatcher* e);
         ~ComponentPositionManager();

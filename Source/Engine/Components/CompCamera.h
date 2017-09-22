@@ -1,7 +1,7 @@
 #ifndef L_ENGINE_COMP_CAMERA
 #define L_ENGINE_COMP_CAMERA
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include <set>
 #include "../RenderManager.h"
 #include "CompPosition.h"
@@ -24,7 +24,7 @@ class ComponentCamera : public BaseComponent{
 };
 
 
-class ComponentCameraManager : public BaseComponentManager{
+class ComponentCameraManager : public BaseComponentManager_Impl<ComponentCamera>{
     public:
         ComponentCameraManager(EventDispatcher* e);
         ~ComponentCameraManager();

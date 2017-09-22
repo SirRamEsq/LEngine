@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include "../Event.h"
 #include "CompPosition.h"
 #include "../RenderManager.h"
@@ -83,7 +83,7 @@ class ComponentSprite : public BaseComponent{
         std::vector< std::unique_ptr<RenderSpriteBatch::Sprite> >   mRenderableSprites; //class owns renderableSprites, which auto adds and deletes itself to the appropriate sprite batch when instantiated and deleted
 };
 
-class ComponentSpriteManager : public BaseComponentManager{
+class ComponentSpriteManager : public BaseComponentManager_Impl<ComponentSprite>{
     public:
         ComponentSpriteManager(EventDispatcher* e);
 

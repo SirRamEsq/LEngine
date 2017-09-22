@@ -80,11 +80,13 @@ ComponentLightManager::ComponentLightManager(EventDispatcher* e) : BaseComponent
     BuildVAOFirst();
 }
 
-void ComponentLightManager::AddComponent(EID id, EID parent){
+std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(EID id, ComponentLight* parent){
     auto i=componentList.find(id);
     if(i!=componentList.end()){return;}
+
     auto light = make_unique<ComponentLight>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
-    componentList[id] = std::move(light);
+
+    return std::move(light);
 }
 
 
