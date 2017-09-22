@@ -1,11 +1,12 @@
 #ifndef L_ENGINE_TEST_COMP_MAN_MOCK
 #define L_ENGINE_TEST_COMP_MAN_MOCK
 
-#include "../../Engine/BaseComponent.h"
+#include "../../Engine/BaseComponentManager.h"
 
+class ComponentTestManager;
 class ComponentTest : public BaseComponent{
 	public:
-		ComponentTest(EID id, const std::string& logName);
+		ComponentTest(EID id, ComponentTestManager* manager);
 		~ComponentTest();
 
 		void Update();
@@ -18,10 +19,10 @@ class ComponentTest : public BaseComponent{
 		unsigned int updateCount;
 };
 
-class ComponentTestManager : public BaseComponentManager{
+class ComponentTestManager : public BaseComponentManager_Impl<ComponentTest>{
 	public:
         ComponentTestManager(EventDispatcher* e);
-        void AddComponent(EID id, EID parent = 0);
+		std::unique_ptr<ComponentTest> ConstructComponent(EID id, ComponentTest* parent);
 };
 
 

@@ -1,6 +1,7 @@
 #ifndef L_COMPCOLLISIONBOX
 #define L_COMPCOLLISIONBOX
 
+#include "../BaseComponentManager.h"
 #include "CompPosition.h"
 #include "CompScript.h"
 
@@ -104,7 +105,8 @@ class ComponentCollision : public BaseComponent{
 
             bool active;
         };
-        ComponentCollision(EID id, ComponentPosition* pos, const std::string& logFile);
+
+        ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager);
         ~ComponentCollision();
         bool noTiles;//Don't check against any tiles ever
 
@@ -156,11 +158,11 @@ struct CollisionGrid{
 
     void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int mapWidthPixels);
 };
-class ComponentCollisionManager : public BaseComponentManager{
+class ComponentCollisionManager : public BaseComponentManager_Impl<ComponentCollision>{
     public:
         ComponentCollisionManager(EventDispatcher* e);
 		void Update();
-        void AddComponent(EID id, EID parent=0);
+		std::unique_ptr<ComponentCollision>ConstructComponent(EID id, ComponentCollision* parent);
         void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
         void UpdateCheckTileCollision   (const RSC_Map* currentMap);

@@ -12,8 +12,8 @@ Each Particle Creator will have two draw calls, one for the head of the buffer a
 ////////////////////
 //Particle Creator//
 ////////////////////
-ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite, const std::string& logFile)
-    : RenderableObjectWorld(rm), dependencyRenderManager(rm), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4), logFileName(logFile){
+ParticleCreator::ParticleCreator(RenderManager* rm, const unsigned int& particleLife, const bool& useSprite)
+    : RenderableObjectWorld(rm), dependencyRenderManager(rm), mParticleLifeSpan(particleLife), mUseSprite(useSprite), VerticiesPerParticle(4){
 
     mScriptShaderCodeVertex="";
     mScriptShaderCodeFragment="";
@@ -639,8 +639,8 @@ void ParticleCreator::Render(const RenderCamera* camera, const RSC_GLProgram* pr
 //Component Particle//
 //////////////////////
 
-ComponentParticle::ComponentParticle(EID id, ComponentPosition* pos, RenderManager* rm, const std::string& logName)
-    : BaseComponent(id, logName), dependencyRenderManager(rm){
+ComponentParticle::ComponentParticle(EID id, ComponentPosition* pos, RenderManager* rm, ComponentParticleManager* manager)
+    : BaseComponent(id, manager), dependencyRenderManager(rm){
      myPos = pos;
 }
 
@@ -688,7 +688,7 @@ void ComponentParticle::HandleEvent(const Event* event){
 
 
 ParticleCreator* ComponentParticle::AddParticleCreator    (const unsigned int& creatorLife, const unsigned int& particleLife){
-    mParticleCreators.push_back(make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false, logFileName));
+    mParticleCreators.push_back(make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false));
     ParticleCreator* pc=mParticleCreators[mParticleCreators.size()-1].get();
     pc->mLifeSpanMax=creatorLife;
 	pc->mLifeSpan = creatorLife;
@@ -702,17 +702,16 @@ void ComponentParticle::DeleteParticleCreators(){
 //////////////////////////////
 //Component Particle Manager//
 //////////////////////////////
-ComponentParticleManager::ComponentParticleManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_PARTICLE", e){
+ComponentParticleManager::ComponentParticleManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 }
 
 ComponentParticleManager::~ComponentParticleManager(){
 }
 
-void ComponentParticleManager::AddComponent(EID id, EID parent){
-    auto i=componentList.find(id);
-    if(i!=componentList.end()){return;}
-    auto par = make_unique<ComponentParticle>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, logFileName);
-    componentList[id] = std::move(par);
+std::unique_ptr<ComponentParticle> ComponentParticleManager::ConstructComponent (EID id, ComponentParticle* parent){
+    auto par = make_unique<ComponentParticle>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
+
+    return std::move(par);
 }
 
 void ComponentParticleManager::SetDependencies(RenderManager* rm, ComponentPositionManager* pos){

@@ -147,6 +147,65 @@ TEST_CASE("EntityManager set mFlagDelete all when no entities have been created"
 
 }
 
-//TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]"){
+TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]"){
+	GameStateManager_Mock dummyManager(NULL);
+	EventDispatcher eventDispatcher;
+	ComponentTestManager compMan(&eventDispatcher);
+	EntityManager entityMan(&dummyManager);
+	entityMan.RegisterComponentManager(&compMan, 10);
 
-//}
+	EID eid1 = entityMan.NewEntity();
+	EID eid2 = entityMan.NewEntity();
+	EID eid3 = entityMan.NewEntity();
+
+	REQUIRE(entityMan.GetEntityCount() == 3);
+
+	compMan.AddComponent(eid1);
+	compMan.AddComponent(eid2);
+	compMan.AddComponent(eid3);
+
+	compMan.Update();
+
+	auto compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid1));
+	REQUIRE( compPointer->GetUpdateCount() == 1);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid2));
+	REQUIRE( compPointer->GetUpdateCount() == 1);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid3));
+	REQUIRE( compPointer->GetUpdateCount() == 1);
+
+	std::vector<EID> eidList;
+	eidList.push_back(eid2);
+	entityMan.Deactivate(eidList);
+
+	compMan.Update();
+
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid1));
+	REQUIRE( compPointer->GetUpdateCount() == 2);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid2));
+	REQUIRE( compPointer->GetUpdateCount() == 1);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid3));
+	REQUIRE( compPointer->GetUpdateCount() == 2);
+
+	eidList.push_back(eid1);
+	entityMan.Deactivate(eidList);
+
+	compMan.Update();
+
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid1));
+	REQUIRE( compPointer->GetUpdateCount() == 2);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid2));
+	REQUIRE( compPointer->GetUpdateCount() == 1);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid3));
+	REQUIRE( compPointer->GetUpdateCount() == 3);
+
+	entityMan.Activate(eidList);
+
+	compMan.Update();
+
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid1));
+	REQUIRE( compPointer->GetUpdateCount() == 3);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid2));
+	REQUIRE( compPointer->GetUpdateCount() == 2);
+	compPointer = static_cast<ComponentTest*>(compMan.GetComponent(eid3));
+	REQUIRE( compPointer->GetUpdateCount() == 4);
+}
