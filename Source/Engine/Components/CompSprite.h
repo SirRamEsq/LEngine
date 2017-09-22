@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include "../Event.h"
 #include "CompPosition.h"
 #include "../RenderManager.h"
@@ -37,7 +37,7 @@ class ComponentSprite : public BaseComponent{
     friend class ComponentSpriteManager;
 
     public:
-        ComponentSprite (EID id, ComponentPosition* pos, const std::string& logFile);
+        ComponentSprite (EID id, ComponentPosition* pos, ComponentSpriteManager* manager);
         ~ComponentSprite();
 
         void    Update();
@@ -83,11 +83,11 @@ class ComponentSprite : public BaseComponent{
         std::vector< std::unique_ptr<RenderSpriteBatch::Sprite> >   mRenderableSprites; //class owns renderableSprites, which auto adds and deletes itself to the appropriate sprite batch when instantiated and deleted
 };
 
-class ComponentSpriteManager : public BaseComponentManager{
+class ComponentSpriteManager : public BaseComponentManager_Impl<ComponentSprite>{
     public:
         ComponentSpriteManager(EventDispatcher* e);
 
-        void AddComponent(EID id, EID parent = 0);
+		std::unique_ptr<ComponentSprite> ConstructComponent (EID id, ComponentSprite* parent);
 };
 
 /*

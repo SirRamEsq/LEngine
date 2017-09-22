@@ -1,7 +1,7 @@
 #ifndef L_POSCOMP
 #define L_POSCOMP
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include <set>
 
 //Forward-Declare for MapNode
@@ -53,9 +53,10 @@ struct MapNode{
 	Coord2df positionWorld;
 };
 
+class ComponentPositionManager;
 class ComponentPosition : public BaseComponent{
     public:
-        ComponentPosition(EID id, MapNode* parent, const std::string& logFile);
+        ComponentPosition(EID id, MapNode* parent, ComponentPositionManager* manager);
         ~ComponentPosition();
 
         void Update();
@@ -118,12 +119,12 @@ class ComponentPosition : public BaseComponent{
         MapNode mNode;
 };
 
-class ComponentPositionManager : public BaseComponentManager{
+class ComponentPositionManager : public BaseComponentManager_Impl<ComponentPosition>{
     public:
         ComponentPositionManager(EventDispatcher* e);
         ~ComponentPositionManager();
 
-        void AddComponent(EID id, EID parent=0);
+		std::unique_ptr<ComponentPosition> ConstructComponent (EID id, ComponentPosition* parent);
 
         MapNode* const GetRootNode();
 

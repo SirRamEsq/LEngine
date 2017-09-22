@@ -3,7 +3,7 @@
 
 using namespace luabridge;
 
-ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logName) : BaseComponent(id, logName), keyMapping(keys){
+ComponentInput::ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentInputManager* manager) : BaseComponent(id, manager), keyMapping(keys){
     mEntityID=id;
 }
 ComponentInput::~ComponentInput(){
@@ -19,17 +19,15 @@ void ComponentInput::ListenForInput(std::string keyName){
     (*keyMapping)[keyName].insert(mEntityID);
 }
 
-void ComponentInputManager::AddComponent(EID id, EID parent){
-    auto i=componentList.find(id);
-    if(i!=componentList.end()){return;}
-    auto input = make_unique<ComponentInput>(keyMapping.get(), id, logFileName);
-    componentList[id] = std::move(input);
+std::unique_ptr<ComponentInput> ComponentInputManager::ConstructComponent (EID id, ComponentInput* parent){
+    auto input = make_unique<ComponentInput>(keyMapping.get(), id, this);
+    return std::move(input);
 }
 
 void ComponentInputManager::SetDependency(std::shared_ptr<InputManager::KeyMapping> keys){
     keyMapping = keys;
 }
 
-ComponentInputManager::ComponentInputManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_INPUT", e){
+ComponentInputManager::ComponentInputManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 
 }

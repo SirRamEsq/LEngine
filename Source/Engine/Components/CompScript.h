@@ -1,7 +1,7 @@
 #ifndef L_SCRIPTCOMP
 #define L_SCRIPTCOMP
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include "CompPosition.h"
 #include "CompSprite.h"
 #include "CompParticle.h"
@@ -40,7 +40,7 @@ class ComponentScript : public BaseComponent{
     friend class GameState;
 
     public:
-        ComponentScript(EID id, lua_State* state, EventDispatcher* ed, LuaInterface* interface, RenderManager* rm, const std::string& logFile);
+        ComponentScript(EID id, lua_State* state, EventDispatcher* ed, LuaInterface* interface, RenderManager* rm, ComponentScriptManager* manager);
         ~ComponentScript();
 
         void HandleEvent(const Event* event);
@@ -109,12 +109,12 @@ class ComponentScript : public BaseComponent{
 };
 
 class TiledObject;
-class ComponentScriptManager : public BaseComponentManager{
+class ComponentScriptManager : public BaseComponentManager_Impl<ComponentScript>{
     public:
         ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
 		~ComponentScriptManager();
 
-        void AddComponent(EID id, EID parent=0);
+		std::unique_ptr<ComponentScript> ConstructComponent (EID id, ComponentScript* parent);
 		void SetDependencies(RenderManager* rm);
 
     private:

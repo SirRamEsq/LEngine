@@ -2,6 +2,7 @@
 #define L_COMPINPUT
 
 #include "CompScript.h"
+#include "../BaseComponentManager.h"
 #include "../Input.h"
 #include <string>
 
@@ -9,9 +10,10 @@
  * This component is used to register the keys to listen to for a given entity
  * it does not decide what to do with the input, it is only responsible for getting the input
  */
+class ComponentInputManager;
 class ComponentInput : public BaseComponent{
     public:
-        ComponentInput(InputManager::KeyMapping* keys, EID id, const std::string& logFile);
+        ComponentInput(InputManager::KeyMapping* keys, EID id, ComponentInputManager* manager);
 		~ComponentInput();
 
         void Update();
@@ -22,11 +24,11 @@ class ComponentInput : public BaseComponent{
         InputManager::KeyMapping* keyMapping;
 };
 
-class ComponentInputManager : public BaseComponentManager{
+class ComponentInputManager : public BaseComponentManager_Impl<ComponentInput>{
     public:
         ComponentInputManager(EventDispatcher* e);
         void SetDependency(std::shared_ptr<InputManager::KeyMapping> keys);
-        void AddComponent(EID id, EID parent=0);
+		std::unique_ptr<ComponentInput> ConstructComponent (EID id, ComponentInput* parent);
 
     private:
         std::shared_ptr<InputManager::KeyMapping> keyMapping;

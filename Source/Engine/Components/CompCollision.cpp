@@ -45,8 +45,8 @@ bool ComponentCollision::ColBox::operator < (const ColBox &rhs) const {
     return true;
 }
 
-ComponentCollision::ComponentCollision(EID id, ComponentPosition* pos, const std::string& logName)
-: BaseComponent(id, logName), myPos(pos){
+ComponentCollision::ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager)
+: BaseComponent(id, manager), myPos(pos){
     noTiles=false;
     alwaysCheckCount=0;
 }
@@ -217,15 +217,13 @@ void ComponentCollision::ChangeBox(int boxid, CRect& box){
 //Component Collision Manager//
 ///////////////////////////////
 
-ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseComponentManager("L_COMP_COLLISION", e){
+ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 
 }
 
-void ComponentCollisionManager::AddComponent(EID id, EID parent){
-    auto i=componentList.find(id);
-    if(i!=componentList.end()){return;}
-    auto comp = make_unique<ComponentCollision>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), logFileName);
-    componentList[id] = std::move(comp);
+std::unique_ptr<ComponentCollision>ComponentCollisionManager::ConstructComponent(EID id, ComponentCollision* parent){
+    auto comp = make_unique<ComponentCollision>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), this);
+	return std::move(comp);
 }
 
 void ComponentCollisionManager::SendCollisionEvent(const ComponentCollision& sender, const ComponentCollision& reciever, int recieverBoxID, Event::MSG mes){
