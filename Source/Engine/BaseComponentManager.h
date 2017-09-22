@@ -13,8 +13,12 @@ class BaseComponentManager{
         virtual void      	DeleteComponent     (EID id)=0;
 
         virtual bool     	HasComponent        (EID id)=0;
+		virtual bool 		IsActive(EID id)=0;
         virtual int 		GetComponentCount   ()=0;
+        virtual int 		GetActiveComponentCount   ()=0;
 
+		virtual void ActivateComponent(EID id)=0;
+		virtual void DeactivateComponent(EID id)=0;
 		/**
 		 * Updates all active components once
 		 * Sets and unsets the component's 'updatedThisFrame' boolean
@@ -58,7 +62,12 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 
         bool     	HasComponent        (EID id) final;
         virtual T* 	GetComponent        (EID id);
+		bool 		IsActive(EID id) final;
         int 		GetComponentCount   () final;
+        int 		GetActiveComponentCount   () final;
+
+		void ActivateComponent(EID id) final;
+		void DeactivateComponent(EID id) final;
 
 		/**
 		 * Updates all active components once
@@ -93,7 +102,7 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 		///All Components that this Manager owns
         std::map<EID, std::unique_ptr<T> > componentList;
 		///Components that are active and will be updated
-        std::map<EID, T*> activeComponentList;
+        std::map<EID, T*> activeComponents;
         EventDispatcher* eventDispatcher;
 };
 
