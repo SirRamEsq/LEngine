@@ -46,7 +46,7 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 		BaseComponentManager_Impl(EventDispatcher* e);
 
 	   	///Create a new component with the specified ID
-        void    AddComponent        (EID id, EID parent=0);
+        void    AddComponent        (EID id, EID parent=0) final;
  		///Add an instantiated component 
 		void    AddComponent        (std::unique_ptr<T> comp);
 
@@ -72,8 +72,8 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 		 * The component that has the deleted entity as a parent may also access the old parent
 		 * and change parents before the manager forces the parent to be null
 		 */
-        void HandleEvent(const Event* event);
-        void BroadcastEvent(const Event* event);
+		void HandleEvent(const Event* event) final;
+        void BroadcastEvent(const Event* event) final;
 		/**
 		 * Sets parent of a component
 		 * Both parent and child must exist as a component of this manager
@@ -88,6 +88,7 @@ class BaseComponentManager_Impl : public BaseComponentManager{
 		 * otherwise the entities are ordered and updated by EID
 		 */
 		void UpdateComponent(T* child);
+        virtual void ProcessEvent(const Event* event);
 
 		///All Components that this Manager owns
         std::map<EID, std::unique_ptr<T> > componentList;
