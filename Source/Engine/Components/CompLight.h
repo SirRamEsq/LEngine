@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "../BaseComponentManager.h"
 #include "../Resources/RSC_GLShader.h"
 #include "../glslHelper.h"
 #include "../BaseComponent.h"
@@ -55,11 +56,11 @@ class ComponentLight : public BaseComponent{
         std::vector<LightSource> lightSources;
 };
 
-class ComponentLightManager : public BaseComponentManager{
+class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight>{
     public:
         ComponentLightManager(EventDispatcher* e);
 
-        void AddComponent(EID id, EID parent = 0);
+		std::unique_ptr<ComponentLight> ConstructComponent(EID id, ComponentLight* parent);
         void Update();
 
         void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const RSC_GLProgram* shaderProgram);

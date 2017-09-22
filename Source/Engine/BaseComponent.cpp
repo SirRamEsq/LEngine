@@ -33,23 +33,6 @@ void BaseComponent::SetParent(BaseComponent* p){
 	parent = p;
 }
 
-void BaseComponent::SetParentEID(EID p){
-	if(p == 0){
-		SetParent(NULL);
-		return;
-	}
-		
-	if(mManager->HasComponent(p)==false){
-		std::stringstream ss;
-		ss << "Parent with eid " << p << " Doesn't Exist";
-		K_Log.Write(ss.str());
-		SetParent(NULL);
-		ASSERT(false);
-		return;
-	}
-	SetParent(mManager->GetComponent(p));
-}
-
 BaseComponent* BaseComponent::GetParent(){
 	return parent;
 }

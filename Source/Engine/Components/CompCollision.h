@@ -1,6 +1,7 @@
 #ifndef L_COMPCOLLISIONBOX
 #define L_COMPCOLLISIONBOX
 
+#include "../BaseComponentManager.h"
 #include "CompPosition.h"
 #include "CompScript.h"
 
@@ -156,7 +157,7 @@ struct CollisionGrid{
 
     void UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int mapWidthPixels);
 };
-class ComponentCollisionManager : public BaseComponentManager{
+class ComponentCollisionManager : public BaseComponentManager_Impl<ComponentCollision>{
     public:
         ComponentCollisionManager(EventDispatcher* e);
 		void Update();

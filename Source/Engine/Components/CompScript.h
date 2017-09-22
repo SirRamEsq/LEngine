@@ -1,7 +1,7 @@
 #ifndef L_SCRIPTCOMP
 #define L_SCRIPTCOMP
 
-#include "../BaseComponent.h"
+#include "../BaseComponentManager.h"
 #include "CompPosition.h"
 #include "CompSprite.h"
 #include "CompParticle.h"
@@ -109,7 +109,7 @@ class ComponentScript : public BaseComponent{
 };
 
 class TiledObject;
-class ComponentScriptManager : public BaseComponentManager{
+class ComponentScriptManager : public BaseComponentManager_Impl<ComponentScript>{
     public:
         ComponentScriptManager(lua_State* state, LuaInterface* interface, EventDispatcher* e);
 		~ComponentScriptManager();

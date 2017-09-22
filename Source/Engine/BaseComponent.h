@@ -7,7 +7,6 @@
 #include <map>
 #include <memory>
 
-class BaseComponentManager;
 class ComponentPositionManager;
 class BaseComponent{
     friend class BaseComponentManager;
@@ -38,7 +37,6 @@ class BaseComponent{
 		bool updatedThisFrame;
     protected:
         EID mEntityID;
-        BaseComponentManager* mManager;
 
 		///Pointer to component's parent, should be same type of component as derived class BaseComponent* parent;
 		BaseComponent* parent;

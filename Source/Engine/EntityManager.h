@@ -1,7 +1,7 @@
 #ifndef L_ENTITY_MAN
 #define L_ENTITY_MAN
 
-#include "BaseComponent.h"
+#include "BaseComponentManager.h"
 #include "Exceptions.h"
 #include "Defines.h"
 #include "Event.h"
