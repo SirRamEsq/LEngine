@@ -149,10 +149,18 @@ void EntityManager::DeactivateAllEntities(){
 
 }
 
-void Activate(std::vector<EID> entities){
-
+void EntityManager::Activate(std::vector<EID> entities){
+	for(auto i = entities.begin(); i!= entities.end(); i++){
+		for(auto comp = componentsRegistered.begin(); comp != componentsRegistered.end(); comp++){
+			comp->second->ActivateComponent(*i);
+		}
+	}
 }
 
-void Deactivate(std::vector<EID> entities){
-
+void EntityManager::Deactivate(std::vector<EID> entities){
+	for(auto i = entities.begin(); i!= entities.end(); i++){
+		for(auto comp = componentsRegistered.begin(); comp != componentsRegistered.end(); comp++){
+			comp->second->DeactivateComponent(*i);
+		}
+	}
 }
