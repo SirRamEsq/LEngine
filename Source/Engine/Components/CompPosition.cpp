@@ -78,10 +78,10 @@ Coord2df MapNode::TranslateWorldToLocal(const Coord2df& worldCoordinates){
 /////////////////////
 //ComponentPosition//
 /////////////////////
-ComponentPosition::ComponentPosition(EID id, MapNode* parent, const std::string& logName) : BaseComponent(id, logName){
+ComponentPosition::ComponentPosition(EID id, MapNode* parent, ComponentPositionManager* manager) : BaseComponent(id, manager){
 	mEntityID=id;
-	mNode.SetParent(parent);
 	maximumSpeed = 15.0;
+	mNode.SetParent(parent);
 }
 ComponentPosition::~ComponentPosition(){
 }
@@ -193,28 +193,22 @@ MapNode* ComponentPosition::GetMapNode(){
 ////////////////////////////
 //ComponentPositionManager//
 ////////////////////////////
-ComponentPositionManager::ComponentPositionManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_POSITION", e){
+ComponentPositionManager::ComponentPositionManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 }
 
 ComponentPositionManager::~ComponentPositionManager(){
 }
 
-void ComponentPositionManager::AddComponent(EID id, EID parent){
-	//Return if component with EID exists
-	auto i = componentList.find(id);
-	if(i != componentList.end()){return;}
-
+std::unique_ptr<ComponentPosition> ComponentPositionManager::ConstructComponent (EID id, ComponentPosition* parent){
 	//Assign manager's root node as the node's parent by default
-	auto pos = make_unique<ComponentPosition>(id, &mRootNode, logFileName);
-	pos->mManager=this;
-
-	//Grab a dumb pointer for setting the parent after adding the component to the list
-	auto dumbPointer = pos.get();
-	componentList[id] = std::move(pos);
+	//this is needed in case the parent is null,
+	//in which case, the map node parent will be the root node
+	auto pos = make_unique<ComponentPosition>(id, &mRootNode, this);
 
 	//Change component's parent
-	//If the parent is valid, its map node will become the new node's parent
-	SetParent(dumbPointer->GetEID(), parent);
+	pos->SetParent(parent);
+
+	return std::move(pos);
 }
 
 MapNode* const ComponentPositionManager::GetRootNode(){

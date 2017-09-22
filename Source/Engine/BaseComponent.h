@@ -8,6 +8,7 @@
 #include <memory>
 
 class ComponentPositionManager;
+class BaseComponentManager;
 class BaseComponent{
     friend class BaseComponentManager;
     friend class ComponentPositionManager;
@@ -18,23 +19,26 @@ class BaseComponent{
     public:
         virtual ~BaseComponent();
 
-        BaseComponent(EID id, const std::string& logName, BaseComponent* parent=NULL); 
+        BaseComponent(EID id, BaseComponentManager* manager); 
 
         virtual void Update()=0;
         virtual void HandleEvent(const Event* event);
 
         EID GetEID() const {return mEntityID;}
 
-        const std::string logFileName;
         void SetEventCallbackFunction(EventFunction f);
 
 		virtual void SetParent(BaseComponent* p);
-		///wrapper around 'SetParent', used mainly for scripting interface
-		void SetParentEID(EID p);
+		/**
+		 * Calls mManager's SetParent with own id and argument id
+		 * Mainly exists for the sake of the scripting language
+		 */
+		void SetParentEID(EID id);
 		virtual BaseComponent* GetParent();
 
 		//Used by ComponentManager to determine if this component was already updated this frame
 		bool updatedThisFrame;
+
     protected:
         EID mEntityID;
 
@@ -44,6 +48,8 @@ class BaseComponent{
     private:
 		///Can be used to handle an event (optional)
         EventFunction eventCallback;
+
+		BaseComponentManager* mManager;
 };
 
 #endif

@@ -45,7 +45,8 @@ bool AnimationData::SetAnimation(const std::string& aniName){
     return true;
 }
 
-ComponentSprite::ComponentSprite(EID id, ComponentPosition* pos, const std::string& logName) : BaseComponent(id, logName){
+ComponentSprite::ComponentSprite(EID id, ComponentPosition* pos, ComponentSpriteManager* manager)
+	: BaseComponent(id, manager){
     mEntityID=id;
     myPos = pos;
     mNumberOfLoadedSprites=0;
@@ -226,7 +227,7 @@ bool ComponentSprite::SpriteExists(int index){
     if( (index < 0) || (index >= mNumberOfLoadedSprites) ){
         std::stringstream ss;
         ss << "Sprite Index out of range: Sprite Index '" << index << "' doesn't exist for entity with ID " << mEntityID;
-        K_Log.Write(ss.str(), Log::SEVERITY::ERROR, logFileName);
+        K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
         return false;
     }
     return true;
@@ -314,14 +315,13 @@ void ComponentSprite::HandleEvent(const Event* event){}
 //ComponentSpriteManager//
 //////////////////////////
 
-ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseComponentManager("LOG_COMP_SPRITE", e){
+ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseComponentManager_Impl(e){
 
 }
 
-void ComponentSpriteManager::AddComponent(EID id, EID parent){
-    auto i = componentList.find(id);
-    if(i!=componentList.end()){return;}
-    auto sprite = make_unique<ComponentSprite>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), logFileName);
-    componentList[id] = std::move(sprite);
+std::unique_ptr<ComponentSprite> ComponentSpriteManager::ConstructComponent (EID id, ComponentSprite* parent){
+    auto sprite = make_unique<ComponentSprite>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), this);
+
+    return std::move(sprite);
 }
 

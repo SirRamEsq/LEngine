@@ -105,7 +105,8 @@ class ComponentCollision : public BaseComponent{
 
             bool active;
         };
-        ComponentCollision(EID id, ComponentPosition* pos, const std::string& logFile);
+
+        ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager);
         ~ComponentCollision();
         bool noTiles;//Don't check against any tiles ever
 
@@ -161,7 +162,7 @@ class ComponentCollisionManager : public BaseComponentManager_Impl<ComponentColl
     public:
         ComponentCollisionManager(EventDispatcher* e);
 		void Update();
-        void AddComponent(EID id, EID parent=0);
+		std::unique_ptr<ComponentCollision>ConstructComponent(EID id, ComponentCollision* parent);
         void UpdateBuckets(int widthPixels);
         void UpdateCheckEntityCollision ();
         void UpdateCheckTileCollision   (const RSC_Map* currentMap);
