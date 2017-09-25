@@ -267,7 +267,7 @@ std::map<EID,EID> GameState::SetMapCreateEntitiesFromLayers(const std::vector<st
 
             //Set position
             comPosMan.AddComponent(ent);
-            ((ComponentPosition*)(comPosMan.GetComponent(ent)) )->SetPositionLocal( Coord2df(objectIt->second.x, objectIt->second.y) );
+            comPosMan.GetComponent(ent)->SetPositionLocal( Coord2df(objectIt->second.x, objectIt->second.y) );
 
             //Add script Component and set to be initialized later during linking stage after all entities have EIDs
             if(objectIt->second.script!=""){
@@ -345,8 +345,8 @@ void GameState::SetMapLinkEntities(
                 entityID    = tiledIDtoEntityID.find((*eventSource))->second;
                 listenerID  = tiledIDtoEntityID.find(objectIt->first)->second;
 
-                ComponentScript* listenerScript=((ComponentScript*)comScriptMan.GetComponent(listenerID));
-                ComponentScript* senderScript=((ComponentScript*)comScriptMan.GetComponent(entityID));
+                ComponentScript* listenerScript=comScriptMan.GetComponent(listenerID);
+                ComponentScript* senderScript=comScriptMan.GetComponent(entityID);
                 if((listenerScript==NULL)or(senderScript==NULL)){
                     std::stringstream ss;
                     ss << "[Map Loader: " << mCurrentMap->GetMapName() << "]" << " Couldn't listen to event from TiledID " << *eventSource
@@ -360,7 +360,7 @@ void GameState::SetMapLinkEntities(
 
             //Parent Linking
             if(parent!=0){
-                ComponentScript* scriptComp =((ComponentScript*)  (comScriptMan.GetComponent(child)));
+                ComponentScript* scriptComp = comScriptMan.GetComponent(child);
 
                 //if entity has a script, it's up to the script to decide how to handle the parent, else it's assigned to all components
                 if(scriptComp==NULL){
@@ -373,7 +373,7 @@ void GameState::SetMapLinkEntities(
     //Set all objects that use entrances to their proper entrance
     if(correctEntrance!=NULL){
         for(auto i = objectsUsingEntrance.begin(); i != objectsUsingEntrance.end(); i++){
-            ((ComponentPosition*)(comPosMan.GetComponent(*i)) )->SetPositionLocal( Coord2df(correctEntranceX, correctEntranceY) );
+            comPosMan.GetComponent(*i)->SetPositionLocal( Coord2df(correctEntranceX, correctEntranceY) );
         }
     }
 }

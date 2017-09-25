@@ -82,7 +82,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	}
 
 	SECTION("Ensure that the LEngine module is correctly loaded"){
-		auto scriptComponent = (ComponentScript*) scriptMan->GetComponent(eid);
+		auto scriptComponent = scriptMan->GetComponent(eid);
 
 		std::string mapDepthString = "10";
 		std::string parentString = "0";
@@ -111,8 +111,8 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 
 		std::string eventDescription = "TEST1";
 
-		auto scriptComponent = (ComponentScript*) scriptMan->GetComponent(eid);
-		auto otherScriptComponent = (ComponentScript*) scriptMan->GetComponent(newEID);
+		auto scriptComponent = scriptMan->GetComponent(eid);
+		auto otherScriptComponent = scriptMan->GetComponent(newEID);
 
 		scriptComponent->RunFunction("Observe31337");
 		REQUIRE(lastError == "Observing 31337");
