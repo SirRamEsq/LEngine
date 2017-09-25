@@ -343,7 +343,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 							 const TiledObject* obj, LuaRef* initTable){
 
 	//check if entity has script component
-	ComponentScript* scriptComponent = (ComponentScript*) parentState->comScriptMan.GetComponent(id);
+	ComponentScript* scriptComponent = parentState->comScriptMan.GetComponent(id);
 	if(scriptComponent == NULL){
 		std::stringstream ss;
 		ss << "Couldn't run script for entity with EID " << id << " as this entity does not have a script component";
@@ -508,10 +508,10 @@ const RSC_Sprite* LuaInterface::LoadSprite(const std::string& sprPath){
 }
 
 void LuaInterface::ListenForInput (EID id, const std::string& inputName){
-	ComponentInput* comInput = ((ComponentInput*)(parentState->comInputMan.GetComponent(id)));
+	ComponentInput* comInput = (parentState->comInputMan.GetComponent(id));
 	if(comInput == NULL){
 		parentState->comInputMan.AddComponent(id);
-		comInput = ((ComponentInput*)(parentState->comInputMan.GetComponent(id)));
+		comInput = (parentState->comInputMan.GetComponent(id));
 		if(comInput == NULL){
 			std::stringstream ss;
 			ss << "Couldn't listen for input for script with eid " << id << " no input component";
@@ -523,7 +523,7 @@ void LuaInterface::ListenForInput (EID id, const std::string& inputName){
 }
 
 void LuaInterface::WriteError	  (EID id, const std::string& error){
-	ComponentScript* component = ((ComponentScript*)parentState->comScriptMan.GetComponent(id));
+	ComponentScript* component = parentState->comScriptMan.GetComponent(id);
 	if(component == NULL){
 		std::stringstream ss;
 		ss << "[ LUA" << " | ??? | EID given: " << id << " ]	" << error;
@@ -560,32 +560,32 @@ ComponentPosition*	LuaInterface::GetPositionComponent (const EID& id){
 	if(parentState->comPosMan.HasComponent(id)==false){
 		parentState->comPosMan.AddComponent(id);
 	}
-	return (ComponentPosition*)(parentState->comPosMan.GetComponent(id));
+	return parentState->comPosMan.GetComponent(id);
 }
 ComponentSprite*	LuaInterface::GetSpriteComponent   (const EID& id){
 	if(parentState->comSpriteMan.HasComponent(id)==false){
 		parentState->comSpriteMan.AddComponent(id);
 	}
-	return (ComponentSprite*)(parentState->comSpriteMan.GetComponent(id));
+	return parentState->comSpriteMan.GetComponent(id);
 }
 ComponentCollision* LuaInterface::GetCollisionComponent(const EID& id){
 	if(parentState->comCollisionMan.HasComponent(id)==false){
 		parentState->comCollisionMan.AddComponent(id);
 	}
-	return (ComponentCollision*)(parentState->comCollisionMan.GetComponent(id));
+	return parentState->comCollisionMan.GetComponent(id);
 }
 ComponentParticle*	LuaInterface::GetParticleComponent (const EID& id){
 	if(parentState->comParticleMan.HasComponent(id)==false){
 		parentState->comParticleMan.AddComponent(id);
 	}
-	return (ComponentParticle*)parentState->comParticleMan.GetComponent(id);
+	return parentState->comParticleMan.GetComponent(id);
 }
 
 ComponentCamera*  LuaInterface::GetCameraComponent (const EID& id){
 	if(parentState->comCameraMan.HasComponent(id)==false){
 		parentState->comCameraMan.AddComponent(id);
 	}
-	return (ComponentCamera*)(parentState->comCameraMan.GetComponent(id));
+	return parentState->comCameraMan.GetComponent(id);
 }
 
 ////////////
@@ -596,11 +596,11 @@ EID LuaInterface::EntityGetInterfaceByName(const std::string& name){
 }
 
 luabridge::LuaRef LuaInterface::EntityGetInterface (const EID& id){
-	return ((ComponentScript*)Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id))->GetEntityInterface();
+	return (Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id))->GetEntityInterface();
 }
 
 Coord2df LuaInterface::EntityGetPositionWorld(EID entity){
-	ComponentPosition* pos = ((ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity));
+	ComponentPosition* pos = (Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity));
 	if(pos == NULL){
 		std::stringstream ss;
 		ss << "EntityGetPositionWorld was passed entity id " << entity << " Which does not exist";
@@ -611,7 +611,7 @@ Coord2df LuaInterface::EntityGetPositionWorld(EID entity){
 }
 
 Coord2df LuaInterface::EntityGetMovement(EID entity){
-	return ((ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity))->GetMovement();
+	return (Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity))->GetMovement();
 }
 
 EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DEPTH depth, EID parent,
@@ -622,7 +622,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
 
 	//New Position Component for Entity
 	parentState->comPosMan.AddComponent(ent);
-	((ComponentPosition*)(parentState->comPosMan.GetComponent(ent)) )->SetPositionLocal( Coord2df(x,y) );
+	parentState->comPosMan.GetComponent(ent)->SetPositionLocal( Coord2df(x,y) );
 
 	//Get script Data
 	const RSC_Script* scriptData=K_ScriptMan.GetItem(scriptName);
@@ -654,11 +654,11 @@ void LuaInterface::EntityDelete(EID entity){
 //Rendering//
 /////////////
 RenderLine* LuaInterface::RenderObjectLine	  (EID selfID, int x, int y, int xx, int yy){
-	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(selfID)));
+	ComponentScript* script=(parentState->comScriptMan.GetComponent(selfID));
 	return script->RenderObjectLine(x,y,xx,yy);
 }
 void		LuaInterface::RenderObjectDelete  (EID selfID, RenderableObject* obj){
-	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(selfID)));
+	ComponentScript* script=(parentState->comScriptMan.GetComponent(selfID));
 	script->RenderObjectDelete(obj);
 }
 
@@ -667,8 +667,8 @@ void		LuaInterface::RenderObjectDelete  (EID selfID, RenderableObject* obj){
 //////////
 void LuaInterface::EventLuaObserveEntity  (EID listenerID, EID senderID){
 	//Get the script that the listener wants to hear
-	ComponentScript* senderScript=((ComponentScript*)(parentState->comScriptMan.GetComponent(senderID)));
-	ComponentScript* listenerScript=((ComponentScript*)(parentState->comScriptMan.GetComponent(listenerID)));
+	ComponentScript* senderScript=(parentState->comScriptMan.GetComponent(senderID));
+	ComponentScript* listenerScript=(parentState->comScriptMan.GetComponent(listenerID));
 	if(senderScript==NULL){
 		K_Log.Write("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (senderID), Log::SEVERITY::ERROR, DEBUG_LOG);
 		return;
@@ -682,13 +682,13 @@ void LuaInterface::EventLuaObserveEntity  (EID listenerID, EID senderID){
 }
 
 void LuaInterface::EventLuaBroadcastEvent (EID senderID, const std::string& event){
-	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(senderID)));
+	ComponentScript* script=(parentState->comScriptMan.GetComponent(senderID));
 
 	script->EventLuaBroadcastEvent(event);
 }
 
 void LuaInterface::EventLuaSendToObservers (EID senderID, const std::string& event){
-	ComponentScript* script=((ComponentScript*)(parentState->comScriptMan.GetComponent(senderID)));
+	ComponentScript* script=(parentState->comScriptMan.GetComponent(senderID));
 
 	script->EventLuaSendToObservers(event);
 }
@@ -696,7 +696,7 @@ void LuaInterface::EventLuaSendToObservers (EID senderID, const std::string& eve
 void LuaInterface::EventLuaSendEvent	  (EID senderID, EID recieverID, const std::string& event){
 	Event e(senderID, recieverID, Event::MSG::LUA_EVENT, event);
 
-	ComponentScript* script=(ComponentScript*)parentState->comScriptMan.GetComponent(recieverID);
+	ComponentScript* script=parentState->comScriptMan.GetComponent(recieverID);
 	if(script==NULL){return;}
 	script->HandleEvent(&e);
 }

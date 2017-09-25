@@ -27,7 +27,7 @@ void GS_Script::Init(const RSC_Script* stateScript){
 
 	comScriptMan.AddComponent(eid);
 	luaInterface.RunScript(eid, stateScript, depth, parent, scriptName, scriptType, NULL, NULL);
-	entityScript = (ComponentScript*)comScriptMan.GetComponent(eid);
+	entityScript = comScriptMan.GetComponent(eid);
 }
 
 void GS_Script::Close(){

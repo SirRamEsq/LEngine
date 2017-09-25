@@ -57,8 +57,8 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
     positionManager.AddComponent(entity);
     collisionManager.AddComponent(entity);
 
-    auto compCol = (ComponentCollision*) collisionManager.GetComponent(entity);
-    auto compPos = (ComponentPosition*) positionManager.GetComponent(entity);
+    auto compCol = collisionManager.GetComponent(entity);
+    auto compPos = positionManager.GetComponent(entity);
 
     compPos->SetPositionLocal(pos);
     compCol->SetEventCallbackFunction(CallbackFunction);
@@ -195,8 +195,8 @@ TEST_CASE("Entity Collision tests", "[collision]"){
 
         positionManager.AddComponent(entity);
         collisionManager.AddComponent(entity);
-        auto compCol = (ComponentCollision*) collisionManager.GetComponent(entity);
-        auto compPos = (ComponentPosition*) positionManager.GetComponent(entity);
+        auto compCol = collisionManager.GetComponent(entity);
+        auto compPos = positionManager.GetComponent(entity);
 
         compPos->SetPositionLocal(pos);
         compCol->SetEventCallbackFunction(CallbackFunction);
@@ -217,7 +217,7 @@ TEST_CASE("Entity Collision tests", "[collision]"){
         collisionManager.UpdateCheckEntityCollision();
         REQUIRE(0 == callbackValueEntity);
 
-        auto compPos = (ComponentPosition*) positionManager.GetComponent(EID_MIN);
+        auto compPos = positionManager.GetComponent(EID_MIN);
         Coord2df pos(16,8);
         compPos->SetPositionLocal(pos);
 

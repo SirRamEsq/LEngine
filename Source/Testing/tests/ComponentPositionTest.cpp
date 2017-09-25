@@ -20,7 +20,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	auto eid = 250;
 	posMan->AddComponent(eid);
 
-	auto posComp = (ComponentPosition*) posMan->GetComponent(eid);
+	auto posComp = posMan->GetComponent(eid);
 	REQUIRE(posComp != NULL);
 
 	SECTION("Position, Velocity, Accleration are calculated correctly"){
@@ -49,7 +49,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	SECTION("Parents can be added and updated correctly"){
 		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
-		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
+		auto parent = posMan->GetComponent(parentEID);
 		REQUIRE(parent != NULL);
 
 		auto childEID = eid;
@@ -90,7 +90,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	SECTION("Ensure that coordinates can be translated between world and local"){
 		auto parentEID = 210;
 		posMan->AddComponent(parentEID);
-		auto parent = (ComponentPosition*)posMan->GetComponent(parentEID);
+		auto parent = posMan->GetComponent(parentEID);
 
 		REQUIRE(parent != NULL);
 

@@ -222,7 +222,7 @@ ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseC
 }
 
 std::unique_ptr<ComponentCollision>ComponentCollisionManager::ConstructComponent(EID id, ComponentCollision* parent){
-    auto comp = make_unique<ComponentCollision>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), this);
+    auto comp = make_unique<ComponentCollision>(id, dependencyPosition->GetComponent(id), this);
 	return std::move(comp);
 }
 
@@ -259,10 +259,10 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
     for(auto bucketIt = grid.buckets.begin(); bucketIt != grid.buckets.end(); bucketIt++){
         for(auto eidIt1 = bucketIt->second.begin(); eidIt1 != bucketIt->second.end(); eidIt1++){
 
-            comp1 = (ComponentCollision*)(componentList[*eidIt1].get());
+            comp1 = componentList[*eidIt1].get();
 
             for(auto eidIt2 = eidIt1+1; eidIt2 != bucketIt->second.end(); eidIt2++){
-                comp2 = (ComponentCollision*)(componentList[*eidIt2].get());
+                comp2 = componentList[*eidIt2].get();
                 primaryPass=false;
 
                 alreadyRegisteredBox1.clear();
@@ -329,7 +329,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
         //Start iterating through collision boxes
         //boxIt1 is a colbox iterator for each collision component
         //i iterates through all of the collision components
-        for(boxIt1=((ComponentCollision*)compIt1->second.get())->GetItBeg(); boxIt1!=((ComponentCollision*)compIt1->second.get())->GetItEnd(); boxIt1++){
+        for(boxIt1=compIt1->second.get()->GetItBeg(); boxIt1!=compIt1->second.get()->GetItEnd(); boxIt1++){
             if((boxIt1->flags&TILE_CHECK)!=TILE_CHECK)   {continue;} //Check if the box even exists to check tiles
 
             //Adds box coordinates to entity's coordinates
@@ -415,7 +415,7 @@ void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int
 
     buckets.clear();
     for (auto it = comps->begin(); it != comps->end(); it++){
-        primaryBox = ((ComponentCollision*)(it->second))->GetPrimary();
+        primaryBox = it->second->GetPrimary();
         if(primaryBox == NULL) {continue;}
 
         rect = primaryBox->ToGameCoords();
