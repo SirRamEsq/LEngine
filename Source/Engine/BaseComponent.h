@@ -4,7 +4,6 @@
 #include "Defines.h"
 #include "Event.h"
 
-#include <map>
 #include <memory>
 
 class ComponentPositionManager;

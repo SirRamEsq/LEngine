@@ -405,16 +405,16 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
 
 
 void ComponentCollisionManager::UpdateBuckets (int widthPixels){
-    grid.UpdateBuckets((std::map<EID, ComponentCollision*>*)(&componentList), widthPixels);
+    grid.UpdateBuckets(&componentList, widthPixels);
 }
 
-void CollisionGrid::UpdateBuckets(std::map<EID, ComponentCollision*>* comps, int mapWidthPixels){
+void CollisionGrid::UpdateBuckets(const std::unordered_map<EID, std::unique_ptr<ComponentCollision> >* comps, int mapWidthPixels){
     std::set<int> hashes;
     ComponentCollision::ColBox* primaryBox;
     CRect rect;
 
     buckets.clear();
-    for (auto it = comps->begin(); it != comps->end(); it++){
+    for (auto it = comps->cbegin(); it != comps->cend(); it++){
         primaryBox = it->second->GetPrimary();
         if(primaryBox == NULL) {continue;}
 

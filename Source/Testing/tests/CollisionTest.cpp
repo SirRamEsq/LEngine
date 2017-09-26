@@ -212,6 +212,7 @@ TEST_CASE("Entity Collision tests", "[collision]"){
     positionManager.Update();
 
     RSC_MapMock testMap("TEST", 256,256);
+
     SECTION("Basic test"){
         collisionManager.UpdateBuckets(testMap.GetWidthPixels());
         collisionManager.UpdateCheckEntityCollision();
