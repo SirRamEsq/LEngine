@@ -82,7 +82,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 		//This will be false if the child was updated before the parent
 		REQUIRE(child->GetPositionWorld().x == Approx(childX + parentX + parentXspd));
 		REQUIRE(child->GetPositionWorld().y == Approx(childY + parentY + parentYspd));
-		//Local should be the same as its initial value, the child's position relative to it's parent hasn't changed
+		//Local should be the same as its initial value, the child's position relative to its parent hasn't changed
 		REQUIRE(child->GetPositionLocal().x == Approx(childX));
 		REQUIRE(child->GetPositionLocal().y == Approx(childY));
 	}

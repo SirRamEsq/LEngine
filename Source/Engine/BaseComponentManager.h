@@ -3,6 +3,7 @@
 
 #include "Defines.h"
 #include "BaseComponent.h"
+#include <unordered_map>
 
 class BaseComponentManager{
     public:
@@ -100,9 +101,9 @@ class BaseComponentManager_Impl : public BaseComponentManager{
         virtual void ProcessEvent(const Event* event);
 
 		///All Components that this Manager owns
-        std::map<EID, std::unique_ptr<T> > componentList;
+        std::unordered_map<EID, std::unique_ptr<T> > componentList;
 		///Components that are active and will be updated
-        std::map<EID, T*> activeComponents;
+        std::unordered_map<EID, T*> activeComponents;
         EventDispatcher* eventDispatcher;
 };
 
