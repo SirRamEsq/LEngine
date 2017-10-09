@@ -193,6 +193,7 @@ void GameStateManager_Impl::HandleEvent(const Event* event){
 bool GameStateManager_Impl::Update(){
     mCurrentState->entityMan.Cleanup();
 	if(popState == false){
+		//push next state if one exists
 		PushNextState();
 	}
 	else{
