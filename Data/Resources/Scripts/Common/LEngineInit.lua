@@ -2,6 +2,7 @@ local container = {}
 --contains all the data that Lua scripts need from cpp
 container.NewLEngine = function ()
   --Initialize Container
+  --add state script pointer?
   local LEngine = {
     _VERSION      = "v1.0",
     _DESCRIPTION  = "Module that the LEngine populates with data and sends to each instance of a script component",
