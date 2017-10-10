@@ -19,8 +19,8 @@ void EventDispatcher::SetDependencies(GameStateManager* gs, EntityManager* em){
     gameStateManager        = gs;
     gameStateEntityManager  = em;
 
-    if(gameStateManager==NULL){K_Log.Write("GameStateManager is NULL in the EventDispatcher", Log::SEVERITY::WARN, Log::typeDefault);}
-    if(gameStateEntityManager==NULL){K_Log.Write("EntityManager is NULL in the EventDispatcher",  Log::SEVERITY::WARN, Log::typeDefault);}
+    if(gameStateManager==NULL){LOG_DEBUG("GameStateManager is NULL in the EventDispatcher");}
+    if(gameStateEntityManager==NULL){LOG_DEBUG("EntityManager is NULL in the EventDispatcher");}
 };
 
 void EventDispatcher::DispatchEvent(const Event& event){

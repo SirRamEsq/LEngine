@@ -44,7 +44,7 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 		default:
 			std::stringstream ss;
 			ss << "RenderCamera framebuffer failed, status: " << status << std::endl;
-			K_Log.Write(ss.str(), Log::SEVERITY::FATAL);
+			LOG_FATAL(ss.str());
 			break;
 	}
 
@@ -215,7 +215,7 @@ RenderManager::RenderManager()
 		if(defaultProgramSprite == NULL){ ss << "\n -Sprite shader program could not be loaded";}
 		if(defaultProgramLight == NULL){ ss << "\n -Light shader program could not be loaded";}
 		if(defaultProgramImage == NULL){ ss << "\n -Image shader program could not be loaded";}
-		K_Log.Write(ss.str(), Log::SEVERITY::FATAL);
+		LOG_FATAL(ss.str());
 		throw LEngineException(ss.str());
 	}
 }
@@ -291,7 +291,7 @@ void RenderManager::Render(){
 			default: errorString = "?";
 		}
 		ss << "GL Error: " << errorString << std::endl;
-		K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+		LOG_ERROR(ss.str());
 	}
 #endif
 }

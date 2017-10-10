@@ -37,7 +37,7 @@ void stackdump_g(lua_State* l, const std::string& logFile)
 		}
 	}
 	ss << "==========";
-	K_Log.Write(ss.str(), Log::SEVERITY::DEBUG, logFile);
+	LOG_DEBUG(ss.str());
 }
 
 int GetErrorInfo(lua_State* L){
@@ -57,7 +57,7 @@ int GetErrorInfo(lua_State* L){
 
    std::stringstream ss;
    ss << "Lua Error: " << msg.str();
-   K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+   LOG_ERROR(ss.str());
    lua_pushstring(L, msg.str().c_str());
    return 1;
 }
@@ -139,7 +139,7 @@ LuaInterface::LuaInterface(GameState* state)
 	if(lState==NULL){
 		std::stringstream ss;
 		ss << "Lua state couldn't be created";
-		K_Log.Write(ss.str());
+		LOG_INFO(ss.str());
 		return;
 	}
 
@@ -149,17 +149,17 @@ LuaInterface::LuaInterface(GameState* state)
 
 	LuaRef cppTable = getGlobal(lState, "CPP");
 	if (cppTable.isNil()) {
-		K_Log.Write("CPP is nil", Log::SEVERITY::FATAL, DEBUG_LOG);
+		LOG_FATAL("CPP is nil");
 	}
 	if (!cppTable.isTable()) {
-		K_Log.Write("CPP is not table", Log::SEVERITY::FATAL, DEBUG_LOG);
+		LOG_FATAL("CPP is not table");
 	}
 
 	cppTable["interface"]=this;
 
 	LuaRef interfaceInstance = cppTable["interface"];
 	if (interfaceInstance.isNil()){
-		K_Log.Write("interface instance is nil", Log::SEVERITY::FATAL, DEBUG_LOG);
+		LOG_FATAL("interface instance is nil");
 	}
 	/*
 	Could probably remove the dependency on LuaFileSystem entirely if I just pass the current directory from the engine
@@ -195,7 +195,7 @@ LuaInterface::LuaInterface(GameState* state)
 			ss << "Lua String could not be run " << *doStrings[i]
 			<< " | Error code is: " << error << " "
 			<< "   ...Error Message is " << lua_tostring(lState,-1);
-			K_Log.Write(ss.str(), Log::SEVERITY::FATAL, DEBUG_LOG);
+			LOG_FATAL(ss.str());
 			lua_pop(lState, -1); //pop error message
 			//GetErrorInfo(lState);
 			return;
@@ -204,10 +204,10 @@ LuaInterface::LuaInterface(GameState* state)
 
 	LuaRef engineFunction = getGlobal(lState, "NewLEngine");
 	if (engineFunction.isNil()) {
-		K_Log.Write("NewLEngine is nil", Log::SEVERITY::FATAL, DEBUG_LOG);
+		LOG_FATAL("NewLEngine is nil");
 	}
 	if (!engineFunction.isFunction()) {
-		K_Log.Write("NewLEngine is not function", Log::SEVERITY::FATAL, DEBUG_LOG);
+		LOG_FATAL("NewLEngine is not function");
 	}
 
 	//GetBaseEntity Creator
@@ -217,8 +217,8 @@ LuaInterface::LuaInterface(GameState* state)
 		K_ScriptMan.LoadItem(scriptName,scriptName);
 		baseScript = K_ScriptMan.GetItem(scriptName);
 		if(baseScript==NULL){
-			K_Log.Write("Cannot load base entity lua script", Log::SEVERITY::ERROR, DEBUG_LOG);
-			K_Log.Write(scriptName, Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR("Cannot load base entity lua script");
+			LOG_ERROR(scriptName);
 		}
 	}
 	if(baseScript!=NULL){
@@ -229,7 +229,7 @@ LuaInterface::LuaInterface(GameState* state)
 			baseLuaClass = functionReference;
 		}
 		catch(LEngineException e){
-			K_Log.Write(e.what(), Log::SEVERITY::FATAL, DEBUG_LOG);
+			LOG_FATAL(e.what());
 		}
 	}
 
@@ -305,7 +305,7 @@ int LuaInterface::RunScriptGetChunk(const RSC_Script* script){
 			functionReference = RunScriptLoadFromChunk(script);
 		}
 		catch(LEngineException e){
-			K_Log.Write(e.what(), Log::SEVERITY::FATAL, DEBUG_LOG);
+			LOG_FATAL(e.what());
 			throw e;
 		}
 
@@ -331,7 +331,7 @@ int LuaInterface::GetTypeFunction(const std::string& type){
 		else{
 			std::stringstream ss;
 			ss << "Couldn't load type function '"<<type<<"' at path '"<<fileName.str()<<"'";
-			K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR(ss.str());
 			return -1;
 		}
 	}
@@ -362,7 +362,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		if(typeFunction != -1){
 			//push type function along with base class argument and call function
 			lua_rawgeti(lState, LUA_REGISTRYINDEX, typeFunction);
-			K_Log.Write("Pushed Type " + type, Log::SEVERITY::DEBUG);
+			LOG_DEBUG("Pushed Type " + type);
 		}
 	}
 	//Push the result of baseClass as an argument for the type function
@@ -376,7 +376,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 			ss << "Error String is '" << lua_tostring(lState, -1) << "'";
 			// completely clear the stack before return
 			lua_settop(lState, 0);
-			K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR(ss.str());
 
 			throw LEngineException(ss.str());
 			return false;
@@ -397,7 +397,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 			ss << "Type is: " << type;
 			// completely clear the stack before return
 			lua_settop(lState, 0);
-			K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR(ss.str());
 
 			throw LEngineException(ss.str());
 			return false;
@@ -412,7 +412,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		<< "   ...Error Message is " << lua_tostring(lState,-1);
 		// completely clear the stack before return
 		lua_settop(lState, 0);
-		K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR(ss.str());
 		return false;
 	}
 
@@ -422,7 +422,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		errorMsg << "Returned value from lua function is not a table in script [" << script->scriptName
 		<< "] with EID [" << id << "] \n"
 		<< " ...Type is: [" << lua_typename(lState, lua_type(lState, stackTop)) << "]";
-		K_Log.Write(errorMsg.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR(errorMsg.str());
 		// completely clear the stack before return
 		lua_settop(lState, 0);
 		return false;
@@ -448,8 +448,8 @@ bool LuaInterface::RunScript(EID id, const RSC_Script* script, MAP_DEPTH depth, 
 		returnedTable["LEngineData"]= engineTableRef;
 	}
 	catch(std::exception e){
-		K_Log.Write("Couldn't Run LEngineInit; ");
-		K_Log.Write(e.what());
+		LOG_INFO("Couldn't Run LEngineInit; ");
+		LOG_INFO(e.what());
 	}
 
 	//////////////////////////////////////////////////
@@ -499,7 +499,7 @@ const RSC_Sprite* LuaInterface::LoadSprite(const std::string& sprPath){
 	const RSC_Sprite* sprite=K_SpriteMan.GetItem(sprPath);
 	if(sprite==NULL){
 		if(K_SpriteMan.LoadItem(sprPath,sprPath)==false){
-			K_Log.Write("LuaInterface::LoadSprite; Couldn't Load Sprite Named: " + sprPath, Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR("LuaInterface::LoadSprite; Couldn't Load Sprite Named: " + sprPath);
 			return NULL;
 		}
 		sprite=K_SpriteMan.GetItem(sprPath);
@@ -515,7 +515,7 @@ void LuaInterface::ListenForInput (EID id, const std::string& inputName){
 		if(comInput == NULL){
 			std::stringstream ss;
 			ss << "Couldn't listen for input for script with eid " << id << " no input component";
-			K_Log.Write(ss.str(), Log::SEVERITY::WARN, DEBUG_LOG);
+			LOG_DEBUG(ss.str());
 			return;
 		}
 	}
@@ -527,14 +527,14 @@ void LuaInterface::WriteError	  (EID id, const std::string& error){
 	if(component == NULL){
 		std::stringstream ss;
 		ss << "[ LUA" << " | ??? | EID given: " << id << " ]	" << error;
-		K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR(ss.str());
 		return;
 	}
 	const std::string& name=component->scriptName;
 	std::stringstream ss;
 	ss << "[ LUA" << " | " << name << " | EID: " << id << " ]	" << error;
 
-	K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+	LOG_ERROR(ss.str());
 	if(errorCallbackFunction!=NULL){
 		errorCallbackFunction(id, error);
 	}
@@ -604,7 +604,7 @@ Coord2df LuaInterface::EntityGetPositionWorld(EID entity){
 	if(pos == NULL){
 		std::stringstream ss;
 		ss << "EntityGetPositionWorld was passed entity id " << entity << " Which does not exist";
-		K_Log.Write(ss.str(), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR(ss.str());
 		return Coord2df(0,0);
 	}
 	return pos->GetPositionWorld();
@@ -630,7 +630,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
 		K_ScriptMan.LoadItem(scriptName,scriptName);
 		scriptData=K_ScriptMan.GetItem(scriptName);
 		if(scriptData==NULL){
-			K_Log.Write("LuaInterface::EntityNew; Couldn't Load Script Named: " + scriptName, Log::SEVERITY::ERROR, DEBUG_LOG);
+			LOG_ERROR("LuaInterface::EntityNew; Couldn't Load Script Named: " + scriptName);
 			return 0;
 		}
 	}
@@ -639,7 +639,7 @@ EID LuaInterface::EntityNew (const std::string& scriptName, int x, int y, MAP_DE
 	parentState->comScriptMan.AddComponent(ent);
 
 	if(RunScript(ent, scriptData, depth, parent, name, type, NULL, &propertyTable)==false){
-		K_Log.Write("Couldn't Create a new Entity", Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR("Couldn't Create a new Entity");
 		return 0;
 	}
 
@@ -670,10 +670,10 @@ void LuaInterface::EventLuaObserveEntity  (EID listenerID, EID senderID){
 	ComponentScript* senderScript=(parentState->comScriptMan.GetComponent(senderID));
 	ComponentScript* listenerScript=(parentState->comScriptMan.GetComponent(listenerID));
 	if(senderScript==NULL){
-		K_Log.Write("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (senderID), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (senderID));
 		return;
 	}if(listenerScript==NULL){
-		K_Log.Write("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (listenerID), Log::SEVERITY::ERROR, DEBUG_LOG);
+		LOG_ERROR("Error: In function EventLuaObserveEntity; Cannot find entity with id: " + (listenerID));
 		return;
 	}
 

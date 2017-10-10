@@ -29,7 +29,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string& fileName){
     if(physfsError!=NULL){
         std::stringstream ss;
         ss << "Physfs Error in Generic File '" << fileName << "' Error: " << physfsError;
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
 		throw LEngineFileException(ss.str(), fileName);
     }
 

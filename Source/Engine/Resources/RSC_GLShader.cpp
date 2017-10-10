@@ -25,7 +25,7 @@ std::string RSC_GLShader::LoadShaderFromFile(const std::string& filepath){
 		return std::string(shaderFile->GetData(), shaderFile->length);
     }
     catch(LEngineFileException e){
-        K_Log.Write(e.what());
+        LOG_INFO(e.what());
 		return "";
     }
 }
@@ -51,7 +51,7 @@ RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type){
 		std::stringstream ss;
 		ss << "Shader '" << mHandleID << "' of type '" << mShaderType << "' is unusable\n"
 			<< "Source Code;\n" << glslCode; 
-		K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+		LOG_ERROR(ss.str());
 	}
 }
 
@@ -83,7 +83,7 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
 			ss
             << infoLog
             << "\n| -- --------------------------------------------------- -- |" << std::endl;
-            K_Log.Write(ss.str());
+            LOG_INFO(ss.str());
             return false;
         }
     }
@@ -94,7 +94,7 @@ bool CheckShaderCompileErrors(GLuint shader, std::string type){
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
             std::stringstream ss;
             ss << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n| -- --------------------------------------------------- -- |" << std::endl;
-            K_Log.Write(ss.str());
+            LOG_INFO(ss.str());
             return false;
         }
     }
@@ -117,7 +117,7 @@ RSC_GLProgram::~RSC_GLProgram(){
 
 bool RSC_GLProgram::AddShader(const RSC_GLShader* shader){
     if(shader->GetShaderID()==0){
-        K_Log.Write("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0");
+        LOG_INFO("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0");
         return false;
     }
     switch (shader->GetShaderType()){
@@ -179,7 +179,7 @@ bool RSC_GLProgram::LinkProgram(){
                 std::unique_ptr<char> infoLog( new char[infoLength] );
                 glGetShaderInfoLog(shader->GetShaderID(), infoLength, NULL, infoLog.get());
                 std::string str(infoLog.get(), infoLength);
-                K_Log.Write(str);
+                LOG_INFO(str);
             }
         }
     }
@@ -201,7 +201,7 @@ GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string& name) const{
         std::stringstream ss;
         ss << "[C++] RSC_GLProgram::GetUniformBlockHandle; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Block named " << name;
-        K_Log.Write(ss.str(), Log::SEVERITY::INFO, Log::typeDefault);
+        LOG_INFO(ss.str());
         throw LEngineShaderProgramException(ss.str(), this);
     }
     return returnVal;
@@ -213,7 +213,7 @@ GLint RSC_GLProgram::GetUniformLocation(const std::string& name) const {
         std::stringstream ss;
         ss << "[C++] RSC_GLProgram::GetUniformLocation; shader program with ID " << mHandleID
             << " doesn't have an active Uniform Location named '" << name << "'";
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
         throw LEngineShaderProgramException(ss.str(), this);
     }
     return returnVal;

@@ -31,6 +31,7 @@ std::map<Log::SEVERITY, std::string> Log::SEVERITY_STR = {
 const std::string Log::logPath       = "Logs/";
 const std::string Log::typeDefault   = "DEFAULT";
 const std::string Log::fileExtension = ".txt" ;
+Log Log::staticLog = Log();
 
 Log::Log(){
 	entryFilter = NULL;

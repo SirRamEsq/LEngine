@@ -20,7 +20,7 @@ RSC_Script::RSC_Script(std::string sname, const char* dat, unsigned int fsize)
         script = make_unique<RSC_Script>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
-        K_Log.Write(e.what());
+        LOG_INFO(e.what());
     }
 
     return script;

@@ -46,7 +46,7 @@ RenderSpriteBatch::RenderSpriteBatch(RenderManager* rm, const std::string& tex, 
 	texture=K_TextureMan.GetItem(textureName);
 	std::stringstream ss;
 	ss << "ERROR: RenderSpriteBatch; Couldn't find texture named: " << textureName;
-	if(texture==NULL){K_Log.Write(ss.str());}
+	if(texture==NULL){LOG_INFO(ss.str());}
 	AddToRenderManager();
 }
 
