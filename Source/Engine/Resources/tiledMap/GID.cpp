@@ -3,7 +3,7 @@
 
 GIDEnabled::GIDEnabled(GIDManager* man, GID first, GID last)
     : manager(man), firstGID(first), lastGID(last){
-    if(firstGID>lastGID){K_Log.Write("[C++] GIDEnabled Constructor: lowest gid passed is greater than highest GID passed");}
+    if(firstGID>lastGID){LOG_INFO("[C++] GIDEnabled Constructor: lowest gid passed is greater than highest GID passed");}
 
     manager->NewRange(first, last, this);
 }

@@ -98,7 +98,7 @@ bool SDLInit::InitOpenGL(){
 
 void SDLInit::InitSDL(){
 
-    if(SDL_Init(SDL_INIT_EVERYTHING)==-1){K_Log.Write("Didn't init SDL properly"); return;}
+    if(SDL_Init(SDL_INIT_EVERYTHING)==-1){LOG_FATAL("Didn't init SDL properly"); return;}
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -111,21 +111,21 @@ void SDLInit::InitSDL(){
 
     mMainContextGL = SDL_GL_CreateContext(mMainWindow);
 
-    if(InitOpenGL()==0){K_Log.Write("Didn't Initialize OpenGL"); return;}
+    if(InitOpenGL()==0){LOG_FATAL("Didn't Initialize OpenGL"); return;}
 
 
-    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096)==-1){K_Log.Write("Didn't init SDL Mixer properly"); return;}
+    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096)==-1){LOG_FATAL("Didn't init SDL Mixer properly"); return;}
     int flags=MIX_INIT_OGG;
     int initted=Mix_Init(flags);
     if( (initted&flags) != flags) {
         std::stringstream ss;
         ss << "SDL_Mix_Init: Failed to init required ogg and mod support!" << "\n"
         << "SDL_Mix_Init: " << Mix_GetError();
-        K_Log.Write(ss.str());
+        LOG_FATAL(ss.str());
     }
 
     if(TTF_Init()==-1) {
-        K_Log.Write("SDL_TTF_INIT: Couldn't init SDL_TTF!");
+        LOG_FATAL("SDL_TTF_INIT: Couldn't init SDL_TTF!");
     }
     //defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/fourside.ttf",      12 );
     defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/lumine_hall.ttf",     60 );
@@ -134,7 +134,7 @@ void SDLInit::InitSDL(){
     //defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/gasfont.ttf",       32 );
     //defaultFont = TTF_OpenFont( "Data/Resources/Fonts/XXRaytid.ttf",              28 );
     if(defaultFont==NULL){
-        K_Log.Write("Couldn't load ttf");
+        LOG_FATAL("Couldn't load ttf");
     }
 
 	//why is this glew here? what does it do?
@@ -142,11 +142,11 @@ void SDLInit::InitSDL(){
     if (GLEW_OK != err){
         std::stringstream ss;
         ss << "Error in GLEW INIT: " << glewGetErrorString(err);
-        K_Log.Write(ss.str());
+        LOG_FATAL(ss.str());
     }
 
 	if(InitImgGui(mMainWindow)!=true){
-		K_Log.Write("Couldn't Initialize ImgGui");
+		LOG_FATAL("Couldn't Initialize ImgGui");
 	}
 
     SDL_GL_SetSwapInterval(1);

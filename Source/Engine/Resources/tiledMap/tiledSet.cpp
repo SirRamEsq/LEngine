@@ -20,11 +20,11 @@ void TiledSet::Init(GID first, GIDManager* man){
     catch(LEngineFileException fe){
         std::stringstream ss;
         ss << fe.what() << "\n Filename is " << fe.fileName;
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
         initializationOK=false;
         return;
     }
-    if(texture==NULL){K_Log.Write("[C++; TiledSet Constructor] Couldn't load texture from name " + textureName);}
+    if(texture==NULL){LOG_INFO("[C++; TiledSet Constructor] Couldn't load texture from name " + textureName);}
 
     tilesWide  = texture->GetWidth()  / tileWidth;
     tilesHigh  = texture->GetHeight() / tileHeight;
@@ -138,7 +138,7 @@ void TiledSet::LoadHeightMaps(GID id){
     for (; xit<coord.GetRight(); xit++){
         //std::stringstream ss;
         //ss << "Right: " << coord.GetRight() <<  "Left: " << coord.GetLeft() <<  "Top: " << coord.GetTop() <<  "Bottom: " << coord.GetBottom();
-        //K_Log.Write(ss.str());
+        //LOG_INFO(ss.str());
         if(texture->GetPixelAlpha(xit,coord.GetTop())==255){ //top of image
            topsolid+=1;
            topHit=true;

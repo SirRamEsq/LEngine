@@ -129,11 +129,11 @@ void ComponentScript::HandleEvent(const Event* event){
         try{
             LuaRef fKDown = scriptPointer["OnKeyDown"];
             if (fKDown.isNil()) {
-                K_Log.Write("OnKeyDown not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnKeyDown not found in script with EID " + (mEntityID));
                 return;
             }
             if (!fKDown.isFunction()) {
-                K_Log.Write("OnKeyDown not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnKeyDown not function in script with EID " + (mEntityID));
                 return;
             }
 			std::string key = event->description;
@@ -142,7 +142,7 @@ void ComponentScript::HandleEvent(const Event* event){
         catch (LuaException const& e){
             std::stringstream ss;
             ss << "Lua Exception: " << e.what ();
-            K_Log.Write(ss.str());
+            LOG_INFO(ss.str());
         }
     }
 
@@ -151,11 +151,11 @@ void ComponentScript::HandleEvent(const Event* event){
         try{
             LuaRef fKUp = scriptPointer["OnKeyUp"];
             if (fKUp.isNil()) {
-                K_Log.Write("OnKeyUp not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnKeyUp not found in script with EID " + (mEntityID));
                 return;
             }
             if (!fKUp.isFunction()) {
-                K_Log.Write("OnKeyUp not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnKeyUp not found in script with EID " + (mEntityID));
                 return;
             }
 			std::string key = event->description;
@@ -165,7 +165,7 @@ void ComponentScript::HandleEvent(const Event* event){
             std::stringstream ss;
             ss << "In OnKeyUp event in script with EID " << mEntityID << "\n"
             << "   ...Lua Exception " << e.what();
-            K_Log.Write(ss.str(),  Log::SEVERITY::ERROR);
+            LOG_ERROR(ss.str());
         }
     }
 
@@ -174,11 +174,11 @@ void ComponentScript::HandleEvent(const Event* event){
         try{
             LuaRef fEC = scriptPointer["OnEntityCollision"];
             if (fEC.isNil()) {
-                K_Log.Write("OnEntityCollision not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnEntityCollision not found in script with EID " + (mEntityID));
                 return;
             }
             if (!fEC.isFunction()) {
-                K_Log.Write("OnEntityCollision not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnEntityCollision not function in script with EID " + (mEntityID));
                 return;
             } 
 			auto packet = EColPacket::ExtraDataDefinition::GetExtraData(event);
@@ -187,7 +187,7 @@ void ComponentScript::HandleEvent(const Event* event){
         catch (LuaException const& e){
             std::stringstream ss;
             ss << "Lua Exception: " << e.what ();
-            K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+            LOG_ERROR(ss.str());
         }
     }
 
@@ -198,11 +198,11 @@ void ComponentScript::HandleEvent(const Event* event){
             if (fTC.isNil()) {
                 std::stringstream ss;
                 ss << "OnTileCollision not found in script with EID " << (mEntityID) << " Name is: " << scriptName;
-                K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+                LOG_ERROR(ss.str());
                 return;
             }
             if (!fTC.isFunction()) {
-                K_Log.Write("OnTileCollision not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnTileCollision not found in script with EID " + (mEntityID));
                 return;
             }
 			auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
@@ -211,7 +211,7 @@ void ComponentScript::HandleEvent(const Event* event){
         catch (LuaException const& e){
             std::stringstream ss;
             ss << "Lua Exception: " << e.what ();
-            K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+            LOG_ERROR(ss.str());
         }
     }
     else if(event->message== Event::MSG::LUA_EVENT){
@@ -221,11 +221,11 @@ void ComponentScript::HandleEvent(const Event* event){
             std::stringstream ss;
             ss << "OnLuaEvent not found in script with EID " << (mEntityID) << " Name is: " << scriptName;
             if (fTC.isNil()) {
-                K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+                LOG_ERROR(ss.str());
                 return;
             }
             if (!fTC.isFunction()) {
-                K_Log.Write("OnLuaEvent not found in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+                LOG_ERROR("OnLuaEvent not found in script with EID " + (mEntityID));
                 return;
             }
 
@@ -234,7 +234,7 @@ void ComponentScript::HandleEvent(const Event* event){
         catch (LuaException const& e){
             std::stringstream ss;
             ss << "Lua Exception: " << e.what ();
-            K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+            LOG_ERROR(ss.str());
         }
     }
     else if(event->message== Event::MSG::ENTITY_DELETED){
@@ -255,13 +255,13 @@ void ComponentScript::RunFunction(const std::string& fname){
         //get function from instance table
         LuaRef fN = scriptPointer[fname.c_str()];
         if (fN.isNil()) {
-            K_Log.Write("Tried to run lua function; " + fname, Log::SEVERITY::ERROR);
-            K_Log.Write("Function not found in script with EID " + (mEntityID),  Log::SEVERITY::ERROR);
+            LOG_ERROR("Tried to run lua function; " + fname);
+            LOG_ERROR("Function not found in script with EID " + (mEntityID));
             return;
         }
         if (!fN.isFunction()) {
-            K_Log.Write("Tried to run lua function; " + fname, Log::SEVERITY::ERROR);
-            K_Log.Write("Passed name is not function in script with EID " + (mEntityID), Log::SEVERITY::ERROR);
+            LOG_ERROR("Tried to run lua function; " + fname);
+            LOG_ERROR("Passed name is not function in script with EID " + (mEntityID));
             return;
         }
         fN();
@@ -271,7 +271,7 @@ void ComponentScript::RunFunction(const std::string& fname){
         std::stringstream ss;
         ss << "Lua Exception: " << e.what ()
         << "\nScript Name is " << scriptName;
-        K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+        LOG_ERROR(ss.str());
 
 		#ifdef DEBUG_MODE
 			std::cout << ss.str() << std::endl;

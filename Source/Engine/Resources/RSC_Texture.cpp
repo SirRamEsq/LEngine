@@ -96,7 +96,7 @@ bool RSC_Texture::ExportTexture(const char* path) const {
     if(SOIL_save_image(path,SOIL_SAVE_TYPE_BMP,mTexData.width,mTexData.height,mBytesPerPixel,mTexData.data.get())==0){
         std::string pathString (path);
         std::string errorString = "Texture Write to Disk Failed @ Path: " + pathString;
-        K_Log.Write(errorString);
+        LOG_INFO(errorString);
         throw Exception(errorString);
     }
 }
@@ -191,7 +191,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
         ss << "[C++] RSC_Texture:GetPixelAlpha; Texture X index out of bounds" <<
                 "\n    X is: " << x <<
                 "\n    W is: " << mTexData.width;
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
 
     }
     else if(y>=mTexData.height){
@@ -199,7 +199,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
         ss << "[C++] RSC_Texture:GetPixelAlpha; Texture Y index out of bounds" <<
                 "\n    Y is: " << y <<
                 "\n    H is: " << mTexData.height;
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
     }
     else{
         int index=(x+(y*mTexData.width)) * 4; //get Correct pixel index
@@ -223,7 +223,7 @@ int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, L
 
     GLint errorcode=glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(errorcode != GL_FRAMEBUFFER_COMPLETE){
-        K_Log.Write("ERROR: Framebuffer not complete, error code: " + errorcode);
+        LOG_INFO("ERROR: Framebuffer not complete, error code: " + errorcode);
         return false;
     }
 
@@ -282,14 +282,14 @@ std::unique_ptr<RSC_Texture> RSC_Texture::LoadResource(const std::string& fname)
         if(data.get()->GetData()==NULL){
             std::stringstream ss;
             ss << "Texture " << fullPath << " couldn't be found.";
-            K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+            LOG_ERROR(ss.str());
             return NULL;
         }
         texture = make_unique<RSC_Texture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
         texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
     }
     catch(LEngineFileException e){
-        K_Log.Write(e.what());
+        LOG_INFO(e.what());
         throw e;
     }
 

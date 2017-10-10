@@ -71,6 +71,8 @@ class Log{;
         static std::map<SEVERITY, std::string> SEVERITY_STR;
 		///Will write the entries to a file
 		static void WriteEntriesToFile(const std::vector<const Entry*> _entries, const std::string& fileName);
+
+		static Log staticLog;
     protected:
 		///All entries written to this log
 		mutable std::vector<Entry> entries;
@@ -89,5 +91,13 @@ class Log{;
 		///Returns the date formated specially for fileNames
 		static std::string GetDateString();
 };
+
+//more laconic access
+#define LOG_FATAL(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::FATAL);
+#define LOG_ERROR(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::ERROR);
+#define LOG_WARN(stdString)  Log::staticLog.Write(stdString, Log::SEVERITY::WARN);
+#define LOG_INFO(stdString)  Log::staticLog.Write(stdString, Log::SEVERITY::INFO);
+#define LOG_DEBUG(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::DEBUG);
+#define LOG_TRACE(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::TRACE);
 
 #endif

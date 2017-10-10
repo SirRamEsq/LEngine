@@ -12,7 +12,7 @@ bool IniHandler::OpenReadFile(const std::string& fname){
     if(iniRead.is_open()){CloseReadFile();}
     iniRead.open(fname.c_str());
     if(!iniRead.good()){
-        K_Log.Write("IniHandler::OpenReadFile file isn't good", Log::SEVERITY::ERROR);
+        LOG_ERROR("IniHandler::OpenReadFile file isn't good");
         return false;
     }
     return true;
@@ -22,7 +22,7 @@ bool IniHandler::OpenWriteFile(const std::string& fname){
     if(iniWrite.is_open()){CloseWriteFile();}
     iniWrite.open(fname.c_str());
     if(!iniWrite.good()){
-        K_Log.Write("IniHandler::OpenWriteFile file isn't good", Log::SEVERITY::ERROR);
+        LOG_ERROR("IniHandler::OpenWriteFile file isn't good");
         return false;
     }
     return true;

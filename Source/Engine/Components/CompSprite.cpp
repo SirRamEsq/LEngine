@@ -227,7 +227,7 @@ bool ComponentSprite::SpriteExists(int index){
     if( (index < 0) || (index >= mNumberOfLoadedSprites) ){
         std::stringstream ss;
         ss << "Sprite Index out of range: Sprite Index '" << index << "' doesn't exist for entity with ID " << mEntityID;
-        K_Log.Write(ss.str(), Log::SEVERITY::ERROR);
+        LOG_ERROR(ss.str());
         return false;
     }
     return true;
@@ -294,7 +294,7 @@ int ComponentSprite::AddSprite(const RSC_Sprite* sprite, const MAP_DEPTH& depth,
     if(texture==NULL){
         std::stringstream ss;
         ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named " << sprite->GetTextureName();
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
         return -1;
     }
 

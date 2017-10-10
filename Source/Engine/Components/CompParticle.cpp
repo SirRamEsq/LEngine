@@ -237,7 +237,7 @@ std::unique_ptr<RSC_GLShader> ParticleCreator::GenerateFragmentShader(){
     std::unique_ptr<RSC_GLShader> shader (new RSC_GLShader(ss.str(), SHADER_FRAGMENT));
 
     ss << "\n\n\n";
-    K_Log.Write(ss.str());
+    LOG_INFO(ss.str());
 
     return shader;
 }
@@ -261,7 +261,7 @@ std::unique_ptr<RSC_GLShader> ParticleCreator::GenerateVertexShader(){
     std::unique_ptr<RSC_GLShader> shader (new RSC_GLShader(ss.str(), SHADER_VERTEX));
 
     ss << "\n\n\n";
-    K_Log.Write(ss.str());
+    LOG_INFO(ss.str());
 
     return shader;
 }

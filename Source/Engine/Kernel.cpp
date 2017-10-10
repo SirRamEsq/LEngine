@@ -1,7 +1,7 @@
 #include "Kernel.h"
 #include "gui/imgui_LEngine.h"
 
-Log 						Kernel::log;
+Log* 						Kernel::log = &Log::staticLog;
 
 SDLInit*					Kernel::SDLMan;
 InputManager				Kernel::inputMan;
@@ -60,7 +60,7 @@ void ImGuiState::Reset(){
 }
 
 void Kernel::Close(){
-	K_Log.Write("Closing");
+	log->Write("Closing");
 	stateMan.Close();
 	SDLMan->CloseSDL();
 
@@ -90,19 +90,19 @@ void Kernel::Inst(int argc, char *argv[]){
 	PHYSFS_setWriteDir("Data/");
 
 #ifndef DEBUG_MODE
-	K_Log.WriteToFile("Log");
+	log->WriteToFile("Log");
 	debugMode = false;
 #else
-	K_Log.WriteToFile("Log_DEBUG");
+	log->WriteToFile("Log_DEBUG");
 	debugMode = true;
 #endif
-	K_Log.Write("Starting up...");
+	log->Write("Starting up...");
 
     const char * physfsError = PHYSFS_getLastError();
     if(physfsError!=NULL){
         std::stringstream ss;
         ss << "Physfs Error in Kernel Inst; Error: " << physfsError;
-        K_Log.Write(ss.str());
+        log->Write(ss.str());
     }
 
 	//commandLine.ParseArgs(argc, argv);
@@ -124,7 +124,7 @@ void Kernel::Inst(int argc, char *argv[]){
 				return true;
 			}
 		);
-		log.SetEntryFilter(fp);
+		log->SetEntryFilter(fp);
 	}
 	debugPause = false;
 	SDLMan=SDLInit::Inst();
@@ -140,13 +140,13 @@ void Kernel::Inst(int argc, char *argv[]){
 	rscMapMan		.SetLoadFunction(&RSC_MapImpl::LoadResource   );
 	rscFontMan		.SetLoadFunction(&RSC_Font::LoadResource   );
 
-	rscTexMan		.SetLog(&log);
-	rscSpriteMan	.SetLog(&log);
-	rscMusicMan		.SetLog(&log);
-	rscSoundMan		.SetLog(&log);
-	rscScriptMan	.SetLog(&log);
-	rscMapMan		.SetLog(&log);
-	rscFontMan		.SetLog(&log);
+	rscTexMan		.SetLog(log);
+	rscSpriteMan	.SetLog(log);
+	rscMusicMan		.SetLog(log);
+	rscSoundMan		.SetLog(log);
+	rscScriptMan	.SetLog(log);
+	rscMapMan		.SetLog(log);
+	rscFontMan		.SetLog(log);
 
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
@@ -189,8 +189,8 @@ void Kernel::DEBUG_DisplayLog(){
 			index++;
 		}
 
-		log.SetEntryFilterFlags(newFlags);
-		auto entries = log.GetEntries();
+		log->SetEntryFilterFlags(newFlags);
+		auto entries = log->GetEntries();
 
 		for(auto i = entries.begin(); i != entries.end(); i++){
 			ImGui::TextWrapped((*i)->ToString().c_str());
@@ -283,11 +283,11 @@ void Kernel::ImGuiCreateDeviceObjects(){
 		guiState.shaderHandle = make_unique<RSC_GLProgram>();
 
 		if(guiState.vertHandle->IsUsable() == false){
-			K_Log.Write("Couldn't load ImGui Vertex Shader");
+			log->Write("Couldn't load ImGui Vertex Shader");
 			throw LEngineException("Imgui No Vertex Shader");
 		}
 		if(guiState.fragHandle->IsUsable() == false){
-			K_Log.Write("Couldn't load ImGui Fragment Shader");
+			log->Write("Couldn't load ImGui Fragment Shader");
 			throw LEngineException("Imgui No Fragment Shader");
 		}
 		

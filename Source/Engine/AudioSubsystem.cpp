@@ -21,7 +21,7 @@ SoundEvent::SoundEvent(const std::string& soundName, unsigned short int vol){
         if(snd==NULL){
             std::stringstream error;
             error << "Couldn't load sound named " << soundName;
-            K_Log.Write(error.str(), Log::SEVERITY::ERROR, Log::typeDefault);
+            LOG_ERROR(error.str());
         }
     }
     sound = snd;

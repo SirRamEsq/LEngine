@@ -79,7 +79,7 @@ class Kernel{
 		static GenericContainer<RSC_GLProgram>	rscShaderProgramMan;
 
 		static InputManager inputManager;
-		static Log log;
+		static Log* log;
 
 		static ImGuiState guiState;
 
@@ -130,7 +130,5 @@ class Kernel{
 #define K_FontMan		Kernel::rscFontMan
 #define K_ShaderMan		Kernel::rscShaderMan
 #define K_ShaderProgramMan		Kernel::rscShaderProgramMan
-
-#define K_Log			Kernel::log
 
 #endif

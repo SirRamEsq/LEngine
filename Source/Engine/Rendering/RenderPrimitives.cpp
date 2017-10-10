@@ -36,12 +36,12 @@ void RenderText::Render(const RenderCamera* camera, const RSC_GLProgram* program
         del=false;
     }
     if(defaultFont==NULL){
-            K_Log.Write("Font is NULL", Log::SEVERITY::ERROR);
+            LOG_ERROR("Font is NULL");
     }
     if(mTexture==NULL){
         SDL_Surface* surface= TTF_RenderUTF8_Blended( defaultFont, text.c_str(), color );
         if(surface==NULL){
-            K_Log.Write("Text's SDL Surface is NULL", Log::SEVERITY::ERROR);
+            LOG_ERROR("Text's SDL Surface is NULL");
         }
         w=surface->w;
         h=surface->h;

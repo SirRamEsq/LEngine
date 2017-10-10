@@ -66,7 +66,7 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer){
             ss << "Couldn't add TileLayer named: " << layer->layerName
             << "\n    With Depth of: " << depth
             << "\n    Depth already taken";
-            K_Log.Write(ss.str());
+            LOG_INFO(ss.str());
             return false;
         }
 
@@ -191,8 +191,8 @@ void TiledData::TMXLoadAttributes(rapidxml::xml_node<>* rootAttributeNode, Attri
     for (xml_attribute<> *attr = rootAttributeNode->first_attribute(); attr; attr = attr->next_attribute()){
         key=attr->name();
         value=attr->value();
-        //K_Log.Write("Key is ");
-        //K_Log.Write(key);
+        //LOG_INFO("Key is ");
+        //LOG_INFO(key);
 
         //If the attribute map passed in is empty, simply fill it with every attribute found
         if(emptyMap){
@@ -357,12 +357,12 @@ std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
             rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
         catch(RSC_Map::Exception e){
-            K_Log.Write(e.what());
+            LOG_INFO(e.what());
             throw e;
         }
     }
     catch(LEngineFileException e){
-        K_Log.Write(e.what());
+        LOG_INFO(e.what());
         throw e;
     }
 
@@ -381,7 +381,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     std::stringstream mapInitializeDebugMessage;
     mapInitializeDebugMessage << "[C++; RSC_MapImpl:LoadTMX] Filename is: " << TMXname;
 
-    K_Log.Write(mapInitializeDebugMessage.str());
+    LOG_INFO(mapInitializeDebugMessage.str());
     using namespace rapidxml;
     xml_document<> doc;    // character type defaults to char
     AttributeMap attributes; //this will contain all of the attributes of a given part of the map as the function goes on
@@ -418,7 +418,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
         std::stringstream ss;
         ss << "Couldn't load map named: " << TMXname
         << "\n    Tile width and height are not 16 pixels";
-        K_Log.Write(ss.str());
+        LOG_INFO(ss.str());
     }
 
     //Translate background color from string to int
@@ -433,7 +433,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     //Main loop, gets all of <map> children
     for(; node!=0; node=node->next_sibling()){
         std::string nn(node->name());
-        K_Log.Write(nn);
+        LOG_INFO(nn);
 
         if(nn=="properties"){ //Map properties; only one of these in the whole map file; specifies the global script and what entities it listens to
             std::string listenString="";
@@ -475,8 +475,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
 
                     file.reset( LoadGenericFile(externalTilesetFilePath.str()).release() );
 
-                    if(file.get()->length==0){K_Log.Write("File Length is null");}
-                    if(file.get()->GetData()==NULL){K_Log.Write("Data is null");}
+                    if(file.get()->length==0){LOG_INFO("File Length is null");}
+                    if(file.get()->GetData()==NULL){LOG_INFO("Data is null");}
 
                     xmlFile = std::string(file->GetData(),file->length);
                     tileSetDoc.parse<0>((char*)xmlFile.c_str());
@@ -486,13 +486,13 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
                 catch(rapidxml::parse_error e){
                     std::stringstream ss;
                     ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a rapidxml::parse error" << "\n    What is: " << e.what();
-                    K_Log.Write(ss.str());
+                    LOG_INFO(ss.str());
 
                 }
                 catch(LEngineFileException e){
                     std::stringstream ss;
                     ss << "[C++; RSC_MapImpl::LoadTMX] TileSetDoc threw a fileException error" << "\n    What is: " << e.what();
-                    K_Log.Write(ss.str());
+                    LOG_INFO(ss.str());
                 }
             }
             //External Tilesets don't have their first gid included in their file, only the actual map assigns gids
@@ -545,7 +545,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
                     }
                 }
                 if(engineRange==NULL){
-                    //K_Log.Write("Oh Noes");
+                    //LOG_INFO("Oh Noes");
                     break;
                 }
 
@@ -610,7 +610,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
     GID id=0;
     for(subnode=subnode->first_node(); subnode; subnode=subnode->next_sibling()){
         valueString=subnode->first_attribute("gid")->value();
-        //K_Log.Write("ValueString is: ", valueString);
+        //LOG_INFO("ValueString is: ", valueString);
         id=strtol( valueString.c_str(), NULL, 10);
 
         data.push_back(id);
@@ -639,7 +639,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer (rapidxml::xml_
         }
     }
     tileLayer->animatedRefreshRate=animationRate; //if zero, no animation will occur
-    //K_Log.Write(TMXname, Log::typeDefault);
+    //LOG_INFO(TMXname, Log::typeDefault);
 
     return tileLayer;
 }
@@ -755,7 +755,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer (rapidxml::
             TMXProcessEventListeners(listenString,newObj.eventSources);
 
             //Process more complicated properties
-            K_Log.Write(newObj.type);
+            LOG_INFO(newObj.type);
             if(newObj.type!=""){
                 if(newObj.type==global_TiledStrings[TILED_EVT_MAP_ENTRANCE]){
                     MapEntrance e;
@@ -817,7 +817,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(rapidxml::xml
         if(texture==NULL){
             std::stringstream ss;
             ss << "Couldn't load texture for Image Layer " << texturePath;
-            K_Log.Write(ss.str());
+            LOG_INFO(ss.str());
             return NULL;
         }
     }
@@ -950,7 +950,7 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(rapidxml::xml_node<>* tiled
                         ts->tileAnimations[tilePropertyID]   = animation;
                     }
                     else{
-                        K_Log.Write("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name
+                        LOG_INFO("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name
                                               + ": Animation named " + animationName + " in Sprite " + spriteName
                                               + " cannot be loaded as it was not defined using an 'animationSequence' tag");                                              
                     }
