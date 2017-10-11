@@ -305,7 +305,7 @@ ComponentScriptManager::ComponentScriptManager(lua_State* state, LuaInterface* i
 }
 
 std::unique_ptr<ComponentScript> ComponentScriptManager::ConstructComponent (EID id, ComponentScript* parent){
-    auto script = make_unique<ComponentScript>(id, lState, eventDispatcher, lInterface, dependencyRenderManager, this);
+    auto script = std::make_unique<ComponentScript>(id, lState, eventDispatcher, lInterface, dependencyRenderManager, this);
 
     return std::move(script);
 }

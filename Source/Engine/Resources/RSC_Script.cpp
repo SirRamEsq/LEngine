@@ -17,7 +17,7 @@ RSC_Script::RSC_Script(std::string sname, const char* dat, unsigned int fsize)
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        script = make_unique<RSC_Script>(fname, data.get()->GetData(), data.get()->length);
+        script = std::make_unique<RSC_Script>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
         LOG_INFO(e.what());

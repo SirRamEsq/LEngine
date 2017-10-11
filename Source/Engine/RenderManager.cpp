@@ -477,13 +477,13 @@ void RenderManager::ImGuiRender(ImDrawData* drawData){
 }
 
 std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(const std::string& vertName, const std::string& fragName){
-	std::unique_ptr<const RSC_GLShader> fragShader(make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(fragName), SHADER_FRAGMENT));
-	std::unique_ptr<const RSC_GLShader> vertShader(make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(vertName), SHADER_VERTEX  ));
+	std::unique_ptr<const RSC_GLShader> fragShader(std::make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(fragName), SHADER_FRAGMENT));
+	std::unique_ptr<const RSC_GLShader> vertShader(std::make_unique<RSC_GLShader>(RSC_GLShader::LoadShaderFromFile(vertName), SHADER_VERTEX  ));
 
 	if(fragShader->GetShaderID()!=0){K_ShaderMan.LoadItem(fragName, fragShader);}
 	if(vertShader->GetShaderID()!=0){K_ShaderMan.LoadItem(vertName, vertShader);}
 
-	std::unique_ptr<RSC_GLProgram> program = make_unique<RSC_GLProgram>();
+	std::unique_ptr<RSC_GLProgram> program = std::make_unique<RSC_GLProgram>();
 	program->AddShader(K_ShaderMan.GetItem(fragName));
 	program->AddShader(K_ShaderMan.GetItem(vertName));
 	program->LinkProgram();

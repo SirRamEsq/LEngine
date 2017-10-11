@@ -10,7 +10,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 		auto stateSize = K_StateMan.StackSize();
 		REQUIRE(stateSize == 1);
 
-		K_StateMan.PushState(std::move(make_unique<GameStateMock>(&K_StateMan)));
+		K_StateMan.PushState(std::move(std::make_unique<GameStateMock>(&K_StateMan)));
 		//Update stateman, causing the new state to be pushed
 		Kernel::Update();
 		stateSize = K_StateMan.StackSize();
@@ -30,7 +30,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	}
 
 	SECTION( "State Update and Draw Called Correctly" ) {
-		auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
+		auto stateSmart = std::make_unique<GameStateMock>(&K_StateMan);
 		auto state = stateSmart.get();
 		K_StateMan.PushState(std::move(stateSmart));
 
@@ -51,7 +51,7 @@ TEST_CASE("Map Loading functional tests", "[state][rsc_map][kernel]"){
 	SECTION( "Load Map from File"){
 		//Assuming that the map has a width, height, and at least one entity
 		REQUIRE_NOTHROW([&](){
-			auto stateSmart = make_unique<GameStateMock>(&K_StateMan);
+			auto stateSmart = std::make_unique<GameStateMock>(&K_StateMan);
 			auto state = stateSmart.get();
 			K_StateMan.PushState(std::move(stateSmart));
 

@@ -108,13 +108,12 @@ class ComponentCollision : public BaseComponent{
 
         ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager);
         ~ComponentCollision();
-        bool noTiles;//Don't check against any tiles ever
 
         void Update();
 
         void AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int orderNum=0); //x and y are relative to myPos
         void AddCollisionBox(CRect rect, int boxid, int orderNum=0);
-        void SetPrimaryCollisionBox(int boxid, bool ntile=false);//If collision fails with the primary box, none of the others are checked
+        void SetPrimaryCollisionBox(int boxid);//If collision fails with the primary box, none of the others are checked
         void AlwaysCheck(int boxid); //this box will always be checked, even if the primary fails
         void CheckForEntities(int boxid);
         void CheckForTiles(int boxid);

@@ -129,7 +129,7 @@ RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl& rhs){
     mMapName            = rhs.mMapName;
     firstGID            = rhs.firstGID;
 
-    tiledData = make_unique<TiledData> (*rhs.tiledData.get());
+    tiledData = std::make_unique<TiledData> (*rhs.tiledData.get());
 }
 
  RSC_MapImpl::~RSC_MapImpl(){
@@ -354,7 +354,7 @@ std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string& fname){
 
         try{
             auto tiledData = TiledData::LoadResourceFromTMX(fname, data.get()->GetData(), data.get()->length);
-            rscMap = make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
+            rscMap = std::make_unique<RSC_MapImpl>( std::move(tiledData) ) ;
         }
         catch(RSC_Map::Exception e){
             LOG_INFO(e.what());
@@ -412,7 +412,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(const std::string& TMX
     attributes["tilewidth"]         = Attribute("unsigned int", &sizeOfTileWidth);
     attributes["tileheight"]        = Attribute("unsigned int", &sizeOfTileHeight);
     TiledData::TMXLoadAttributes(node, attributes);
-    auto tiledData = make_unique<TiledData>(tilesWide, tilesHigh);
+    auto tiledData = std::make_unique<TiledData>(tilesWide, tilesHigh);
 
     if((sizeOfTileWidth != LENGINE_DEF_TILE_W) or (sizeOfTileHeight != LENGINE_DEF_TILE_H)){
         std::stringstream ss;
@@ -660,7 +660,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer (rapidxml::
     attributes["DEPTH"] = Attribute("int", &depth);
     TMXLoadAttributesFromProperties(&properties, attributes);
 
-    std::unique_ptr<TiledObjectLayer> objectLayer = make_unique<TiledObjectLayer>(0,0, objectLayerName, depth, &tiledData->gid);
+    std::unique_ptr<TiledObjectLayer> objectLayer = std::make_unique<TiledObjectLayer>(0,0, objectLayerName, depth, &tiledData->gid);
     objectLayer->properties=properties;
 
     //Siblings of <properties> are actual objects

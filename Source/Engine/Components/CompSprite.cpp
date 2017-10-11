@@ -300,7 +300,7 @@ int ComponentSprite::AddSprite(const RSC_Sprite* sprite, const MAP_DEPTH& depth,
 
     mSprites.            push_back(sprite);
     mAnimationData.      push_back(data);
-    mRenderableSprites.  push_back(make_unique<RenderSpriteBatch::Sprite> (sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(), depth, offset));
+    mRenderableSprites.  push_back(std::make_unique<RenderSpriteBatch::Sprite> (sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(), depth, offset));
 
     CalculateVerticies(mNumberOfLoadedSprites);
 
@@ -320,7 +320,7 @@ ComponentSpriteManager::ComponentSpriteManager(EventDispatcher* e) : BaseCompone
 }
 
 std::unique_ptr<ComponentSprite> ComponentSpriteManager::ConstructComponent (EID id, ComponentSprite* parent){
-    auto sprite = make_unique<ComponentSprite>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), this);
+    auto sprite = std::make_unique<ComponentSprite>(id, (ComponentPosition*)Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(id), this);
 
     return std::move(sprite);
 }

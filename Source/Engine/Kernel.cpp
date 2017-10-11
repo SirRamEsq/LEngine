@@ -151,7 +151,7 @@ void Kernel::Inst(int argc, char *argv[]){
 	gameLoops=0;
 	nextGameTick=SDL_GetTicks() - 1;
 
-	Kernel::stateMan.PushState(make_unique<GameStartState>(&Kernel::stateMan) );
+	Kernel::stateMan.PushState(std::make_unique<GameStartState>(&Kernel::stateMan) );
 	Kernel::stateMan.PushNextState();
 }
 
@@ -214,6 +214,7 @@ bool Kernel::Update(){
 	}
 
 	//Audio subsystem can be put on a different thread
+	//although with sdlMixer, it already is on a different thread
 	audioSubsystem.ProcessEvents();
 
 	gameLoops++;
@@ -278,9 +279,9 @@ void Kernel::ImGuiCreateDeviceObjects(){
 			"	Out_Color = Frag_Color * texture( Texture, Frag_UV.st);\n"
 			"}\n";
 
-		guiState.vertHandle = make_unique<RSC_GLShader>(vertex_shader, SHADER_VERTEX);
-		guiState.fragHandle = make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
-		guiState.shaderHandle = make_unique<RSC_GLProgram>();
+		guiState.vertHandle = std::make_unique<RSC_GLShader>(vertex_shader, SHADER_VERTEX);
+		guiState.fragHandle = std::make_unique<RSC_GLShader>(fragment_shader, SHADER_FRAGMENT);
+		guiState.shaderHandle = std::make_unique<RSC_GLProgram>();
 
 		if(guiState.vertHandle->IsUsable() == false){
 			log->Write("Couldn't load ImGui Vertex Shader");

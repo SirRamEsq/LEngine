@@ -39,7 +39,7 @@ std::unique_ptr<RSC_Font> RSC_Font::LoadResource(const std::string& fname){
         if(data->GetData()==NULL){
             throw LEngineException("RSC_Font::LoadResource; data is NULL!");
         }
-        font = make_unique<RSC_Font>(fname, std::move(data));
+        font = std::make_unique<RSC_Font>(fname, std::move(data));
     }
     catch(LEngineFileException e){
         LOG_ERROR(e.what());

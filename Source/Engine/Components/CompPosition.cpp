@@ -203,7 +203,7 @@ std::unique_ptr<ComponentPosition> ComponentPositionManager::ConstructComponent 
 	//Assign manager's root node as the node's parent by default
 	//this is needed in case the parent is null,
 	//in which case, the map node parent will be the root node
-	auto pos = make_unique<ComponentPosition>(id, &mRootNode, this);
+	auto pos = std::make_unique<ComponentPosition>(id, &mRootNode, this);
 
 	//Change component's parent
 	pos->SetParent(parent);

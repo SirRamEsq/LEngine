@@ -222,12 +222,12 @@ void GameStateManager_Impl::Draw(){
 void GameState::SetMapHandleRenderableLayers(const std::map<MAP_DEPTH, TiledLayerGeneric*>& layers){
     for(auto i = layers.begin(); i != layers.end(); i++){
         if(i->second->layerType == LAYER_TILE){
-            auto layer = make_unique<RenderTileLayer> (&renderMan, (TiledTileLayer*)i->second);
+            auto layer = std::make_unique<RenderTileLayer> (&renderMan, (TiledTileLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
 
         if(i->second->layerType == LAYER_IMAGE){
-            auto layer = make_unique<RenderImageLayer> (&renderMan, (TiledImageLayer*)i->second);
+            auto layer = std::make_unique<RenderImageLayer> (&renderMan, (TiledImageLayer*)i->second);
             mCurrentMapTileLayers.push_back( std::move(layer) );
         }
     }
@@ -407,7 +407,7 @@ bool GameState::SetCurrentMap(const RSC_Map* m, unsigned int entranceID){
 
     //Copy map passed
     mCurrentMap.reset();
-    mCurrentMap = make_unique<RSC_MapImpl>(*((RSC_MapImpl*)(m)));
+    mCurrentMap = std::make_unique<RSC_MapImpl>(*((RSC_MapImpl*)(m)));
 
     TiledData* td=(mCurrentMap->GetTiledData());
     SetMapHandleRenderableLayers(td->tiledRenderableLayers);
