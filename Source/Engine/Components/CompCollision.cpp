@@ -47,7 +47,6 @@ bool ComponentCollision::ColBox::operator < (const ColBox &rhs) const {
 
 ComponentCollision::ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager)
 : BaseComponent(id, manager), myPos(pos){
-    noTiles=false;
     alwaysCheckCount=0;
 }
 
@@ -87,7 +86,7 @@ void ComponentCollision::AddCollisionBox(CRect rect, int boxid, int orderNum){
     OrderList();
 }
 
-void ComponentCollision::SetPrimaryCollisionBox(int boxid, bool ntile){
+void ComponentCollision::SetPrimaryCollisionBox(int boxid){
     ColBox* cb=GetColBox(boxid);
     if(cb!=NULL){cb->flags= (cb->flags|PRIMARY);}
     else{
@@ -222,7 +221,7 @@ ComponentCollisionManager::ComponentCollisionManager(EventDispatcher* e) : BaseC
 }
 
 std::unique_ptr<ComponentCollision>ComponentCollisionManager::ConstructComponent(EID id, ComponentCollision* parent){
-    auto comp = make_unique<ComponentCollision>(id, dependencyPosition->GetComponent(id), this);
+    auto comp = std::make_unique<ComponentCollision>(id, dependencyPosition->GetComponent(id), this);
 	return std::move(comp);
 }
 
@@ -315,8 +314,6 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
 void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentMap){
     //Put event into smart pointer so that the same event can be reused (not multiple events allocated and deallocated on the stack)
     //May want to change this behaviour at some point, as recievers of the event may expect that they can hold on to it
-    std::vector<ComponentCollision::ColBox>::iterator boxIt1;
-    std::vector<ComponentCollision::ColBox>::iterator boxIt2;
     Coord2d ul(0,0), dr(0,0);
     const TiledTileLayer* tLayer=NULL;
     CRect box1(0,0,0,0);
@@ -329,7 +326,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
         //Start iterating through collision boxes
         //boxIt1 is a colbox iterator for each collision component
         //i iterates through all of the collision components
-        for(boxIt1=compIt1->second.get()->GetItBeg(); boxIt1!=compIt1->second.get()->GetItEnd(); boxIt1++){
+        for(auto boxIt1=compIt1->second.get()->GetItBeg(); boxIt1!=compIt1->second.get()->GetItEnd(); boxIt1++){
             if((boxIt1->flags&TILE_CHECK)!=TILE_CHECK)   {continue;} //Check if the box even exists to check tiles
 
             //Adds box coordinates to entity's coordinates
@@ -476,7 +473,7 @@ void EColPacket::ExtraDataDefinition::SetExtraData(Event* event){
 }
 
 const EColPacket* EColPacket::ExtraDataDefinition::GetExtraData(const Event* event){
-	return ((const EColPacket*)(event->extradata));
+	return static_cast<const EColPacket*>(event->extradata);
 }
 
 //////////////
@@ -491,5 +488,5 @@ void TColPacket::ExtraDataDefinition::SetExtraData(Event* event){
 }
 
 const TColPacket* TColPacket::ExtraDataDefinition::GetExtraData(const Event* event){
-	return ((const TColPacket*)(event->extradata));
+	return static_cast<const TColPacket*>(event->extradata);
 }

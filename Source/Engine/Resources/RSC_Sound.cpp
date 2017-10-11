@@ -34,7 +34,7 @@ std::unique_ptr<RSC_Sound> RSC_Sound::LoadResource(const std::string& fname){
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        sound = make_unique<RSC_Sound>(fname, data.get()->GetData(), data.get()->length);
+        sound = std::make_unique<RSC_Sound>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
         LOG_INFO(e.what());
@@ -86,7 +86,7 @@ std::unique_ptr<RSC_Music> RSC_Music::LoadResource(const std::string& fname){
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        music = make_unique<RSC_Music>(fname, data.get()->GetData(), data.get()->length);
+        music = std::make_unique<RSC_Music>(fname, data.get()->GetData(), data.get()->length);
     }
     catch(LEngineFileException e){
         LOG_INFO(e.what());

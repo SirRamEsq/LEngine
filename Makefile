@@ -15,7 +15,7 @@ DEPEXT		:= d
 OBJEXT		:= o
 
 #Flags, Libraries and Includes
-CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++11 -ggdb3 -pg
+CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++14 -ggdb3 -pg
 CFLAGS_LINK	:= -pg
 
 #without efence debug

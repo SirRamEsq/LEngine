@@ -688,7 +688,7 @@ void ComponentParticle::HandleEvent(const Event* event){
 
 
 ParticleCreator* ComponentParticle::AddParticleCreator    (const unsigned int& creatorLife, const unsigned int& particleLife){
-    mParticleCreators.push_back(make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false));
+    mParticleCreators.push_back(std::make_unique<ParticleCreator>(dependencyRenderManager, particleLife, false));
     ParticleCreator* pc=mParticleCreators[mParticleCreators.size()-1].get();
     pc->mLifeSpanMax=creatorLife;
 	pc->mLifeSpan = creatorLife;
@@ -709,7 +709,7 @@ ComponentParticleManager::~ComponentParticleManager(){
 }
 
 std::unique_ptr<ComponentParticle> ComponentParticleManager::ConstructComponent (EID id, ComponentParticle* parent){
-    auto par = make_unique<ComponentParticle>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
+    auto par = std::make_unique<ComponentParticle>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
 
     return std::move(par);
 }

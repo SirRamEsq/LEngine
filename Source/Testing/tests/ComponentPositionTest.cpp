@@ -10,7 +10,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]"){
 	Kernel::Inst();
 
 	auto stateManager = &K_StateMan;
-	auto stateSmrtPtr = make_unique<GameStateMock>(stateManager);
+	auto stateSmrtPtr = std::make_unique<GameStateMock>(stateManager);
 	auto state = stateSmrtPtr.get();
 	stateManager->PushState(std::move(stateSmrtPtr));
 

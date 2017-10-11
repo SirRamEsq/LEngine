@@ -348,7 +348,7 @@ std::unique_ptr<RSC_Sprite> RSC_Sprite::LoadResource(const std::string& fname){
         if(data.get()->GetData()==NULL){
             return NULL;
         }
-        sprite = make_unique<RSC_Sprite>(fname);
+        sprite = std::make_unique<RSC_Sprite>(fname);
         if(sprite->LoadFromXML(data.get()->GetData(), data.get()->length)==false){
             LOG_INFO("Couldn't parse XML Sprite Data for sprite " + fname);
             return NULL;

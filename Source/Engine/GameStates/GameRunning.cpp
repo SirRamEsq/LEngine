@@ -72,7 +72,7 @@ void GameRunningState::HandleEvent(const Event* event){
 		std::string inputKey = event->description;
 
         if     ( inputKey == "use")    {countdown=-1;}
-        else if( inputKey == "pause")  {gameStateManager->PushState(make_unique<GamePauseState> (gameStateManager));}
+        else if( inputKey == "pause")  {gameStateManager->PushState(std::make_unique<GamePauseState> (gameStateManager));}
 
         else if( inputKey == "up")      {u=true;}
         else if( inputKey == "down")    {d=true;}

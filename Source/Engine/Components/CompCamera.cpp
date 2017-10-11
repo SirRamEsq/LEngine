@@ -42,7 +42,7 @@ ComponentCameraManager::~ComponentCameraManager(){
 }
 
 std::unique_ptr<ComponentCamera> ComponentCameraManager::ConstructComponent	(EID id, ComponentCamera* parent){
-    auto cam = make_unique<ComponentCamera>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
+    auto cam = std::make_unique<ComponentCamera>(id, (ComponentPosition*)dependencyPosition->GetComponent(id), dependencyRenderManager, this);
 	return std::move(cam);
 }
 

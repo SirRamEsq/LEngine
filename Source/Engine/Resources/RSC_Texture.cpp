@@ -285,7 +285,7 @@ std::unique_ptr<RSC_Texture> RSC_Texture::LoadResource(const std::string& fname)
             LOG_ERROR(ss.str());
             return NULL;
         }
-        texture = make_unique<RSC_Texture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
+        texture = std::make_unique<RSC_Texture>((const unsigned char*)data.get()->GetData(), data.get()->length, fname);
         texture->SetColorKey(MASK_R, MASK_G, MASK_B, true);
     }
     catch(LEngineFileException e){

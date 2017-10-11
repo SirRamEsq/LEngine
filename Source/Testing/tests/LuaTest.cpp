@@ -17,7 +17,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]"){
 	Kernel::Inst();
 
 	auto stateManager = &K_StateMan;
-	auto stateAuto = make_unique<GameStateMock>(stateManager);
+	auto stateAuto = std::make_unique<GameStateMock>(stateManager);
 	auto state = stateAuto.get();
 	stateManager->PushState(std::move(stateAuto));
 

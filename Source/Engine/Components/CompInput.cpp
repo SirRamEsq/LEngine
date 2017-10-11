@@ -20,7 +20,7 @@ void ComponentInput::ListenForInput(std::string keyName){
 }
 
 std::unique_ptr<ComponentInput> ComponentInputManager::ConstructComponent (EID id, ComponentInput* parent){
-    auto input = make_unique<ComponentInput>(keyMapping.get(), id, this);
+    auto input = std::make_unique<ComponentInput>(keyMapping.get(), id, this);
     return std::move(input);
 }
 

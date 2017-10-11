@@ -310,12 +310,14 @@ std::string NumberToString ( T Number ){
 	return ss.str();
 }
 
-//Herb sutters make_unique function
+//Herb sutters std::make_unique function
 //https://herbsutter.com/gotw/_102/
+/*
 template<typename T, typename ...Args>
-std::unique_ptr<T> make_unique( Args&& ...args ){
+std::unique_ptr<T> std::make_unique( Args&& ...args ){
     return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
 }
+*/
 
 //Double packing, not mine
 #define pack754_32(f) (pack754((f), 32, 8))

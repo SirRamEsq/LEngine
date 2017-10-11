@@ -28,7 +28,7 @@ ComponentTestManager::ComponentTestManager(EventDispatcher* e) : BaseComponentMa
 }
 
 std::unique_ptr<ComponentTest> ComponentTestManager::ConstructComponent(EID id, ComponentTest* parent){
-    auto component = make_unique<ComponentTest>(id, this);
+    auto component = std::make_unique<ComponentTest>(id, this);
 	component->SetParent(parent);
     return std::move(component);
 }

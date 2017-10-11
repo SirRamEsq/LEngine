@@ -19,7 +19,7 @@ class Event{
 		//using the visitor pattern to set and get the void pointer
 		class ExtraDataDefinition{
 			public:
-				//To dervice from this class correctly...
+				//To derive from this class correctly...
 				//write a constructor that grabs the data structure you want to set to extradata
 				//store the datastructure in a member variable
 				//assign the member variable to the event->extradata in the SetExtraData function
