@@ -2,6 +2,7 @@
 #define LENGINE_TILED_HELPERS
 
 #include "../../Defines.h"
+#include "../../Coordinates.h"
 
 #include <string>
 #include <map>

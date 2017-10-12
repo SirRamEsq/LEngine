@@ -2,6 +2,7 @@
 #define L_POSCOMP
 
 #include "../BaseComponentManager.h"
+#include "../Coordinates.h"
 #include <set>
 
 //Forward-Declare for MapNode

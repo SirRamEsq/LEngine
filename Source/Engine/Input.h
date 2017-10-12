@@ -2,6 +2,8 @@
 #define L_SDL_INPUT
 
 #include "SDL2/SDL.h"
+
+#include "Coordinates.h"
 #include "EntityManager.h"
 #include "Event.h"
 

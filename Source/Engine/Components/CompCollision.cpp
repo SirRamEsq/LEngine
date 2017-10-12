@@ -168,7 +168,8 @@ void ComponentCollision::OrderList(){
 const CRect& ComponentCollision::ColBox::ToGameCoords(){
 	auto posFloat = myPos->GetPositionWorld().Round();
 
-    Coord2d pos (posFloat.x, posFloat.y);
+    Coord2df pos (posFloat.x, posFloat.y);
+	pos = pos.Round();
     gameCoords.x = pos.x + rect.x;
     gameCoords.y = pos.y + rect.y;
     gameCoords.w = rect.w;
@@ -274,7 +275,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
 
                 //Check first if the primaries collide
                 if( (primaryBox1 != NULL) && (primaryBox2 != NULL) ){
-                    primaryPass=CollisionRect(primaryBox1->ToGameCoords(), primaryBox2->ToGameCoords());
+                    primaryPass=CollisionRectRect(primaryBox1->ToGameCoords(), primaryBox2->ToGameCoords()).mCollided;
                 }
                 if(primaryPass){
                     for(auto boxIt1=comp1->GetItBeg(); boxIt1!=comp1->GetItEnd(); boxIt1++){//iterate through the collision boxes of compIt1
@@ -287,7 +288,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
                             if(not boxIt2->active){continue;}
                             box2=boxIt2->ToGameCoords();
 
-                            if(CollisionRect(box1, box2)){
+                            if(CollisionRectRect(box1, box2).mCollided){
                                 //Each entity will only be sent one collision event per collision box max
                                 if(alreadyRegisteredBox1.find(boxIt1->id)==alreadyRegisteredBox1.end()){
                                     //                      Sender                                      Reciever                       Reciever BoxID
@@ -314,7 +315,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
 void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentMap){
     //Put event into smart pointer so that the same event can be reused (not multiple events allocated and deallocated on the stack)
     //May want to change this behaviour at some point, as recievers of the event may expect that they can hold on to it
-    Coord2d ul(0,0), dr(0,0);
+    Coord2df ul(0,0), dr(0,0);
     const TiledTileLayer* tLayer=NULL;
     CRect box1(0,0,0,0);
     CRect box2(0,0,0,0);

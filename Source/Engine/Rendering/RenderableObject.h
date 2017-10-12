@@ -2,6 +2,7 @@
 #define L_ENGINE_RENDERABLE_OBJECT
 
 #include "../Defines.h"
+#include "../Coordinates.h"
 #include "../Resources/RSC_GLShader.h"
 
 #include <string>

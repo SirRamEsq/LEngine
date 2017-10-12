@@ -9,6 +9,7 @@
 
 #include "../Errorlog.h"
 #include "../Defines.h"
+#include "../Coordinates.h"
 
 class RSC_Texture{
     public:

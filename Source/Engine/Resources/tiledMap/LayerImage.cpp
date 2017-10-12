@@ -3,7 +3,7 @@
 TiledImageLayer::TiledImageLayer(const unsigned int& tileW, const unsigned int& tileH, const std::string& name, const MAP_DEPTH& depth, const GIDManager* g, const RSC_Texture* tex)
     : TiledLayerGeneric(tileW, tileH, name, depth, g, LAYER_IMAGE), texture(tex){
 	
-		offset = Coord2d( 0, 0 );
+		offset = Coord2df( 0, 0 );
 		parallax = Coord2df( 1, 1 ); 
 		repeatX = false;
 		repeatY = false;
@@ -11,11 +11,11 @@ TiledImageLayer::TiledImageLayer(const unsigned int& tileW, const unsigned int& 
 		stretchToMapY = false;
 }
 
-void TiledImageLayer::SetOffset( const Coord2d& off ){
-	offset = off;
+void TiledImageLayer::SetOffset( const Coord2df& off ){
+	offset = off.Round();
 }
 
-Coord2d TiledImageLayer::GetOffset() const {
+Coord2df TiledImageLayer::GetOffset() const {
 	return offset;
 }
 
