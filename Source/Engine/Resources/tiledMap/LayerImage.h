@@ -2,6 +2,7 @@
 #define LENGINE_TILED_LAYER_IMAGE
 
 #include "../../Defines.h"
+#include "../../Coordinates.h"
 #include "LayerGeneric.h"
 
 #include "../RSC_Texture.h"
@@ -14,8 +15,8 @@ class TiledImageLayer : public TiledLayerGeneric{
         void SetTexture (const RSC_Texture* tex);
         const RSC_Texture* GetTexture() const;
 
-        void SetOffset (const Coord2d& off);
-		Coord2d GetOffset() const;
+        void SetOffset (const Coord2df& off);
+		Coord2df GetOffset() const;
 
         void SetParallax (const Coord2df& para);
 		Coord2df GetParallax() const;
@@ -34,7 +35,7 @@ class TiledImageLayer : public TiledLayerGeneric{
 		///If true, image is repeated, if false, image is strectched
 		bool repeatX, repeatY;
 		bool stretchToMapX, stretchToMapY;
-        Coord2d     offset;
+        Coord2df    offset;
         Coord2df    parallax;
         const RSC_Texture*   texture;
 };

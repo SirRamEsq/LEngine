@@ -4,6 +4,7 @@
 #include "Errorlog.h"
 #include "math.h"
 #include "Defines.h"
+#include "Coordinates.h"
 
 // const used to convert degrees into radians
 //is defined in math.h #define M_PI 3.14

@@ -35,7 +35,7 @@
 
 //---- Define constructor and implicit cast operators to convert back<>forth from your math types and ImVec2/ImVec4.
 
-#include "../Defines.h"
+#include "../Coordinates.h"
 #define IM_VEC2_CLASS_EXTRA                                                 \
         ImVec2(const Coord2df& f) { x = f.x; y = f.y; }                     \
 		Coord2df ToCoord2df(){return Coord2df(x,y);}						\

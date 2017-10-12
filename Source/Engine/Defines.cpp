@@ -37,44 +37,6 @@ int SCREEN_H=640;
 
 float ASPECT_RATIO=   (float)SCREEN_W / (float)SCREEN_H;
 
-int CRect::GetTop() const{
-    if(h>0){return y;}
-    else{return y+h;}
-}
-int CRect::GetBottom() const{
-    if(h>0){return y+h;}
-    else{return y;}
-}
-int CRect::GetLeft() const{
-    if(w>0){return x;}
-    else{return x+w;}
-}
-int CRect::GetRight() const{
-    if(w>0){return x+w;}
-    else{return x;}
-}
-
-float FloatRect::GetTop() const{
-    if(h>0){return y;}
-    else{return y+h;}
-}
-float FloatRect::GetBottom() const{
-    if(h>0){return y+h;}
-    else{return y;}
-}
-float FloatRect::GetLeft() const{
-    if(w>0){return x;}
-    else{return x+w;}
-}
-float FloatRect::GetRight() const{
-    if(w>0){return x+w;}
-    else{return x;}
-}
-
-
-
-
-
 bool GET_ENDIAN(){
     int32_t i = 1;
     unsigned char *p = (unsigned char *)&i;
@@ -242,7 +204,6 @@ std::string GetDateTime(){
 
 	return std::string(timeStringBuffer);
 }
-
 #ifdef DEBUG_MODE
 	void _ASSERT(char const* file, unsigned int line, char const* assertion, bool stop){
 		std::cout << std::endl << "Assertion failed: " << file << ", line " << line << std::endl 
