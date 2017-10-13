@@ -239,13 +239,13 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileRight
 
 		--Primary collision
-		louie.entityCollision.primaryCollision.box = CPP.CRect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
+		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
 		louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, louie.entityCollision.primaryCollision.ID, 30)
 		louie.CompCollision:CheckForEntities(louie.entityCollision.primaryCollision.ID)
 		louie.CompCollision:SetPrimaryCollisionBox(louie.entityCollision.primaryCollision.ID)
 
 		--[[Grab collision
-		louie.entityCollision.grabCollision.box = CPP.CRect(louie.c.COL_WIDTH/2, louie.c.COL_HEIGHT/2, louie.c.COL_WIDTH/2,	1)
+		louie.entityCollision.grabCollision.box = CPP.Rect(louie.c.COL_WIDTH/2, louie.c.COL_HEIGHT/2, louie.c.COL_WIDTH/2,	1)
 		louie.CompCollision:AddCollisionBox(louie.entityCollision.grabCollision.box, louie.entityCollision.grabCollision.ID, 30)
 		louie.CompCollision:CheckForEntities(louie.entityCollision.grabCollision.ID)
 		--]]
@@ -965,7 +965,7 @@ function container.NewLouie(baseclass)
 
 			--destroy box
 			layer:SetTile(tx,ty, 0)
-			layer:UpdateRenderArea(CPP.CRect(tx,ty, 0,0))
+			layer:UpdateRenderArea(CPP.Rect(tx,ty, 0,0))
 
 			--Display box break effect
 			CPP.interface:EntityNew('Effects/boxBreak.lua',tx*16,ty*16, louie.depth, 0, "BOXBREAK", "",

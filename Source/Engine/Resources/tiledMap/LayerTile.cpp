@@ -73,7 +73,7 @@ void TiledTileLayer::SetTile(unsigned int x, unsigned int y, unsigned int id) co
     }
 }
 
-void TiledTileLayer::UpdateRenderArea(CRect area) const {
+void TiledTileLayer::UpdateRenderArea(Rect area) const {
     updatedAreas.push_back(area);
 }
 

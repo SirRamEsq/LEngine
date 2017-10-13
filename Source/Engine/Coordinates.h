@@ -89,10 +89,10 @@ class Shape{
 
 //forward declare
 class Circle; 
-class CRect : public Shape{
+class Rect : public Shape{
     public:
-        CRect(float xx, float yy, float ww, float hh);
-		CRect();
+        Rect(float xx, float yy, float ww, float hh);
+		Rect();
 
         inline float  GetW()              const   {return w;  }
         inline void   SetW(const float& ww)          {w = ww;    }
@@ -110,7 +110,7 @@ class CRect : public Shape{
 		Coord2df GetCenter() const;
 
 		CollisionResponse Contains(const Coord2df& point);
-		CollisionResponse Contains(const CRect& r);
+		CollisionResponse Contains(const Rect& r);
 		CollisionResponse Contains(const Circle& r);
 
 		///Width and height of Rect
@@ -134,16 +134,16 @@ class Circle : public Shape{
         inline void  SetRadius(const float& radius) {r=radius;  }
 
 		CollisionResponse Contains(const Coord2df& point);
-		CollisionResponse Contains(const CRect& r);
+		CollisionResponse Contains(const Rect& r);
 		CollisionResponse Contains(const Circle& r);
 
 		///Radius
 		float r;
 };
 
-CollisionResponse CollisionRectRect(const CRect& RR, const CRect& R);
-CollisionResponse CollisionRectCircle(const CRect& R, const Circle C);
-CollisionResponse CollisionRectPoint(const CRect& R, const Coord2df& point);
+CollisionResponse CollisionRectRect(const Rect& RR, const Rect& R);
+CollisionResponse CollisionRectCircle(const Rect& R, const Circle C);
+CollisionResponse CollisionRectPoint(const Rect& R, const Coord2df& point);
 CollisionResponse CollisionCircleCircle(const Circle& CC, const Circle& C);
 CollisionResponse CollisionCirclePoint(const Circle& CC, const Coord2df& point);
 

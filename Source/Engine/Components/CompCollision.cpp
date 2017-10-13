@@ -60,7 +60,7 @@ void ComponentCollisionManager::SetDependencies(ComponentPositionManager* pos){
 	dependencyPosition = pos;
 }
 
-ComponentCollision::ColBox::ColBox(CRect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH d) : myPos(pos){
+ComponentCollision::ColBox::ColBox(Rect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH d) : myPos(pos){
     if(r.w==0){r.w=1;}
     if(r.h==0){r.h=1;}
     if(myPos == NULL){
@@ -75,11 +75,11 @@ ComponentCollision::ColBox::ColBox(CRect r, int i, ComponentPosition* pos, uint8
 }
 
 void ComponentCollision::AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int ordernNum){
-    CRect rect(x,y,w,h);
+    Rect rect(x,y,w,h);
     AddCollisionBox(rect, boxid, ordernNum);
 }
 
-void ComponentCollision::AddCollisionBox(CRect rect, int boxid, int orderNum){
+void ComponentCollision::AddCollisionBox(Rect rect, int boxid, int orderNum){
     ColBox cb(rect, boxid, myPos, 0, orderNum);
     cb.myPos=myPos;
     boxes.push_back(cb);
@@ -133,7 +133,7 @@ ComponentCollision::ColBox* ComponentCollision::GetColBox(int boxid){
     return NULL;
 }
 
-CRect* ComponentCollision::GetPrimaryRect(){
+Rect* ComponentCollision::GetPrimaryRect(){
     auto i=boxes.begin();
     if(i==boxes.end()){return NULL;}
 
@@ -151,7 +151,7 @@ ComponentCollision::ColBox* ComponentCollision::GetPrimary(){
     return NULL;
 }
 
-CRect* ComponentCollision::GetBox(int boxid){
+Rect* ComponentCollision::GetBox(int boxid){
     ColBox* cb=GetColBox(boxid);
     if(cb==NULL){return NULL;}
     return &cb->rect;
@@ -165,7 +165,7 @@ void ComponentCollision::OrderList(){
     std::sort(boxes.begin(), boxes.end());
 }
 
-const CRect& ComponentCollision::ColBox::ToGameCoords(){
+const Rect& ComponentCollision::ColBox::ToGameCoords(){
 	auto pos= myPos->GetPositionWorld().Round();
 
     gameCoords.x = pos.x + rect.x;
@@ -176,33 +176,33 @@ const CRect& ComponentCollision::ColBox::ToGameCoords(){
 }
 
 void ComponentCollision::ChangeWidth(int boxid, int value){
-    CRect* cb;
+    Rect* cb;
     if((cb=GetBox(boxid))!=NULL){
         if(value==0){value=1;}
         cb->w=value;
     }
 }
 void ComponentCollision::ChangeHeight(int boxid, int value){
-    CRect* cb;
+    Rect* cb;
     if((cb=GetBox(boxid))!=NULL){
         if(value==0){value=1;}
         cb->h=value;
     }
 }
 void ComponentCollision::ChangeX(int boxid, int value){
-    CRect* cb;
+    Rect* cb;
     if((cb=GetBox(boxid))!=NULL){
         cb->x=value;
     }
 }
 void ComponentCollision::ChangeY(int boxid, int value){
-    CRect* cb;
+    Rect* cb;
     if((cb=GetBox(boxid))!=NULL){
         cb->y=value;
     }
 }
-void ComponentCollision::ChangeBox(int boxid, CRect& box){
-    CRect* cb;
+void ComponentCollision::ChangeBox(int boxid, Rect& box){
+    Rect* cb;
     if((cb=GetBox(boxid))!=NULL){
         cb->x=box.x;
         cb->y=box.y;
@@ -249,8 +249,8 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
     std::set <int> alreadyRegisteredBox1;
     std::set <int> alreadyRegisteredBox2;
 
-    CRect box1(0,0,0,0);
-    CRect box2(0,0,0,0);
+    Rect box1(0,0,0,0);
+    Rect box2(0,0,0,0);
 
     bool primaryPass;
 
@@ -325,8 +325,8 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
     //May want to change this behaviour at some point, as recievers of the event may expect that they can hold on to it
     Coord2df ul(0,0), dr(0,0);
     const TiledTileLayer* tLayer=NULL;
-    CRect box1(0,0,0,0);
-    CRect box2(0,0,0,0);
+    Rect box1(0,0,0,0);
+    Rect box2(0,0,0,0);
     TColPacket packet;//for messaging purposes
 
     for(auto compIt1=componentList.begin(); compIt1!=componentList.end(); compIt1++){
@@ -417,7 +417,7 @@ void ComponentCollisionManager::UpdateBuckets (int widthPixels){
 void CollisionGrid::UpdateBuckets(const std::unordered_map<EID, std::unique_ptr<ComponentCollision> >* comps, int mapWidthPixels){
     std::set<int> hashes;
     ComponentCollision::ColBox* primaryBox;
-    CRect rect;
+    Rect rect;
 
 	//Collision will get WEIRD once outside the map
 	

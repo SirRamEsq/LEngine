@@ -93,14 +93,14 @@ class ComponentCollision : public BaseComponent{
             //implemented for vector sorting
             bool operator < (const ColBox &rhs) const;
 
-            ColBox(CRect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH depth=0);
-            CRect rect;
-            CRect gameCoords;
+            ColBox(Rect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH depth=0);
+            Rect rect;
+            Rect gameCoords;
             int id;
             uint8_t flags;
             MAP_DEPTH depth;
             ComponentPosition* myPos;
-            const CRect& ToGameCoords();
+            const Rect& ToGameCoords();
             int mOrderNum; //Higher order nums get placed first
 
             bool active;
@@ -112,7 +112,7 @@ class ComponentCollision : public BaseComponent{
         void Update();
 
         void AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int orderNum=0); //x and y are relative to myPos
-        void AddCollisionBox(CRect rect, int boxid, int orderNum=0);
+        void AddCollisionBox(Rect rect, int boxid, int orderNum=0);
         void SetPrimaryCollisionBox(int boxid);//If collision fails with the primary box, none of the others are checked
         void AlwaysCheck(int boxid); //this box will always be checked, even if the primary fails
         void CheckForEntities(int boxid);
@@ -128,7 +128,7 @@ class ComponentCollision : public BaseComponent{
         void SetName(std::string n){name=n;}
         void SetType(std::string t){objType=t;}
 
-        void ChangeBox(int boxid, CRect& box);
+        void ChangeBox(int boxid, Rect& box);
 
         std::string name;
         std::string objType;
@@ -136,8 +136,8 @@ class ComponentCollision : public BaseComponent{
 
     protected:
         ColBox* GetPrimary();
-        CRect* GetPrimaryRect();
-        CRect* GetBox(int boxid);
+        Rect* GetPrimaryRect();
+        Rect* GetBox(int boxid);
 
         std::vector<ColBox>::iterator GetItBeg(){return boxes.begin();}
         std::vector<ColBox>::iterator GetItEnd(){return boxes.end();}

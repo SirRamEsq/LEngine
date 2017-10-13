@@ -38,8 +38,8 @@ class RSC_Texture{
 
         bool ExportTexture    (const char* path) const;
 
-        int RenderToTexture (const CRect &area, RSC_Texture* otherTexture, LOrigin origin=L_ORIGIN_CENTER) const;
-        void BlitArea       (const CRect &area, LOrigin origin=L_ORIGIN_CENTER) const;
+        int RenderToTexture (const Rect &area, RSC_Texture* otherTexture, LOrigin origin=L_ORIGIN_CENTER) const;
+        void BlitArea       (const Rect &area, LOrigin origin=L_ORIGIN_CENTER) const;
 
         void Clear();
         void UpdateDataFromGL();

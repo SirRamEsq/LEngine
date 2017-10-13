@@ -66,7 +66,7 @@ function container.NewGui(baseclass)
 
 		--just for giggles
 		local resolution = CPP.interface:GetResolution()
-		--gui.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
+		--gui.myCameraComp:SetViewport(CPP.Rect(0,0,resolution.x,resolution.y))
 
 		--------------------
 		--Particle Effects--

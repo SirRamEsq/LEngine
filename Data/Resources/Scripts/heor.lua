@@ -256,12 +256,12 @@ function heor.Initialize()
 	heor.tileCollision.callbackFunctions.TileRight = heor.OnTileRight
 
 	--Primary collision
-	heor.entityCollision.primaryCollision.box = CPP.CRect(0, 0, heor.c.WIDTH, heor.c.HEIGHT)
+	heor.entityCollision.primaryCollision.box = CPP.Rect(0, 0, heor.c.WIDTH, heor.c.HEIGHT)
 	heor.CompCollision:AddCollisionBox(heor.entityCollision.primaryCollision.box, heor.entityCollision.primaryCollision.ID, 30)
 	heor.CompCollision:CheckForEntities(heor.entityCollision.primaryCollision.ID)
 	heor.CompCollision:SetPrimaryCollisionBox(heor.entityCollision.primaryCollision.ID)
 	--Grab collision
-	heor.entityCollision.grabCollision.box = CPP.CRect(heor.c.WIDTH/2, heor.c.HEIGHT/2, heor.c.WIDTH/2,	1)
+	heor.entityCollision.grabCollision.box = CPP.Rect(heor.c.WIDTH/2, heor.c.HEIGHT/2, heor.c.WIDTH/2,	1)
 	heor.CompCollision:AddCollisionBox(heor.entityCollision.grabCollision.box, heor.entityCollision.grabCollision.ID, 30)
 	heor.CompCollision:CheckForEntities(heor.entityCollision.grabCollision.ID)
 

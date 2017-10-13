@@ -35,7 +35,7 @@ function NewCamera(baseclass)
 		camera.myCameraComp	= CPP.interface:GetCameraComponent (camera.EID);
 		--just for giggles
 		--local resolution = CPP.interface:GetResolution()
-		--camera.myCameraComp:SetViewport(CPP.CRect(0,0,resolution.x,resolution.y))
+		--camera.myCameraComp:SetViewport(CPP.Rect(0,0,resolution.x,resolution.y))
 
 		--Set parent for All Component Managers (That have been added thus far: position and script)
 		--This will ensure that the parent script will be updated before this script

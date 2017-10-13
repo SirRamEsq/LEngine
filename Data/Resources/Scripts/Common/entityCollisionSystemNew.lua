@@ -34,12 +34,12 @@ function collision.Init(self, w, h, component, eid)
 	self.EID = eid
 	self.cComp=component
 
-	boxPrimary=	CPP.CRect(0, 0, w+4,	h+4);
+	boxPrimary=	CPP.Rect(0, 0, w+4,	h+4);
 
 	self.boxEntRight=nil;
 	self.boxEntLeft=nil;
 	self.boxEntUp=nil;
-	self.boxEntDown=CPP.CRect(0, (h/2)+2, w,	h/2);
+	self.boxEntDown=CPP.Rect(0, (h/2)+2, w,	h/2);
 
 	self.cComp:AddCollisionBox(boxPrimary, self.boxID.BOX_PRIME, 0);
 	self.cComp:CheckForEntities(self.boxID.BOX_PRIME);

@@ -119,19 +119,19 @@ function collision.Init(w,h, iface, component, eid)
 
   local coords=collision.tileCollision.coordinates;
   --Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
-	collision.tileCollision.cboxTileRight= CPP.CRect(coords.CBOX_RIGHT_X_OFFSET,	coords.CBOX_RIGHT_Y_OFFSET,	coords.CBOX_RIGHT_W_OFFSET,	coords.CBOX_RIGHT_H_OFFSET);
-	collision.tileCollision.cboxTileLeft=	 CPP.CRect(coords.CBOX_LEFT_X_OFFSET,   coords.CBOX_LEFT_Y_OFFSET,   coords.CBOX_LEFT_W_OFFSET, 	coords.CBOX_LEFT_H_OFFSET );
-	collision.tileCollision.cboxTileUp=		 CPP.CRect(coords.CBOX_UP_X_OFFSET,   	coords.CBOX_UP_Y_OFFSET,	    coords.CBOX_UP_W_OFFSET,     coords.CBOX_UP_H_OFFSET   );
+	collision.tileCollision.cboxTileRight= CPP.Rect(coords.CBOX_RIGHT_X_OFFSET,	coords.CBOX_RIGHT_Y_OFFSET,	coords.CBOX_RIGHT_W_OFFSET,	coords.CBOX_RIGHT_H_OFFSET);
+	collision.tileCollision.cboxTileLeft=	 CPP.Rect(coords.CBOX_LEFT_X_OFFSET,   coords.CBOX_LEFT_Y_OFFSET,   coords.CBOX_LEFT_W_OFFSET, 	coords.CBOX_LEFT_H_OFFSET );
+	collision.tileCollision.cboxTileUp=		 CPP.Rect(coords.CBOX_UP_X_OFFSET,   	coords.CBOX_UP_Y_OFFSET,	    coords.CBOX_UP_W_OFFSET,     coords.CBOX_UP_H_OFFSET   );
 
-	collision.tileCollision.cboxTileDownA= CPP.CRect(coords.CBOX_GROUND_A_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,	coords.CBOX_GROUND_H_OFFSET);
-	collision.tileCollision.cboxTileDownB= CPP.CRect(coords.CBOX_GROUND_B_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,  coords.CBOX_GROUND_H_OFFSET);
+	collision.tileCollision.cboxTileDownA= CPP.Rect(coords.CBOX_GROUND_A_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,	coords.CBOX_GROUND_H_OFFSET);
+	collision.tileCollision.cboxTileDownB= CPP.Rect(coords.CBOX_GROUND_B_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,  coords.CBOX_GROUND_H_OFFSET);
 
-	cboxPrimary=	CPP.CRect(0, 0, w+4,	h+4);
+	cboxPrimary=	CPP.Rect(0, 0, w+4,	h+4);
 
   collision.entityCollision.cboxEntRight=nil;
   collision.entityCollision.cboxEntLeft=nil;
   collision.entityCollision.cboxEntUp=nil;
-  collision.entityCollision.cboxEntDown=CPP.CRect(0, (h/2)+2, w,	h/2);
+  collision.entityCollision.cboxEntDown=CPP.Rect(0, (h/2)+2, w,	h/2);
 
 	component:AddCollisionBox(cboxPrimary, collision.entityCollision.boxID.CBOX_PRIME, 0);
 	component:CheckForEntities(collision.entityCollision.boxID.CBOX_PRIME);

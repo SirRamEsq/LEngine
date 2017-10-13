@@ -109,7 +109,7 @@ class Matrix4 {
         static Matrix4 IdentityMatrix ();
         static Matrix4 ZeroMatrix     ();
 		static Matrix4 OrthoGraphicProjectionMatrix(const Coord2df& displaySize);
-		static Matrix4 OrthoGraphicProjectionMatrix(const CRect& displayArea);
+		static Matrix4 OrthoGraphicProjectionMatrix(const Rect& displayArea);
 
         GLfloat m[16];
 };

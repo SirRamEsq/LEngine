@@ -38,13 +38,13 @@ class TiledTileLayer : public TiledLayerGeneric{
         bool    UsesHMaps       () const;
         float   GetFriction     () const;
         //All set tiles will be updated on the GPU
-        void    UpdateRenderArea(CRect area) const;
+        void    UpdateRenderArea(Rect area) const;
 
         unsigned int GetAnimationRate () const {return animatedRefreshRate;  }
 
         TiledSet* GetTiledSet() const {return tileSet;}
 
-        mutable std::vector<CRect> updatedAreas;
+        mutable std::vector<Rect> updatedAreas;
 
     protected:
         //Each tiled Layer is allowed one tiled set

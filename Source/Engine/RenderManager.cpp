@@ -12,12 +12,12 @@
 //RenderCamera//
 ////////////////
 
-RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
+RenderCamera::RenderCamera(RenderManager* rm, Rect viewPort)
 	: frameBufferTextureDiffuse(std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
-	screenSpace = CRect(0, 0, 1.0, 1.0);
+	screenSpace = Rect(0, 0, 1.0, 1.0);
 	rotation=0;
 	SetView(viewPort);
 
@@ -76,19 +76,19 @@ float RenderCamera::GetRotation() const{
 	return rotation;
 }
 
-CRect RenderCamera::GetView()const {
+Rect RenderCamera::GetView()const {
 	return view;
 }
 
-void RenderCamera::SetView(CRect viewPort){
+void RenderCamera::SetView(Rect viewPort){
 	view = viewPort;
 }
 
-CRect RenderCamera::GetScreenSpace()const {
+Rect RenderCamera::GetScreenSpace()const {
 	return screenSpace;
 }
 
-void RenderCamera::SetScreenSpace(CRect screen){
+void RenderCamera::SetScreenSpace(Rect screen){
 	screenSpace = screen;
 }
 

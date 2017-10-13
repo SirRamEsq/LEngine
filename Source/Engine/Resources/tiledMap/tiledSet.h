@@ -30,7 +30,7 @@ class TiledSet : public GIDEnabled{
         bool        ContainsTile                  (GID id) const;
         void        GetTextureCoordinatesFromGID  (GID id, float& left, float& right, float& top, float& bottom) const;
         const LAnimation* GetAnimationDataFromGID       (GID id) const;
-        CRect       GetTextureRectFromGID         (GID id) const;
+        Rect       GetTextureRectFromGID         (GID id) const;
 
         RSC_Heightmap        GetHeightMap  (GID id) const {return tileHMAPs.find(id)->second; }
         int               GetTilesWide  ()       const {return tilesWide;     }

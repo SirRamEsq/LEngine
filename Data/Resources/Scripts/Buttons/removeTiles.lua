@@ -78,7 +78,7 @@ local entity = baseclass or {}
 
 		entity.CompCollision:SetName(entity.LEngineData.name)
 		entity.CompCollision:SetType("")
-		entity.CompCollision:AddCollisionBox(CPP.CRect(0,0,entity.WIDTH, entity.HEIGHT), entity.cBoxID, 0)
+		entity.CompCollision:AddCollisionBox(CPP.Rect(0,0,entity.WIDTH, entity.HEIGHT), entity.cBoxID, 0)
 		entity.CompCollision:CheckForEntities(entity.cBoxID)
 		entity.CompCollision:SetPrimaryCollisionBox(entity.cBoxID)
 
@@ -121,7 +121,7 @@ local entity = baseclass or {}
 				end
 			end
 		end
-		local updateRect = CPP.CRect(tiles.x,tiles.y,tiles.w,tiles.h)
+		local updateRect = CPP.Rect(tiles.x,tiles.y,tiles.w,tiles.h)
 		entity.tileLayer:UpdateRenderArea(updateRect)
 		entity.state = not entity.state
 		entity.SetSprite(entity.state)

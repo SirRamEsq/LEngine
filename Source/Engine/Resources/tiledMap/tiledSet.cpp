@@ -84,8 +84,8 @@ void TiledSet::GetTextureCoordinatesFromGID(GID id, float& left, float& right, f
     bottom  = texY;
 }
 
-CRect TiledSet::GetTextureRectFromGID(GID id) const {
-    if(ContainsTile(id)==false){return CRect(0,0,0,0);}
+Rect TiledSet::GetTextureRectFromGID(GID id) const {
+    if(ContainsTile(id)==false){return Rect(0,0,0,0);}
     GID indexValue = id - GetFirstGID();
     unsigned int x = 0;
     unsigned int y = 0;
@@ -95,7 +95,7 @@ CRect TiledSet::GetTextureRectFromGID(GID id) const {
         indexValue-=tilesWide;
     }
     x=indexValue;
-    CRect returnVal(x*16, y*16, 16, 16);
+    Rect returnVal(x*16, y*16, 16, 16);
     return returnVal; //posX, posY, TileWidth, TileHeight
 }
 
@@ -108,7 +108,7 @@ const LAnimation* TiledSet::GetAnimationDataFromGID (GID id) const{
 void TiledSet::LoadHeightMaps(GID id){
     if(texture==NULL){return;}
 
-    CRect coord=GetTextureRectFromGID(id);
+    Rect coord=GetTextureRectFromGID(id);
 
     int8_t hHMap [16] = {0};
     int8_t vHMap [16] = {0};

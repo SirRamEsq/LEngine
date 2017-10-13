@@ -5,7 +5,7 @@ function mockCPP()
 		error("[EID " .. eid .. "] " .. errorString)
 	end
 
-	function mock.CRect(x, y, w, h)
+	function mock.Rect(x, y, w, h)
 		local rect = {}
 		rect.x=x
 		rect.y=y

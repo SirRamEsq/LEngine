@@ -32,10 +32,10 @@ bool ComponentLight::LightExists(const int& id){
 
 void ComponentLight::Update(){}
 /*
-void ComponentLight::Render(const CRect& drawArea){
+void ComponentLight::Render(const Rect& drawArea){
     RSC_Texture* texture=K_TextureMan.GetItem("SpotLight.png");
     if(texture==NULL){K_Log.Write("CARP"); return;}
-    //texture->BlitArea(CRect(32,0,texture->GetWidth(),texture->GetHeight()), L_ORIGIN_CENTER);
+    //texture->BlitArea(Rect(32,0,texture->GetWidth(),texture->GetHeight()), L_ORIGIN_CENTER);
     texture->Bind();
 
     float radius=128;
@@ -47,7 +47,7 @@ void ComponentLight::Render(const CRect& drawArea){
     }
     //Use shader here! :D
 
-    CRect area(0,0,texture->GetWidth(),texture->GetHeight());
+    Rect area(0,0,texture->GetWidth(),texture->GetHeight());
     area.heightTruncation=false;
     float Left=     (float)area.GetLeft()   / (float)texture->GetWidth();
     float Right=    (float)area.GetRight()  / (float)texture->GetWidth();
@@ -109,7 +109,7 @@ void ComponentLightManager::Render(RSC_Texture* textureDiffuse, RSC_Texture* tex
     glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 
     //Render diffuse to destination, (only the areas that contain light will be processed by the shader)
-    textureDiffuse->RenderToTexture(CRect(0,0, textureDestination->GetWidth(), textureDestination->GetHeight()), textureDestination);
+    textureDiffuse->RenderToTexture(Rect(0,0, textureDestination->GetWidth(), textureDestination->GetHeight()), textureDestination);
 
     shaderProgram->Bind();
 

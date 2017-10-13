@@ -409,7 +409,7 @@ void ParticleCreator::WriteData(const unsigned int& writeLocation, const unsigne
                                                     mDefaultColorMax.a)
                             );
 
-		CRect coord (-1,-1,2,2);
+		Rect coord (-1,-1,2,2);
 		float texCoordLeft = -1;
 		float texCoordRight = 1;
 		float texCoordTop = -1;

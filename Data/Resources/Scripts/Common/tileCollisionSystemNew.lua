@@ -101,14 +101,14 @@ function collision.Init(w, h, iface, component, eid)
 
 	local coords=collision.coordinates;
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
-	collision.boxTileRight= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
-	collision.boxTileLeft=	 CPP.CRect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
-	collision.boxTileRightShort= CPP.CRect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
-	collision.boxTileLeftShort=	 CPP.CRect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
-	collision.boxTileUp=		 CPP.CRect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
+	collision.boxTileRight= CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
+	collision.boxTileLeft=	 CPP.Rect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
+	collision.boxTileRightShort= CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
+	collision.boxTileLeftShort=	 CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
+	collision.boxTileUp=		 CPP.Rect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
 
-	collision.boxTileDownR= CPP.CRect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
-	collision.boxTileDownL= CPP.CRect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
+	collision.boxTileDownR= CPP.Rect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
+	collision.boxTileDownL= CPP.Rect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
 
 	collision.cComp:AddCollisionBox(collision.boxTileDownR, collision.boxID.TILE_DOWN_R, coords.GROUND_ORDER);
 	collision.cComp:CheckForTiles(collision.boxID.TILE_DOWN_R);

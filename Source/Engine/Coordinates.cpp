@@ -24,44 +24,44 @@ Shape::Shape(Coord2df pos)
 ////////
 //Rect//
 ////////
-CRect::CRect(float xx, float yy, float ww, float hh)
+Rect::Rect(float xx, float yy, float ww, float hh)
 	: Shape(xx,yy), w(ww), h(hh){
 
 }
-CRect::CRect()
+Rect::Rect()
 	: Shape(0,0), w(0), h(0){
 
 }
 
-float CRect::GetTop() const{
+float Rect::GetTop() const{
     if( h > 0 ){ return y; }
     else{ return y + h; }
 }
-float CRect::GetBottom() const{
+float Rect::GetBottom() const{
     if( h > 0 ){ return y + h; }
     else{ return y; }
 }
-float CRect::GetLeft() const{
+float Rect::GetLeft() const{
     if( w > 0 ){ return x; }
     else{ return x + w; }
 }
-float CRect::GetRight() const{
+float Rect::GetRight() const{
     if( w > 0 ){ return x + w; }
     else{ return x; }
 }
 
-CollisionResponse CRect::Contains(const Coord2df& point){
+CollisionResponse Rect::Contains(const Coord2df& point){
 	return CollisionRectPoint(*this, point);
 }
-CollisionResponse CRect::Contains(const CRect& r){
+CollisionResponse Rect::Contains(const Rect& r){
 	return CollisionRectRect(*this,r);
 }
 
-CollisionResponse CRect::Contains(const Circle& r){
+CollisionResponse Rect::Contains(const Circle& r){
 	return CollisionRectCircle(*this,r);
 }
 
-Coord2df CRect::GetCenter() const{
+Coord2df Rect::GetCenter() const{
 	float left = GetLeft();
 	float right = GetRight();
 	float xDiff = right - left;
@@ -108,7 +108,7 @@ float Circle::GetRight   ()  const{
 CollisionResponse Circle::Contains(const Coord2df& point){
 	return CollisionCirclePoint(*this, point);
 }
-CollisionResponse Circle::Contains(const CRect& r){
+CollisionResponse Circle::Contains(const Rect& r){
 	return CollisionRectCircle(r, *this);
 }
 CollisionResponse Circle::Contains(const Circle& r){
@@ -118,7 +118,7 @@ CollisionResponse Circle::Contains(const Circle& r){
 /////////////
 //Collision//
 /////////////
-CollisionResponse CollisionRectRect(const CRect& RR, const CRect& R){
+CollisionResponse CollisionRectRect(const Rect& RR, const Rect& R){
     if (R.GetBottom() < RR.GetTop())   {return CollisionResponse(0,0,false);}
     if (R.GetTop()    > RR.GetBottom()){return CollisionResponse(0,0,false);}
     if (R.GetRight()  < RR.GetLeft())  {return CollisionResponse(0,0,false);}
@@ -127,7 +127,7 @@ CollisionResponse CollisionRectRect(const CRect& RR, const CRect& R){
 	return CollisionResponse(RR.GetCenter() - R.GetCenter(),true);
 }
 
-CollisionResponse CollisionRectCircle(const CRect& R, const Circle C){
+CollisionResponse CollisionRectCircle(const Rect& R, const Circle C){
     if (R.GetBottom() < C.GetTop())   {return CollisionResponse(0,0,false);}
     if (R.GetTop()    > C.GetBottom()){return CollisionResponse(0,0,false);}
     if (R.GetRight()  < C.GetLeft())  {return CollisionResponse(0,0,false);}
@@ -136,7 +136,7 @@ CollisionResponse CollisionRectCircle(const CRect& R, const Circle C){
 	return CollisionResponse(0,0,false);
 }
 
-CollisionResponse CollisionRectPoint(const CRect& R, const Coord2df& point){
+CollisionResponse CollisionRectPoint(const Rect& R, const Coord2df& point){
     int leftR, rightR, topR, bottomR;
 
     leftR= R.GetLeft();

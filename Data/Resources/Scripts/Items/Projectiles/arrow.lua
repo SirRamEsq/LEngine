@@ -78,12 +78,12 @@ function arrow.Initialize()
 	arrow.mySpriteComp:SetAnimation(arrow.mySpriteID, "Fire");
 	arrow.mySpriteComp:SetRotation(arrow.mySpriteID, 0);
 
-	arrow.cboxPrimary = CPP.CRect(arrow.CBOX_X, arrow.CBOX_Y, arrow.CBOX_W,	arrow.CBOX_H);
+	arrow.cboxPrimary = CPP.Rect(arrow.CBOX_X, arrow.CBOX_Y, arrow.CBOX_W,	arrow.CBOX_H);
 	arrow.myColComp:AddCollisionBox(arrow.cboxPrimary, arrow.CBOX_PRIME_ID, 0);
 	arrow.myColComp:CheckForEntities(arrow.CBOX_PRIME_ID);
 
-	arrow.T_CBOX_LEFT  = CPP.CRect(0,7,3,3);
-	arrow.T_CBOX_RIGHT = CPP.CRect(15,7,3,3);
+	arrow.T_CBOX_LEFT  = CPP.Rect(0,7,3,3);
+	arrow.T_CBOX_RIGHT = CPP.Rect(15,7,3,3);
 
 	if arrow.DIRECTION==arrow.DIRECTION_LEFT then arrow.myColComp:AddCollisionBox(arrow.T_CBOX_LEFT, arrow.T_CBOX_ID, 0);
 	else arrow.myColComp:AddCollisionBox(arrow.T_CBOX_RIGHT, arrow.T_CBOX_ID, 0); end
