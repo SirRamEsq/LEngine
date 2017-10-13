@@ -223,7 +223,7 @@ Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Coord2df& displaySize){
 	);
 }
 
-Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const CRect& displayArea){
+Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Rect& displayArea){
 	float rightSide   = displayArea.GetRight();
 	float leftSide	  = displayArea.GetLeft();
 	float bottomSide  = displayArea.GetBottom();

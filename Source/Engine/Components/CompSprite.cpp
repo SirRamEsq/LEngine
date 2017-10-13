@@ -77,7 +77,7 @@ void ComponentSprite::Update(){
         animation->Update();
 
 		/*
-        const CRect coordinateRect = spriteData->GetAnimation(animation->GetAnimation())->GetCRectAtIndex(animation->GetImageIndex());
+        const Rect coordinateRect = spriteData->GetAnimation(animation->GetAnimation())->GetRectAtIndex(animation->GetImageIndex());
 
         textureW = renderSprite->textureWidth;
         textureH = renderSprite->textureHeight;

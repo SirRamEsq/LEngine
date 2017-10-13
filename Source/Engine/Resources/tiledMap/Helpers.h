@@ -60,12 +60,12 @@ An Exit can only be used to exit the map
 
 struct MapEntrance{
     unsigned int mEntranceID;
-    CRect mPosition;
+    Rect mPosition;
 };
 
 struct MapExit{
     unsigned int mEntranceID;
-    CRect mPosition;
+    Rect mPosition;
     std::string mMapName;
 };
 #endif

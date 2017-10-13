@@ -24,7 +24,7 @@ enum AnimationLoadTag{
 class RSC_Sprite;
 
 class LAnimation{
-    typedef std::vector<CRect> imageVec;
+    typedef std::vector<Rect> imageVec;
 	friend RSC_Sprite;
 
     public:
@@ -33,12 +33,12 @@ class LAnimation{
         ~LAnimation();
         void Clear();
 
-        void AppendImage(const CRect& img);
+        void AppendImage(const Rect& img);
 
         imageVec::iterator ItBegin() {return images.begin();}
         imageVec::iterator ItEnd() {return images.end();}
 
-        const CRect& GetCRectAtIndex(int index) const ;
+        const Rect& GetRectAtIndex(int index) const ;
 
         int GetWidth    (int index) const ;
         int GetHeight   (int index) const ;

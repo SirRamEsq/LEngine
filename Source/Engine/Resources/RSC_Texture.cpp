@@ -209,7 +209,7 @@ uint8_t RSC_Texture::GetPixelAlpha(const int& x, const int& y) const{
     return 0;
 }
 
-int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, LOrigin origin)const {
+int RSC_Texture::RenderToTexture(const Rect& area, RSC_Texture* otherTexture, LOrigin origin)const {
     //Use GLtranslate before calling this function to set the x/y values
 	return true;
     //Create FBO
@@ -252,9 +252,9 @@ int RSC_Texture::RenderToTexture(const CRect& area, RSC_Texture* otherTexture, L
     return true;
 }
 
-void RSC_Texture::BlitArea(const CRect& are, LOrigin origin) const{
+void RSC_Texture::BlitArea(const Rect& are, LOrigin origin) const{
     Bind();
-    CRect area=are;
+    Rect area=are;
     float Left=     (float)area.GetLeft()   / (float)mTexData.width;
     float Right=    (float)area.GetRight()  / (float)mTexData.width;
     float Top=      (float)area.GetTop()    / (float)mTexData.height;

@@ -84,10 +84,10 @@ RenderImageLayer::RenderImageLayer(RenderManager* rm, TiledImageLayer* l)
     SetDepth(l->GetDepth());
     render=true;
     AddToRenderManager();
-    BuildVAO(CRect(0,0,0,0));
+    BuildVAO(Rect(0,0,0,0));
 }
 
-void RenderImageLayer::BuildVAO(CRect camera){
+void RenderImageLayer::BuildVAO(Rect camera){
     const RSC_Texture* tex = layer->GetTexture();
     int tWidth = tex->GetWidth();
     int tHeight = tex->GetHeight();

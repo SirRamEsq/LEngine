@@ -924,16 +924,16 @@ void LuaInterface::ExposeCPP(){
 				.addData("y", &Shape::y) //Read-Write
 			.endClass()
 
-			.deriveClass<CRect, Shape>("CRect")
+			.deriveClass<Rect, Shape>("Rect")
 				.addConstructor<void (*)(float, float, float, float)> ()
 
-				.addData("w", &CRect::w) //Read-Write
-				.addData("h", &CRect::h) //Read-Write
+				.addData("w", &Rect::w) //Read-Write
+				.addData("h", &Rect::h) //Read-Write
 
-				.addFunction("GetTop",		&CRect::GetTop)
-				.addFunction("GetBottom",	&CRect::GetBottom)
-				.addFunction("GetLeft",		&CRect::GetLeft)
-				.addFunction("GetRight",	&CRect::GetRight)
+				.addFunction("GetTop",		&Rect::GetTop)
+				.addFunction("GetBottom",	&Rect::GetBottom)
+				.addFunction("GetLeft",		&Rect::GetLeft)
+				.addFunction("GetRight",	&Rect::GetRight)
 			.endClass()
 
 			.beginClass<ComponentCollision>("ComponentCollision")

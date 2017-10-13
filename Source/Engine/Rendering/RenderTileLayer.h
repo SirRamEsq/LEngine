@@ -65,7 +65,7 @@ class RenderTileLayer : public RenderableObjectWorld{
         ~RenderTileLayer();
 
         void BuildVAO();
-        void BuildVAOArea(CRect area);
+        void BuildVAOArea(Rect area);
 
         void Render(const RenderCamera* camera, const RSC_GLProgram* program);
         const TiledTileLayer* layer;

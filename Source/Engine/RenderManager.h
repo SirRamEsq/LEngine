@@ -36,7 +36,7 @@ class RenderCamera{
 	friend class ComponentCamera;
 
 	public:
-		RenderCamera(RenderManager* rm, CRect viewPort);
+		RenderCamera(RenderManager* rm, Rect viewPort);
 		~RenderCamera();
 
 		void	SetScaling (float s);
@@ -46,17 +46,17 @@ class RenderCamera{
 
 		void  Bind (const GLuint& GlobalCameraUBO);
 
-		CRect GetView()const;
-		void SetView(CRect viewPort);
-		CRect GetScreenSpace()const;
-		void SetScreenSpace(CRect screen);
+		Rect GetView()const;
+		void SetView(Rect viewPort);
+		Rect GetScreenSpace()const;
+		void SetScreenSpace(Rect screen);
 
 		void RenderFrameBufferTextureFinal();
 		void RenderFrameBufferTextureDiffuse();
 
 	protected:
 		///Resolution to display
-		CRect view;
+		Rect view;
 
 		RSC_Texture* GetFrameBufferTextureDiffuse(){return frameBufferTextureDiffuse.get();}
 		RSC_Texture* GetFrameBufferTextureFinal(){return frameBufferTextureFinal.get();}
@@ -71,7 +71,7 @@ class RenderCamera{
 
 		///Coordinates on the screen that the image will be rendered to
 		///All coordinates normalized between 0.0 and 1.0
-		CRect screenSpace;
+		Rect screenSpace;
 
 		///frame buffer object id
 		GLuint FBO; 

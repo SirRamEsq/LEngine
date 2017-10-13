@@ -150,7 +150,7 @@ void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, 
 		startUV.y = ani->GetUVTop(frame);
 		endUV.x = ani->GetUVRight(frame);
 		endUV.y = ani->GetUVBottom(frame);
-		auto rect =  ani->GetCRectAtIndex(frame);
+		auto rect =  ani->GetRectAtIndex(frame);
 		size.x = rect.w;
 		size.y = rect.h;
 	}
@@ -159,7 +159,7 @@ void ImGui::CalculateUV(const RSC_Sprite* sprite, const std::string& animation, 
 		auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(), sprite->GetTextureName());
 		textureID = (void*) texture->GetOpenGLID();
 		auto animationStruct = sprite->GetAnimation(animation);
-		auto frameRect = animationStruct->GetCRectAtIndex(frame);
+		auto frameRect = animationStruct->GetRectAtIndex(frame);
 
 		float startUVX = ((float)frameRect.GetLeft()) / texture->GetWidth();
 		float startUVY = ((float)frameRect.GetTop()) / texture->GetHeight();

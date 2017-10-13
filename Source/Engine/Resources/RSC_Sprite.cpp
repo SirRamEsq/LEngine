@@ -75,8 +75,8 @@ void LAnimation::SetColorKey(int image, unsigned int r, unsigned int g, unsigned
 //    images[image]->SetColorKey(r,g,b);
 }
 
-void LAnimation::AppendImage(const CRect& img){
-    images.push_back(CRect(img));
+void LAnimation::AppendImage(const Rect& img){
+    images.push_back(Rect(img));
 }
 
 int LAnimation::GetWidth(int index)const {
@@ -107,7 +107,7 @@ LAnimation::LAnimation(const double& spd, AnimationLoadTag t) : loadTag(t){
 	isUVCalculated = false;
 }
 
-const CRect& LAnimation::GetCRectAtIndex(int imageIndex)const {
+const Rect& LAnimation::GetRectAtIndex(int imageIndex)const {
 	if(ValidateIndex(imageIndex)){
     	return images[imageIndex];
 	}
@@ -271,7 +271,7 @@ LAnimation* RSC_Sprite::LoadAnimation(rapidxml::xml_node<>* animationNode){
 
     LAnimation* animation;
     xml_node<>* imageNode;
-    CRect rect;
+    Rect rect;
     std::string animationName, speed;
     xml_attribute<>* attribute = animationNode->first_attribute("name");
     if(attribute!=NULL){animationName=attribute->value();}
@@ -303,7 +303,7 @@ LAnimation* RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNod
     using namespace rapidxml;
 
     LAnimation* animation;
-    CRect startRect;
+    Rect startRect;
     int imgs = 0;
     std::string animationName, speed;
     xml_attribute<>* attribute = animationNode->first_attribute("name");
@@ -331,7 +331,7 @@ LAnimation* RSC_Sprite::LoadAnimationSequence(rapidxml::xml_node<>* animationNod
     attribute = animationNode->first_attribute("imgs");
     if(attribute!=NULL){imgs=strtol(attribute->value(), NULL, 10);}
 
-    CRect rect(startRect);
+    Rect rect(startRect);
     for(int i = 1; i <= imgs; i++){
         animation->AppendImage(rect);
 

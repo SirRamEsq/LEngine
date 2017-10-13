@@ -188,7 +188,7 @@ void RenderTileLayer::BuildVAO(){
     vao.UpdateGPU();
 }
 
-void RenderTileLayer::BuildVAOArea(CRect area){
+void RenderTileLayer::BuildVAOArea(Rect area){
     for(unsigned int x=area.GetLeft(); x<=area.GetRight(); x++){
         for(unsigned int y=area.GetTop(); y<=area.GetBottom(); y++){
             BuildVAOTile(x,y);
