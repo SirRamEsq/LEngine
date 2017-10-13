@@ -62,6 +62,10 @@ struct CollisionResponse{
 	bool mCollided;
 };
 
+
+//forward declares
+class Circle; 
+class Rect;
 class Shape{
 	public:
 		Shape(Coord2df pos);
@@ -83,12 +87,18 @@ class Shape{
 		inline Coord2df GetPos()				   const 	{return Coord2df(x,y);}
 		inline void     SetPos(const Coord2df pos) 			{x = pos.x; y = pos.y;}
 
+		///Collision Detection
+		virtual CollisionResponse Contains(const Coord2df& point) const = 0;
+		/*
+		 * Used for collision detection
+		 * this particular virtual function is used to implement a visitor pattern
+		 */
+		virtual CollisionResponse Contains(const Shape* shape) const = 0;
+		virtual CollisionResponse Contains(const Rect& r) const = 0;
+		virtual CollisionResponse Contains(const Circle& r) const = 0;
 		float x, y;
 };
 
-
-//forward declare
-class Circle; 
 class Rect : public Shape{
     public:
         Rect(float xx, float yy, float ww, float hh);
@@ -109,9 +119,11 @@ class Rect : public Shape{
         float GetRight   () const;
 		Coord2df GetCenter() const;
 
-		CollisionResponse Contains(const Coord2df& point);
-		CollisionResponse Contains(const Rect& r);
-		CollisionResponse Contains(const Circle& r);
+		CollisionResponse Contains(const Coord2df& point) const;
+		///Visitor
+		CollisionResponse Contains(const Shape* shape) const;
+		CollisionResponse Contains(const Rect& r) const;
+		CollisionResponse Contains(const Circle& r) const;
 
 		///Width and height of Rect
 		float w, h;
@@ -133,9 +145,11 @@ class Circle : public Shape{
         inline float GetRadius()           const    {return r;  }
         inline void  SetRadius(const float& radius) {r=radius;  }
 
-		CollisionResponse Contains(const Coord2df& point);
-		CollisionResponse Contains(const Rect& r);
-		CollisionResponse Contains(const Circle& r);
+		CollisionResponse Contains(const Coord2df& point) const;
+		///Visitor
+		CollisionResponse Contains(const Shape* shape) const;
+		CollisionResponse Contains(const Rect& r) const;
+		CollisionResponse Contains(const Circle& r) const;
 
 		///Radius
 		float r;
