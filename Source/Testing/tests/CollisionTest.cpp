@@ -174,7 +174,7 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]"){
 }
 
 TEST_CASE("Entity Collision tests", "[collision]"){
-    REQUIRE(0 == callbackValueEntity);
+	callbackValueEntity = 0;
 
     EventDispatcher             eventDispatcher;
     EntityManager               entityMan(&dummyManager);
@@ -211,7 +211,7 @@ TEST_CASE("Entity Collision tests", "[collision]"){
     }
     positionManager.Update();
 
-    RSC_MapMock testMap("TEST", 256,256);
+    RSC_MapMock testMap("TEST", 2560,2560);
 
     SECTION("Basic test"){
         collisionManager.UpdateBuckets(testMap.GetWidthPixels());
@@ -221,6 +221,43 @@ TEST_CASE("Entity Collision tests", "[collision]"){
         auto compPos = positionManager.GetComponent(EID_MIN);
         Coord2df pos(16,8);
         compPos->SetPositionLocal(pos);
+
+        collisionManager.UpdateBuckets(testMap.GetWidthPixels());
+        collisionManager.UpdateCheckEntityCollision();
+
+        //2 collisions, both colliding entities will register 1 collision
+        REQUIRE(2 == callbackValueEntity);
+    }
+
+	/**
+	 * This test will check to see if boxes that are larger than buckets will be
+	 * processed correctly
+	 */
+    SECTION("Large boxes test"){
+        collisionManager.UpdateBuckets(testMap.GetWidthPixels());
+        collisionManager.UpdateCheckEntityCollision();
+		REQUIRE(0 == callbackValueEntity);
+
+		//two large entities overlapping
+		for(int i = 0; i < 2; i++){
+			Coord2df pos(COLLISION_GRID_SIZE*10, COLLISION_GRID_SIZE*10);
+
+			positionManager.AddComponent(entity);
+			collisionManager.AddComponent(entity);
+			auto compCol = collisionManager.GetComponent(entity);
+			auto compPos = positionManager.GetComponent(entity);
+
+			compPos->SetPositionLocal(pos);
+			compCol->SetEventCallbackFunction(CallbackFunction);
+
+			CRect box(0,0, COLLISION_GRID_SIZE*2, COLLISION_GRID_SIZE*2);
+			int boxID = 0;
+			compCol->AddCollisionBox(box, boxID);
+			compCol->CheckForEntities(boxID);
+			compCol->SetPrimaryCollisionBox(boxID);
+
+			entity++;
+		}
 
         collisionManager.UpdateBuckets(testMap.GetWidthPixels());
         collisionManager.UpdateCheckEntityCollision();

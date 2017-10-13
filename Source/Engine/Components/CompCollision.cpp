@@ -419,6 +419,8 @@ void CollisionGrid::UpdateBuckets(const std::unordered_map<EID, std::unique_ptr<
     ComponentCollision::ColBox* primaryBox;
     CRect rect;
 
+	//Collision will get WEIRD once outside the map
+	
     buckets.clear();
     for (auto it = comps->cbegin(); it != comps->cend(); it++){
         primaryBox = it->second->GetPrimary();
