@@ -50,14 +50,14 @@ float Rect::GetRight() const{
     else{ return x; }
 }
 
-CollisionResponse Rect::Contains(const Coord2df& point){
+CollisionResponse Rect::Contains(const Coord2df& point) const{
 	return CollisionRectPoint(*this, point);
 }
-CollisionResponse Rect::Contains(const Rect& r){
+CollisionResponse Rect::Contains(const Rect& r) const{
 	return CollisionRectRect(*this,r);
 }
 
-CollisionResponse Rect::Contains(const Circle& r){
+CollisionResponse Rect::Contains(const Circle& r) const{
 	return CollisionRectCircle(*this,r);
 }
 
@@ -70,6 +70,10 @@ Coord2df Rect::GetCenter() const{
 	float bottom = GetBottom();
 	float yDiff = bottom - top;
 	return Coord2df(left + (xDiff/2), top + (yDiff/2) );
+}
+
+CollisionResponse Rect::Contains(const Shape* shape) const{
+	return shape->Contains(this);
 }
 
 //////////
@@ -105,16 +109,19 @@ float Circle::GetRight   ()  const{
 	return x + r;
 }
 
-CollisionResponse Circle::Contains(const Coord2df& point){
+CollisionResponse Circle::Contains(const Coord2df& point) const{
 	return CollisionCirclePoint(*this, point);
 }
-CollisionResponse Circle::Contains(const Rect& r){
+CollisionResponse Circle::Contains(const Rect& r) const{
 	return CollisionRectCircle(r, *this);
 }
-CollisionResponse Circle::Contains(const Circle& r){
+CollisionResponse Circle::Contains(const Circle& r) const{
 	return CollisionCircleCircle(*this, r);
 }
 
+CollisionResponse Circle::Contains(const Shape* shape) const{
+	return shape->Contains(this);
+}
 /////////////
 //Collision//
 /////////////
