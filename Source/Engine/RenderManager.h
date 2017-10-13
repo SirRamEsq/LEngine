@@ -48,8 +48,8 @@ class RenderCamera{
 
 		CRect GetView()const;
 		void SetView(CRect viewPort);
-		FloatRect GetScreenSpace()const;
-		void SetScreenSpace(FloatRect screen);
+		CRect GetScreenSpace()const;
+		void SetScreenSpace(CRect screen);
 
 		void RenderFrameBufferTextureFinal();
 		void RenderFrameBufferTextureDiffuse();
@@ -71,7 +71,7 @@ class RenderCamera{
 
 		///Coordinates on the screen that the image will be rendered to
 		///All coordinates normalized between 0.0 and 1.0
-		FloatRect screenSpace;
+		CRect screenSpace;
 
 		///frame buffer object id
 		GLuint FBO; 

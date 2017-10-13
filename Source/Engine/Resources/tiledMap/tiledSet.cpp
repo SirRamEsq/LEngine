@@ -1,6 +1,8 @@
 #include "tiledSet.h"
 #include "../../Kernel.h"
 
+#include "math.h"
+
 TiledSet::TiledSet(const std::string& n, const std::string& tex, const unsigned int tileW, const unsigned int tileH, GID first, GIDManager* man)
     : GIDEnabled(man), name(n), textureName(tex), tileWidth(tileW), tileHeight(tileH){
     Init(first, man);
@@ -148,7 +150,7 @@ void TiledSet::LoadHeightMaps(GID id){
            bottomHit=true;
         }
         if((topHit)and(bottomHit)){
-           hHMap[xit-coord.x]=16;
+           hHMap[(int)round(xit-coord.x)]=16;
            //the height map was initialized to 0, this sets up the height map if top and bottom solid are equal
         }
         topHit=false;
@@ -164,7 +166,7 @@ void TiledSet::LoadHeightMaps(GID id){
            rightHit=true;
         }
         if((leftHit)and(rightHit)){
-           vHMap[yit-coord.y]=16;
+           vHMap[(int)round(yit-coord.y)]=16;
            //the height map was initialized to 0, this sets up the height map if top and bottom solid are equal
         }
         leftHit=false;

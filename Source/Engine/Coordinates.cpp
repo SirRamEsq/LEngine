@@ -9,22 +9,45 @@ CollisionResponse::CollisionResponse(float x, float y, bool collided)
 	: mVector(x,y), mCollided(collided){
 
 }
+/////////
+//Shape//
+/////////
+Shape::Shape(float xx, float yy)
+	: x(xx), y(yy){
 
-int CRect::GetTop() const{
-    if(h>0){return y;}
-    else{return y+h;}
 }
-int CRect::GetBottom() const{
-    if(h>0){return y+h;}
-    else{return y;}
+
+Shape::Shape(Coord2df pos)
+	: x(pos.x), y(pos.y){
+
 }
-int CRect::GetLeft() const{
-    if(w>0){return x;}
-    else{return x+w;}
+////////
+//Rect//
+////////
+CRect::CRect(float xx, float yy, float ww, float hh)
+	: Shape(xx,yy), w(ww), h(hh){
+
 }
-int CRect::GetRight() const{
-    if(w>0){return x+w;}
-    else{return x;}
+CRect::CRect()
+	: Shape(0,0), w(0), h(0){
+
+}
+
+float CRect::GetTop() const{
+    if( h > 0 ){ return y; }
+    else{ return y + h; }
+}
+float CRect::GetBottom() const{
+    if( h > 0 ){ return y + h; }
+    else{ return y; }
+}
+float CRect::GetLeft() const{
+    if( w > 0 ){ return x; }
+    else{ return x + w; }
+}
+float CRect::GetRight() const{
+    if( w > 0 ){ return x + w; }
+    else{ return x; }
 }
 
 CollisionResponse CRect::Contains(const Coord2df& point){
@@ -49,51 +72,37 @@ Coord2df CRect::GetCenter() const{
 	return Coord2df(left + (xDiff/2), top + (yDiff/2) );
 }
 
-
-
-float FloatRect::GetTop() const{
-    if(h>0){return y;}
-    else{return y+h;}
-}
-float FloatRect::GetBottom() const{
-    if(h>0){return y+h;}
-    else{return y;}
-}
-float FloatRect::GetLeft() const{
-    if(w>0){return x;}
-    else{return x+w;}
-}
-float FloatRect::GetRight() const{
-    if(w>0){return x+w;}
-    else{return x;}
-}
-
-
-
+//////////
+//Circle//
+//////////
 Circle::Circle(Coord2df pos, float radius)
-	: mPos(pos), mRadius(radius){
+	: Shape(pos), r(radius){
 	
 }
 
-Circle::Circle(float x, float y, float radius)
-	: mPos(x, y), mRadius(radius){
+Circle::Circle(float xx, float yy, float radius)
+	: Shape(xx, yy), r(radius){
 	
+}
+
+Coord2df Circle::GetCenter() const{
+	return Coord2df(x + r, y + r);
 }
 
 float Circle::GetTop     ()  const{
-	return mPos.y - mRadius;
+	return y - r;
 }
 
 float Circle::GetBottom  ()  const{
-	return mPos.y + mRadius;
+	return y + r;
 }
 
 float Circle::GetLeft    ()  const{
-	return mPos.x - mRadius;
+	return x - r;
 }
 
 float Circle::GetRight   ()  const{
-	return mPos.x + mRadius;
+	return x + r;
 }
 
 CollisionResponse Circle::Contains(const Coord2df& point){
@@ -106,6 +115,9 @@ CollisionResponse Circle::Contains(const Circle& r){
 	return CollisionCircleCircle(*this, r);
 }
 
+/////////////
+//Collision//
+/////////////
 CollisionResponse CollisionRectRect(const CRect& RR, const CRect& R){
     if (R.GetBottom() < RR.GetTop())   {return CollisionResponse(0,0,false);}
     if (R.GetTop()    > RR.GetBottom()){return CollisionResponse(0,0,false);}

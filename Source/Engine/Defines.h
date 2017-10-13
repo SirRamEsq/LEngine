@@ -143,6 +143,11 @@ class Color4f{
         }
 };
 
+//These data structures can be treated as arrays by openGL
+struct LVertexPos2D  { GLfloat x;             GLfloat y;          };
+struct LTexCoord     { GLfloat s;             GLfloat t;          };
+struct LVertexData2D { LVertexPos2D position; LTexCoord texCoord; };
+
 extern Color4f Color4f_WHITE;
 extern Color4f Color4f_RED  ;
 extern Color4f Color4f_GREEN;
