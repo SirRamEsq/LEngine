@@ -17,7 +17,7 @@ RenderCamera::RenderCamera(RenderManager* rm, CRect viewPort)
 	, frameBufferTextureFinal  (std::unique_ptr<RSC_Texture>(new RSC_Texture(viewPort.w, viewPort.h, 4, GL_RGBA)))
 	, dependencyRenderManager(rm){
 	scale=1;
-	screenSpace = FloatRect(0, 0, 1.0, 1.0);
+	screenSpace = CRect(0, 0, 1.0, 1.0);
 	rotation=0;
 	SetView(viewPort);
 
@@ -84,11 +84,11 @@ void RenderCamera::SetView(CRect viewPort){
 	view = viewPort;
 }
 
-FloatRect RenderCamera::GetScreenSpace()const {
+CRect RenderCamera::GetScreenSpace()const {
 	return screenSpace;
 }
 
-void RenderCamera::SetScreenSpace(FloatRect screen){
+void RenderCamera::SetScreenSpace(CRect screen){
 	screenSpace = screen;
 }
 

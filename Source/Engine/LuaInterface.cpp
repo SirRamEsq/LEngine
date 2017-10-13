@@ -919,11 +919,14 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("AnimateSprite",		&ComponentSprite::AnimateSprite)
 			.endClass()
 
-			.beginClass<CRect>("CRect")
-				.addConstructor<void (*)(int, int, int, int)> ()
+			.beginClass<Shape>("Shape")
+				.addData("x", &Shape::x) //Read-Write
+				.addData("y", &Shape::y) //Read-Write
+			.endClass()
 
-				.addData("x", &CRect::x) //Read-Write
-				.addData("y", &CRect::y) //Read-Write
+			.deriveClass<CRect, Shape>("CRect")
+				.addConstructor<void (*)(float, float, float, float)> ()
+
 				.addData("w", &CRect::w) //Read-Write
 				.addData("h", &CRect::h) //Read-Write
 
@@ -970,8 +973,8 @@ void LuaInterface::ExposeCPP(){
 				.addData("x", &Coord2df::x)
 				.addData("y", &Coord2df::y)
 				.addFunction("Round", &Coord2df::Round)
-				.addFunction("Add", &Coord2df::operator+)
-				.addFunction("Subtract", &Coord2df::operator-)
+				.addFunction("Add", &Coord2df::Add)
+				.addFunction("Subtract", &Coord2df::Subtract)
 			.endClass()
 
 			.beginClass<Color4f>("Color4f")
