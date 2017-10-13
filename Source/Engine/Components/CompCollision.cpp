@@ -254,12 +254,22 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
 
     bool primaryPass;
 
+	/* ISSUE
+	 * collision boxes can be part of multiple buckets
+	 * therefore, two eids can be compared twice
+	 */
+
+	std::set< std::pair<EID, EID> > alreadyProcessed;
     for(auto bucketIt = grid.buckets.begin(); bucketIt != grid.buckets.end(); bucketIt++){
         for(auto eidIt1 = bucketIt->second.begin(); eidIt1 != bucketIt->second.end(); eidIt1++){
 
             comp1 = componentList[*eidIt1].get();
 
             for(auto eidIt2 = eidIt1+1; eidIt2 != bucketIt->second.end(); eidIt2++){
+				auto newPair = std::pair<EID,EID>(*eidIt1, *eidIt2);
+				if(alreadyProcessed.find(newPair) != alreadyProcessed.end()){continue;}
+				alreadyProcessed.insert(newPair);
+
                 comp2 = componentList[*eidIt2].get();
                 primaryPass=false;
 
