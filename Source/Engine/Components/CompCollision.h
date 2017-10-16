@@ -33,8 +33,6 @@ struct TColPacket{
     int GetY(){return y;}
     int GetID(){return box;}
     RSC_Heightmap GetHmap();
-    /*LTDF* GetTDF(){return tdf;}
-    LTDF* tdf;//tdf collided with*/
     const TiledTileLayer* GetLayer();
     const TiledTileLayer* tl;
 	
@@ -87,10 +85,24 @@ class ComponentCollision : public BaseComponent{
 
         void Update();
 
-        void AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int orderNum=0); //x and y are relative to myPos
-        void AddCollisionBox(Rect rect, int boxid, int orderNum=0);
-        void SetPrimaryCollisionBox(int boxid);//If collision fails with the primary box, none of the others are checked
+
+		///Add specified shape and id as a CollisionBox (should generate boxid instead of passing?)
+        void AddCollisionBox(const Shape* shape, int boxid, int orderNum=0);
+		/**
+		 * Sets the primary CollisionBox
+		 * If the primary box fails, the rest will not be checked for a given entity
+		 * \param boxid The id of the registered collision box to set as primary
+		 */
+        void SetPrimaryCollisionBox(int boxid);
+		/**
+		 * Will enable a box ot be used to check for other entities
+		 * \param boxid	The id of the registered collision box to enable entity checking on
+		 */
         void CheckForEntities(int boxid);
+		/**
+		 * Will enable a box ot be used to check for tiles
+		 * \param boxid	The id of the registered collision box to enable tile checking on
+		 */
         void CheckForTiles(int boxid);
         void Activate(int boxid);
         void Deactivate(int boxid);
@@ -112,9 +124,13 @@ class ComponentCollision : public BaseComponent{
 
     private:
         void OrderList();
-        int alwaysCheckCount; //number of boxes to always check
+
         CollisionBox* GetColBox(int boxid);
+
+		///Registered CollisionBoxes
         std::vector<CollisionBox> boxes;
+
+		///dependency
         ComponentPosition* myPos;
 };
 
