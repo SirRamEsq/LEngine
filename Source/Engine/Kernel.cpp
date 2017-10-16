@@ -1,5 +1,6 @@
 #include "Kernel.h"
 #include "gui/imgui_LEngine.h"
+#include "Resolution.h"
 
 Log* 						Kernel::log = &Log::staticLog;
 
@@ -132,6 +133,9 @@ void Kernel::Inst(int argc, char *argv[]){
 	/// \TODO remove this, have InitSDL intialize everything
 	SDLMan->InitOpenGL();
 
+	Resolution::UpdateResolution(SDLMan->mMainWindow);
+	Resolution::SetVirtualResolution(Coord2df(480, 320));
+
 	rscTexMan		.SetLoadFunction(&RSC_Texture::LoadResource   );
 	rscSpriteMan	.SetLoadFunction(&RSC_Sprite::LoadResource	 );
 	rscMusicMan		.SetLoadFunction(&RSC_Music::LoadResource	);
@@ -200,6 +204,8 @@ void Kernel::DEBUG_DisplayLog(){
 
 bool Kernel::Update(){
     inputManager.HandleInput();
+
+	Resolution::UpdateResolution(SDLMan->mMainWindow);
 	ImGuiNewFrame(SDLMan->mMainWindow);
 
 	if(debugMode){
@@ -371,10 +377,6 @@ void Kernel::ImGuiNewFrame(SDL_Window* window){
     io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
 	guiState.projectionMatrix = Matrix4::OrthoGraphicProjectionMatrix(Coord2df(w,h));
 
-	SCREEN_W = display_w;
-	SCREEN_H = display_h;
-	ASPECT_RATIO = SCREEN_W / SCREEN_H;
-
     // Setup time step
     Uint32	time = SDL_GetTicks();
     double current_time = time / 1000.0;
@@ -409,6 +411,3 @@ void Kernel::ImGuiInvalidateFontTexture(){
 	}
 }
 
-Coord2df Kernel::GetResolution(){
-	return Coord2df(SCREEN_W, SCREEN_H);
-}

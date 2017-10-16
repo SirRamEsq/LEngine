@@ -2,6 +2,7 @@
 #include "Exceptions.h"
 #include "StateManager.h"
 #include "Kernel.h"
+#include "Resolution.h"
 #include "gui/imgui_LEngine.h"
 #include "GameStates/GS_Script.h"
 
@@ -760,7 +761,11 @@ bool LuaInterface::GetMouseButtonMiddle(){
 }
 
 Coord2df LuaInterface::GetResolution(){
-	return Kernel::GetResolution();
+	return Resolution::GetResolution();
+}
+
+Coord2df LuaInterface::GetVirtualResolution(){
+	return Resolution::GetVirtualResolution();
 }
 
 void LuaInterface::SimulateKeyPress(const std::string& keyName){
@@ -837,6 +842,7 @@ void LuaInterface::ExposeCPP(){
 				.addFunction("GetMouseButtonMiddle",	&LuaInterface::GetMouseButtonMiddle)
 
 				.addFunction("GetResolution",	&LuaInterface::GetResolution)
+				.addFunction("GetVirtualResolution",	&LuaInterface::GetVirtualResolution)
 
 				.addFunction("PushState",	&LuaInterface::PushState)
 				.addFunction("PopState",	&LuaInterface::PopState)

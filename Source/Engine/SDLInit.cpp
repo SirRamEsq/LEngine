@@ -65,7 +65,7 @@ bool InitImgGui(SDL_Window* window){
 }
 
 bool SDLInit::InitOpenGL(){
-    glViewport(0, 0, SCREEN_W, SCREEN_H);
+    glViewport(0, 0, 1024, 768);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_TEXTURE_2D); //Enable Texture Mapping
@@ -74,7 +74,7 @@ bool SDLInit::InitOpenGL(){
     glLoadIdentity();
 
     //Bottom is the height, Top is 0
-    glOrtho(0.0f, SCREEN_W, SCREEN_H, 0, 0, 1); //2D
+    glOrtho(0.0f, 1024, 768, 0, 0, 1); //2D
     //gluPerspective(45.0,(GLfloat)SCREEN_W/(GLfloat)SCREEN_H,0.1,100.0); //3D
 
     glClearColor( 1.0, 0.0, 1.0, 1.0 );
@@ -106,7 +106,7 @@ void SDLInit::InitSDL(){
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
     mMainWindow= SDL_CreateWindow(   "LEngine", //name
-                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_W, SCREEN_H, //x,y,w,h
+                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, //x,y,w,h
                                     SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED ); //flags
 
     mMainContextGL = SDL_GL_CreateContext(mMainWindow);

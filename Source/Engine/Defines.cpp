@@ -27,15 +27,15 @@ const int TICKS_PER_SECOND  = 68;
 const int SKIP_TICKS        = 1000 / TICKS_PER_SECOND;
 const int MAX_FRAMESKIP     = 8;
 
-const int CAMERA_W=480;
-const int CAMERA_H=320;
+//const int CAMERA_W=480;
+//const int CAMERA_H=320;
 
 const int COLLISION_GRID_SIZE = 64;
 
-int SCREEN_W=960;
-int SCREEN_H=640;
+//int SCREEN_W=960;
+//int SCREEN_H=640;
 
-float ASPECT_RATIO=   (float)SCREEN_W / (float)SCREEN_H;
+//float ASPECT_RATIO=   (float)SCREEN_W / (float)SCREEN_H;
 
 bool GET_ENDIAN(){
     int32_t i = 1;

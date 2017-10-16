@@ -1,12 +1,13 @@
 #include "CompCamera.h"
 #include "../Kernel.h"
+#include "../Resolution.h"
 #include "math.h"
 
 ///////////////////
 //ComponentCamera//
 ///////////////////
 ComponentCamera::ComponentCamera(EID id, ComponentPosition* pos, RenderManager* rm, ComponentCameraManager* manager)
-	: BaseComponent(id, manager), mCamera(rm, Rect(0,0, CAMERA_W, CAMERA_H)){
+	: BaseComponent(id, manager), mCamera(rm, Rect(Coord2df(0,0), Resolution::GetVirtualResolution())){
     mPosition= pos;
 }
 ComponentCamera::~ComponentCamera(){

@@ -2,6 +2,7 @@
 
 #include "Components/CompSprite.h"
 #include "Kernel.h"
+#include "Resolution.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
@@ -152,7 +153,8 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, SCREEN_W, SCREEN_H, 0, 0, 1); //2D
+	auto resolution = Resolution::GetResolution();
+    glOrtho(0.0f, resolution.x, resolution.y, 0, 0, 1); //2D
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -169,13 +171,13 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
 		glVertex3i(0,0,0);
 
 		glTexCoord2f(Right, Top);
-		glVertex3i(SCREEN_W,0,0);
+		glVertex3i(resolution.x,0,0);
 
 		glTexCoord2f(Right, Bottom);
-		glVertex3i(SCREEN_W,SCREEN_H,0);
+		glVertex3i(resolution.x,resolution.y,0);
 
 		glTexCoord2f(Left,	Bottom);
-		glVertex3i(0,SCREEN_H,0);
+		glVertex3i(0,resolution.y,0);
 	glEnd();
 }
 
@@ -228,7 +230,8 @@ void RenderManager::OrderOBJs(){
 }
 
 void RenderManager::Render(){
-	glViewport(0, 0, SCREEN_W, SCREEN_H);
+	auto resolution = Resolution::GetResolution();
+	glViewport(0, 0, resolution.x, resolution.y);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 	timeElapsed += 1;
