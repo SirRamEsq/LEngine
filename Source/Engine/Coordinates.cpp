@@ -21,6 +21,12 @@ Shape::Shape(Coord2df pos)
 	: x(pos.x), y(pos.y){
 
 }
+
+void Shape::Translate(const Coord2df& pos){
+	x += pos.x;
+	y += pos.y;
+}
+
 ////////
 //Rect//
 ////////

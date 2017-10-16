@@ -25,6 +25,9 @@ class Coord2df{
 			x = f;
 			y = f;
         }
+        inline Coord2df operator* (float f) const{
+            return Coord2df(x * f, y * f);
+        }
 		inline Coord2df Round() const{
 			return Coord2df( floor(x + 0.5f), floor(y + 0.5f) );
 		}
@@ -86,6 +89,8 @@ class Shape{
 
 		inline Coord2df GetPos()				   const 	{return Coord2df(x,y);}
 		inline void     SetPos(const Coord2df pos) 			{x = pos.x; y = pos.y;}
+
+		void Translate(const Coord2df& pos);
 
 		///Collision Detection
 		virtual CollisionResponse Contains(const Coord2df& point) const = 0;
