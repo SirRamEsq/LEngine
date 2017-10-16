@@ -15,7 +15,7 @@ class ComponentPosition;
 
 class CollisionBox{
 	public:
-		CollisionBox(unsigned int id, int order, uint8_t flags, const Shape& shape, ComponentPosition* pos);
+		CollisionBox(unsigned int id, int order, uint8_t flags, const Shape* shape, ComponentPosition* pos);
 		bool operator < (const CollisionBox &rhs) const;
 		CollisionResponse Collides(const CollisionBox* box);
 

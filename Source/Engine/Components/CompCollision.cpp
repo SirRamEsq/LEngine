@@ -20,7 +20,6 @@ RSC_Heightmap TColPacket::GetHmap(){
 
 ComponentCollision::ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager)
 : BaseComponent(id, manager), myPos(pos){
-    alwaysCheckCount=0;
 }
 
 ComponentCollision::~ComponentCollision(){
@@ -33,13 +32,8 @@ void ComponentCollisionManager::SetDependencies(ComponentPositionManager* pos){
 	dependencyPosition = pos;
 }
 
-void ComponentCollision::AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int ordernNum){
-    Rect rect(x,y,w,h);
-    AddCollisionBox(rect, boxid, ordernNum);
-}
-
-void ComponentCollision::AddCollisionBox(Rect rect, int boxid, int orderNum){
-    boxes.push_back(CollisionBox (boxid, orderNum, 0, rect, myPos));
+void ComponentCollision::AddCollisionBox(const Shape* shape, int boxid, int orderNum){
+    boxes.push_back(CollisionBox (boxid, orderNum, 0, shape, myPos));
     OrderList();
 }
 
@@ -335,26 +329,6 @@ void CollisionGrid::UpdateBuckets(const std::unordered_map<EID, std::unique_ptr<
 }
 
 void ComponentCollisionManager::Update(){
-    /*
-    SUMMARY:
-
-    Function will check for collisions against entities and tiles and send the results to the script component via events.
-
-    COMPONENTCHECKING:
-
-    Function will first check whether two collision components have primary collision boxes. If so,
-    the primary boxes are checked and the value primaryPass is the result (it is false by default).
-    The function then begins iterating through all of the boxes of each component.
-    The box is skipped over under the following conditions:
-    -The box is primary (unimportant as we already checked the primary boxes)
-    -The box is meant for tiles (tiles will be checked against each object later)
-    -The box isn't meant to always be checked and the primaryPass is false
-
-    The components then each recieve an event if the boxes collide. The component's eid
-    that was collided with is the reciever and the boxid is the extra data.
-    */
-
-	/// \TODO make this manager respect the parent child relationship
 	GameStateManager* gs = &K_StateMan;
 	GameState* state = gs->GetCurrentState();
 	auto stateMap = state->GetCurrentMap();
