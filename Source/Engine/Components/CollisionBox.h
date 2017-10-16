@@ -1,8 +1,8 @@
 #ifndef LENGINE_COMP_COLLISION_BOX
 #define LENGINE_COMP_COLLISION_BOX
 
-#include "../../Defines.h"
-#include "../../Coordinates.h"
+#include "../Defines.h"
+#include "../Coordinates.h"
 
 
 enum CB_FLAGS{
@@ -15,12 +15,22 @@ class ComponentPosition;
 
 class CollisionBox{
 	public:
-		CollisionBox(unsigned int id, int order, uint8_t flags, std::unique_ptr<Shape>* shape, ComponentPosition* pos);
+		CollisionBox(unsigned int id, int order, uint8_t flags, const Shape& shape, ComponentPosition* pos);
 		bool operator < (const CollisionBox &rhs) const;
-
-		std::unique_ptr<Shape> mShape;
-
 		CollisionResponse Collides(const CollisionBox* box);
+
+		void Activate();
+		void Deactivate();
+		bool IsActive() const;
+
+		void SetShape(const Shape* shape);
+		void UpdateWorldCoord();
+		const Shape* GetWorldCoord();
+
+		void SetFlags(uint8_t flags);
+		uint8_t Flags();
+
+		unsigned int GetId();
 
 	private:
 		///Unique identifier for this box
@@ -36,5 +46,8 @@ class CollisionBox{
 
 		///Dependency on compPosition... may remove
 		ComponentPosition* mPos;
+
+		std::unique_ptr<Shape> mShape;
+		std::unique_ptr<Shape> mShapeToWorldCoords;
 };
 #endif

@@ -71,6 +71,14 @@ class Circle;
 class Rect;
 class Shape{
 	public:
+		//Defines where the shape is considered to originate from
+		enum Origin{
+			Left = -1,
+			Center = 0,
+			Right = 1,
+			Top = -1,
+			Bottom = 1
+		};
 		Shape(Coord2df pos);
 		Shape(float xx, float yy);
 
@@ -99,9 +107,16 @@ class Shape{
 		 * this particular virtual function is used to implement a visitor pattern
 		 */
 		virtual CollisionResponse Contains(const Shape* shape) const = 0;
-		virtual CollisionResponse Contains(const Rect& r) const = 0;
-		virtual CollisionResponse Contains(const Circle& r) const = 0;
+		virtual CollisionResponse Contains(const Rect* r) const = 0;
+		virtual CollisionResponse Contains(const Circle* r) const = 0;
+
+		virtual std::unique_ptr<Shape> MakeCopy() const =0;
+
+		virtual Origin GetOriginHorizontal() const =0;
+		virtual Origin GetOriginVertical() const =0;
+
 		float x, y;
+
 };
 
 class Rect : public Shape{
@@ -128,8 +143,13 @@ class Rect : public Shape{
 		CollisionResponse Contains(const Coord2df& point) const;
 		///Visitor
 		CollisionResponse Contains(const Shape* shape) const;
-		CollisionResponse Contains(const Rect& r) const;
-		CollisionResponse Contains(const Circle& r) const;
+		CollisionResponse Contains(const Rect* r) const;
+		CollisionResponse Contains(const Circle* r) const;
+
+		Origin GetOriginHorizontal() const;
+		Origin GetOriginVertical() const;
+
+		std::unique_ptr<Shape> MakeCopy() const;
 
 		///Width and height of Rect
 		float w, h;
@@ -154,8 +174,13 @@ class Circle : public Shape{
 		CollisionResponse Contains(const Coord2df& point) const;
 		///Visitor
 		CollisionResponse Contains(const Shape* shape) const;
-		CollisionResponse Contains(const Rect& r) const;
-		CollisionResponse Contains(const Circle& r) const;
+		CollisionResponse Contains(const Rect* r) const;
+		CollisionResponse Contains(const Circle* r) const;
+		
+		Origin GetOriginHorizontal() const;
+		Origin GetOriginVertical() const;
+
+		std::unique_ptr<Shape> MakeCopy() const;
 
 		///Radius
 		float r;

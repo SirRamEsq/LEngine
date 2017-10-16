@@ -43,6 +43,21 @@ Rect::Rect()
 
 }
 
+std::unique_ptr<Shape> Rect::MakeCopy() const{
+	auto returnValue = std::make_unique<Rect>(x,y,w,h);
+	return returnValue;
+}
+
+Shape::Origin Rect::GetOriginHorizontal() const{
+	if(w>=0){return Shape::Origin::Left;}
+	return Shape::Origin::Right;
+}
+
+Shape::Origin Rect::GetOriginVertical() const{
+	if(h>=0){return Shape::Origin::Top;}
+	return Shape::Origin::Bottom;
+}
+
 float Rect::GetTop() const{
     if( h > 0 ){ return y; }
     else{ return y + h; }
@@ -63,12 +78,12 @@ float Rect::GetRight() const{
 CollisionResponse Rect::Contains(const Coord2df& point) const{
 	return CollisionRectPoint(*this, point);
 }
-CollisionResponse Rect::Contains(const Rect& r) const{
-	return CollisionRectRect(*this,r);
+CollisionResponse Rect::Contains(const Rect* r) const{
+	return CollisionRectRect(*this, *r);
 }
 
-CollisionResponse Rect::Contains(const Circle& r) const{
-	return CollisionRectCircle(*this,r);
+CollisionResponse Rect::Contains(const Circle* r) const{
+	return CollisionRectCircle(*this, *r);
 }
 
 Coord2df Rect::GetCenter() const{
@@ -99,6 +114,19 @@ Circle::Circle(float xx, float yy, float radius)
 	
 }
 
+Shape::Origin Circle::GetOriginHorizontal() const{
+	return Shape::Origin::Center;
+}
+
+Shape::Origin Circle::GetOriginVertical() const{
+	return Shape::Origin::Center;
+}
+
+std::unique_ptr<Shape> Circle::MakeCopy() const{
+	auto returnValue = std::make_unique<Circle>(x,y,r);
+	return returnValue;
+}
+
 Coord2df Circle::GetCenter() const{
 	return Coord2df(x + r, y + r);
 }
@@ -122,11 +150,11 @@ float Circle::GetRight   ()  const{
 CollisionResponse Circle::Contains(const Coord2df& point) const{
 	return CollisionCirclePoint(*this, point);
 }
-CollisionResponse Circle::Contains(const Rect& r) const{
-	return CollisionRectCircle(r, *this);
+CollisionResponse Circle::Contains(const Rect* r) const{
+	return CollisionRectCircle(*r, *this);
 }
-CollisionResponse Circle::Contains(const Circle& r) const{
-	return CollisionCircleCircle(*this, r);
+CollisionResponse Circle::Contains(const Circle* r) const{
+	return CollisionCircleCircle(*this, *r);
 }
 
 CollisionResponse Circle::Contains(const Shape* shape) const{

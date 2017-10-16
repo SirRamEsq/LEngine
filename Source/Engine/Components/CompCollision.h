@@ -7,6 +7,7 @@
 
 #include "../Resources/RSC_Map.h"
 #include "../Defines.h"
+#include "CollisionBox.h"
 #include <list>
 
 //Lua Includes
@@ -22,14 +23,6 @@ extern "C"{
 Primary collision box WILL send an event. It will also check if the other boxes need to be checked
 Thus, every entity that wants collision must have at least a primary cbox
 */
-
-enum bitflags{
-    //Always check is now ignored with the advent of buckets
-    ALWAYS_CHECK=1,
-    PRIMARY=2,
-    ENT_CHECK=4,
-    TILE_CHECK=8
-};
 
 class ComponentCollisionManager;
 
@@ -89,23 +82,6 @@ class ComponentCollision : public BaseComponent{
     friend class CollisionGrid;
 
     public:
-        struct ColBox{
-            //implemented for vector sorting
-            bool operator < (const ColBox &rhs) const;
-
-            ColBox(Rect r, int i, ComponentPosition* pos, uint8_t f, int orderNum, MAP_DEPTH depth=0);
-            Rect rect;
-            Rect gameCoords;
-            int id;
-            uint8_t flags;
-            MAP_DEPTH depth;
-            ComponentPosition* myPos;
-            const Rect& ToGameCoords();
-            int mOrderNum; //Higher order nums get placed first
-
-            bool active;
-        };
-
         ComponentCollision(EID id, ComponentPosition* pos, ComponentCollisionManager* manager);
         ~ComponentCollision();
 
@@ -114,39 +90,31 @@ class ComponentCollision : public BaseComponent{
         void AddCollisionBoxInt(int x, int y, int w, int h, int boxid, int orderNum=0); //x and y are relative to myPos
         void AddCollisionBox(Rect rect, int boxid, int orderNum=0);
         void SetPrimaryCollisionBox(int boxid);//If collision fails with the primary box, none of the others are checked
-        void AlwaysCheck(int boxid); //this box will always be checked, even if the primary fails
         void CheckForEntities(int boxid);
         void CheckForTiles(int boxid);
         void Activate(int boxid);
         void Deactivate(int boxid);
 
-        void ChangeWidth(int boxid, int value);
-        void ChangeHeight(int boxid, int value);
-        void ChangeX(int boxid, int value);
-        void ChangeY(int boxid, int value);
-
         void SetName(std::string n){name=n;}
         void SetType(std::string t){objType=t;}
 
-        void ChangeBox(int boxid, Rect& box);
+        void SetShape(int boxid, const Shape* shape);
 
         std::string name;
         std::string objType;
         void*       extraData;
 
     protected:
-        ColBox* GetPrimary();
-        Rect* GetPrimaryRect();
-        Rect* GetBox(int boxid);
+        CollisionBox* GetPrimary();
 
-        std::vector<ColBox>::iterator GetItBeg(){return boxes.begin();}
-        std::vector<ColBox>::iterator GetItEnd(){return boxes.end();}
+        std::vector<CollisionBox>::iterator GetItBeg(){return boxes.begin();}
+        std::vector<CollisionBox>::iterator GetItEnd(){return boxes.end();}
 
     private:
         void OrderList();
         int alwaysCheckCount; //number of boxes to always check
-        ColBox* GetColBox(int boxid);
-        std::vector<ColBox> boxes;
+        CollisionBox* GetColBox(int boxid);
+        std::vector<CollisionBox> boxes;
         ComponentPosition* myPos;
 };
 
