@@ -1,6 +1,7 @@
 #include "RSC_Texture.h"
 
 #include "../Kernel.h"
+#include "../Resolution.h"
 #include "ResourceLoading.h"
 #include "../Defines.h"
 #include <cstring>
@@ -242,10 +243,13 @@ int RSC_Texture::RenderToTexture(const Rect& area, RSC_Texture* otherTexture, LO
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDeleteFramebuffers(1, &fbo);
 
-    glViewport(0, 0, SCREEN_W, SCREEN_H);
+	auto resolution = Resolution::GetResolution();
+	auto vp = Resolution::GetVirtualResolution();
+
+    glViewport(0, 0, resolution.x, resolution.y);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, CAMERA_W, CAMERA_H, 0, 1, -1);
+    glOrtho(0.0f, vp.x, vp.y, 0, 1, -1);
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 

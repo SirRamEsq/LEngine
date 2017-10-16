@@ -28,6 +28,10 @@ Rect::Rect(float xx, float yy, float ww, float hh)
 	: Shape(xx,yy), w(ww), h(hh){
 
 }
+Rect::Rect(const Coord2df& xy, const Coord2df& wh)
+	: Shape(xy), w(wh.x), h(wh.y){
+
+}
 Rect::Rect()
 	: Shape(0,0), w(0), h(0){
 

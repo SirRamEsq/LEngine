@@ -2,6 +2,7 @@
 #include "GS_Script.h"
 
 #include "../Kernel.h"
+#include "../Resolution.h"
 #include "../RenderManager.h"
 #include "../gui/imgui_LEngine.h"
 
@@ -43,7 +44,10 @@ void GameStartState::HandleEvent(const Event* event){
 }
 
 bool GameStartState::Update(){
-	ImGui::SetNextWindowPos(Coord2df((SCREEN_W/2)-100, (SCREEN_H/2)-50));
+	auto resolution = Resolution::GetResolution();
+	resolution.x -= 100;
+	resolution.y -= 50;
+	ImGui::SetNextWindowPos(resolution);
 	ImGui::BeginFlags("STARTUPWINDOW", ImGuiWindowFlags_NoTitleBar + ImGuiWindowFlags_NoResize);
 	ImGui::TextWrapper(countdownMessage);
 	ImGui::ProgressBar(countdown / countdownMax, Coord2df(-1.0f, 0.0f));

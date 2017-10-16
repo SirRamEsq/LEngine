@@ -166,14 +166,6 @@ extern const int TICKS_PER_SECOND;
 extern const int SKIP_TICKS;
 extern const int MAX_FRAMESKIP;
 
-extern int SCREEN_W;
-extern int SCREEN_H;
-
-extern const int CAMERA_W;
-extern const int CAMERA_H;
-
-extern float ASPECT_RATIO;
-
 template <typename T>
 std::string NumberToString ( T Number ){
 	std::stringstream ss;

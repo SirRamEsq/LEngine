@@ -102,6 +102,7 @@ class Shape{
 class Rect : public Shape{
     public:
         Rect(float xx, float yy, float ww, float hh);
+        Rect(const Coord2df& xy, const Coord2df& wh);
 		Rect();
 
         inline float  GetW()              const   {return w;  }
