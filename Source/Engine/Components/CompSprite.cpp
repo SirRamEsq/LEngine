@@ -142,9 +142,6 @@ void ComponentSprite::Update(){
         renderSprite->data.texture4.x = ani->GetUVLeft(index);
         renderSprite->data.texture4.y = ani->GetUVBottom(index);
 
-        //Render Using only full integers for translation to get that pixel-perfect look
-        int xPos= floor (pos.x + renderSprite->offset.x + 0.5f);
-        int yPos= floor (pos.y + renderSprite->offset.y + 0.5f);
 
         Vec2 temp(0,0);
         temp.x = renderSprite->data.vertexOrigin1.x;
@@ -167,6 +164,9 @@ void ComponentSprite::Update(){
         renderSprite->data.scalingRotation.y = renderSprite->scaleY;
         renderSprite->data.scalingRotation.z = renderSprite->rotation;
 
+        //Render Using only full integers for translation to get that pixel-perfect look
+        int xPos= floor (pos.x + renderSprite->offset.x + 0.5f);
+        int yPos= floor (pos.y + renderSprite->offset.y + 0.5f);
         renderSprite->data.translate.x = xPos;
         renderSprite->data.translate.y = yPos;
     }
@@ -176,12 +176,9 @@ void ComponentSprite::CalculateVerticies(int index){
     LOrigin origin=mSprites[index]->GetOrigin();
     float spriteWidth=mSprites[index]->GetWidth();
     float spriteHeight=mSprites[index]->GetHeight();
-    //Pixel '0' counts as a pixel for the purpose of our calculations
-    spriteHeight -=1;
-    spriteWidth  -=1;
 
-    float spriteWidthHalf=spriteWidth/2;
-    float spriteHeightHalf=spriteHeight/2;
+    int spriteWidthHalf=spriteWidth/2;
+    int spriteHeightHalf=spriteHeight/2;
 
     RenderSpriteBatch::Sprite* rSprite=mRenderableSprites[index].get();
 

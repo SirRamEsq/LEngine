@@ -93,7 +93,9 @@ void RSC_Texture::UpdateDataFromGL(){
 }
 
 bool RSC_Texture::ExportTexture(const char* path) const {
-    //UpdateDataFromGL();
+	auto NotConstHack = ((RSC_Texture*)(this));
+    NotConstHack->UpdateDataFromGL();
+	
     if(SOIL_save_image(path,SOIL_SAVE_TYPE_BMP,mTexData.width,mTexData.height,mBytesPerPixel,mTexData.data.get())==0){
         std::string pathString (path);
         std::string errorString = "Texture Write to Disk Failed @ Path: " + pathString;

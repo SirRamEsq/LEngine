@@ -28,10 +28,10 @@ RenderCamera::RenderCamera(RenderManager* rm, Rect viewPort)
 	//render buffers are a good choice when not intending on sampling from the data
 	//the depth buffer is only for the framebuffer, it won't be sampled externally
 	//only the color will be sampled externally
-	glGenRenderbuffers(1, &mDepthRBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO); 
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w, viewPort.h);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthRBO);  
+	//glGenRenderbuffers(1, &mDepthRBO);
+	//glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO); 
+	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w, viewPort.h);
+	//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mDepthRBO);  
 
 	//unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -157,27 +157,31 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture* tex){
     glOrtho(0.0f, resolution.x, resolution.y, 0, 0, 1); //2D
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
+	
+	auto vres = Resolution::GetVirtualResolution();
+	auto res = Resolution::GetResolution();
+	auto ratioX = vres.x / res.x;
+	auto ratioY = vres.y / res.y;
 	tex->Bind();
 	float Left=		0;
-	float Right=	1;
+	float Right=	1;// * ratioX;
 	//texture is upside down, invert top and bottom
-	float Top=		1;
+	float Top=		1;// * ratioY;
 	float Bottom=	0;
 
 
 	glBegin(GL_QUADS);
 		glTexCoord2f(Left,	Top);
-		glVertex3i(0,0,0);
+		glVertex3f(0,0,0);
 
 		glTexCoord2f(Right, Top);
-		glVertex3i(resolution.x,0,0);
+		glVertex3f(resolution.x,0,0);
 
 		glTexCoord2f(Right, Bottom);
-		glVertex3i(resolution.x,resolution.y,0);
+		glVertex3f(resolution.x,resolution.y,0);
 
 		glTexCoord2f(Left,	Bottom);
-		glVertex3i(0,resolution.y,0);
+		glVertex3f(0,resolution.y,0);
 	glEnd();
 }
 

@@ -42,7 +42,7 @@ function container.NewGui(baseclass)
 
 		gui.winName = "TEST1"
 	
-		gui.sprite1 = CPP.interface:LoadSprite("SpriteArrow.xml");
+		gui.sprite1 = CPP.interface:LoadSprite("test.xml");
 		if(gui.sprite1 == nil)then
 			CPP.interface:WriteError(gui.EID, "Sprite is NIL!")
 		end
@@ -63,6 +63,11 @@ function container.NewGui(baseclass)
 		gui.myPositionComp	= CPP.interface:GetPositionComponent (EID);
 		gui.myParticleComp	= CPP.interface:GetParticleComponent (EID);
 		gui.myCameraComp	= CPP.interface:GetCameraComponent (EID);
+		gui.sprite	 = CPP.interface:LoadSprite("test.xml");
+		gui.animation = "test";
+		gui.mySpriteComp	= CPP.interface:GetSpriteComponent (EID);
+		gui.mainSpriteID	= gui.mySpriteComp:AddSprite(gui.sprite, gui.depth, 64, 64);
+		gui.CompSprite:SetAnimation		(gui.mainSpriteID, "test");
 
 		--just for giggles
 		local resolution = CPP.interface:GetResolution()
@@ -71,8 +76,6 @@ function container.NewGui(baseclass)
 		--------------------
 		--Particle Effects--
 		--------------------
-		gui.sprite	 = CPP.interface:LoadSprite("SpriteArrow.xml");
-		gui.animation = "Fire";
 		Vec2d = gui.myPositionComp:GetPositionLocal();
 		local xPos = Vec2d.x+200;
 		local yPos = Vec2d.y+250;
@@ -145,19 +148,19 @@ function container.NewGui(baseclass)
 			CPP.ImGui.Text( "Resolution: " .. tostring(resolution.x) .. "x" .. tostring(resolution.y) )
 			CPP.ImGui.Text( "This Window Size: " .. tostring(gui.winSize.x) .. "x" .. tostring(gui.winSize.y) )
 
-			CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 0)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 1)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 2)
-			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "Fire", 3)
+			CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
+			CPP.ImGui.SameLine(); CPP.ImGui.Sprite(gui.sprite1, "test", 0)
 			CPP.ImGui.Separator()
 
 			CPP.ImGui.Text("More Text")
 			local buttonPress = CPP.ImGui.Button("Press This")
-			local spriteButtonPress = CPP.ImGui.SpriteButton(gui.sprite1, "Fire", gui.currentFrame)
+			local spriteButtonPress = CPP.ImGui.SpriteButton(gui.sprite1, "test", 0)
 
 			CPP.ImGui.Text("Animation ProgressBar")
 			CPP.ImGui.ProgressBar(progressBarFill, CPP.Coord2df(128, 16))
