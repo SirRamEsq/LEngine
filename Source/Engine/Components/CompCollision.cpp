@@ -70,11 +70,15 @@ void ComponentCollision::CheckForTiles(int boxid){
 
 void ComponentCollision::Activate(int boxid){
     CollisionBox* cb=GetColBox(boxid);
-    cb->Activate();
+	if(cb != NULL){
+		cb->Activate();
+	}
 }
 void ComponentCollision::Deactivate(int boxid){
     CollisionBox* cb=GetColBox(boxid);
-	cb->Deactivate();
+	if(cb != NULL){
+		cb->Deactivate();
+	}
 }
 
 CollisionBox* ComponentCollision::GetColBox(int boxid){
