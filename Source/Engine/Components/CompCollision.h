@@ -119,16 +119,16 @@ class ComponentCollision : public BaseComponent{
     protected:
         CollisionBox* GetPrimary();
 
-        std::vector<CollisionBox>::iterator GetItBeg(){return boxes.begin();}
-        std::vector<CollisionBox>::iterator GetItEnd(){return boxes.end();}
+		auto GetItBeg(){return boxes.begin();}
+		auto GetItEnd(){return boxes.end();}
+
 
     private:
-        void OrderList();
-
+		void OrderList();
         CollisionBox* GetColBox(int boxid);
 
 		///Registered CollisionBoxes
-        std::vector<CollisionBox> boxes;
+        std::unordered_map<int, CollisionBox> boxes;
 
 		///dependency
         ComponentPosition* myPos;

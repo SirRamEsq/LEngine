@@ -33,8 +33,17 @@ void ComponentCollisionManager::SetDependencies(ComponentPositionManager* pos){
 }
 
 void ComponentCollision::AddCollisionBox(const Shape* shape, int boxid, int orderNum){
-    boxes.push_back(CollisionBox (boxid, orderNum, 0, shape, myPos));
+    boxes.insert(
+		std::pair<int, CollisionBox>(boxid, CollisionBox(orderNum, 0, shape, myPos) )
+	);
     OrderList();
+}
+
+void ComponentCollision::SetShape(int boxid, const Shape* shape){
+	auto box = GetColBox(boxid);
+	if(box!=NULL){
+		box->SetShape(shape);
+	}
 }
 
 void ComponentCollision::SetPrimaryCollisionBox(int boxid){
@@ -52,13 +61,11 @@ void ComponentCollision::SetPrimaryCollisionBox(int boxid){
 void ComponentCollision::CheckForEntities(int boxid){
     CollisionBox* cb=GetColBox(boxid);
     if(cb!=NULL){cb->SetFlags( (cb->Flags() | ENT_CHECK) );}
-    OrderList();
 }
 
 void ComponentCollision::CheckForTiles(int boxid){
     CollisionBox* cb=GetColBox(boxid);
     if(cb!=NULL){cb->SetFlags( (cb->Flags() | TILE_CHECK) );}
-    OrderList();
 }
 
 void ComponentCollision::Activate(int boxid){
@@ -71,10 +78,12 @@ void ComponentCollision::Deactivate(int boxid){
 }
 
 CollisionBox* ComponentCollision::GetColBox(int boxid){
-    for(auto i=boxes.begin(); i!=boxes.end(); i++){
-        if((*i).GetId()==boxid){return &(*i);}
-    }
-    return NULL;
+	auto it = boxes.find(boxid);
+	if(it == boxes.end()){
+		return NULL;
+	}
+
+	return &(it->second);
 }
 
 CollisionBox* ComponentCollision::GetPrimary(){
@@ -82,21 +91,16 @@ CollisionBox* ComponentCollision::GetPrimary(){
     if(i==boxes.end()){return NULL;}
 
     //if the first box isn't primary, none of them are
-    if( (i->Flags()&PRIMARY) ){return &(*i);}
+    if( (i->second.Flags()&PRIMARY) ){return &(i->second);}
     return NULL;
 }
 
 void ComponentCollision::OrderList(){
-    //primary comes first,
-    //then always checks,
-    //then entities,
-    //then tiles
-    std::sort(boxes.begin(), boxes.end());
-}
-
-void ComponentCollision::SetShape(int boxid, const Shape* shape){
-	auto cbox = GetColBox(boxid);
-	cbox->SetShape(shape);
+	auto cmp = [](std::pair<int,CollisionBox> const & a, std::pair<int,CollisionBox> const & b){ 
+		return a.second < b.second;
+	};
+	//primary comes first,
+    //std::sort(boxes.begin(), boxes.end(), cmp);
 }
 
 ///////////////////////////////
@@ -173,30 +177,30 @@ void ComponentCollisionManager::UpdateCheckEntityCollision(){
                     primaryPass = primaryBox1->Collides(primaryBox2).mCollided;
                 }
                 if(primaryPass){
-                    for(auto boxIt1=comp1->GetItBeg(); boxIt1!=comp1->GetItEnd(); boxIt1++){//iterate through the collision boxes of compIt1
-                        if( (boxIt1->Flags()&ENT_CHECK)!=ENT_CHECK)            {continue;} //Skip if you the box doesn't have the ENT_CHECK flag set
-                        if(not boxIt1->IsActive()){continue;}
+                    for(auto boxIt1 = comp1->GetItBeg(); boxIt1!=comp1->GetItEnd(); boxIt1++){//iterate through the collision boxes of compIt1
+                        if( (boxIt1->second.Flags()&ENT_CHECK)!=ENT_CHECK)            {continue;} //Skip if you the box doesn't have the ENT_CHECK flag set
+                        if(not boxIt1->second.IsActive()){continue;}
 
                         for(auto boxIt2=comp2->GetItBeg(); boxIt2!=comp2->GetItEnd(); boxIt2++){//iterate through the collision boxes of compIt2
-                            if((boxIt2->Flags()&ENT_CHECK)!=ENT_CHECK)            {continue;}
-                            if(not boxIt2->IsActive()){continue;}
+                            if((boxIt2->second.Flags()&ENT_CHECK)!=ENT_CHECK)            {continue;}
+                            if(not boxIt2->second.IsActive()){continue;}
 
-							boxIt1->UpdateWorldCoord();
-							boxIt2->UpdateWorldCoord();
-                            if(boxIt1->Collides(&(*boxIt2)).mCollided){
+							boxIt1->second.UpdateWorldCoord();
+							boxIt2->second.UpdateWorldCoord();
+                            if(boxIt1->second.Collides(&(boxIt2->second)).mCollided){
                                 //Each entity will only be sent one collision event per collision box max
-                                if(alreadyRegisteredBox1.find(boxIt1->GetId())==alreadyRegisteredBox1.end()){
+                                if(alreadyRegisteredBox1.find(boxIt1->first)==alreadyRegisteredBox1.end()){
                                     //                      Sender                                      Reciever                       Reciever BoxID
-                                    SendCollisionEvent(*comp2, *comp1 ,boxIt1->GetId(), Event::MSG::COLLISION_ENTITY);
+                                    SendCollisionEvent(*comp2, *comp1 ,boxIt1->first, Event::MSG::COLLISION_ENTITY);
                                     //Register box to make sure an event isn't sent here again
-                                    alreadyRegisteredBox1.insert(boxIt1->GetId());
+                                    alreadyRegisteredBox1.insert(boxIt1->first);
                                 }
 
-                                if(alreadyRegisteredBox2.find(boxIt2->GetId())==alreadyRegisteredBox2.end()){
+                                if(alreadyRegisteredBox2.find(boxIt2->first)==alreadyRegisteredBox2.end()){
                                     //                      Sender                                      Reciever                       Reciever BoxID
-                                    SendCollisionEvent(*comp1, *comp2 ,boxIt2->GetId(), Event::MSG::COLLISION_ENTITY);
+                                    SendCollisionEvent(*comp1, *comp2 ,boxIt2->first, Event::MSG::COLLISION_ENTITY);
                                     //Register box to make sure an event isn't sent here again
-                                    alreadyRegisteredBox2.insert(boxIt2->GetId());
+                                    alreadyRegisteredBox2.insert(boxIt2->first);
                                 }
                             }
                         }
@@ -222,11 +226,11 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
         //boxIt1 is a colbox iterator for each collision component
         //i iterates through all of the collision components
         for(auto boxIt1=compIt1->second.get()->GetItBeg(); boxIt1!=compIt1->second.get()->GetItEnd(); boxIt1++){
-            if((boxIt1->Flags()&TILE_CHECK)!=TILE_CHECK)   {continue;} //Check if the box even exists to check tiles
+            if((boxIt1->second.Flags()&TILE_CHECK)!=TILE_CHECK)   {continue;} //Check if the box even exists to check tiles
 
             //Adds box coordinates to entity's coordinates
-			boxIt1->UpdateWorldCoord();
-            shape = boxIt1->GetWorldCoord();
+			boxIt1->second.UpdateWorldCoord();
+            shape = boxIt1->second.GetWorldCoord();
 
             ul.x = shape->GetLeft();  ul.y = shape->GetTop();
             dr.x = shape->GetRight(); dr.y = shape->GetBottom();
@@ -245,7 +249,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
                 packet.tl=tLayer;
                 packet.x=txx1;
                 packet.y=tyy2;
-                packet.box=boxIt1->GetId();
+                packet.box=boxIt1->first;
 
 				TColPacket::ExtraDataDefinition extraData(&packet);
 				Event event(EID_SYSTEM, compIt1->first, Event::MSG::COLLISION_TILE, "TILE", &extraData);
@@ -273,7 +277,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
                     if(tLayer!=NULL){
                         packet.x=tx;
                         packet.y=ty;
-                        packet.box=boxIt1->GetId();
+                        packet.box=boxIt1->first;
                         packet.tl=tLayer;
 
 						TColPacket::ExtraDataDefinition extraData(&packet);
