@@ -79,6 +79,9 @@ collision.collisionComponent=nil;
     collision.tileCollision.coordinates.CBOX_UP_X_OFFSET       =  1;
     collision.tileCollision.coordinates.CBOX_UP_ORDER          =  10
 
+	--contatins Rect shapes
+	collision.boxRect = {}
+
 
 --Collision Boxes
 		--Entity Collision Boxes
@@ -118,42 +121,45 @@ function collision.Init(w,h, iface, component, eid)
   collision.collisionComponent=component
 
   local coords=collision.tileCollision.coordinates;
+  local tboxID = collision.tileCollision.boxID
   --Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
-	collision.tileCollision.cboxTileRight= CPP.Rect(coords.CBOX_RIGHT_X_OFFSET,	coords.CBOX_RIGHT_Y_OFFSET,	coords.CBOX_RIGHT_W_OFFSET,	coords.CBOX_RIGHT_H_OFFSET);
-	collision.tileCollision.cboxTileLeft=	 CPP.Rect(coords.CBOX_LEFT_X_OFFSET,   coords.CBOX_LEFT_Y_OFFSET,   coords.CBOX_LEFT_W_OFFSET, 	coords.CBOX_LEFT_H_OFFSET );
-	collision.tileCollision.cboxTileUp=		 CPP.Rect(coords.CBOX_UP_X_OFFSET,   	coords.CBOX_UP_Y_OFFSET,	    coords.CBOX_UP_W_OFFSET,     coords.CBOX_UP_H_OFFSET   );
+	collision.boxRect[tboxID.CBOX_TILE_RIGHT]= CPP.Rect(coords.CBOX_RIGHT_X_OFFSET,	coords.CBOX_RIGHT_Y_OFFSET,	coords.CBOX_RIGHT_W_OFFSET,	coords.CBOX_RIGHT_H_OFFSET);
+	collision.boxRect[tboxID.CBOX_TILE_LEFT]=	 CPP.Rect(coords.CBOX_LEFT_X_OFFSET,   coords.CBOX_LEFT_Y_OFFSET,   coords.CBOX_LEFT_W_OFFSET, 	coords.CBOX_LEFT_H_OFFSET );
+	collision.boxRect[tboxID.CBOX_TILE_UP]=		 CPP.Rect(coords.CBOX_UP_X_OFFSET,   	coords.CBOX_UP_Y_OFFSET,	    coords.CBOX_UP_W_OFFSET,     coords.CBOX_UP_H_OFFSET   );
 
-	collision.tileCollision.cboxTileDownA= CPP.Rect(coords.CBOX_GROUND_A_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,	coords.CBOX_GROUND_H_OFFSET);
-	collision.tileCollision.cboxTileDownB= CPP.Rect(coords.CBOX_GROUND_B_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,  coords.CBOX_GROUND_H_OFFSET);
+	collision.boxRect[tboxID.CBOX_TILE_DOWN_A]= CPP.Rect(coords.CBOX_GROUND_A_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,	coords.CBOX_GROUND_H_OFFSET);
+	collision.boxRect[tboxID.CBOX_TILE_DOWN_B]= CPP.Rect(coords.CBOX_GROUND_B_X_OFFSET,	coords.CBOX_GROUND_Y_OFFSET, 	1,  coords.CBOX_GROUND_H_OFFSET);
 
-	cboxPrimary=	CPP.Rect(0, 0, w+4,	h+4);
 
-  collision.entityCollision.cboxEntRight=nil;
-  collision.entityCollision.cboxEntLeft=nil;
-  collision.entityCollision.cboxEntUp=nil;
-  collision.entityCollision.cboxEntDown=CPP.Rect(0, (h/2)+2, w,	h/2);
+  local eboxID = collision.entityCollision.boxID
+  collision.boxRect[eboxID.CBOX_PRIME] = CPP.Rect(0, 0, w+4,	h+4);
+  collision.boxRect[eboxID.CBOX_ENT_LEFT]=nil;
+  collision.boxRect[eboxID.CBOX_ENT_UP]=nil;
+  collision.boxRect[eboxID.CBOX_ENT_RIGHT]=nil;
+  collision.boxRect[eboxID.CBOX_ENT_DOWN]=CPP.Rect(0, (h/2)+2, w,	h/2);
 
-	component:AddCollisionBox(cboxPrimary, collision.entityCollision.boxID.CBOX_PRIME, 0);
-	component:CheckForEntities(collision.entityCollision.boxID.CBOX_PRIME);
-	component:SetPrimaryCollisionBox(collision.entityCollision.boxID.CBOX_PRIME, false);
+  local boxRect = collision.boxRect;
+	component:AddCollisionBox(boxRect[eboxID.CBOX_PRIME], eboxID.CBOX_PRIME, 0);
+	component:CheckForEntities(eboxID.CBOX_PRIME);
+	component:SetPrimaryCollisionBox(eboxID.CBOX_PRIME);
 
-  component:AddCollisionBox(collision.entityCollision.cboxEntDown, collision.entityCollision.boxID.CBOX_ENT_DOWN, 0);
-	component:CheckForEntities(collision.entityCollision.boxID.CBOX_ENT_DOWN);
+    component:AddCollisionBox(boxRect[eboxID.CBOX_ENT_DOWN], eboxID.CBOX_ENT_DOWN, 0);
+	component:CheckForEntities(eboxID.CBOX_ENT_DOWN);
 
-	component:AddCollisionBox(collision.tileCollision.cboxTileDownA, collision.tileCollision.boxID.CBOX_TILE_DOWN_A, coords.CBOX_GROUND_ORDER);
-	component:CheckForTiles(collision.tileCollision.boxID.CBOX_TILE_DOWN_A);
+	component:AddCollisionBox(boxRect[tboxID.CBOX_TILE_DOWN_A], tboxID.CBOX_TILE_DOWN_A, coords.CBOX_GROUND_ORDER);
+	component:CheckForTiles(tboxID.CBOX_TILE_DOWN_A);
 
-	component:AddCollisionBox(collision.tileCollision.cboxTileDownB, collision.tileCollision.boxID.CBOX_TILE_DOWN_B, coords.CBOX_GROUND_ORDER);
-	component:CheckForTiles(collision.tileCollision.boxID.CBOX_TILE_DOWN_B);
+	component:AddCollisionBox(boxRect[tboxID.CBOX_TILE_DOWN_B], tboxID.CBOX_TILE_DOWN_B, coords.CBOX_GROUND_ORDER);
+	component:CheckForTiles(tboxID.CBOX_TILE_DOWN_B);
 
-	component:AddCollisionBox(collision.tileCollision.cboxTileRight, collision.tileCollision.boxID.CBOX_TILE_RIGHT, coords.CBOX_RIGHT_ORDER);
-	component:CheckForTiles(collision.tileCollision.boxID.CBOX_TILE_RIGHT);
+	component:AddCollisionBox(boxRect[tboxID.CBOX_TILE_DOWN_B], tboxID.CBOX_TILE_RIGHT, coords.CBOX_RIGHT_ORDER);
+	component:CheckForTiles(tboxID.CBOX_TILE_RIGHT);
 
-	component:AddCollisionBox(collision.tileCollision.cboxTileLeft, collision.tileCollision.boxID.CBOX_TILE_LEFT, coords.CBOX_LEFT_ORDER);
-	component:CheckForTiles(collision.tileCollision.boxID.CBOX_TILE_LEFT);
+	component:AddCollisionBox(boxRect[tboxID.CBOX_TILE_DOWN_B], tboxID.CBOX_TILE_LEFT, coords.CBOX_LEFT_ORDER);
+	component:CheckForTiles(tboxID.CBOX_TILE_LEFT);
 
-	component:AddCollisionBox(collision.tileCollision.cboxTileUp, collision.tileCollision.boxID.CBOX_TILE_UP, coords.CBOX_UP_ORDER);
-	component:CheckForTiles(collision.tileCollision.boxID.CBOX_TILE_UP);
+	component:AddCollisionBox(boxRect[tboxID.CBOX_TILE_DOWN_B], tboxID.CBOX_TILE_UP, coords.CBOX_UP_ORDER);
+	component:CheckForTiles(tboxID.CBOX_TILE_UP);
 
 	collision.groundTouch=false;
 end
@@ -222,22 +228,40 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 end
 
 function collision.Update(xspd, yspd)
-  if(collision.groundTouch==true)then
-    collision.tileCollision.footHeightValue=math.floor(yspd+0.5+CBOX_FEET_OFFSET+math.abs(xspd))+2
-  else
-    collision.tileCollision.footHeightValue=math.floor(yspd + 0.5 + CBOX_FEET_OFFSET)+1
-  end
-  collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_DOWN_A,  collision.tileCollision.footHeightValue);
-  collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_DOWN_B,  collision.tileCollision.footHeightValue);
-  collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_UP,      math.floor(yspd - 2.5));
+	if(collision.groundTouch==true)then
+   		collision.tileCollision.footHeightValue=math.floor(yspd+0.5+CBOX_FEET_OFFSET+math.abs(xspd))+2
+ 	else
+   		collision.tileCollision.footHeightValue=math.floor(yspd + 0.5 + CBOX_FEET_OFFSET)+1
+  	end
+
+	local tboxID = collision.tileCollision.boxID
+	local eboxID = collision.entityCollision.boxID
+	local boxes = collision.boxRect
+	boxes[tboxID.CBOX_TILE_DOWN_A].h 	= collision.tileCollision.footHeightValue
+	boxes[tboxID.CBOX_TILE_DOWN_B].h 	= collision.tileCollision.footHeightValue
+	boxes[tboxID.CBOX_TILE_UP].h 		= math.floor(yspd - 2.5)
+	boxes[tboxID.CBOX_TILE_LEFT].w 		= math.floor(xspd - 0.5)-1
+	boxes[tboxID.CBOX_TILE_RIGHT].w 		= math.floor(xspd + 0.5)
+
+	collision.collisionComponent:SetShape(tboxID.CBOX_TILE_DOWN_A, 	boxes[tboxID.CBOX_TILE_DOWN_A]);
+	collision.collisionComponent:SetShape(tboxID.CBOX_TILE_DOWN_B, 	boxes[tboxID.CBOX_TILE_DOWN_B]);
+	collision.collisionComponent:SetShape(tboxID.CBOX_TILE_LEFT, 	boxes[tboxID.CBOX_TILE_LEFT]);
+	collision.collisionComponent:SetShape(tboxID.CBOX_TILE_RIGHT,  	boxes[tboxID.CBOX_TILE_RIGHT]);
+	collision.collisionComponent:SetShape(tboxID.CBOX_TILE_UP,  	boxes[tboxID.CBOX_TILE_UP]);
+
+	--[[
+  	collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_DOWN_A,  collision.tileCollision.footHeightValue);
+  	collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_DOWN_B,  collision.tileCollision.footHeightValue);
+  	collision.collisionComponent:ChangeHeight(collision.tileCollision.boxID.CBOX_TILE_UP,      math.floor(yspd - 2.5));
 	collision.collisionComponent:ChangeWidth(collision.tileCollision.boxID.CBOX_TILE_LEFT,    math.floor(xspd - 0.5)-1);
 	collision.collisionComponent:ChangeWidth(collision.tileCollision.boxID.CBOX_TILE_RIGHT,   math.floor(xspd + 0.5));
+	]]--
 
-  collision.tileCollision.previous.tileLeft =false;
-  collision.tileCollision.previous.tileRight=false;
-  collision.tileCollision.previous.tileUp   =false;
-  collision.ignoreTileX=-1;
-  collision.prevGroundTouch=collision.groundTouch;
+  	collision.tileCollision.previous.tileLeft =false;
+  	collision.tileCollision.previous.tileRight=false;
+  	collision.tileCollision.previous.tileUp   =false;
+  	collision.ignoreTileX=-1;
+  	collision.prevGroundTouch=collision.groundTouch;
 	collision.groundTouch=false;
 	collision.frameProperties.firstCollision=false;
 end

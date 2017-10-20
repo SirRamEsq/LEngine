@@ -225,18 +225,18 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 	return hmap:GetHeightMapH( HMAP_index_value );
 end
 
-function UseShortBoxes()
-	collision.cComp:Activate(collision.boxID[TILE_RIGHT_SHORT])
-	collision.cComp:Activate(collision.boxID[TILE_LEFT_SHORT])
-	collision.cComp:Deactivate(collision.boxID[TILE_RIGHT])
-	collision.cComp:Deactivate(collision.boxID[TILE_LEFT])
+function collision.UseShortBoxes()
+	collision.cComp:Activate(collision.boxID.TILE_RIGHT_SHORT)
+	collision.cComp:Activate(collision.boxID.TILE_LEFT_SHORT)
+	collision.cComp:Deactivate(collision.boxID.TILE_RIGHT)
+	collision.cComp:Deactivate(collision.boxID.TILE_LEFT)
 end
 
-function UseNormalBoxes()
-	collision.cComp:Deactivate(collision.boxID[TILE_RIGHT_SHORT])
-	collision.cComp:Deactivate(collision.boxID[TILE_LEFT_SHORT])
-	collision.cComp:Activate(collision.boxID[TILE_RIGHT])
-	collision.cComp:Activate(collision.boxID[TILE_LEFT])
+function collision.UseNormalBoxes()
+	collision.cComp:Deactivate(collision.boxID.TILE_RIGHT_SHORT)
+	collision.cComp:Deactivate(collision.boxID.TILE_LEFT_SHORT)
+	collision.cComp:Activate(collision.boxID.TILE_RIGHT)
+	collision.cComp:Activate(collision.boxID.TILE_LEFT)
 end
 
 function collision.Update(xspd, yspd)
