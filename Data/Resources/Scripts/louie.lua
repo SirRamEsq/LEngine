@@ -111,6 +111,8 @@ function container.NewLouie(baseclass)
 
 			louie.currentState= louie.c.STATE_NORMAL;
 
+			louie.isDecelerating = false
+
 		--CLIMBING
 			louie.climb = {}
 			louie.climb.SPEED = 2
@@ -165,6 +167,8 @@ function container.NewLouie(baseclass)
 
 		--Sound Effects
 			louie.SoundJump = "smw_jump.wav";
+			louie.SoundFireball = "smw_fireball.wav";
+			louie.SoundFirecoin = "smw_coin.wav";
 	end
 
 	function louie.Initialize()
@@ -264,15 +268,9 @@ function container.NewLouie(baseclass)
 
 	function louie.SetCollisionBoxes()
 		if(louie.currentState == louie.c.STATE_ROLL)then
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT)
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT)
+			louie.tileCollision:UseShortBoxes()
 		else
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT)
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT)
+			louie.tileCollision:UseNormalBoxes()
 		end
 	end
 
@@ -582,6 +580,8 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.groundTouch=false;
 		if(louie.currentState==louie.c.STATE_ROLL)then --long jump
 			louie.xspd = louie.xspd * 1.5;
+		elseif(louie.isDecelerating)then --side jump
+			louie.yspd = louie.yspd * 1.25
 		end
 
 		CPP.interface:EventLuaBroadcastEvent(louie.EID, "JUMP");
@@ -670,8 +670,10 @@ function container.NewLouie(baseclass)
 				if(absGS<louie.c.ACCELERATION_TOP)then
 					louie.groundSpeed= louie.groundSpeed + (louie.c.ACCELERATION * direction);
 				end
+				louie.isDecelerating = false
 			else
 				louie.groundSpeed= louie.groundSpeed + (louie.c.DEACCELERATION * direction);
+				louie.isDecelerating = true
 			end
 		end
 
@@ -689,10 +691,12 @@ function container.NewLouie(baseclass)
 				end
 				if(movDir==direction) then
 					if(absX<louie.c.ACCELERATION_TOP)then
-					louie.xspd= louie.xspd + (louie.c.ACCELERATION_AIR * direction);
+						louie.xspd= louie.xspd + (louie.c.ACCELERATION_AIR * direction);
 					end
+					louie.isDecelerating = false
 				else
-						 louie.xspd= louie.xspd + ((louie.c.ACCELERATION_AIR + louie.c.FRICTION_AIR) * direction);
+					louie.xspd= louie.xspd + ((louie.c.ACCELERATION_AIR + louie.c.FRICTION_AIR) * direction);
+					louie.isDecelerating = true
 				end
 			end
 		end
@@ -944,6 +948,7 @@ function container.NewLouie(baseclass)
 	function louie.GetHat()
 		if(louie.health <= 1)then
 			louie.health = 2
+			CPP.interface:PlaySound(louie.SoundCoin, 100);
 		end
 	end
 
@@ -1056,6 +1061,7 @@ function container.NewLouie(baseclass)
 			local pos = louie.CompPosition:GetPositionWorld()
 			CPP.interface:EntityNew('Effects/fallingHat.lua', pos.x, pos.y, louie.depth, 0,"FALLING_HAT", "",
 									{direction = louie.facingDir * -1})
+			CPP.interface:PlaySound(louie.SoundFireball, 100);
 		end
 	end
 

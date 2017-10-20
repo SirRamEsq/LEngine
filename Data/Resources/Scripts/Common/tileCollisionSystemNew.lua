@@ -225,6 +225,20 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 	return hmap:GetHeightMapH( HMAP_index_value );
 end
 
+function UseShortBoxes()
+	collision.cComp:Activate(collision.boxID[TILE_RIGHT_SHORT])
+	collision.cComp:Activate(collision.boxID[TILE_LEFT_SHORT])
+	collision.cComp:Deactivate(collision.boxID[TILE_RIGHT])
+	collision.cComp:Deactivate(collision.boxID[TILE_LEFT])
+end
+
+function UseNormalBoxes()
+	collision.cComp:Deactivate(collision.boxID[TILE_RIGHT_SHORT])
+	collision.cComp:Deactivate(collision.boxID[TILE_LEFT_SHORT])
+	collision.cComp:Activate(collision.boxID[TILE_RIGHT])
+	collision.cComp:Activate(collision.boxID[TILE_LEFT])
+end
+
 function collision.Update(xspd, yspd)
 	if(collision.groundTouch==true)then
 		collision.footHeightValue=math.floor(yspd+0.5+collision.FEET_OFFSET+math.abs(xspd))+2
@@ -238,12 +252,16 @@ function collision.Update(xspd, yspd)
 	boxes[boxID.TILE_DOWN_L].h 	= collision.footHeightValue
 	boxes[boxID.TILE_LEFT].w 	= math.floor(xspd - 0.5)
 	boxes[boxID.TILE_RIGHT].w 	= math.floor(xspd + 0.5)
+	boxes[boxID.TILE_LEFT_SHORT].w 	= math.floor(xspd - 0.5)
+	boxes[boxID.TILE_RIGHT_SHORT].w 	= math.floor(xspd + 0.5)
 	boxes[boxID.TILE_UP].h 		= math.floor(yspd - 2.5)
 
 	collision.cComp:SetShape(boxID.TILE_DOWN_R, boxes[boxID.TILE_DOWN_R]);
 	collision.cComp:SetShape(boxID.TILE_DOWN_L, boxes[boxID.TILE_DOWN_L]);
 	collision.cComp:SetShape(boxID.TILE_LEFT, 	boxes[boxID.TILE_LEFT]);
 	collision.cComp:SetShape(boxID.TILE_RIGHT,  boxes[boxID.TILE_RIGHT]);
+	collision.cComp:SetShape(boxID.TILE_LEFT_SHORT, 	boxes[boxID.TILE_LEFT_SHORT]);
+	collision.cComp:SetShape(boxID.TILE_RIGHT_SHORT,  boxes[boxID.TILE_RIGHT_SHORT]);
 	collision.cComp:SetShape(boxID.TILE_UP,  	boxes[boxID.TILE_UP]);
 
 	collision.previous.tileLeft =false;
