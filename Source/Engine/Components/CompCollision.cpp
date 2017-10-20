@@ -42,7 +42,12 @@ void ComponentCollision::AddCollisionBox(const Shape* shape, int boxid, int orde
 void ComponentCollision::SetShape(int boxid, const Shape* shape){
 	auto box = GetColBox(boxid);
 	if(box!=NULL){
-		box->SetShape(shape);
+		if(shape != NULL){
+			box->SetShape(shape);
+		}
+		else{
+			LOG_ERROR("ComponentCollision::SetShape passed null shape");
+		}
 	}
 }
 
