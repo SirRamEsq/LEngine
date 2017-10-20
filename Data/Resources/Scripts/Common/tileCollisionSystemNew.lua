@@ -35,6 +35,9 @@ collision.cComp=nil;
 	collision.boxID.TILE_DOWN_R=8;
 	collision.boxID.TILE_DOWN_L=9;
 
+	--Actual Rect shapes will be stored here
+	collision.boxRect = {}
+
 		--Where BOXs are relative to ground (Down) position
 		--Should check horizontal boxes first
 		collision.FEET_OFFSET=8;
@@ -100,38 +103,53 @@ function collision.Init(w, h, iface, component, eid)
 	collision.cComp=component
 
 	local coords=collision.coordinates;
+	local boxID = collision.boxID
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
-	collision.boxTileRight= CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
-	collision.boxTileLeft=	 CPP.Rect(coords.LEFT_X_OFFSET,	 coords.LEFT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
-	collision.boxTileRightShort= CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
-	collision.boxTileLeftShort=	 CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
-	collision.boxTileUp=		 CPP.Rect(coords.UP_X_OFFSET,		coords.UP_Y_OFFSET,			coords.UP_W_OFFSET,			coords.UP_H_OFFSET	 );
+	collision.boxRect[boxID.TILE_RIGHT		] =
+		CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,			coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
 
-	collision.boxTileDownR= CPP.Rect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
-	collision.boxTileDownL= CPP.Rect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
+	collision.boxRect[boxID.TILE_LEFT		]=
+		CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_Y_OFFSET,	 		coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
 
-	collision.cComp:AddCollisionBox(collision.boxTileDownR, collision.boxID.TILE_DOWN_R, coords.GROUND_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_DOWN_R);
+	collision.boxRect[boxID.TILE_RIGHT_SHORT]=
+		CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, 	coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
 
-	collision.cComp:AddCollisionBox(collision.boxTileDownL, collision.boxID.TILE_DOWN_L, coords.GROUND_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_DOWN_L);
+	collision.boxRect[boxID.TILE_LEFT_SHORT	]=
+		CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 	coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
 
-	collision.cComp:AddCollisionBox(collision.boxTileRight, collision.boxID.TILE_RIGHT, coords.RIGHT_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_RIGHT);
+	collision.boxRect[boxID.TILE_UP			]=
+		CPP.Rect(coords.UP_X_OFFSET,	coords.UP_Y_OFFSET,				coords.UP_W_OFFSET,		coords.UP_H_OFFSET	 );
 
-	collision.cComp:AddCollisionBox(collision.boxTileLeft, collision.boxID.TILE_LEFT, coords.LEFT_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_LEFT);
+	collision.boxRect[boxID.TILE_DOWN_R]=
+		CPP.Rect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
 
-	collision.cComp:AddCollisionBox(collision.boxTileRightShort, collision.boxID.TILE_RIGHT_SHORT, coords.RIGHT_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_RIGHT_SHORT);
-	collision.cComp:Deactivate(collision.boxID.TILE_RIGHT_SHORT);
+	collision.boxRect[boxID.TILE_DOWN_L]=
+		CPP.Rect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		1,	coords.GROUND_H_OFFSET);
 
-	collision.cComp:AddCollisionBox(collision.boxTileLeftShort, collision.boxID.TILE_LEFT_SHORT, coords.LEFT_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_LEFT_SHORT);
-	collision.cComp:Deactivate(collision.boxID.TILE_RIGHT_SHORT);
+	local boxes = collision.boxRect
 
-	collision.cComp:AddCollisionBox(collision.boxTileUp, collision.boxID.TILE_UP, coords.UP_ORDER);
-	collision.cComp:CheckForTiles(collision.boxID.TILE_UP);
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_DOWN_R], boxID.TILE_DOWN_R, coords.GROUND_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_DOWN_R);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_DOWN_L], boxID.TILE_DOWN_L, coords.GROUND_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_DOWN_L);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_RIGHT], boxID.TILE_RIGHT, coords.RIGHT_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_RIGHT);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_LEFT], boxID.TILE_LEFT, coords.LEFT_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_LEFT);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_UP], boxID.TILE_UP, coords.UP_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_UP);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_RIGHT_SHORT], boxID.TILE_RIGHT_SHORT, coords.RIGHT_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_RIGHT_SHORT);
+	collision.cComp:Deactivate(boxID.TILE_RIGHT_SHORT);
+
+	collision.cComp:AddCollisionBox(boxes[boxID.TILE_LEFT_SHORT], boxID.TILE_LEFT_SHORT, coords.LEFT_ORDER);
+	collision.cComp:CheckForTiles(boxID.TILE_LEFT_SHORT);
+	collision.cComp:Deactivate(boxID.TILE_RIGHT_SHORT);
 
 	collision.groundTouch=false;
 end
@@ -214,11 +232,19 @@ function collision.Update(xspd, yspd)
 		collision.footHeightValue=math.floor(yspd + 0.5 + collision.FEET_OFFSET)+1
 	end
 
-	collision.cComp:ChangeHeight(collision.boxID.TILE_DOWN_R,  collision.footHeightValue);
-	collision.cComp:ChangeHeight(collision.boxID.TILE_DOWN_L,  collision.footHeightValue);
-	collision.cComp:ChangeHeight(collision.boxID.TILE_UP,		math.floor(yspd - 2.5));
-	collision.cComp:ChangeWidth(collision.boxID.TILE_LEFT,		math.floor(xspd - 0.5));
-	collision.cComp:ChangeWidth(collision.boxID.TILE_RIGHT,		math.floor(xspd + 0.5));
+	local boxID = collision.boxID
+	local boxes = collision.boxRect
+	boxes[boxID.TILE_DOWN_R].h 	= collision.footHeightValue
+	boxes[boxID.TILE_DOWN_L].h 	= collision.footHeightValue
+	boxes[boxID.TILE_LEFT].w 	= math.floor(xspd - 0.5)
+	boxes[boxID.TILE_RIGHT].w 	= math.floor(xspd + 0.5)
+	boxes[boxID.TILE_UP].h 		= math.floor(yspd - 2.5)
+
+	collision.cComp:SetShape(boxID.TILE_DOWN_R, boxes[boxID.TILE_DOWN_R]);
+	collision.cComp:SetShape(boxID.TILE_DOWN_L, boxes[boxID.TILE_DOWN_L]);
+	collision.cComp:SetShape(boxID.TILE_LEFT, 	boxes[boxID.TILE_LEFT]);
+	collision.cComp:SetShape(boxID.TILE_RIGHT,  boxes[boxID.TILE_RIGHT]);
+	collision.cComp:SetShape(boxID.TILE_UP,  	boxes[boxID.TILE_UP]);
 
 	collision.previous.tileLeft =false;
 	collision.previous.tileRight=false;
@@ -231,7 +257,7 @@ end
 
 function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 	--[[
-	The fact that this function has been called means that the CPP engine has decided a collision exists here
+	CPP engine has decided a collision exists here
 	]]--
 
 	--Easy access to context data

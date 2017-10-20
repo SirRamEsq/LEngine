@@ -1,8 +1,8 @@
 #include "CollisionBox.h"
 #include "CompPosition.h"
 
-CollisionBox::CollisionBox(unsigned int id, int order, uint8_t flags, const Shape* shape, ComponentPosition* pos)
-	: mId(id), mOrder(order), mFlags(flags), mPos(pos){
+CollisionBox::CollisionBox(int order, uint8_t flags, const Shape* shape, ComponentPosition* pos)
+	: mOrder(order), mFlags(flags), mPos(pos){
 
 	mActive = true;
 	ASSERT( mShape.get() != NULL);
@@ -64,6 +64,3 @@ uint8_t CollisionBox::Flags(){
 	return mFlags;
 }
 
-unsigned int CollisionBox::GetId(){
-	return mId;
-}

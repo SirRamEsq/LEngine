@@ -67,7 +67,7 @@ function container.NewGui(baseclass)
 		gui.animation = "test";
 		gui.mySpriteComp	= CPP.interface:GetSpriteComponent (EID);
 		gui.mainSpriteID	= gui.mySpriteComp:AddSprite(gui.sprite, gui.depth, 64, 64);
-		gui.CompSprite:SetAnimation		(gui.mainSpriteID, "test");
+		gui.mySpriteComp:SetAnimation		(gui.mainSpriteID, "test");
 
 		--just for giggles
 		local resolution = CPP.interface:GetResolution()

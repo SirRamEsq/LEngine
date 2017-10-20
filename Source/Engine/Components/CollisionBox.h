@@ -15,7 +15,7 @@ class ComponentPosition;
 
 class CollisionBox{
 	public:
-		CollisionBox(unsigned int id, int order, uint8_t flags, const Shape* shape, ComponentPosition* pos);
+		CollisionBox(int order, uint8_t flags, const Shape* shape, ComponentPosition* pos);
 		bool operator < (const CollisionBox &rhs) const;
 		CollisionResponse Collides(const CollisionBox* box);
 
@@ -30,12 +30,7 @@ class CollisionBox{
 		void SetFlags(uint8_t flags);
 		uint8_t Flags();
 
-		unsigned int GetId();
-
 	private:
-		///Unique identifier for this box
-		unsigned int mId;
-
 		uint8_t mFlags;
 
 		///Identifies whether this box is currently active
