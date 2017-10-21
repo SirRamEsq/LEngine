@@ -134,6 +134,8 @@ class Rect : public Shape{
 		inline Coord2df GetSize()			  const 	{return Coord2df(w,h);}
 		inline void     SetSize(Coord2df size) 			{w = size.x; h = size.y;}
 
+		Rect Round() const;
+
         float GetTop     () const;
         float GetBottom  () const;
         float GetLeft    () const;

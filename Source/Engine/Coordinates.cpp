@@ -43,6 +43,14 @@ Rect::Rect()
 
 }
 
+Rect Rect::Round() const{
+	auto xy = Coord2df(x,y);
+	auto wh = Coord2df(w,h);
+	xy = xy.Round();
+	wh = wh.Round();
+	return Rect(xy, wh);
+}
+
 std::unique_ptr<Shape> Rect::MakeCopy() const{
 	auto returnValue = std::make_unique<Rect>(x,y,w,h);
 	return returnValue;
