@@ -44,6 +44,7 @@ function container.NewLouie(baseclass)
 		louie.c.COL_HEIGHT=32; --HEIGHT of object sprite
 		louie.c.WIDTH=18; --WIDTH of object sprite
 		louie.c.HEIGHT=32; --HEIGHT of object sprite
+		louie.c.SIDEJUMP_XSPD = 2
 
 		louie.c.GRAVITY=0.21875;
 		louie.c.SLOPE_GRAVITY=0.15
@@ -52,7 +53,7 @@ function container.NewLouie(baseclass)
 		louie.c.JUMPHEIGHT_BOX = louie.c.JUMPHEIGHT - 1;
 		louie.c.ACCELERATION=.046875*2;
 		louie.c.ACCELERATION_AIR= louie.c.ACCELERATION;
-		louie.c.DEACCELERATION=1;
+		louie.c.DEACCELERATION=.6;
 		louie.c.ACCELERATION_TOP=4; --Max Speed Louie can acheive through normal acceleration
 		louie.c.ROLL_SPEED= louie.c.ACCELERATION_TOP+1;
 		louie.c.ROLL_TIMER=15;
@@ -168,7 +169,7 @@ function container.NewLouie(baseclass)
 		--Sound Effects
 			louie.SoundJump = "smw_jump.wav";
 			louie.SoundFireball = "smw_fireball.wav";
-			louie.SoundFirecoin = "smw_coin.wav";
+			louie.SoundCoin = "smw_coin.wav";
 	end
 
 	function louie.Initialize()
@@ -317,6 +318,11 @@ function container.NewLouie(baseclass)
 			louie.CompSprite:SetAnimationSpeed(louie.currentSpriteID, 0);
 		end
 
+		if(louie.isDecelerating) then
+			if(louie.tileCollision.groundTouch)then
+				louie.CompSprite:SetAnimation(louie.currentSpriteID, "Skid")
+			end
+		end
 		louie.CompSprite:SetScalingX(louie.currentSpriteID, louie.facingDir);
 
 		louie.CompSprite:SetScalingY(louie.currentSpriteID, 1);
@@ -581,7 +587,10 @@ function container.NewLouie(baseclass)
 		if(louie.currentState==louie.c.STATE_ROLL)then --long jump
 			louie.xspd = louie.xspd * 1.5;
 		elseif(louie.isDecelerating)then --side jump
-			louie.yspd = louie.yspd * 1.25
+			if(math.abs(louie.xspd) > 2)then
+				louie.yspd = louie.yspd * 1.25
+				louie.xspd = louie.c.SIDEJUMP_XSPD * louie.facingDir * -1
+			end	
 		end
 
 		CPP.interface:EventLuaBroadcastEvent(louie.EID, "JUMP");
