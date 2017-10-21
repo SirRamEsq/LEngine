@@ -66,6 +66,11 @@ void ComponentCollision::SetPrimaryCollisionBox(int boxid){
 void ComponentCollision::CheckForEntities(int boxid){
     CollisionBox* cb=GetColBox(boxid);
     if(cb!=NULL){cb->SetFlags( (cb->Flags() | ENT_CHECK) );}
+    else{
+        std::stringstream ss;
+        ss << "Couldn't find box id: " <<  boxid;
+        LOG_INFO(ss.str());
+    }
 }
 
 void ComponentCollision::CheckForTiles(int boxid){
@@ -96,11 +101,10 @@ CollisionBox* ComponentCollision::GetColBox(int boxid){
 }
 
 CollisionBox* ComponentCollision::GetPrimary(){
-    auto i=boxes.begin();
-    if(i==boxes.end()){return NULL;}
+    for (auto i=boxes.begin(); i != boxes.end(); i++){
+		if( (i->second.Flags()&PRIMARY) ){return &(i->second);}
+	}
 
-    //if the first box isn't primary, none of them are
-    if( (i->second.Flags()&PRIMARY) ){return &(i->second);}
     return NULL;
 }
 
@@ -240,9 +244,11 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
             //Adds box coordinates to entity's coordinates
 			boxIt1->second.UpdateWorldCoord();
             shape = boxIt1->second.GetWorldCoord();
+			//only rects for now
+			Rect r = (static_cast<const Rect*>(shape))->Round();
 
-            ul.x = shape->GetLeft();  ul.y = shape->GetTop();
-            dr.x = shape->GetRight(); dr.y = shape->GetBottom();
+            ul.x = r.GetLeft();  ul.y = r.GetTop();
+            dr.x = r.GetRight(); dr.y = r.GetBottom();
             int txx1=ul.x;
             int txx2=dr.x;
             int tyy1=ul.y;
@@ -270,8 +276,8 @@ void ComponentCollisionManager::UpdateCheckTileCollision(const RSC_Map* currentM
             int differenceX=txx2-txx1; //Both differences will always be positive
             int differenceY=tyy2-tyy1;
 
-            bool negativeH = (shape->GetOriginHorizontal() == Shape::Origin::Right);
-            bool negativeW = (shape->GetOriginVertical() == Shape::Origin::Bottom);
+            bool negativeH = (r.GetOriginHorizontal() == Shape::Origin::Right);
+            bool negativeW = (r.GetOriginVertical() == Shape::Origin::Bottom);
             int tx, ty;
 
             if(negativeW)   {tx=txx2;}
@@ -328,11 +334,12 @@ void CollisionGrid::UpdateBuckets(const std::unordered_map<EID, std::unique_ptr<
 
 		primaryBox->UpdateWorldCoord();
         shape = primaryBox->GetWorldCoord();
+		Rect r = (static_cast<const Rect*>(shape))->Round();
 
-        hashes.insert( (shape->GetLeft()  / COLLISION_GRID_SIZE) + ( (shape->GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
-        hashes.insert( (shape->GetRight() / COLLISION_GRID_SIZE) + ( (shape->GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
-        hashes.insert( (shape->GetLeft()  / COLLISION_GRID_SIZE) + ( (shape->GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
-        hashes.insert( (shape->GetRight() / COLLISION_GRID_SIZE) + ( (shape->GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (r.GetLeft()  / COLLISION_GRID_SIZE) + ( (r.GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (r.GetRight() / COLLISION_GRID_SIZE) + ( (r.GetTop()    / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (r.GetLeft()  / COLLISION_GRID_SIZE) + ( (r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
+        hashes.insert( (r.GetRight() / COLLISION_GRID_SIZE) + ( (r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels) );
 
         for(auto hashIt = hashes.begin(); hashIt != hashes.end(); hashIt++){
             buckets[*hashIt].push_back(it->second->GetEID());
