@@ -1,4 +1,5 @@
 #include "Coordinates.h"
+#include <memory>
 
 CollisionResponse::CollisionResponse(const Coord2df& vec, bool collided)
 	: mVector(vec), mCollided(collided){
@@ -53,7 +54,7 @@ Rect Rect::Round() const{
 
 std::unique_ptr<Shape> Rect::MakeCopy() const{
 	auto returnValue = std::make_unique<Rect>(x,y,w,h);
-	return returnValue;
+	return std::move(returnValue);
 }
 
 Shape::Origin Rect::GetOriginHorizontal() const{
@@ -132,7 +133,7 @@ Shape::Origin Circle::GetOriginVertical() const{
 
 std::unique_ptr<Shape> Circle::MakeCopy() const{
 	auto returnValue = std::make_unique<Circle>(x,y,r);
-	return returnValue;
+	return std::move(returnValue);
 }
 
 Coord2df Circle::GetCenter() const{
