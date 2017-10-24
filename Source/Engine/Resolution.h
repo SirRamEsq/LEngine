@@ -13,27 +13,27 @@
  *
  * Is a singleton class, as only one screenspace will be drawn to
  */
-class Resolution{
-	Resolution();
+class Resolution {
+  Resolution();
 
-	public:
-		/*
-		 * Sets mResolutionX and mResolutionY
-		 * to value obtained from SDL_Window
-		 */
-		static void UpdateResolution(SDL_Window* window);
-		static Coord2df GetResolution();
+ public:
+  /*
+   * Sets mResolutionX and mResolutionY
+   * to value obtained from SDL_Window
+   */
+  static void UpdateResolution(SDL_Window *window);
+  static Coord2df GetResolution();
 
-		static void SetVirtualResolution(const Coord2df& res);
-		static Coord2df GetVirtualResolution();
+  static void SetVirtualResolution(const Coord2df &res);
+  static Coord2df GetVirtualResolution();
 
-	private:
-		static unsigned int mResolutionX;
-		static unsigned int mResolutionY;
-		static unsigned int mVirtualResolutionX;
-		static unsigned int mVirtualResolutionY;
+ private:
+  static unsigned int mResolutionX;
+  static unsigned int mResolutionY;
+  static unsigned int mVirtualResolutionX;
+  static unsigned int mVirtualResolutionY;
 
-		static float mVirtualAspectRatio;
+  static float mVirtualAspectRatio;
 };
 
 #endif

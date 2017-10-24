@@ -1,48 +1,44 @@
 #ifndef LENGINE_COMP_COLLISION_BOX
 #define LENGINE_COMP_COLLISION_BOX
 
-#include "../Defines.h"
 #include "../Coordinates.h"
+#include "../Defines.h"
 
-
-enum CB_FLAGS{
-    PRIMARY		= 1,
-    ENT_CHECK	= 2,
-    TILE_CHECK	= 4
-};
+enum CB_FLAGS { PRIMARY = 1, ENT_CHECK = 2, TILE_CHECK = 4 };
 
 class ComponentPosition;
 
-class CollisionBox{
-	public:
-		CollisionBox(int order, uint8_t flags, const Shape* shape, ComponentPosition* pos);
-		bool operator < (const CollisionBox &rhs) const;
-		CollisionResponse Collides(const CollisionBox* box);
+class CollisionBox {
+ public:
+  CollisionBox(int order, uint8_t flags, const Shape *shape,
+               ComponentPosition *pos);
+  bool operator<(const CollisionBox &rhs) const;
+  CollisionResponse Collides(const CollisionBox *box);
 
-		void Activate();
-		void Deactivate();
-		bool IsActive() const;
+  void Activate();
+  void Deactivate();
+  bool IsActive() const;
 
-		void SetShape(const Shape* shape);
-		void UpdateWorldCoord();
-		const Shape* GetWorldCoord();
+  void SetShape(const Shape *shape);
+  void UpdateWorldCoord();
+  const Shape *GetWorldCoord();
 
-		void SetFlags(uint8_t flags);
-		uint8_t Flags();
+  void SetFlags(uint8_t flags);
+  uint8_t Flags();
 
-	private:
-		uint8_t mFlags;
+ private:
+  uint8_t mFlags;
 
-		///Identifies whether this box is currently active
-		bool mActive;
+  /// Identifies whether this box is currently active
+  bool mActive;
 
-		///Identifies the order in which this box is processed
-		int mOrder;
+  /// Identifies the order in which this box is processed
+  int mOrder;
 
-		///Dependency on compPosition... may remove
-		ComponentPosition* mPos;
+  /// Dependency on compPosition... may remove
+  ComponentPosition *mPos;
 
-		std::unique_ptr<Shape> mShape;
-		std::unique_ptr<Shape> mShapeToWorldCoords;
+  std::unique_ptr<Shape> mShape;
+  std::unique_ptr<Shape> mShapeToWorldCoords;
 };
 #endif
