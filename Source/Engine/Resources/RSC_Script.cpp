@@ -1,27 +1,26 @@
 #include "RSC_Script.h"
 #include "../Defines.h"
-#include "ResourceLoading.h"
 #include "../Kernel.h"
+#include "ResourceLoading.h"
 
-RSC_Script::RSC_Script(std::string sname, const char* dat, unsigned int fsize)
- : scriptName(sname), script(dat,fsize){}
+RSC_Script::RSC_Script(std::string sname, const char *dat, unsigned int fsize)
+    : scriptName(sname), script(dat, fsize) {}
 
- RSC_Script::~RSC_Script(){
- }
+RSC_Script::~RSC_Script() {}
 
- std::unique_ptr<RSC_Script> RSC_Script::LoadResource(const std::string& fname){
-    std::unique_ptr<RSC_Script> script = NULL;
-    try{
-        std::string fullPath = "Resources/Scripts/"+fname;
-        auto data=LoadGenericFile(fullPath);
-        if(data.get()->GetData()==NULL){
-            return NULL;
-        }
-        script = std::make_unique<RSC_Script>(fname, data.get()->GetData(), data.get()->length);
+std::unique_ptr<RSC_Script> RSC_Script::LoadResource(const std::string &fname) {
+  std::unique_ptr<RSC_Script> script = NULL;
+  try {
+    std::string fullPath = "Resources/Scripts/" + fname;
+    auto data = LoadGenericFile(fullPath);
+    if (data.get()->GetData() == NULL) {
+      return NULL;
     }
-    catch(LEngineFileException e){
-        LOG_INFO(e.what());
-    }
+    script = std::make_unique<RSC_Script>(fname, data.get()->GetData(),
+                                          data.get()->length);
+  } catch (LEngineFileException e) {
+    LOG_INFO(e.what());
+  }
 
-    return script;
- }
+  return script;
+}

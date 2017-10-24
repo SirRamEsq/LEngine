@@ -5,99 +5,112 @@
 #include "physfs.h"
 
 #include <fstream>
-#include <string>
-#include <vector>
+#include <inttypes.h>
 #include <map>
 #include <memory>
-#include <inttypes.h>
+#include <string>
+#include <vector>
 
-class Log{;
-    public:
-        class Exception : public LEngineException{using LEngineException::LEngineException;};
-        enum SEVERITY{
-            FATAL = 1,
-            ERROR = 2,
-            WARN = 4,
-            INFO = 8,
-            DEBUG = 16,
-            TRACE = 32 
-        };
+class Log {
+  ;
 
-		struct Entry{
-			Entry(const std::string& text, Log::SEVERITY s, const std::string& ty, uint32_t time);
+ public:
+  class Exception : public LEngineException {
+    using LEngineException::LEngineException;
+  };
+  enum SEVERITY {
+    FATAL = 1,
+    ERROR = 2,
+    WARN = 4,
+    INFO = 8,
+    DEBUG = 16,
+    TRACE = 32
+  };
 
-			Log::SEVERITY severity;
-			std::string type;
-			std::string message;
-			uint32_t timeStamp;
+  struct Entry {
+    Entry(const std::string &text, Log::SEVERITY s, const std::string &ty,
+          uint32_t time);
 
-			std::string ToString() const;
-		};
+    Log::SEVERITY severity;
+    std::string type;
+    std::string message;
+    uint32_t timeStamp;
 
-		///Signature of function used to determine if an entry is filtered or not
-		typedef bool (*fp_EntryFilter)(const Entry& entry, int flags, int itemCount);
+    std::string ToString() const;
+  };
 
+  /// Signature of function used to determine if an entry is filtered or not
+  typedef bool (*fp_EntryFilter)(const Entry &entry, int flags, int itemCount);
 
-		Log();
-        ~Log();
+  Log();
+  ~Log();
 
-		///Set filter to use when calling GetEntries
-		void SetEntryFilter(fp_EntryFilter filter);
-		///Set filter flags to use for different severity levels
-		void SetEntryFilterFlags(int flags);
-		///Returns all entries. Will use filter set by SetEntryFilter if one was passed
-		std::vector<const Entry*> GetEntries() const;
+  /// Set filter to use when calling GetEntries
+  void SetEntryFilter(fp_EntryFilter filter);
+  /// Set filter flags to use for different severity levels
+  void SetEntryFilterFlags(int flags);
+  /// Returns all entries. Will use filter set by SetEntryFilter if one was
+  /// passed
+  std::vector<const Entry *> GetEntries() const;
 
-		/**
-		 * Will write a new entry to entries
-		 * \param text Text to write
-		 * \param severity Severity of message
-		 * \param type Optional metadata about the Entry's type
-		 */
-        void Write (const std::string& text, SEVERITY severity = SEVERITY::INFO, const std::string& type = Log::typeDefault) const;
+  /**
+   * Will write a new entry to entries
+   * \param text Text to write
+   * \param severity Severity of message
+   * \param type Optional metadata about the Entry's type
+   */
+  void Write(const std::string &text, SEVERITY severity = SEVERITY::INFO,
+             const std::string &type = Log::typeDefault) const;
 
-		///If called, all entries will henceforth be written to this file
-		void WriteToFile(const std::string& fileName);
+  /// If called, all entries will henceforth be written to this file
+  void WriteToFile(const std::string &fileName);
 
+  /// Default value for Entry::type
+  static const std::string typeDefault;
+  /// fileExtension used when saving to file
+  static const std::string fileExtension;
+  /// file path used when saving to file
+  static const std::string logPath;
 
-		///Default value for Entry::type
-        static const std::string typeDefault;
-		///fileExtension used when saving to file
-        static const std::string fileExtension;
-		///file path used when saving to file
-        static const std::string logPath;
+  /// Stores string reprentation of different severity levels
+  static std::map<SEVERITY, std::string> SEVERITY_STR;
+  /// Will write the entries to a file
+  static void WriteEntriesToFile(const std::vector<const Entry *> _entries,
+                                 const std::string &fileName);
 
-		///Stores string reprentation of different severity levels
-        static std::map<SEVERITY, std::string> SEVERITY_STR;
-		///Will write the entries to a file
-		static void WriteEntriesToFile(const std::vector<const Entry*> _entries, const std::string& fileName);
+  static Log staticLog;
 
-		static Log staticLog;
-    protected:
-		///All entries written to this log
-		mutable std::vector<Entry> entries;
+ protected:
+  /// All entries written to this log
+  mutable std::vector<Entry> entries;
 
-    private:
-		///Filter used when calling GetEntries
-		fp_EntryFilter entryFilter;
-		int filterFlags;
-        std::ofstream* GetFilePointer(const std::string& fname);
+ private:
+  /// Filter used when calling GetEntries
+  fp_EntryFilter entryFilter;
+  int filterFlags;
+  std::ofstream *GetFilePointer(const std::string &fname);
 
-		PHYSFS_File* fileHandle; 
+  PHYSFS_File *fileHandle;
 
-		///Closes currently opened file
-		void CloseFileHandle();
+  /// Closes currently opened file
+  void CloseFileHandle();
 
-		///Returns the date formated specially for fileNames
-		static std::string GetDateString();
+  /// Returns the date formated specially for fileNames
+  static std::string GetDateString();
 };
 
-//more laconic access
-#define LOG_FATAL(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::FATAL);
-#define LOG_ERROR(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::ERROR);
-#define LOG_WARN(stdString)  Log::staticLog.Write(stdString, Log::SEVERITY::WARN);
-#define LOG_INFO(stdString)  Log::staticLog.Write(stdString, Log::SEVERITY::INFO);
-#define LOG_DEBUG(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::DEBUG);
-#define LOG_TRACE(stdString) Log::staticLog.Write(stdString, Log::SEVERITY::TRACE);
+// more laconic access
+#define LOG_FATAL(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::FATAL);
+#define LOG_ERROR(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::ERROR);
+#define LOG_WARN(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::WARN);
+#define LOG_INFO(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::INFO);
+#define LOG_DEBUG(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::DEBUG);
+#define LOG_TRACE(stdString) \
+  Log::staticLog.Write(stdString, Log::SEVERITY::TRACE);
 
 #endif

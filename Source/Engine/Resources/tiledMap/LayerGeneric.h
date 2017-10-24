@@ -1,54 +1,60 @@
 #ifndef LENGINE_TILED_LAYER_GENERIC
 #define LENGINE_TILED_LAYER_GENERIC
 
-#include "Helpers.h"
 #include "GID.h"
+#include "Helpers.h"
 
 class RSC_MapImpl;
 class TiledData;
 
-//A TiledTileLayer defines the make up of a layer of terrain from the TiledSet that it makes use of
-//The TiledTileLayer is, at it's core, a 2d array of GID values from a single TileSet.
-//In addition to the properties outlined in the TiledSet, the TiledTileLayer can override and add to those properties.
-class TiledLayerGeneric{
-    friend RSC_MapImpl;
-    friend TiledData;
-    public:
-        TiledLayerGeneric(const unsigned int& tileW, const unsigned int& tileH, const std::string& name,
-                          const MAP_DEPTH& depth, const GIDManager* g, const L_TILED_LAYER_TYPE& type=LAYER_GENERIC);
-        virtual ~TiledLayerGeneric(){}
+// A TiledTileLayer defines the make up of a layer of terrain from the TiledSet
+// that it makes use of
+// The TiledTileLayer is, at it's core, a 2d array of GID values from a single
+// TileSet.
+// In addition to the properties outlined in the TiledSet, the TiledTileLayer
+// can override and add to those properties.
+class TiledLayerGeneric {
+  friend RSC_MapImpl;
+  friend TiledData;
 
-        //Width and Height in Pixels
-        const unsigned int pixelWidth;
-        const unsigned int pixelHeight;
+ public:
+  TiledLayerGeneric(const unsigned int &tileW, const unsigned int &tileH,
+                    const std::string &name, const MAP_DEPTH &depth,
+                    const GIDManager *g,
+                    const L_TILED_LAYER_TYPE &type = LAYER_GENERIC);
+  virtual ~TiledLayerGeneric() {}
 
-        //Width and Height in Tiles
-        const unsigned int tileWidth;
-        const unsigned int tileHeight;
+  // Width and Height in Pixels
+  const unsigned int pixelWidth;
+  const unsigned int pixelHeight;
 
-        const L_TILED_LAYER_TYPE layerType;
-        const std::string layerName;
+  // Width and Height in Tiles
+  const unsigned int tileWidth;
+  const unsigned int tileHeight;
 
-        //GID Manager for the RSC_Map that this layer is a part of
-        const GIDManager*  GIDM;
+  const L_TILED_LAYER_TYPE layerType;
+  const std::string layerName;
 
-        float       GetAlpha  () const {return layerOpacity;}
-        int         GetFlags  () const {return layerFlags;  }
-		void 	SetAlpha(float a){layerOpacity = a;}
-        bool        IsVisible () const {return layerVisible;}
-        bool        Ignore    () const;
-        MAP_DEPTH   GetDepth  () const {return layerDepth;  }
+  // GID Manager for the RSC_Map that this layer is a part of
+  const GIDManager *GIDM;
 
-        std::string GetPropertyValue(const std::string& propertyName) const;
-        bool        PropertyExists  (const std::string& propertyName) const;
+  float GetAlpha() const { return layerOpacity; }
+  int GetFlags() const { return layerFlags; }
+  void SetAlpha(float a) { layerOpacity = a; }
+  bool IsVisible() const { return layerVisible; }
+  bool Ignore() const;
+  MAP_DEPTH GetDepth() const { return layerDepth; }
 
-    protected:
-        int         layerFlags;
-        MAP_DEPTH   layerDepth;
-        float       layerOpacity;
-        bool        layerVisible;
+  std::string GetPropertyValue(const std::string &propertyName) const;
+  bool PropertyExists(const std::string &propertyName) const;
 
-        PropertyMap properties;
+ protected:
+  int layerFlags;
+  MAP_DEPTH layerDepth;
+  float layerOpacity;
+  bool layerVisible;
+
+  PropertyMap properties;
 };
 
 #endif

@@ -128,9 +128,9 @@
  *
  * PhysicsFS is mostly thread safe. The error messages returned by
  *  PHYSFS_getLastError are unique by thread, and library-state-setting
- *  functions are mutex'd. For efficiency, individual file accesses are 
- *  not locked, so you can not safely read/write/seek/close/etc the same 
- *  file from two threads at the same time. Other race conditions are bugs 
+ *  functions are mutex'd. For efficiency, individual file accesses are
+ *  not locked, so you can not safely read/write/seek/close/etc the same
+ *  file from two threads at the same time. Other race conditions are bugs
  *  that should be reported/patched.
  *
  * While you CAN use stdio/syscall file access in a program that has PHYSFS_*
@@ -228,43 +228,43 @@ extern "C" {
 #else
 #define __EXPORT__
 #endif
-#endif  /* DOXYGEN_SHOULD_IGNORE_THIS */
+#endif /* DOXYGEN_SHOULD_IGNORE_THIS */
 
 /**
  * \typedef PHYSFS_uint8
  * \brief An unsigned, 8-bit integer type.
  */
-typedef unsigned char         PHYSFS_uint8;
+typedef unsigned char PHYSFS_uint8;
 
 /**
  * \typedef PHYSFS_sint8
  * \brief A signed, 8-bit integer type.
  */
-typedef signed char           PHYSFS_sint8;
+typedef signed char PHYSFS_sint8;
 
 /**
  * \typedef PHYSFS_uint16
  * \brief An unsigned, 16-bit integer type.
  */
-typedef unsigned short        PHYSFS_uint16;
+typedef unsigned short PHYSFS_uint16;
 
 /**
  * \typedef PHYSFS_sint16
  * \brief A signed, 16-bit integer type.
  */
-typedef signed short          PHYSFS_sint16;
+typedef signed short PHYSFS_sint16;
 
 /**
  * \typedef PHYSFS_uint32
  * \brief An unsigned, 32-bit integer type.
  */
-typedef unsigned int          PHYSFS_uint32;
+typedef unsigned int PHYSFS_uint32;
 
 /**
  * \typedef PHYSFS_sint32
  * \brief A signed, 32-bit integer type.
  */
-typedef signed int            PHYSFS_sint32;
+typedef signed int PHYSFS_sint32;
 
 /**
  * \typedef PHYSFS_uint64
@@ -280,23 +280,21 @@ typedef signed int            PHYSFS_sint32;
  *           equivalent to PHYSFS_sint32!
  */
 
-
-#if (defined PHYSFS_NO_64BIT_SUPPORT)  /* oh well. */
-typedef PHYSFS_uint32         PHYSFS_uint64;
-typedef PHYSFS_sint32         PHYSFS_sint64;
+#if (defined PHYSFS_NO_64BIT_SUPPORT) /* oh well. */
+typedef PHYSFS_uint32 PHYSFS_uint64;
+typedef PHYSFS_sint32 PHYSFS_sint64;
 #elif (defined _MSC_VER)
-typedef signed __int64        PHYSFS_sint64;
-typedef unsigned __int64      PHYSFS_uint64;
+typedef signed __int64 PHYSFS_sint64;
+typedef unsigned __int64 PHYSFS_uint64;
 #else
-typedef unsigned long long    PHYSFS_uint64;
-typedef signed long long      PHYSFS_sint64;
+typedef unsigned long long PHYSFS_uint64;
+typedef signed long long PHYSFS_sint64;
 #endif
-
 
 #ifndef DOXYGEN_SHOULD_IGNORE_THIS
 /* Make sure the types really have the right sizes */
-#define PHYSFS_COMPILE_TIME_ASSERT(name, x)               \
-       typedef int PHYSFS_dummy_ ## name[(x) * 2 - 1]
+#define PHYSFS_COMPILE_TIME_ASSERT(name, x) \
+  typedef int PHYSFS_dummy_##name[(x)*2 - 1]
 
 PHYSFS_COMPILE_TIME_ASSERT(uint8, sizeof(PHYSFS_uint8) == 1);
 PHYSFS_COMPILE_TIME_ASSERT(sint8, sizeof(PHYSFS_sint8) == 1);
@@ -312,8 +310,7 @@ PHYSFS_COMPILE_TIME_ASSERT(sint64, sizeof(PHYSFS_sint64) == 8);
 
 #undef PHYSFS_COMPILE_TIME_ASSERT
 
-#endif  /* DOXYGEN_SHOULD_IGNORE_THIS */
-
+#endif /* DOXYGEN_SHOULD_IGNORE_THIS */
 
 /**
  * \struct PHYSFS_File
@@ -338,11 +335,9 @@ PHYSFS_COMPILE_TIME_ASSERT(sint64, sizeof(PHYSFS_sint64) == 8);
  * \sa PHYSFS_setBuffer
  * \sa PHYSFS_flush
  */
-typedef struct PHYSFS_File
-{
-    void *opaque;  /**< That's all you get. Don't touch. */
+typedef struct PHYSFS_File {
+  void *opaque; /**< That's all you get. Don't touch. */
 } PHYSFS_File;
-
 
 /**
  * \def PHYSFS_file
@@ -356,7 +351,6 @@ typedef struct PHYSFS_File
  * \sa PHYSFS_File
  */
 #define PHYSFS_file PHYSFS_File
-
 
 /**
  * \struct PHYSFS_ArchiveInfo
@@ -373,14 +367,12 @@ typedef struct PHYSFS_File
  *
  * \sa PHYSFS_supportedArchiveTypes
  */
-typedef struct PHYSFS_ArchiveInfo
-{
-    const char *extension;   /**< Archive file extension: "ZIP", for example. */
-    const char *description; /**< Human-readable archive description. */
-    const char *author;      /**< Person who did support for this archive. */
-    const char *url;         /**< URL related to this archive */
+typedef struct PHYSFS_ArchiveInfo {
+  const char *extension;   /**< Archive file extension: "ZIP", for example. */
+  const char *description; /**< Human-readable archive description. */
+  const char *author;      /**< Person who did support for this archive. */
+  const char *url;         /**< URL related to this archive */
 } PHYSFS_ArchiveInfo;
-
 
 /**
  * \struct PHYSFS_Version
@@ -395,19 +387,17 @@ typedef struct PHYSFS_ArchiveInfo
  * \sa PHYSFS_VERSION
  * \sa PHYSFS_getLinkedVersion
  */
-typedef struct PHYSFS_Version
-{
-    PHYSFS_uint8 major; /**< major revision */
-    PHYSFS_uint8 minor; /**< minor revision */
-    PHYSFS_uint8 patch; /**< patchlevel */
+typedef struct PHYSFS_Version {
+  PHYSFS_uint8 major; /**< major revision */
+  PHYSFS_uint8 minor; /**< minor revision */
+  PHYSFS_uint8 patch; /**< patchlevel */
 } PHYSFS_Version;
 
 #ifndef DOXYGEN_SHOULD_IGNORE_THIS
 #define PHYSFS_VER_MAJOR 2
 #define PHYSFS_VER_MINOR 0
 #define PHYSFS_VER_PATCH 2
-#endif  /* DOXYGEN_SHOULD_IGNORE_THIS */
-
+#endif /* DOXYGEN_SHOULD_IGNORE_THIS */
 
 /* PhysicsFS state stuff ... */
 
@@ -427,13 +417,12 @@ typedef struct PHYSFS_Version
  * \sa PHYSFS_Version
  * \sa PHYSFS_getLinkedVersion
  */
-#define PHYSFS_VERSION(x) \
-{ \
+#define PHYSFS_VERSION(x)          \
+  {                                \
     (x)->major = PHYSFS_VER_MAJOR; \
     (x)->minor = PHYSFS_VER_MINOR; \
     (x)->patch = PHYSFS_VER_PATCH; \
-}
-
+  }
 
 /**
  * \fn void PHYSFS_getLinkedVersion(PHYSFS_Version *ver)
@@ -463,7 +452,6 @@ typedef struct PHYSFS_Version
  */
 __EXPORT__ void PHYSFS_getLinkedVersion(PHYSFS_Version *ver);
 
-
 /**
  * \fn int PHYSFS_init(const char *argv0)
  * \brief Initialize the PhysicsFS library.
@@ -485,7 +473,6 @@ __EXPORT__ void PHYSFS_getLinkedVersion(PHYSFS_Version *ver);
  * \sa PHYSFS_isInit
  */
 __EXPORT__ int PHYSFS_init(const char *argv0);
-
 
 /**
  * \fn int PHYSFS_deinit(void)
@@ -514,7 +501,6 @@ __EXPORT__ int PHYSFS_init(const char *argv0);
  * \sa PHYSFS_isInit
  */
 __EXPORT__ int PHYSFS_deinit(void);
-
 
 /**
  * \fn const PHYSFS_ArchiveInfo **PHYSFS_supportedArchiveTypes(void)
@@ -546,7 +532,6 @@ __EXPORT__ int PHYSFS_deinit(void);
  */
 __EXPORT__ const PHYSFS_ArchiveInfo **PHYSFS_supportedArchiveTypes(void);
 
-
 /**
  * \fn void PHYSFS_freeList(void *listVar)
  * \brief Deallocate resources of lists returned by PhysicsFS.
@@ -561,7 +546,6 @@ __EXPORT__ const PHYSFS_ArchiveInfo **PHYSFS_supportedArchiveTypes(void);
  * \sa PHYSFS_getSearchPath
  */
 __EXPORT__ void PHYSFS_freeList(void *listVar);
-
 
 /**
  * \fn const char *PHYSFS_getLastError(void)
@@ -583,7 +567,6 @@ __EXPORT__ void PHYSFS_freeList(void *listVar);
  */
 __EXPORT__ const char *PHYSFS_getLastError(void);
 
-
 /**
  * \fn const char *PHYSFS_getDirSeparator(void)
  * \brief Get platform-dependent dir separator string.
@@ -598,7 +581,6 @@ __EXPORT__ const char *PHYSFS_getLastError(void);
  *   \return READ ONLY null-terminated string of platform's dir separator.
  */
 __EXPORT__ const char *PHYSFS_getDirSeparator(void);
-
 
 /**
  * \fn void PHYSFS_permitSymbolicLinks(int allow)
@@ -631,7 +613,6 @@ __EXPORT__ const char *PHYSFS_getDirSeparator(void);
  * \sa PHYSFS_symbolicLinksPermitted
  */
 __EXPORT__ void PHYSFS_permitSymbolicLinks(int allow);
-
 
 /* !!! FIXME: const this? */
 /**
@@ -675,7 +656,6 @@ __EXPORT__ void PHYSFS_permitSymbolicLinks(int allow);
  */
 __EXPORT__ char **PHYSFS_getCdRomDirs(void);
 
-
 /**
  * \fn const char *PHYSFS_getBaseDir(void)
  * \brief Get the path where the application resides.
@@ -693,7 +673,6 @@ __EXPORT__ char **PHYSFS_getCdRomDirs(void);
  * \sa PHYSFS_getUserDir
  */
 __EXPORT__ const char *PHYSFS_getBaseDir(void);
-
 
 /**
  * \fn const char *PHYSFS_getUserDir(void)
@@ -717,7 +696,6 @@ __EXPORT__ const char *PHYSFS_getBaseDir(void);
  */
 __EXPORT__ const char *PHYSFS_getUserDir(void);
 
-
 /**
  * \fn const char *PHYSFS_getWriteDir(void)
  * \brief Get path where PhysicsFS will allow file writing.
@@ -730,7 +708,6 @@ __EXPORT__ const char *PHYSFS_getUserDir(void);
  * \sa PHYSFS_setWriteDir
  */
 __EXPORT__ const char *PHYSFS_getWriteDir(void);
-
 
 /**
  * \fn int PHYSFS_setWriteDir(const char *newDir)
@@ -753,7 +730,6 @@ __EXPORT__ const char *PHYSFS_getWriteDir(void);
  */
 __EXPORT__ int PHYSFS_setWriteDir(const char *newDir);
 
-
 /**
  * \fn int PHYSFS_addToSearchPath(const char *newDir, int appendToPath)
  * \brief Add an archive or directory to the search path.
@@ -769,7 +745,6 @@ __EXPORT__ int PHYSFS_setWriteDir(const char *newDir);
  * \sa PHYSFS_getSearchPath
  */
 __EXPORT__ int PHYSFS_addToSearchPath(const char *newDir, int appendToPath);
-
 
 /**
  * \fn int PHYSFS_removeFromSearchPath(const char *oldDir)
@@ -789,7 +764,6 @@ __EXPORT__ int PHYSFS_addToSearchPath(const char *newDir, int appendToPath);
  * \sa PHYSFS_getSearchPath
  */
 __EXPORT__ int PHYSFS_removeFromSearchPath(const char *oldDir);
-
 
 /**
  * \fn char **PHYSFS_getSearchPath(void)
@@ -819,9 +793,9 @@ __EXPORT__ int PHYSFS_removeFromSearchPath(const char *oldDir);
  */
 __EXPORT__ char **PHYSFS_getSearchPath(void);
 
-
 /**
- * \fn int PHYSFS_setSaneConfig(const char *organization, const char *appName, const char *archiveExt, int includeCdRoms, int archivesFirst)
+ * \fn int PHYSFS_setSaneConfig(const char *organization, const char *appName,
+ * const char *archiveExt, int includeCdRoms, int archivesFirst)
  * \brief Set up sane, default paths.
  *
  * Helper function.
@@ -878,11 +852,8 @@ __EXPORT__ char **PHYSFS_getSearchPath(void);
  *          gleaned from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_setSaneConfig(const char *organization,
-                                    const char *appName,
-                                    const char *archiveExt,
-                                    int includeCdRoms,
-                                    int archivesFirst);
-
+                                    const char *appName, const char *archiveExt,
+                                    int includeCdRoms, int archivesFirst);
 
 /* Directory management stuff ... */
 
@@ -908,7 +879,6 @@ __EXPORT__ int PHYSFS_setSaneConfig(const char *organization,
  * \sa PHYSFS_delete
  */
 __EXPORT__ int PHYSFS_mkdir(const char *dirName);
-
 
 /**
  * \fn int PHYSFS_delete(const char *filename)
@@ -942,7 +912,6 @@ __EXPORT__ int PHYSFS_mkdir(const char *dirName);
  */
 __EXPORT__ int PHYSFS_delete(const char *filename);
 
-
 /**
  * \fn const char *PHYSFS_getRealDir(const char *filename)
  * \brief Figure out where in the search path a file resides.
@@ -969,7 +938,6 @@ __EXPORT__ int PHYSFS_delete(const char *filename);
  *             the file in question. NULL if not found.
  */
 __EXPORT__ const char *PHYSFS_getRealDir(const char *filename);
-
 
 /**
  * \fn char **PHYSFS_enumerateFiles(const char *dir)
@@ -1011,7 +979,6 @@ __EXPORT__ const char *PHYSFS_getRealDir(const char *filename);
  */
 __EXPORT__ char **PHYSFS_enumerateFiles(const char *dir);
 
-
 /**
  * \fn int PHYSFS_exists(const char *fname)
  * \brief Determine if a file exists in the search path.
@@ -1030,7 +997,6 @@ __EXPORT__ char **PHYSFS_enumerateFiles(const char *dir);
  * \sa PHYSFS_isSymbolicLink
  */
 __EXPORT__ int PHYSFS_exists(const char *fname);
-
 
 /**
  * \fn int PHYSFS_isDirectory(const char *fname)
@@ -1051,7 +1017,6 @@ __EXPORT__ int PHYSFS_exists(const char *fname);
  */
 __EXPORT__ int PHYSFS_isDirectory(const char *fname);
 
-
 /**
  * \fn int PHYSFS_isSymbolicLink(const char *fname)
  * \brief Determine if a file in the search path is really a symbolic link.
@@ -1071,7 +1036,6 @@ __EXPORT__ int PHYSFS_isDirectory(const char *fname);
  */
 __EXPORT__ int PHYSFS_isSymbolicLink(const char *fname);
 
-
 /**
  * \fn PHYSFS_sint64 PHYSFS_getLastModTime(const char *filename)
  * \brief Get the last modification time of a file.
@@ -1086,7 +1050,6 @@ __EXPORT__ int PHYSFS_isSymbolicLink(const char *fname);
  *  \return last modified time of the file. -1 if it can't be determined.
  */
 __EXPORT__ PHYSFS_sint64 PHYSFS_getLastModTime(const char *filename);
-
 
 /* i/o stuff... */
 
@@ -1114,7 +1077,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_getLastModTime(const char *filename);
  */
 __EXPORT__ PHYSFS_File *PHYSFS_openWrite(const char *filename);
 
-
 /**
  * \fn PHYSFS_File *PHYSFS_openAppend(const char *filename)
  * \brief Open a file for appending.
@@ -1140,7 +1102,6 @@ __EXPORT__ PHYSFS_File *PHYSFS_openWrite(const char *filename);
  */
 __EXPORT__ PHYSFS_File *PHYSFS_openAppend(const char *filename);
 
-
 /**
  * \fn PHYSFS_File *PHYSFS_openRead(const char *filename)
  * \brief Open a file for reading.
@@ -1165,7 +1126,6 @@ __EXPORT__ PHYSFS_File *PHYSFS_openAppend(const char *filename);
  */
 __EXPORT__ PHYSFS_File *PHYSFS_openRead(const char *filename);
 
-
 /**
  * \fn int PHYSFS_close(PHYSFS_File *handle)
  * \brief Close a PhysicsFS filehandle.
@@ -1186,9 +1146,9 @@ __EXPORT__ PHYSFS_File *PHYSFS_openRead(const char *filename);
  */
 __EXPORT__ int PHYSFS_close(PHYSFS_File *handle);
 
-
 /**
- * \fn PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle, void *buffer, PHYSFS_uint32 objSize, PHYSFS_uint32 objCount)
+ * \fn PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle, void *buffer,
+ * PHYSFS_uint32 objSize, PHYSFS_uint32 objCount)
  * \brief Read data from a PhysicsFS filehandle
  *
  * The file must be opened for reading.
@@ -1203,13 +1163,13 @@ __EXPORT__ int PHYSFS_close(PHYSFS_File *handle);
  *
  * \sa PHYSFS_eof
  */
-__EXPORT__ PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle,
-                                     void *buffer,
+__EXPORT__ PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle, void *buffer,
                                      PHYSFS_uint32 objSize,
                                      PHYSFS_uint32 objCount);
 
 /**
- * \fn PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle, const void *buffer, PHYSFS_uint32 objSize, PHYSFS_uint32 objCount)
+ * \fn PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle, const void *buffer,
+ * PHYSFS_uint32 objSize, PHYSFS_uint32 objCount)
  * \brief Write data to a PhysicsFS filehandle
  *
  * The file must be opened for writing.
@@ -1221,11 +1181,9 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_read(PHYSFS_File *handle,
  *  \return number of objects written. PHYSFS_getLastError() can shed light on
  *           the reason this might be < (objCount). -1 if complete failure.
  */
-__EXPORT__ PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle,
-                                      const void *buffer,
+__EXPORT__ PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle, const void *buffer,
                                       PHYSFS_uint32 objSize,
                                       PHYSFS_uint32 objCount);
-
 
 /* File position stuff... */
 
@@ -1243,7 +1201,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_write(PHYSFS_File *handle,
  */
 __EXPORT__ int PHYSFS_eof(PHYSFS_File *handle);
 
-
 /**
  * \fn PHYSFS_sint64 PHYSFS_tell(PHYSFS_File *handle)
  * \brief Determine current position within a PhysicsFS filehandle.
@@ -1255,7 +1212,6 @@ __EXPORT__ int PHYSFS_eof(PHYSFS_File *handle);
  * \sa PHYSFS_seek
  */
 __EXPORT__ PHYSFS_sint64 PHYSFS_tell(PHYSFS_File *handle);
-
 
 /**
  * \fn int PHYSFS_seek(PHYSFS_File *handle, PHYSFS_uint64 pos)
@@ -1272,7 +1228,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_tell(PHYSFS_File *handle);
  * \sa PHYSFS_tell
  */
 __EXPORT__ int PHYSFS_seek(PHYSFS_File *handle, PHYSFS_uint64 pos);
-
 
 /**
  * \fn PHYSFS_sint64 PHYSFS_fileLength(PHYSFS_File *handle)
@@ -1291,7 +1246,6 @@ __EXPORT__ int PHYSFS_seek(PHYSFS_File *handle, PHYSFS_uint64 pos);
  * \sa PHYSFS_seek
  */
 __EXPORT__ PHYSFS_sint64 PHYSFS_fileLength(PHYSFS_File *handle);
-
 
 /* Buffering stuff... */
 
@@ -1337,7 +1291,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_fileLength(PHYSFS_File *handle);
  */
 __EXPORT__ int PHYSFS_setBuffer(PHYSFS_File *handle, PHYSFS_uint64 bufsize);
 
-
 /**
  * \fn int PHYSFS_flush(PHYSFS_File *handle)
  * \brief Flush a buffered PhysicsFS file handle.
@@ -1356,7 +1309,6 @@ __EXPORT__ int PHYSFS_setBuffer(PHYSFS_File *handle, PHYSFS_uint64 bufsize);
  */
 __EXPORT__ int PHYSFS_flush(PHYSFS_File *handle);
 
-
 /* Byteorder stuff... */
 
 /**
@@ -1370,7 +1322,6 @@ __EXPORT__ int PHYSFS_flush(PHYSFS_File *handle);
  *   \return converted value.
  */
 __EXPORT__ PHYSFS_sint16 PHYSFS_swapSLE16(PHYSFS_sint16 val);
-
 
 /**
  * \fn PHYSFS_uint16 PHYSFS_swapULE16(PHYSFS_uint16 val)
@@ -1395,7 +1346,6 @@ __EXPORT__ PHYSFS_uint16 PHYSFS_swapULE16(PHYSFS_uint16 val);
  *   \return converted value.
  */
 __EXPORT__ PHYSFS_sint32 PHYSFS_swapSLE32(PHYSFS_sint32 val);
-
 
 /**
  * \fn PHYSFS_uint32 PHYSFS_swapULE32(PHYSFS_uint32 val)
@@ -1424,7 +1374,6 @@ __EXPORT__ PHYSFS_uint32 PHYSFS_swapULE32(PHYSFS_uint32 val);
  */
 __EXPORT__ PHYSFS_sint64 PHYSFS_swapSLE64(PHYSFS_sint64 val);
 
-
 /**
  * \fn PHYSFS_uint64 PHYSFS_swapULE64(PHYSFS_uint64 val)
  * \brief Swap littleendian unsigned 64 to platform's native byte order.
@@ -1440,7 +1389,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_swapSLE64(PHYSFS_sint64 val);
  */
 __EXPORT__ PHYSFS_uint64 PHYSFS_swapULE64(PHYSFS_uint64 val);
 
-
 /**
  * \fn PHYSFS_sint16 PHYSFS_swapSBE16(PHYSFS_sint16 val)
  * \brief Swap bigendian signed 16 to platform's native byte order.
@@ -1452,7 +1400,6 @@ __EXPORT__ PHYSFS_uint64 PHYSFS_swapULE64(PHYSFS_uint64 val);
  *   \return converted value.
  */
 __EXPORT__ PHYSFS_sint16 PHYSFS_swapSBE16(PHYSFS_sint16 val);
-
 
 /**
  * \fn PHYSFS_uint16 PHYSFS_swapUBE16(PHYSFS_uint16 val)
@@ -1478,7 +1425,6 @@ __EXPORT__ PHYSFS_uint16 PHYSFS_swapUBE16(PHYSFS_uint16 val);
  */
 __EXPORT__ PHYSFS_sint32 PHYSFS_swapSBE32(PHYSFS_sint32 val);
 
-
 /**
  * \fn PHYSFS_uint32 PHYSFS_swapUBE32(PHYSFS_uint32 val)
  * \brief Swap bigendian unsigned 32 to platform's native byte order.
@@ -1490,7 +1436,6 @@ __EXPORT__ PHYSFS_sint32 PHYSFS_swapSBE32(PHYSFS_sint32 val);
  *   \return converted value.
  */
 __EXPORT__ PHYSFS_uint32 PHYSFS_swapUBE32(PHYSFS_uint32 val);
-
 
 /**
  * \fn PHYSFS_sint64 PHYSFS_swapSBE64(PHYSFS_sint64 val)
@@ -1507,7 +1452,6 @@ __EXPORT__ PHYSFS_uint32 PHYSFS_swapUBE32(PHYSFS_uint32 val);
  */
 __EXPORT__ PHYSFS_sint64 PHYSFS_swapSBE64(PHYSFS_sint64 val);
 
-
 /**
  * \fn PHYSFS_uint64 PHYSFS_swapUBE64(PHYSFS_uint64 val)
  * \brief Swap bigendian unsigned 64 to platform's native byte order.
@@ -1523,7 +1467,6 @@ __EXPORT__ PHYSFS_sint64 PHYSFS_swapSBE64(PHYSFS_sint64 val);
  */
 __EXPORT__ PHYSFS_uint64 PHYSFS_swapUBE64(PHYSFS_uint64 val);
 
-
 /**
  * \fn int PHYSFS_readSLE16(PHYSFS_File *file, PHYSFS_sint16 *val)
  * \brief Read and convert a signed 16-bit littleendian value.
@@ -1538,7 +1481,6 @@ __EXPORT__ PHYSFS_uint64 PHYSFS_swapUBE64(PHYSFS_uint64 val);
  *           from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_readSLE16(PHYSFS_File *file, PHYSFS_sint16 *val);
-
 
 /**
  * \fn int PHYSFS_readULE16(PHYSFS_File *file, PHYSFS_uint16 *val)
@@ -1556,7 +1498,6 @@ __EXPORT__ int PHYSFS_readSLE16(PHYSFS_File *file, PHYSFS_sint16 *val);
  */
 __EXPORT__ int PHYSFS_readULE16(PHYSFS_File *file, PHYSFS_uint16 *val);
 
-
 /**
  * \fn int PHYSFS_readSBE16(PHYSFS_File *file, PHYSFS_sint16 *val)
  * \brief Read and convert a signed 16-bit bigendian value.
@@ -1571,7 +1512,6 @@ __EXPORT__ int PHYSFS_readULE16(PHYSFS_File *file, PHYSFS_uint16 *val);
  *           from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_readSBE16(PHYSFS_File *file, PHYSFS_sint16 *val);
-
 
 /**
  * \fn int PHYSFS_readUBE16(PHYSFS_File *file, PHYSFS_uint16 *val)
@@ -1589,7 +1529,6 @@ __EXPORT__ int PHYSFS_readSBE16(PHYSFS_File *file, PHYSFS_sint16 *val);
  */
 __EXPORT__ int PHYSFS_readUBE16(PHYSFS_File *file, PHYSFS_uint16 *val);
 
-
 /**
  * \fn int PHYSFS_readSLE32(PHYSFS_File *file, PHYSFS_sint32 *val)
  * \brief Read and convert a signed 32-bit littleendian value.
@@ -1604,7 +1543,6 @@ __EXPORT__ int PHYSFS_readUBE16(PHYSFS_File *file, PHYSFS_uint16 *val);
  *           from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_readSLE32(PHYSFS_File *file, PHYSFS_sint32 *val);
-
 
 /**
  * \fn int PHYSFS_readULE32(PHYSFS_File *file, PHYSFS_uint32 *val)
@@ -1622,7 +1560,6 @@ __EXPORT__ int PHYSFS_readSLE32(PHYSFS_File *file, PHYSFS_sint32 *val);
  */
 __EXPORT__ int PHYSFS_readULE32(PHYSFS_File *file, PHYSFS_uint32 *val);
 
-
 /**
  * \fn int PHYSFS_readSBE32(PHYSFS_File *file, PHYSFS_sint32 *val)
  * \brief Read and convert a signed 32-bit bigendian value.
@@ -1637,7 +1574,6 @@ __EXPORT__ int PHYSFS_readULE32(PHYSFS_File *file, PHYSFS_uint32 *val);
  *           from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_readSBE32(PHYSFS_File *file, PHYSFS_sint32 *val);
-
 
 /**
  * \fn int PHYSFS_readUBE32(PHYSFS_File *file, PHYSFS_uint32 *val)
@@ -1654,7 +1590,6 @@ __EXPORT__ int PHYSFS_readSBE32(PHYSFS_File *file, PHYSFS_sint32 *val);
  *
  */
 __EXPORT__ int PHYSFS_readUBE32(PHYSFS_File *file, PHYSFS_uint32 *val);
-
 
 /**
  * \fn int PHYSFS_readSLE64(PHYSFS_File *file, PHYSFS_sint64 *val)
@@ -1674,7 +1609,6 @@ __EXPORT__ int PHYSFS_readUBE32(PHYSFS_File *file, PHYSFS_uint32 *val);
  */
 __EXPORT__ int PHYSFS_readSLE64(PHYSFS_File *file, PHYSFS_sint64 *val);
 
-
 /**
  * \fn int PHYSFS_readULE64(PHYSFS_File *file, PHYSFS_uint64 *val)
  * \brief Read and convert an unsigned 64-bit littleendian value.
@@ -1692,7 +1626,6 @@ __EXPORT__ int PHYSFS_readSLE64(PHYSFS_File *file, PHYSFS_sint64 *val);
  *          any sort of 64-bit support.
  */
 __EXPORT__ int PHYSFS_readULE64(PHYSFS_File *file, PHYSFS_uint64 *val);
-
 
 /**
  * \fn int PHYSFS_readSBE64(PHYSFS_File *file, PHYSFS_sint64 *val)
@@ -1712,7 +1645,6 @@ __EXPORT__ int PHYSFS_readULE64(PHYSFS_File *file, PHYSFS_uint64 *val);
  */
 __EXPORT__ int PHYSFS_readSBE64(PHYSFS_File *file, PHYSFS_sint64 *val);
 
-
 /**
  * \fn int PHYSFS_readUBE64(PHYSFS_File *file, PHYSFS_uint64 *val)
  * \brief Read and convert an unsigned 64-bit bigendian value.
@@ -1731,7 +1663,6 @@ __EXPORT__ int PHYSFS_readSBE64(PHYSFS_File *file, PHYSFS_sint64 *val);
  */
 __EXPORT__ int PHYSFS_readUBE64(PHYSFS_File *file, PHYSFS_uint64 *val);
 
-
 /**
  * \fn int PHYSFS_writeSLE16(PHYSFS_File *file, PHYSFS_sint16 val)
  * \brief Convert and write a signed 16-bit littleendian value.
@@ -1745,7 +1676,6 @@ __EXPORT__ int PHYSFS_readUBE64(PHYSFS_File *file, PHYSFS_uint64 *val);
  *           find out what went wrong from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_writeSLE16(PHYSFS_File *file, PHYSFS_sint16 val);
-
 
 /**
  * \fn int PHYSFS_writeULE16(PHYSFS_File *file, PHYSFS_uint16 val)
@@ -1761,7 +1691,6 @@ __EXPORT__ int PHYSFS_writeSLE16(PHYSFS_File *file, PHYSFS_sint16 val);
  */
 __EXPORT__ int PHYSFS_writeULE16(PHYSFS_File *file, PHYSFS_uint16 val);
 
-
 /**
  * \fn int PHYSFS_writeSBE16(PHYSFS_File *file, PHYSFS_sint16 val)
  * \brief Convert and write a signed 16-bit bigendian value.
@@ -1775,7 +1704,6 @@ __EXPORT__ int PHYSFS_writeULE16(PHYSFS_File *file, PHYSFS_uint16 val);
  *           find out what went wrong from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_writeSBE16(PHYSFS_File *file, PHYSFS_sint16 val);
-
 
 /**
  * \fn int PHYSFS_writeUBE16(PHYSFS_File *file, PHYSFS_uint16 val)
@@ -1791,7 +1719,6 @@ __EXPORT__ int PHYSFS_writeSBE16(PHYSFS_File *file, PHYSFS_sint16 val);
  */
 __EXPORT__ int PHYSFS_writeUBE16(PHYSFS_File *file, PHYSFS_uint16 val);
 
-
 /**
  * \fn int PHYSFS_writeSLE32(PHYSFS_File *file, PHYSFS_sint32 val)
  * \brief Convert and write a signed 32-bit littleendian value.
@@ -1805,7 +1732,6 @@ __EXPORT__ int PHYSFS_writeUBE16(PHYSFS_File *file, PHYSFS_uint16 val);
  *           find out what went wrong from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_writeSLE32(PHYSFS_File *file, PHYSFS_sint32 val);
-
 
 /**
  * \fn int PHYSFS_writeULE32(PHYSFS_File *file, PHYSFS_uint32 val)
@@ -1821,7 +1747,6 @@ __EXPORT__ int PHYSFS_writeSLE32(PHYSFS_File *file, PHYSFS_sint32 val);
  */
 __EXPORT__ int PHYSFS_writeULE32(PHYSFS_File *file, PHYSFS_uint32 val);
 
-
 /**
  * \fn int PHYSFS_writeSBE32(PHYSFS_File *file, PHYSFS_sint32 val)
  * \brief Convert and write a signed 32-bit bigendian value.
@@ -1836,7 +1761,6 @@ __EXPORT__ int PHYSFS_writeULE32(PHYSFS_File *file, PHYSFS_uint32 val);
  */
 __EXPORT__ int PHYSFS_writeSBE32(PHYSFS_File *file, PHYSFS_sint32 val);
 
-
 /**
  * \fn int PHYSFS_writeUBE32(PHYSFS_File *file, PHYSFS_uint32 val)
  * \brief Convert and write an unsigned 32-bit bigendian value.
@@ -1850,7 +1774,6 @@ __EXPORT__ int PHYSFS_writeSBE32(PHYSFS_File *file, PHYSFS_sint32 val);
  *           find out what went wrong from PHYSFS_getLastError().
  */
 __EXPORT__ int PHYSFS_writeUBE32(PHYSFS_File *file, PHYSFS_uint32 val);
-
 
 /**
  * \fn int PHYSFS_writeSLE64(PHYSFS_File *file, PHYSFS_sint64 val)
@@ -1869,7 +1792,6 @@ __EXPORT__ int PHYSFS_writeUBE32(PHYSFS_File *file, PHYSFS_uint32 val);
  */
 __EXPORT__ int PHYSFS_writeSLE64(PHYSFS_File *file, PHYSFS_sint64 val);
 
-
 /**
  * \fn int PHYSFS_writeULE64(PHYSFS_File *file, PHYSFS_uint64 val)
  * \brief Convert and write an unsigned 64-bit littleendian value.
@@ -1886,7 +1808,6 @@ __EXPORT__ int PHYSFS_writeSLE64(PHYSFS_File *file, PHYSFS_sint64 val);
  *          any sort of 64-bit support.
  */
 __EXPORT__ int PHYSFS_writeULE64(PHYSFS_File *file, PHYSFS_uint64 val);
-
 
 /**
  * \fn int PHYSFS_writeSBE64(PHYSFS_File *file, PHYSFS_sint64 val)
@@ -1905,7 +1826,6 @@ __EXPORT__ int PHYSFS_writeULE64(PHYSFS_File *file, PHYSFS_uint64 val);
  */
 __EXPORT__ int PHYSFS_writeSBE64(PHYSFS_File *file, PHYSFS_sint64 val);
 
-
 /**
  * \fn int PHYSFS_writeUBE64(PHYSFS_File *file, PHYSFS_uint64 val)
  * \brief Convert and write an unsigned 64-bit bigendian value.
@@ -1922,7 +1842,6 @@ __EXPORT__ int PHYSFS_writeSBE64(PHYSFS_File *file, PHYSFS_sint64 val);
  *          any sort of 64-bit support.
  */
 __EXPORT__ int PHYSFS_writeUBE64(PHYSFS_File *file, PHYSFS_uint64 val);
-
 
 /* Everything above this line is part of the PhysicsFS 1.0 API. */
 
@@ -1942,7 +1861,6 @@ __EXPORT__ int PHYSFS_writeUBE64(PHYSFS_File *file, PHYSFS_uint64 val);
  */
 __EXPORT__ int PHYSFS_isInit(void);
 
-
 /**
  * \fn int PHYSFS_symbolicLinksPermitted(void)
  * \brief Determine if the symbolic links are permitted.
@@ -1956,7 +1874,6 @@ __EXPORT__ int PHYSFS_isInit(void);
  * \sa PHYSFS_permitSymbolicLinks
  */
 __EXPORT__ int PHYSFS_symbolicLinksPermitted(void);
-
 
 /**
  * \struct PHYSFS_Allocator
@@ -1978,15 +1895,13 @@ __EXPORT__ int PHYSFS_symbolicLinksPermitted(void);
  *
  * \sa PHYSFS_setAllocator
  */
-typedef struct PHYSFS_Allocator
-{
-    int (*Init)(void);   /**< Initialize. Can be NULL. Zero on failure. */
-    void (*Deinit)(void);  /**< Deinitialize your allocator. Can be NULL. */
-    void *(*Malloc)(PHYSFS_uint64);  /**< Allocate like malloc(). */
-    void *(*Realloc)(void *, PHYSFS_uint64); /**< Reallocate like realloc(). */
-    void (*Free)(void *); /**< Free memory from Malloc or Realloc. */
+typedef struct PHYSFS_Allocator {
+  int (*Init)(void);    /**< Initialize. Can be NULL. Zero on failure. */
+  void (*Deinit)(void); /**< Deinitialize your allocator. Can be NULL. */
+  void *(*Malloc)(PHYSFS_uint64);          /**< Allocate like malloc(). */
+  void *(*Realloc)(void *, PHYSFS_uint64); /**< Reallocate like realloc(). */
+  void (*Free)(void *); /**< Free memory from Malloc or Realloc. */
 } PHYSFS_Allocator;
-
 
 /**
  * \fn int PHYSFS_setAllocator(const PHYSFS_Allocator *allocator)
@@ -2017,9 +1932,9 @@ typedef struct PHYSFS_Allocator
  */
 __EXPORT__ int PHYSFS_setAllocator(const PHYSFS_Allocator *allocator);
 
-
 /**
- * \fn int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath)
+ * \fn int PHYSFS_mount(const char *newDir, const char *mountPoint, int
+ * appendToPath)
  * \brief Add an archive or directory to the search path.
  *
  * If this is a duplicate, the entry is not added again, even though the
@@ -2058,7 +1973,8 @@ __EXPORT__ int PHYSFS_setAllocator(const PHYSFS_Allocator *allocator);
  * \sa PHYSFS_getSearchPath
  * \sa PHYSFS_getMountPoint
  */
-__EXPORT__ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appendToPath);
+__EXPORT__ int PHYSFS_mount(const char *newDir, const char *mountPoint,
+                            int appendToPath);
 
 /**
  * \fn int PHYSFS_getMountPoint(const char *dir)
@@ -2083,7 +1999,6 @@ __EXPORT__ int PHYSFS_mount(const char *newDir, const char *mountPoint, int appe
  * \sa PHYSFS_getMountPoint
  */
 __EXPORT__ const char *PHYSFS_getMountPoint(const char *dir);
-
 
 /**
  * \typedef PHYSFS_StringCallback
@@ -2110,7 +2025,6 @@ __EXPORT__ const char *PHYSFS_getMountPoint(const char *dir);
  * \sa PHYSFS_getSearchPathCallback
  */
 typedef void (*PHYSFS_StringCallback)(void *data, const char *str);
-
 
 /**
  * \typedef PHYSFS_EnumFilesCallback
@@ -2146,7 +2060,6 @@ typedef void (*PHYSFS_StringCallback)(void *data, const char *str);
 typedef void (*PHYSFS_EnumFilesCallback)(void *data, const char *origdir,
                                          const char *fname);
 
-
 /**
  * \fn void PHYSFS_getCdRomDirsCallback(PHYSFS_StringCallback c, void *d)
  * \brief Enumerate CD-ROM directories, using an application-defined callback.
@@ -2179,7 +2092,6 @@ typedef void (*PHYSFS_EnumFilesCallback)(void *data, const char *origdir,
  * \sa PHYSFS_getCdRomDirs
  */
 __EXPORT__ void PHYSFS_getCdRomDirsCallback(PHYSFS_StringCallback c, void *d);
-
 
 /**
  * \fn void PHYSFS_getSearchPathCallback(PHYSFS_StringCallback c, void *d)
@@ -2216,10 +2128,11 @@ __EXPORT__ void PHYSFS_getCdRomDirsCallback(PHYSFS_StringCallback c, void *d);
  */
 __EXPORT__ void PHYSFS_getSearchPathCallback(PHYSFS_StringCallback c, void *d);
 
-
 /**
- * \fn void PHYSFS_enumerateFilesCallback(const char *dir, PHYSFS_EnumFilesCallback c, void *d)
- * \brief Get a file listing of a search path's directory, using an application-defined callback.
+ * \fn void PHYSFS_enumerateFilesCallback(const char *dir,
+ * PHYSFS_EnumFilesCallback c, void *d)
+ * \brief Get a file listing of a search path's directory, using an
+ * application-defined callback.
  *
  * Internally, PHYSFS_enumerateFiles() just calls this function and then builds
  *  a list before returning to the application, so functionality is identical
@@ -2260,7 +2173,8 @@ __EXPORT__ void PHYSFS_enumerateFilesCallback(const char *dir,
                                               void *d);
 
 /**
- * \fn void PHYSFS_utf8FromUcs4(const PHYSFS_uint32 *src, char *dst, PHYSFS_uint64 len)
+ * \fn void PHYSFS_utf8FromUcs4(const PHYSFS_uint32 *src, char *dst,
+ * PHYSFS_uint64 len)
  * \brief Convert a UCS-4 string to a UTF-8 string.
  *
  * UCS-4 strings are 32-bits per character: \c wchar_t on Unix.
@@ -2282,7 +2196,8 @@ __EXPORT__ void PHYSFS_utf8FromUcs4(const PHYSFS_uint32 *src, char *dst,
                                     PHYSFS_uint64 len);
 
 /**
- * \fn void PHYSFS_utf8ToUcs4(const char *src, PHYSFS_uint32 *dst, PHYSFS_uint64 len)
+ * \fn void PHYSFS_utf8ToUcs4(const char *src, PHYSFS_uint32 *dst, PHYSFS_uint64
+ * len)
  * \brief Convert a UTF-8 string to a UCS-4 string.
  *
  * UCS-4 strings are 32-bits per character: \c wchar_t on Unix.
@@ -2304,7 +2219,8 @@ __EXPORT__ void PHYSFS_utf8ToUcs4(const char *src, PHYSFS_uint32 *dst,
                                   PHYSFS_uint64 len);
 
 /**
- * \fn void PHYSFS_utf8FromUcs2(const PHYSFS_uint16 *src, char *dst, PHYSFS_uint64 len)
+ * \fn void PHYSFS_utf8FromUcs2(const PHYSFS_uint16 *src, char *dst,
+ * PHYSFS_uint64 len)
  * \brief Convert a UCS-2 string to a UTF-8 string.
  *
  * UCS-2 strings are 16-bits per character: \c TCHAR on Windows, when building
@@ -2380,16 +2296,14 @@ __EXPORT__ void PHYSFS_utf8ToUcs2(const char *src, PHYSFS_uint16 *dst,
  *   \param len Size, in bytes, of destination buffer.
  */
 __EXPORT__ void PHYSFS_utf8FromLatin1(const char *src, char *dst,
-                                  PHYSFS_uint64 len);
+                                      PHYSFS_uint64 len);
 
 /* Everything above this line is part of the PhysicsFS 2.0 API. */
-
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* !defined _INCLUDE_PHYSFS_H_ */
+#endif /* !defined _INCLUDE_PHYSFS_H_ */
 
 /* end of physfs.h ... */
-

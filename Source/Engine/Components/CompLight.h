@@ -3,80 +3,85 @@
 
 #include <memory>
 
-#include "../BaseComponentManager.h"
-#include "../Resources/RSC_GLShader.h"
-#include "../glslHelper.h"
 #include "../BaseComponent.h"
-#include "../Resources/RSC_Texture.h"
+#include "../BaseComponentManager.h"
 #include "../RenderManager.h"
+#include "../Resources/RSC_GLShader.h"
+#include "../Resources/RSC_Texture.h"
+#include "../glslHelper.h"
 #include "CompPosition.h"
-
 
 #define MAX_LIGHTS 256
 
-//forward declare
+// forward declare
 class ComponentLightManager;
 
-class LightSource{
-    public:
-        LightSource(const float& iStart, const float& iEnd, const float& rad, const float& n, const Vec2& off);
-        //How far the light reaches
-        float radius;
+class LightSource {
+ public:
+  LightSource(const float &iStart, const float &iEnd, const float &rad,
+              const float &n, const Vec2 &off);
+  // How far the light reaches
+  float radius;
 
-        //Value between 0.0f and 1.0f
-        float intensityStart;
-        float intensityEnd;
+  // Value between 0.0f and 1.0f
+  float intensityStart;
+  float intensityEnd;
 
-        //Light flickering value
-        float noise;
+  // Light flickering value
+  float noise;
 
-        //Whether or not light is rendered
-        bool render;
+  // Whether or not light is rendered
+  bool render;
 
-        //Offset from center position of entity
-        Vec2 offset;
+  // Offset from center position of entity
+  Vec2 offset;
 };
 
-class ComponentLight : public BaseComponent{
-    friend class ComponentLightManager;
+class ComponentLight : public BaseComponent {
+  friend class ComponentLightManager;
 
-    public:
-         ComponentLight (EID id, ComponentPosition* pos, ComponentLightManager* manager);
-        ~ComponentLight ();
+ public:
+  ComponentLight(EID id, ComponentPosition *pos,
+                 ComponentLightManager *manager);
+  ~ComponentLight();
 
-        bool LightExists(const int& id);
+  bool LightExists(const int &id);
 
-        void Update     ();
+  void Update();
 
-        int  NewLightSource     (const float& intensityStart, const float& intensityEnd, const float& rad, const float& noise=0.5, const Vec2& offset=Vec2(0,0));
+  int NewLightSource(const float &intensityStart, const float &intensityEnd,
+                     const float &rad, const float &noise = 0.5,
+                     const Vec2 &offset = Vec2(0, 0));
 
-    protected:
-        ComponentPosition* myPos;
-        int numberOfLoadedLights;
-        std::vector<LightSource> lightSources;
+ protected:
+  ComponentPosition *myPos;
+  int numberOfLoadedLights;
+  std::vector<LightSource> lightSources;
 };
 
-class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight>{
-    public:
-        ComponentLightManager(EventDispatcher* e);
+class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
+ public:
+  ComponentLightManager(EventDispatcher *e);
 
-		std::unique_ptr<ComponentLight> ConstructComponent(EID id, ComponentLight* parent);
-        void Update();
+  std::unique_ptr<ComponentLight> ConstructComponent(EID id,
+                                                     ComponentLight *parent);
+  void Update();
 
-        void Render(RSC_Texture* textureDiffuse, RSC_Texture* textureDestination, const RSC_GLProgram* shaderProgram);
+  void Render(RSC_Texture *textureDiffuse, RSC_Texture *textureDestination,
+              const RSC_GLProgram *shaderProgram);
 
-        void BuildVAO();
+  void BuildVAO();
 
-        //Is only called once, used to set data that won't change (in this case, texture coordinates)
-        void BuildVAOFirst();
+  // Is only called once, used to set data that won't change (in this case,
+  // texture coordinates)
+  void BuildVAOFirst();
 
-    private:
-        GLuint   FBO; //frame buffer object id
-        const RSC_Texture* lightTexture;
-        VAOWrapper vao;
+ private:
+  GLuint FBO;  // frame buffer object id
+  const RSC_Texture *lightTexture;
+  VAOWrapper vao;
 
-        unsigned int numberOfLights;
+  unsigned int numberOfLights;
 };
 
-#endif // L_ENGINE_COMP_LIGHT
-
+#endif  // L_ENGINE_COMP_LIGHT

@@ -3,19 +3,19 @@
 
 #include <stdlib.h>
 
-class RandomGenerator{
-    public:
-        RandomGenerator();
-        ~RandomGenerator();
+class RandomGenerator {
+ public:
+  RandomGenerator();
+  ~RandomGenerator();
 
-        void SetSeed(int seed);
-        int GenerateSeed();
+  void SetSeed(int seed);
+  int GenerateSeed();
 
-        int GenerateRandomIntValue(int imin, int imax);
-        double GenerateRandomFloatValue(double imin, double imax);
+  int GenerateRandomIntValue(int imin, int imax);
+  double GenerateRandomFloatValue(double imin, double imax);
 
-    private:
-        int mSeed;
+ private:
+  int mSeed;
 };
 
-#endif // RL_RANDOM_GEN
+#endif  // RL_RANDOM_GEN
