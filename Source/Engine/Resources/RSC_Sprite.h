@@ -4,7 +4,7 @@
 #include "RSC_Texture.h"
 #include "../GenericContainer.h"
 
-#include "rapidxml.hpp"
+#include "../../../LinuxDependencies/rapidxml-1.13/rapidxml.hpp"
 
 #include <string>
 #include <vector>
