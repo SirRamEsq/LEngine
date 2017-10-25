@@ -52,6 +52,9 @@ class GameState {
   /// map
   void SetMapNextFrame(const RSC_Map *m, unsigned int entranceID);
 
+  ///Creates a new Entity next frame
+  EID CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p);
+
  protected:
   virtual void Init(const RSC_Script *stateScript = NULL) = 0;
 
@@ -101,6 +104,7 @@ class GameState {
   /// used by LuaInterface to determine if this state is a GS_Script
   bool isLuaState;
 
+
  private:
   void SetMapHandleRenderableLayers(
       const std::map<MAP_DEPTH, TiledLayerGeneric *> &layers);
@@ -119,6 +123,9 @@ class GameState {
   std::vector<std::unique_ptr<RenderableObjectWorld>> mCurrentMapTileLayers;
   /// This is used to lookup eids by entity name
   std::map<std::string, EID> nameLookupEID;
+
+  void CreateNewEntities();
+  std::vector<std::unique_ptr<EntityCreationPacket> > mEntitiesToCreate;
 };
 
 // Interface

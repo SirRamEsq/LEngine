@@ -119,6 +119,9 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     REQUIRE(lastError == "Observing 31337");
 
     auto luaInterface = state->GetLuaInterface();
+	//process and link up observers
+	luaInterface->Update();
+
     luaInterface->EventLuaSendToObservers(newEID, eventDescription);
     std::stringstream ss1;
     ss1 << "EVENT: " << eventDescription;

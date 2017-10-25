@@ -751,35 +751,10 @@ EID LuaInterface::EntityNew(const std::string &scriptName, int x, int y,
                             MAP_DEPTH depth, EID parent,
                             const std::string &name, const std::string &type,
                             luabridge::LuaRef propertyTable) {
-  // New Entity
-  EID ent = parentState->entityMan.NewEntity();
+  auto packet = std::make_unique<EntityCreationPacket>(
+      scriptName, Coord2df(x, y), depth, parent, name, type, propertyTable);
 
-  // New Position Component for Entity
-  parentState->comPosMan.AddComponent(ent);
-  parentState->comPosMan.GetComponent(ent)->SetPositionLocal(Coord2df(x, y));
-
-  // Get script Data
-  const RSC_Script *scriptData = K_ScriptMan.GetItem(scriptName);
-  if (scriptData == NULL) {
-    K_ScriptMan.LoadItem(scriptName, scriptName);
-    scriptData = K_ScriptMan.GetItem(scriptName);
-    if (scriptData == NULL) {
-      LOG_ERROR("LuaInterface::EntityNew; Couldn't Load Script Named: " +
-                scriptName);
-      return 0;
-    }
-  }
-
-  // Add script component and run script
-  parentState->comScriptMan.AddComponent(ent);
-
-  if (RunScript(ent, scriptData, depth, parent, name, type, NULL,
-                &propertyTable) == false) {
-    LOG_ERROR("Couldn't Create a new Entity");
-    return 0;
-  }
-
-  return ent;
+  return parentState->CreateLuaEntity(std::move(packet));
 }
 
 void LuaInterface::EntityDelete(EID entity) {
@@ -803,29 +778,44 @@ void LuaInterface::RenderObjectDelete(EID selfID, RenderableObject *obj) {
 // Events//
 //////////
 void LuaInterface::EventLuaObserveEntity(EID listenerID, EID senderID) {
-  // Get the script that the listener wants to hear
-  ComponentScript *senderScript =
-      (parentState->comScriptMan.GetComponent(senderID));
-  ComponentScript *listenerScript =
-      (parentState->comScriptMan.GetComponent(listenerID));
-  if (senderScript == NULL) {
-    LOG_ERROR(
-        "Error: In function EventLuaObserveEntity; Cannot find entity "
-        "with id: " +
-        (senderID));
-    return;
-  }
-  if (listenerScript == NULL) {
-    LOG_ERROR(
-        "Error: In function EventLuaObserveEntity; Cannot find entity "
-        "with id: " +
-        (listenerID));
-    return;
-  }
-
-  // Add the listener to the sender's list of observers
-  senderScript->EventLuaAddObserver(listenerScript);
+  mEntitiesToObserve[listenerID].insert(senderID);
 }
+
+void LuaInterface::ProcessObservers() {
+  for (auto i = mEntitiesToObserve.begin(); i != mEntitiesToObserve.end();
+       i++) {
+    for (auto ii = i->second.begin(); ii != i->second.end(); ii++) {
+      auto senderID = *ii;
+      auto listenerID = i->first;
+
+      // Get the script that the listener wants to hear
+      ComponentScript *senderScript =
+          (parentState->comScriptMan.GetComponent(senderID));
+      ComponentScript *listenerScript =
+          (parentState->comScriptMan.GetComponent(listenerID));
+
+      if (senderScript == NULL) {
+        LOG_ERROR(
+            "Error: In function EventLuaObserveEntity; Cannot find entity "
+            "with id: " +
+            (senderID));
+        continue;
+      }
+      if (listenerScript == NULL) {
+        LOG_ERROR(
+            "Error: In function EventLuaObserveEntity; Cannot find entity "
+            "with id: " +
+            (listenerID));
+        continue;
+      }
+
+      // Add the listener to the sender's list of observers
+      senderScript->EventLuaAddObserver(listenerScript);
+    }
+  }
+}
+
+void LuaInterface::Update() { ProcessObservers(); }
 
 void LuaInterface::EventLuaBroadcastEvent(EID senderID,
                                           const std::string &event) {
@@ -1290,4 +1280,20 @@ void LuaInterface::ExposeCPP() {
 
 void LuaInterface::SetErrorCallbackFunction(ErrorCallback func) {
   errorCallbackFunction = func;
+}
+
+EntityCreationPacket::EntityCreationPacket(const std::string &scriptName,
+                                           Coord2df pos, MAP_DEPTH depth,
+                                           EID parent, const std::string &name,
+                                           const std::string &type,
+                                           luabridge::LuaRef propertyTable)
+    : mPropertyTable(propertyTable) {
+  mScriptName = scriptName;
+  mPos = pos;
+  mDepth = depth;
+  mParent = parent;
+  mEntityName = name;
+  mEntityType = type;
+  mScript = NULL;
+  mNewEID = 0;
 }

@@ -58,6 +58,9 @@ void GameState::DrawPreviousState() {
   gameStateManager->DrawPreviousState(this);
 }
 void GameState::UpdateComponentManagers() {
+  CreateNewEntities();
+  luaInterface.Update();
+
   // Game Logic
   // Should consolidate input man's functionality into script man? doesn't
   // really do much...
@@ -443,4 +446,55 @@ bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
   SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
 
   return true;
+}
+
+EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
+  // New Entity
+  EID newEID = entityMan.NewEntity();
+  p->mNewEID = newEID;
+
+  // Get script Data
+  const RSC_Script *scriptData = K_ScriptMan.GetItem(p->mScriptName);
+  if (scriptData == NULL) {
+    K_ScriptMan.LoadItem(p->mScriptName, p->mScriptName);
+    scriptData = K_ScriptMan.GetItem(p->mScriptName);
+    if (scriptData == NULL) {
+      LOG_ERROR("LuaInterface::EntityNew; Couldn't Load Script Named: " +
+                p->mScriptName);
+      return 0;
+    }
+  }
+
+  p->mScript = scriptData;
+
+  mEntitiesToCreate.push_back(std::move(p));
+
+  return newEID;
+}
+
+void GameState::CreateNewEntities() {
+  if (mEntitiesToCreate.empty() == true) {
+    return;
+  }
+
+  for (auto newEnt = mEntitiesToCreate.begin();
+       newEnt != mEntitiesToCreate.end(); newEnt++) {
+    // New Position Component for Entity
+    comPosMan.AddComponent((*newEnt)->mNewEID);
+    comPosMan.GetComponent((*newEnt)->mNewEID)
+        ->SetPositionLocal((*newEnt)->mPos);
+
+    // Add script component and run script
+    comScriptMan.AddComponent((*newEnt)->mNewEID);
+
+    if (luaInterface.RunScript((*newEnt)->mNewEID, (*newEnt)->mScript,
+                               (*newEnt)->mDepth, (*newEnt)->mParent,
+                               (*newEnt)->mEntityName, (*newEnt)->mEntityType,
+                               NULL, &(*newEnt)->mPropertyTable) == false) {
+      LOG_ERROR("Couldn't Create a new Entity");
+      continue;
+    }
+  }
+
+  mEntitiesToCreate.clear();
 }
