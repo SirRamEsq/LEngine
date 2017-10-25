@@ -157,8 +157,6 @@ class RSC_Map {
 };
 
 class RSC_MapImpl : public RSC_Map {
-  ;
-  ;
   friend GameState;
 
  public:
