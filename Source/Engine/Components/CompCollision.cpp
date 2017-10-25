@@ -278,7 +278,10 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
          boxIt1 != compIt1->second.get()->GetItEnd(); boxIt1++) {
       if ((boxIt1->second.Flags() & TILE_CHECK) != TILE_CHECK) {
         continue;
-      }  // Check if the box even exists to check tiles
+      } 
+	  if (not boxIt1->second.IsActive()) {
+		continue;
+	  }
 
       // Adds box coordinates to entity's coordinates
       boxIt1->second.UpdateWorldCoord();
