@@ -1,91 +1,90 @@
 local collision = {}
-collision={};
-
+collision={}; 
 collision.cpp=nil;
 collision.cComp=nil;
 
-	--this tile coordinate will be ignored by top and bottom colliders
-	--if the coordinate is hit by either the left or right collision boxes
-	collision.ignoreTileX=-1;
-	collision.WIDTH=0;
-	collision.HEIGHT=0;
-	collision.TILEWIDTH=16;
-	collision.TILEHEIGHT=16;
+--this tile coordinate will be ignored by top and bottom colliders
+--if the coordinate is hit by either the left or right collision boxes
+collision.ignoreTileX=-1;
+collision.WIDTH=0;
+collision.HEIGHT=0;
+collision.TILEWIDTH=16;
+collision.TILEHEIGHT=16;
 
-	collision.footHeightValue=0
-	collision.boxID={}
-	collision.coordinates={}
+collision.footHeightValue=0
+collision.boxID={}
+collision.coordinates={}
 
-	collision.previous={};
-	collision.previous.tileLeft =false;
-	collision.previous.tileRight=false;
-	collision.previous.tileUp	=false;
+collision.previous={};
+collision.previous.tileLeft =false;
+collision.previous.tileRight=false;
+collision.previous.tileUp	=false;
 
-	collision.callbackFunctions={};
-	collision.callbackFunctions.TileUp		=nil; --Arguments are: newPosition (world)
-	collision.callbackFunctions.TileDown	=nil; --Arguments are: newPosition (world) and Angle (unsigned)
-	collision.callbackFunctions.TileLeft	=nil; --Arguments are: newPosition (world)
-	collision.callbackFunctions.TileRight 	=nil; --Arguments are: newPosition (world)
+collision.callbackFunctions={};
+collision.callbackFunctions.TileUp		=nil; --Arguments are: newPosition (world)
+collision.callbackFunctions.TileDown	=nil; --Arguments are: newPosition (world) and Angle (unsigned)
+collision.callbackFunctions.TileLeft	=nil; --Arguments are: newPosition (world)
+collision.callbackFunctions.TileRight	=nil; --Arguments are: newPosition (world)
 
-	collision.boxID.TILE_UP=5;
-	collision.boxID.TILE_LEFT=6;
-	collision.boxID.TILE_RIGHT=7;
-	collision.boxID.TILE_LEFT_SHORT=16;
-	collision.boxID.TILE_RIGHT_SHORT=17;
-	collision.boxID.TILE_DOWN_R=8;
-	collision.boxID.TILE_DOWN_L=9;
+collision.boxID.TILE_UP=5;
+collision.boxID.TILE_LEFT=6;
+collision.boxID.TILE_RIGHT=7;
+collision.boxID.TILE_LEFT_SHORT=16;
+collision.boxID.TILE_RIGHT_SHORT=17;
+collision.boxID.TILE_DOWN_R=8;
+collision.boxID.TILE_DOWN_L=9;
 
-	--Actual Rect shapes will be stored here
-	collision.boxRect = {}
+--Actual Rect shapes will be stored here
+collision.boxRect = {}
 
-		--Where BOXs are relative to ground (Down) position
-		--Should check horizontal boxes first
-		collision.FEET_OFFSET=8;
+--Where BOXs are relative to ground (Down) position
+--Should check horizontal boxes first
+collision.FEET_OFFSET=8;
 
-		collision.coordinates.GROUND_R_X_OFFSET =  2
-		collision.coordinates.GROUND_L_X_OFFSET =  -2
-		collision.coordinates.GROUND_Y_OFFSET	=  collision.FEET_OFFSET;
-		collision.coordinates.GROUND_H_OFFSET	=  1+collision.FEET_OFFSET;
-		collision.coordinates.GROUND_ORDER		=  5;
+collision.coordinates.GROUND_R_X_OFFSET =  2
+collision.coordinates.GROUND_L_X_OFFSET =  -2
+collision.coordinates.GROUND_Y_OFFSET	=  collision.FEET_OFFSET;
+collision.coordinates.GROUND_H_OFFSET	=  1+collision.FEET_OFFSET;
+collision.coordinates.GROUND_ORDER		=  5;
 
-		collision.coordinates.RIGHT_X_OFFSET	=  0
-		collision.coordinates.RIGHT_Y_OFFSET	=  4
-		collision.coordinates.RIGHT_W_OFFSET	=  1
-		collision.coordinates.RIGHT_H_OFFSET	=  8;
-		collision.coordinates.RIGHT_ORDER		=  15;
+collision.coordinates.RIGHT_X_OFFSET	=  0
+collision.coordinates.RIGHT_Y_OFFSET	=  4
+collision.coordinates.RIGHT_W_OFFSET	=  1
+collision.coordinates.RIGHT_H_OFFSET	=  8;
+collision.coordinates.RIGHT_ORDER		=  15;
 
-		collision.coordinates.LEFT_X_OFFSET		=  0;
-		collision.coordinates.LEFT_Y_OFFSET		=  4;
-		collision.coordinates.LEFT_W_OFFSET		=  -1;
-		collision.coordinates.LEFT_H_OFFSET		=  8;
-		collision.coordinates.LEFT_ORDER		=  15;
+collision.coordinates.LEFT_X_OFFSET		=  0;
+collision.coordinates.LEFT_Y_OFFSET		=  4;
+collision.coordinates.LEFT_W_OFFSET		=  -1;
+collision.coordinates.LEFT_H_OFFSET		=  8;
+collision.coordinates.LEFT_ORDER		=  15;
 
-		collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  11
-		collision.coordinates.RIGHT_SHORT_H_OFFSET	=  4;
+collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  11
+collision.coordinates.RIGHT_SHORT_H_OFFSET	=  4;
 
-		collision.coordinates.LEFT_SHORT_Y_OFFSET	=  11;
-		collision.coordinates.LEFT_SHORT_H_OFFSET	=  4;
+collision.coordinates.LEFT_SHORT_Y_OFFSET	=  11;
+collision.coordinates.LEFT_SHORT_H_OFFSET	=  4;
 
-		collision.coordinates.UP_Y_OFFSET		=  0;
-		collision.coordinates.UP_H_OFFSET		=  -1;
-		collision.coordinates.UP_W_OFFSET		=  2;
-		collision.coordinates.UP_X_OFFSET		=  1;
-		collision.coordinates.UP_ORDER			=  10
+collision.coordinates.UP_Y_OFFSET		=  0;
+collision.coordinates.UP_H_OFFSET		=  -1;
+collision.coordinates.UP_W_OFFSET		=  2;
+collision.coordinates.UP_X_OFFSET		=  1;
+collision.coordinates.UP_ORDER			=  10
 
 
 --Collision Boxes
-		--Tile Collision Boxes
-			collision.boxTileRight=nil;
-			collision.boxTileLeft=nil;
-			collision.boxTileUp=nil;
-			collision.boxTileDownA=nil;
-			collision.boxTileDownB=nil;
+--Tile Collision Boxes
+collision.boxTileRight=nil;
+collision.boxTileLeft=nil;
+collision.boxTileUp=nil;
+collision.boxTileDownA=nil;
+collision.boxTileDownB=nil;
 
-		--Collision state variables
-			collision.frameProperties={}
-			collision.frameProperties.highestHeight=0;
-			collision.frameProperties.lowestAngle=0;
-			collision.frameProperties.firstCollision=false;
+--Collision state variables
+collision.frameProperties={}
+collision.frameProperties.highestHeight=0;
+collision.frameProperties.lowestAngle=0;
+collision.frameProperties.firstCollision=false;
 
 
 function collision.AngleToSignedAngle(a)
@@ -106,25 +105,25 @@ function collision.Init(w, h, iface, component, eid)
 	local boxID = collision.boxID
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
 	collision.boxRect[boxID.TILE_RIGHT		] =
-		CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,			coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
+	CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_Y_OFFSET,			coords.RIGHT_W_OFFSET,	coords.RIGHT_H_OFFSET);
 
 	collision.boxRect[boxID.TILE_LEFT		]=
-		CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_Y_OFFSET,	 		coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
+	CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_Y_OFFSET,			coords.LEFT_W_OFFSET,	coords.LEFT_H_OFFSET );
 
 	collision.boxRect[boxID.TILE_RIGHT_SHORT]=
-		CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET, 	coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
+	CPP.Rect(coords.RIGHT_X_OFFSET,	coords.RIGHT_SHORT_Y_OFFSET,	coords.RIGHT_W_OFFSET,	coords.RIGHT_SHORT_H_OFFSET);
 
 	collision.boxRect[boxID.TILE_LEFT_SHORT	]=
-		CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,	 	coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
+	CPP.Rect(coords.LEFT_X_OFFSET,	coords.LEFT_SHORT_Y_OFFSET,		coords.LEFT_W_OFFSET,	coords.LEFT_SHORT_H_OFFSET );
 
 	collision.boxRect[boxID.TILE_UP			]=
-		CPP.Rect(coords.UP_X_OFFSET,	coords.UP_Y_OFFSET,				coords.UP_W_OFFSET,		coords.UP_H_OFFSET	 );
+	CPP.Rect(coords.UP_X_OFFSET,	coords.UP_Y_OFFSET,				coords.UP_W_OFFSET,		coords.UP_H_OFFSET	 );
 
 	collision.boxRect[boxID.TILE_DOWN_R]=
-		CPP.Rect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		0,	coords.GROUND_H_OFFSET);
+	CPP.Rect(coords.GROUND_R_X_OFFSET,	coords.GROUND_Y_OFFSET,		0,	coords.GROUND_H_OFFSET);
 
 	collision.boxRect[boxID.TILE_DOWN_L]=
-		CPP.Rect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		0,	coords.GROUND_H_OFFSET);
+	CPP.Rect(coords.GROUND_L_X_OFFSET,	coords.GROUND_Y_OFFSET,		0,	coords.GROUND_H_OFFSET);
 
 	local boxes = collision.boxRect
 
@@ -158,8 +157,8 @@ function collision.SetWidthHeight(w, h)
 	--louie is 18,32
 	collision.WIDTH=w;
 	collision.HEIGHT=h;
-	collision.coordinates.GROUND_R_X_OFFSET 	=  w-2
-	collision.coordinates.GROUND_L_X_OFFSET 	=  2;
+	collision.coordinates.GROUND_R_X_OFFSET		=  w-2
+	collision.coordinates.GROUND_L_X_OFFSET		=  2;
 	collision.coordinates.GROUND_Y_OFFSET		=  h-collision.FEET_OFFSET;
 	collision.coordinates.GROUND_H_OFFSET		=  1+collision.FEET_OFFSET;
 	collision.coordinates.GROUND_ORDER			=  5;
@@ -183,11 +182,11 @@ function collision.SetWidthHeight(w, h)
 	collision.coordinates.LEFT_H_OFFSET			=  h-14;
 	collision.coordinates.LEFT_ORDER			=  15;
 
-	collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  math.floor(h/2) - 1
-	collision.coordinates.RIGHT_SHORT_H_OFFSET	=  math.floor(h/4)
+	collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  14
+	collision.coordinates.RIGHT_SHORT_H_OFFSET	=  3
 
-	collision.coordinates.LEFT_SHORT_Y_OFFSET	=  9
-	collision.coordinates.LEFT_SHORT_H_OFFSET	=  h-14;
+	collision.coordinates.LEFT_SHORT_Y_OFFSET	=  14
+	collision.coordinates.LEFT_SHORT_H_OFFSET	=  3;
 
 	collision.coordinates.UP_Y_OFFSET			=  8;
 	collision.coordinates.UP_H_OFFSET			=  1;
@@ -248,21 +247,26 @@ function collision.Update(xspd, yspd)
 
 	local boxID = collision.boxID
 	local boxes = collision.boxRect
-	boxes[boxID.TILE_DOWN_R].h 	= collision.footHeightValue
-	boxes[boxID.TILE_DOWN_L].h 	= collision.footHeightValue
-	boxes[boxID.TILE_LEFT].w 	= math.floor(xspd - 0.5)
-	boxes[boxID.TILE_RIGHT].w 	= math.floor(xspd + 0.5)
-	boxes[boxID.TILE_LEFT_SHORT].w 	= math.floor(xspd - 0.5)
-	boxes[boxID.TILE_RIGHT_SHORT].w 	= math.floor(xspd + 0.5)
-	boxes[boxID.TILE_UP].h 		= math.floor(yspd - 2.5)
+	boxes[boxID.TILE_DOWN_R].h	= collision.footHeightValue
+	boxes[boxID.TILE_DOWN_L].h	= collision.footHeightValue
+	boxes[boxID.TILE_LEFT].w	= math.floor(xspd - 0.5)
+	boxes[boxID.TILE_RIGHT].w	= math.floor(xspd + 0.5)
+	boxes[boxID.TILE_LEFT_SHORT].w	= math.floor(xspd - 0.5)
+	boxes[boxID.TILE_RIGHT_SHORT].w		= math.floor(xspd + 0.5)
+	boxes[boxID.TILE_UP].h		= math.floor(yspd - 2.5)
 
+	for k,v in pairs(boxID)do
+		collision.cComp:SetShape(v, boxes[v])
+	end
+	--[[
 	collision.cComp:SetShape(boxID.TILE_DOWN_R, boxes[boxID.TILE_DOWN_R]);
 	collision.cComp:SetShape(boxID.TILE_DOWN_L, boxes[boxID.TILE_DOWN_L]);
-	collision.cComp:SetShape(boxID.TILE_LEFT, 	boxes[boxID.TILE_LEFT]);
+	collision.cComp:SetShape(boxID.TILE_LEFT,	boxes[boxID.TILE_LEFT]);
 	collision.cComp:SetShape(boxID.TILE_RIGHT,  boxes[boxID.TILE_RIGHT]);
-	collision.cComp:SetShape(boxID.TILE_LEFT_SHORT, 	boxes[boxID.TILE_LEFT_SHORT]);
+	collision.cComp:SetShape(boxID.TILE_LEFT_SHORT,		boxes[boxID.TILE_LEFT_SHORT]);
 	collision.cComp:SetShape(boxID.TILE_RIGHT_SHORT,  boxes[boxID.TILE_RIGHT_SHORT]);
-	collision.cComp:SetShape(boxID.TILE_UP,  	boxes[boxID.TILE_UP]);
+	collision.cComp:SetShape(boxID.TILE_UP,		boxes[boxID.TILE_UP]);
+	--]]
 
 	collision.previous.tileLeft =false;
 	collision.previous.tileRight=false;
@@ -303,8 +307,8 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 	--If Ground Collision Occurred--
 	--============================--
 	if ( ((boxid==collision.boxID.TILE_DOWN_R) or (boxid==collision.boxID.TILE_DOWN_L))
-		 and(tx~=collision.ignoreTileX)
-		 ) then
+		and(tx~=collision.ignoreTileX)
+		) then
 
 		local thisAngle=hmap.angleH;
 		local thisAngleSigned= collision.AngleToSignedAngle(thisAngle);
@@ -336,9 +340,9 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 
 		collision.callbackFunctions.TileDown(newPosition, thisAngle, layer, tx, ty);
 
-	--===========================--
-	--If Right Collision Occurred--
-	--===========================--
+		--===========================--
+		--If Right Collision Occurred--
+		--===========================--
 	elseif ( (boxid==collision.boxID.TILE_RIGHT) or (boxid == collision.boxID.TILE_RIGHT_SHORT)) then
 		if(usesHMaps)then
 			return;
@@ -356,9 +360,9 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 			collision.callbackFunctions.TileRight(newPosition, layer, tx, ty);
 		end
 
-	--==========================--
-	--If Left Collision Occurred--
-	--==========================--
+		--==========================--
+		--If Left Collision Occurred--
+		--==========================--
 	elseif ( (boxid==collision.boxID.TILE_LEFT) or (boxid == collision.boxID.TILE_LEFT_SHORT) ) then
 		if(usesHMaps)then
 			return;
@@ -375,9 +379,9 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 			collision.callbackFunctions.TileLeft(newPosition, layer, tx, ty);
 		end
 
-	--=========================--
-	--If Top Collision Occurred--
-	--=========================--
+		--=========================--
+		--If Top Collision Occurred--
+		--=========================--
 	elseif ( (boxid==collision.boxID.TILE_UP) and(tx~=collision.ignoreTileX))then
 		--Subtract one because (ty+1) pushes one pixel past the actual tile colided with
 		if(usesHMaps)then
