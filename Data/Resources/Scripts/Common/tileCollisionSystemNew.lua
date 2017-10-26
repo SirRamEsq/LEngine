@@ -182,11 +182,11 @@ function collision.SetWidthHeight(w, h)
 	collision.coordinates.LEFT_H_OFFSET			=  h-14;
 	collision.coordinates.LEFT_ORDER			=  15;
 
-	collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  14
-	collision.coordinates.RIGHT_SHORT_H_OFFSET	=  3
+	collision.coordinates.RIGHT_SHORT_Y_OFFSET	=  16
+	collision.coordinates.RIGHT_SHORT_H_OFFSET	=  2
 
-	collision.coordinates.LEFT_SHORT_Y_OFFSET	=  14
-	collision.coordinates.LEFT_SHORT_H_OFFSET	=  3;
+	collision.coordinates.LEFT_SHORT_Y_OFFSET	=  16
+	collision.coordinates.LEFT_SHORT_H_OFFSET	=  2;
 
 	collision.coordinates.UP_Y_OFFSET			=  8;
 	collision.coordinates.UP_H_OFFSET			=  1;
@@ -258,13 +258,13 @@ function collision.Update(xspd, yspd)
 	for k,v in pairs(boxID)do
 		collision.cComp:SetShape(v, boxes[v])
 	end
+	collision.cComp:SetShape(boxID.TILE_RIGHT_SHORT,  boxes[boxID.TILE_RIGHT_SHORT]);
 	--[[
 	collision.cComp:SetShape(boxID.TILE_DOWN_R, boxes[boxID.TILE_DOWN_R]);
 	collision.cComp:SetShape(boxID.TILE_DOWN_L, boxes[boxID.TILE_DOWN_L]);
 	collision.cComp:SetShape(boxID.TILE_LEFT,	boxes[boxID.TILE_LEFT]);
 	collision.cComp:SetShape(boxID.TILE_RIGHT,  boxes[boxID.TILE_RIGHT]);
 	collision.cComp:SetShape(boxID.TILE_LEFT_SHORT,		boxes[boxID.TILE_LEFT_SHORT]);
-	collision.cComp:SetShape(boxID.TILE_RIGHT_SHORT,  boxes[boxID.TILE_RIGHT_SHORT]);
 	collision.cComp:SetShape(boxID.TILE_UP,		boxes[boxID.TILE_UP]);
 	--]]
 
