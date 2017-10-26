@@ -240,8 +240,8 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.Init(louie.c.COL_WIDTH, louie.c.COL_HEIGHT, CPP.interface, louie.CompCollision, louie.EID);
 		louie.tileCollision.callbackFunctions.TileUp	= louie.OnTileUp;
 		louie.tileCollision.callbackFunctions.TileDown  = louie.OnTileDown;
-		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileLeft;
-		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileRight
+		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileHorizontal;
+		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileHorizontal
 
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
@@ -359,6 +359,7 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.AnimateRoll()
+		louie.CompSprite:SetScalingX(louie.currentSpriteRollID, louie.facingDir);
 		louie.CompSprite:SetScalingY(louie.currentSpriteRollID, 1);
 		louie.CompSprite:SetRotation(louie.currentSpriteRollID, (360*(louie.lockTimer/louie.c.ROLL_TIMER)) * -1 * louie.facingDir);
 		louie.CompSprite:SetAnimation			(louie.currentSpriteRollID, "Roll");
@@ -553,7 +554,14 @@ function container.NewLouie(baseclass)
 	function louie.UnlockInput()
 		louie.inputLock=false;
 		louie.lockTimer=0;
+		if(louie.currentState == louie.c.STATE_ROLL)then
+			if(louie.tileCollision.ceilingTouch == true)then
+				louie.ChangeState(louie.c.STATE_ROLL)
+				return false
+			end
+		end
 		louie.currentState=louie.c.STATE_NORMAL;
+		return true
 	end
 
 	function louie.UpdateLock()
@@ -561,8 +569,9 @@ function container.NewLouie(baseclass)
 			louie.lockTimer= louie.lockTimer - 1;
 		end
 		if(louie.lockTimer==0)then
-			louie.UnlockInput();
-			louie.lockTimer=-1;
+			if louie.UnlockInput() then
+				louie.lockTimer=-1;
+			end
 		end
 		if(louie.roll_timer>0)then
 			louie.roll_timer = louie.roll_timer - 1;
@@ -630,18 +639,12 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.ChangeState(newState)
-		louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
-		louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
-		louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT)
-		louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT)
+		louie.tileCollision.UseNormalBoxes();
 		if(newState == louie.c.STATE_NORMAL) then
 			louie.UnlockInput();
 
 		elseif(newState == louie.c.STATE_ROLL) then
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_RIGHT_SHORT)
-			louie.CompCollision:Activate(louie.tileCollision.boxID.TILE_LEFT_SHORT)
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_RIGHT)
-			louie.CompCollision:Deactivate(louie.tileCollision.boxID.TILE_LEFT)
+			louie.tileCollision.UseShortBoxes();
 			louie.LockInput(louie.c.ROLL_TIMER);
 
 		elseif(newState==louie.c.STATE_WALLSLIDE) then
@@ -667,6 +670,10 @@ function container.NewLouie(baseclass)
 		local absGS=math.abs(louie.groundSpeed);
 		local absX= math.abs(louie.xspd);
 		local movDir= (louie.groundSpeed>=0);
+
+		--enable louie to change direction when stopped
+		if(louie.xspd == 0) then louie.facingDir = direction end
+
 		if(movDir==false)then
 			movDir=-1;
 		else
@@ -709,6 +716,7 @@ function container.NewLouie(baseclass)
 				end
 			end
 		end
+
 	end
 
 	function louie.JumpCancel()
@@ -1017,26 +1025,13 @@ function container.NewLouie(baseclass)
 		louie.platformVelocityY=0;
 	end
 
-	function louie.OnTileRight(newPosition, layer, tx, ty)
+	function louie.OnTileHorizontal(newPosition, layer, tx, ty)
 		if(louie.currentState == louie.c.STATE_ROLL)then
 			--if box can be broken, Don't stop momentum
 			if(louie.BreakBox(layer, tx, ty))then
 				return
-			end
-		end
-
-		newPosition= louie.CompPosition:TranslateWorldToLocal(newPosition);
-		louie.CompPosition:SetPositionLocalX(newPosition.x);
-
-		louie.xspd=0; --for when in the air
-		louie.groundSpeed=0;
-	end
-
-	function louie.OnTileLeft(newPosition, layer, tx, ty)
-		if(louie.currentState == louie.c.STATE_ROLL)then
-			--if box can be broken, Don't stop momentum
-			if(louie.BreakBox(layer, tx, ty))then
-				return
+			else
+				louie.ChangeState(louie.c.STATE_NORMAL)
 			end
 		end
 
@@ -1046,6 +1041,7 @@ function container.NewLouie(baseclass)
 
 		louie.xspd=0; --for when in the air
 		louie.groundSpeed=0;
+		
 	end
 
 	function louie.OnTileUp(newPosition, layer, tx, ty)

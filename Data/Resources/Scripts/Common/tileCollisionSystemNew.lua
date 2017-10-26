@@ -148,9 +148,10 @@ function collision.Init(w, h, iface, component, eid)
 
 	collision.cComp:AddCollisionBox(boxes[boxID.TILE_LEFT_SHORT], boxID.TILE_LEFT_SHORT, coords.LEFT_ORDER);
 	collision.cComp:CheckForTiles(boxID.TILE_LEFT_SHORT);
-	collision.cComp:Deactivate(boxID.TILE_RIGHT_SHORT);
+	collision.cComp:Deactivate(boxID.TILE_LEFT_SHORT);
 
 	collision.groundTouch=false;
+	collision.ceilingTouch=false;
 end
 
 function collision.SetWidthHeight(w, h)
@@ -274,6 +275,9 @@ function collision.Update(xspd, yspd)
 	collision.ignoreTileX=-1;
 	collision.prevGroundTouch=collision.groundTouch;
 	collision.groundTouch=false;
+	collision.rightWall=false;
+	collision.leftWall=false;
+	collision.ceilingTouch=false;
 	collision.frameProperties.firstCollision=false;
 end
 
@@ -347,9 +351,9 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 		if(usesHMaps)then
 			return;
 		end
+		collision.rightWall = true
 		if((hspd>=0) or ((collision.groundTouch==false) and (hspd==0)))  then
-			--Add one because the first x pixel counts as part of the width
-			newPosition=CPP.Coord2df( (tx*collision.TILEWIDTH)-collision.coordinates.RIGHT_X_OFFSET-collision.coordinates.RIGHT_W_OFFSET+1,																																																			yval);
+			newPosition=CPP.Coord2df( (tx*collision.TILEWIDTH)-collision.WIDTH, yval);
 
 			collision.previous.tileRight=true;
 			--The top collision box won't try to collide with this tile for the rest of the frame
@@ -367,6 +371,7 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 		if(usesHMaps)then
 			return;
 		end
+		collision.leftWall = true
 		if((hspd<=0) or ((collision.groundTouch==false) and (hspd==0))) then
 			--Subtract one because (tx+1) pushes one pixel past the actual tile colided with
 			newPosition=CPP.Coord2df(((tx+1)*collision.TILEWIDTH)-1, yval);
@@ -384,6 +389,7 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 		--=========================--
 	elseif ( (boxid==collision.boxID.TILE_UP) and(tx~=collision.ignoreTileX))then
 		--Subtract one because (ty+1) pushes one pixel past the actual tile colided with
+		collision.ceilingTouch=true;
 		if(usesHMaps)then
 			return;
 		end
