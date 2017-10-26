@@ -417,6 +417,10 @@ EID GameState::GetEIDFromName(const std::string &name) const {
   return i->second;
 }
 
+bool GameState::SetNextMap(const std::string& mapName){
+
+}
+
 bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
   if (m == NULL) {
     LOG_ERROR("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer");

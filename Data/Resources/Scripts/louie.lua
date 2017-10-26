@@ -44,7 +44,7 @@ function container.NewLouie(baseclass)
 		louie.c.COL_HEIGHT=32; --HEIGHT of object sprite
 		louie.c.WIDTH=18; --WIDTH of object sprite
 		louie.c.HEIGHT=32; --HEIGHT of object sprite
-		louie.c.SIDEJUMP_XSPD = 2
+		louie.c.SIDEJUMP_XSPD = 0.1
 
 		louie.c.GRAVITY=0.21875;
 		louie.c.SLOPE_GRAVITY=0.15
@@ -53,7 +53,7 @@ function container.NewLouie(baseclass)
 		louie.c.JUMPHEIGHT_BOX = louie.c.JUMPHEIGHT - 1;
 		louie.c.ACCELERATION=.046875*2;
 		louie.c.ACCELERATION_AIR= louie.c.ACCELERATION;
-		louie.c.DEACCELERATION=.6;
+		louie.c.DEACCELERATION=.3;
 		louie.c.ACCELERATION_TOP=4; --Max Speed Louie can acheive through normal acceleration
 		louie.c.ROLL_SPEED= louie.c.ACCELERATION_TOP+1;
 		louie.c.ROLL_TIMER=15;

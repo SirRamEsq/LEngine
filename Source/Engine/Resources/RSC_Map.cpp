@@ -688,6 +688,8 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
   AttributeMap attributes;
   std::string objectLayerName = rootNode->first_attribute()->value();
 
+  /// \TODO what if the layer HAS NO ATTRIBUTES?
+
   // Object Layer properties
   rapidxml::xml_node<> *subnodeProperties = rootNode->first_node();
   PropertyMap properties;

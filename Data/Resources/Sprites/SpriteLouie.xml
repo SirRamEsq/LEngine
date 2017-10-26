@@ -26,6 +26,6 @@
 	</animation>
 
 	<animation name="Skid" speed="1.0">
-		<image x="0"  y="0" w="18" h="32"/>
+		<image x="54"  y="32" w="18" h="32"/>
 	</animation>
 </sprite>
