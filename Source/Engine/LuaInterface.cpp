@@ -795,17 +795,19 @@ void LuaInterface::ProcessObservers() {
           (parentState->comScriptMan.GetComponent(listenerID));
 
       if (senderScript == NULL) {
-        LOG_ERROR(
-            "Error: In function EventLuaObserveEntity; Cannot find entity "
-            "with id: " +
-            (senderID));
+		  std::stringstream ss;
+		  ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
+            <<"with id: " <<
+            (senderID);
+        LOG_ERROR(ss.str())
         continue;
       }
       if (listenerScript == NULL) {
-        LOG_ERROR(
-            "Error: In function EventLuaObserveEntity; Cannot find entity "
-            "with id: " +
-            (listenerID));
+		  std::stringstream ss;
+		  ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
+            <<"with id: " <<
+            (listenerID);
+        LOG_ERROR(ss.str())
         continue;
       }
 
@@ -813,6 +815,7 @@ void LuaInterface::ProcessObservers() {
       senderScript->EventLuaAddObserver(listenerScript);
     }
   }
+  mEntitiesToObserve.clear();
 }
 
 void LuaInterface::Update() { ProcessObservers(); }
