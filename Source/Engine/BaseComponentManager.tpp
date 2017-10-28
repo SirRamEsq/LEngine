@@ -22,8 +22,8 @@ void BaseComponentManager_Impl<T>::DeleteAllComponents(){
 
 template <class T>
 void BaseComponentManager_Impl<T>::DeleteComponent(EID id){
-    auto comp=componentList.find(id);
-    if(comp==componentList.end()){return;}
+    //auto comp=componentList.find(id);
+    //if(comp==componentList.end()){return;}
 
 	componentList.erase(id);
 	activeComponents.erase(id);

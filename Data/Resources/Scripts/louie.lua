@@ -190,6 +190,7 @@ function container.NewLouie(baseclass)
 		CPP.interface:ListenForInput(EID, louie.c.K_DOWN);
 		CPP.interface:ListenForInput(EID, louie.c.K_LEFT);
 		CPP.interface:ListenForInput(EID, louie.c.K_RIGHT);
+		CPP.interface:ListenForInput(EID, "cheat");
 		louie.input.RegisterKey( louie.c.K_UP   );
 		louie.input.RegisterKey( louie.c.K_DOWN );
 		louie.input.RegisterKey( louie.c.K_LEFT );
@@ -260,6 +261,7 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.OnKeyDown(keyname)
+		if(keyname == "cheat") then louie.InputJump() end
 		louie.input.OnKeyDown(keyname)
 	end
 

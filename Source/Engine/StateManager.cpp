@@ -417,15 +417,17 @@ EID GameState::GetEIDFromName(const std::string &name) const {
   return i->second;
 }
 
-bool GameState::SetNextMap(const std::string& mapName){
-
-}
-
 bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
   if (m == NULL) {
     LOG_ERROR("Error: GameState::SetCurrentTiledMap was passed a NULL Pointer");
     return false;
   }
+  
+  std::stringstream ss;
+  ss << "Changing Map To: " << m->GetMapName();
+  LOG_INFO(ss.str());
+
+  mEntitiesToCreate.clear();
 
   // Unload all layers from last map
   mCurrentMapTileLayers.clear();

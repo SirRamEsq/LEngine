@@ -2,7 +2,7 @@
 59 = specialLuaKey;
 a = left;
 d = right;
-e = swing;
+e = cheat;
 f = use;
 s = down;
 w = up;

@@ -871,9 +871,15 @@ void LuaInterface::SwapState(const std::string &scriptPath) {
                              script);
 }
 
-void LuaInterface::LoadMap(const std::string &mapPath,
+bool LuaInterface::LoadMap(const std::string &mapPath,
                            unsigned int entranceID) {
   const RSC_Map *m = K_MapMan.GetLoadItem(mapPath, mapPath);
+  if(m == NULL){
+	std::stringstream ss;
+	ss << "Map '" << mapPath << "' not found";
+	LOG_ERROR(ss.str());
+	return false;
+  }
   parentState->SetMapNextFrame(m, entranceID);
 }
 

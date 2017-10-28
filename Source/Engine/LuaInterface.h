@@ -170,7 +170,7 @@ class LuaInterface {
   /// Will swap state with a new GS_Script
   void SwapState(const std::string &scriptPath);
   /// Will load map at specified path
-  void LoadMap(const std::string &mapPath, unsigned int entranceID);
+  bool LoadMap(const std::string &mapPath, unsigned int entranceID);
   /// Sets a key
   void RemapInputToNextKeyPress(const std::string &key);
   /// Gets screen resolution
