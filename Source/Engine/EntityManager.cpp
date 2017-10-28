@@ -109,7 +109,8 @@ void EntityManager::MapNameToEID(EID eid, const std::string &entityName) {
 }
 
 void EntityManager::ClearAllEntities() {
-  for (EID i = EID_MIN; i < entityNumber; i++) {
+	//inclusive, entityNumber is the highest eid in use
+  for (EID i = EID_MIN; i <= entityNumber; i++) {
     DeleteEntity(i);
   }
 }
