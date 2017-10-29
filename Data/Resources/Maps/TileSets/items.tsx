@@ -12,6 +12,12 @@
    <property name="isBoxArrow" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="82">
+  <properties>
+   <property name="isBox" type="bool" value="true"/>
+   <property name="switch" type="int" value="0"/>
+  </properties>
+ </tile>
  <tile id="83">
   <properties>
    <property name="isBox" type="bool" value="true"/>

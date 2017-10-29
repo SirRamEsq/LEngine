@@ -985,10 +985,15 @@ function container.NewLouie(baseclass)
 
 		if(isBox == "true")then
 			local isBoxHat = layer:GetTileProperty(tileID, "isBoxHat")
+			local isSwitch = layer:GetTileProperty(tileID, "switch")
 
 			if(isBoxHat == "true")then
 				boxType1 = 1
 				louie.GetHat()
+
+			elseif(isSwitch ~= nil)then
+				CPP.interface:EventLuaBroadcastEvent(louie.EID, tostring(isSwitch))
+
 			end
 
 			--destroy box

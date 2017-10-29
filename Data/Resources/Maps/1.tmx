@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="20">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="22">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
  <tileset firstgid="257" source="TileSets/items.tsx"/>
+ <imagelayer name="BG1">
+  <image source="rapciu_horizon.png"/>
+  <properties>
+   <property name="DEPTH" type="int" value="200"/>
+   <property name="STRETCH_TO_MAP_X" type="bool" value="true"/>
+   <property name="STRETCH_TO_MAP_Y" type="bool" value="true"/>
+  </properties>
+ </imagelayer>
  <layer name="BG" width="100" height="50">
   <properties>
    <property name="DEPTH" type="int" value="30"/>
@@ -22627,7 +22635,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="339"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -25088,20 +25096,21 @@
     <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
    </properties>
   </object>
-  <object id="18" gid="339" x="1390.5" y="418" width="16" height="16">
+  <object id="19" name="Camera" x="145" y="6" width="217" height="80">
+   <properties>
+    <property name="PARENT" type="int" value="4"/>
+    <property name="SCRIPT" value="Camera/playerCamera.lua"/>
+   </properties>
+  </object>
+  <object id="21" name="Box1 Controller" x="1398" y="271.667" width="62" height="53">
    <properties>
     <property name="SCRIPT" value="Buttons/removeTiles.lua"/>
+    <property name="listenFor" value="0"/>
     <property name="tileLayerName" value="Solid"/>
     <property name="tilesH" type="int" value="2"/>
     <property name="tilesW" type="int" value="2"/>
     <property name="tilesX" type="int" value="88"/>
     <property name="tilesY" type="int" value="22"/>
-   </properties>
-  </object>
-  <object id="19" name="Camera" x="145" y="6" width="217" height="80">
-   <properties>
-    <property name="PARENT" type="int" value="4"/>
-    <property name="SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
  </objectgroup>

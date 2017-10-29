@@ -50,6 +50,8 @@ local entity = baseclass or {}
 
 		entity.state = false
 
+		entity.listenForString = entity.LEngineData.InitializationTable.listenFor or ""
+
 		entity.tilesToRemoveArea.x = entity.LEngineData.InitializationTable.tilesX
 		entity.tilesToRemoveArea.y = entity.LEngineData.InitializationTable.tilesY
 		entity.tilesToRemoveArea.w = entity.LEngineData.InitializationTable.tilesW or 0
@@ -145,6 +147,14 @@ local entity = baseclass or {}
 
 	end
 
+	function entity.OnLuaEvent(senderEID, eventString)
+		if entity.listenForString ~= "" then
+			if eventString == entity.listenForString then
+				entity.Toggle()
+			end
+		end
+
+	end
 
 	entity.EntityInterface						= entity.EntityInterface or {}
 	entity.EntityInterface.IsSolid		= function ()				return true; end
