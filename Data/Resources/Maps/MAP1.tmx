@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="128" height="128" tilewidth="16" tileheight="16" backgroundcolor="#246fca" nextobjectid="46">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="128" height="128" tilewidth="16" tileheight="16" backgroundcolor="#246fca" nextobjectid="47">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
  <tileset firstgid="257" source="TileSets/items.tsx"/>
  <imagelayer name="Image Layer 1">
@@ -114868,6 +114868,12 @@
    <properties>
     <property name="SCRIPT" value="waterFountain.lua"/>
     <property name="direction" value="right"/>
+   </properties>
+  </object>
+  <object id="46" name="Exit" x="1560" y="601.333" width="66.6667" height="46.6667">
+   <properties>
+    <property name="SCRIPT" value="Items/changeMap.lua"/>
+    <property name="map" value="Hub.tmx"/>
    </properties>
   </object>
  </objectgroup>

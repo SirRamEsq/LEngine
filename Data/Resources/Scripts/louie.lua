@@ -33,6 +33,7 @@ function container.NewLouie(baseclass)
 		louie.c.K_DOWN = "down"
 		louie.c.K_LEFT = "left"
 		louie.c.K_RIGHT = "right"
+		louie.c.K_ACTIVATE = "activate"
 
 		louie.c.TILE_WIDTH=16;
 		louie.c.TILE_HEIGHT=16;
@@ -190,11 +191,13 @@ function container.NewLouie(baseclass)
 		CPP.interface:ListenForInput(EID, louie.c.K_DOWN);
 		CPP.interface:ListenForInput(EID, louie.c.K_LEFT);
 		CPP.interface:ListenForInput(EID, louie.c.K_RIGHT);
+		CPP.interface:ListenForInput(EID, louie.c.K_ACTIVATE);
 		CPP.interface:ListenForInput(EID, "cheat");
 		louie.input.RegisterKey( louie.c.K_UP   );
 		louie.input.RegisterKey( louie.c.K_DOWN );
 		louie.input.RegisterKey( louie.c.K_LEFT );
 		louie.input.RegisterKey( louie.c.K_RIGHT);
+		louie.input.RegisterKey( louie.c.K_ACTIVATE);
 
 		louie.CompCollision = CPP.interface:GetCollisionComponent(EID);
 		louie.CompSprite	= CPP.interface:GetSpriteComponent(EID);
@@ -928,6 +931,8 @@ function container.NewLouie(baseclass)
 		local objectName=packet:GetName();
 		local otherEntity = CPP.interface:EntityGetInterface(entityID)
 		local bounceThreshold = 3;
+
+		if louie.input.key[louie.c.K_ACTIVATE] then otherEntity.Activate() end
 
 		if ((myBoxID==louie.entityCollision.primaryCollision.ID))then
 			local solid = otherEntity.IsSolid();

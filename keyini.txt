@@ -1,8 +1,8 @@
-112 = specialLuaKey;
 59 = specialLuaKey;
 a = left;
 d = right;
 e = cheat;
+n = activate;
 f = use;
 s = down;
 w = up;

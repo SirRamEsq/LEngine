@@ -397,6 +397,7 @@ void CollisionGrid::UpdateBuckets(
   const Shape *shape;
 
   // Collision will get WEIRD once outside the map
+  // Collision will also fail if the objct is too large (larger than 3x3 grid)
 
   buckets.clear();
   for (auto it = comps->cbegin(); it != comps->cend(); it++) {
@@ -409,14 +410,14 @@ void CollisionGrid::UpdateBuckets(
     shape = primaryBox->GetWorldCoord();
     Rect r = (static_cast<const Rect *>(shape))->Round();
 
-    hashes.insert((r.GetLeft() / COLLISION_GRID_SIZE) +
-                  ((r.GetTop() / COLLISION_GRID_SIZE) * mapWidthPixels));
-    hashes.insert((r.GetRight() / COLLISION_GRID_SIZE) +
-                  ((r.GetTop() / COLLISION_GRID_SIZE) * mapWidthPixels));
-    hashes.insert((r.GetLeft() / COLLISION_GRID_SIZE) +
-                  ((r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels));
-    hashes.insert((r.GetRight() / COLLISION_GRID_SIZE) +
-                  ((r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels));
+    hashes.insert(((int)r.GetLeft() / COLLISION_GRID_SIZE) +
+                  (((int)r.GetTop() / COLLISION_GRID_SIZE) * mapWidthPixels));
+    hashes.insert(((int)r.GetRight() / COLLISION_GRID_SIZE) +
+                  (((int)r.GetTop() / COLLISION_GRID_SIZE) * mapWidthPixels));
+    hashes.insert(((int)r.GetLeft() / COLLISION_GRID_SIZE) +
+                  (((int)r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels));
+    hashes.insert(((int)r.GetRight() / COLLISION_GRID_SIZE) +
+                  (((int)r.GetBottom() / COLLISION_GRID_SIZE) * mapWidthPixels));
 
     for (auto hashIt = hashes.begin(); hashIt != hashes.end(); hashIt++) {
       buckets[*hashIt].push_back(it->second->GetEID());

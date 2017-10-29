@@ -24,6 +24,7 @@ function BaseEntity.new(ignoringThis)
 	end
 
 	base.EntityInterface = {
+	  Activate	  = function () end,
 	  IsSolid	  = function () return true;  end,
 	  CanBounce   = function () return false; end, --the 'goomba' property
 	  CanClimb	  = function () return false; end, --rope
