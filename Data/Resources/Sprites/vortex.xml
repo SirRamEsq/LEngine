@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite origin="center" width="64" height="64" transparentColor="ff00ff" textureName="vortex.png">
+	<animationSequence name="Walk" speed="1.0" startX="0" startY="0" w="64" h="64" imgs="4"/>
+</sprite>
+
