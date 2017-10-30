@@ -85,8 +85,8 @@ EID EntityManager::NewEntity(const std::string &entityName) {
   }
   // If there are no old eids to use, make a new one
   else {
-    entityNumber++;
     newEntityID = entityNumber;
+    entityNumber++;
   }
 
   MapNameToEID(newEntityID, entityName);
@@ -109,8 +109,7 @@ void EntityManager::MapNameToEID(EID eid, const std::string &entityName) {
 }
 
 void EntityManager::ClearAllEntities() {
-	//inclusive, entityNumber is the highest eid in use
-  for (EID i = EID_MIN; i <= entityNumber; i++) {
+  for (EID i = EID_MIN; i < entityNumber; i++) {
     DeleteEntity(i);
   }
 }
