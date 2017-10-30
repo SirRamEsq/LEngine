@@ -84,9 +84,7 @@ TEST_CASE("EntityManager Name Lookup", "[EntityManager]") {
   REQUIRE(eidWrong != testValue);
 }
 
-TEST_CASE(
-    "EntityManager set mFlagDelete all when no entities have been created",
-    "[EntityManager][regression]") {
+TEST_CASE("EntityManager set delete all", "[EntityManager][regression]") {
   GameStateManager_Mock dummyManager(NULL);
   EventDispatcher eventDispatcher;
   ComponentTestManager compMan(&eventDispatcher);
@@ -145,6 +143,24 @@ TEST_CASE(
   REQUIRE(compPointer->GetUpdateCount() == 2);
   compPointer = compMan.GetComponent(eid3);
   REQUIRE(compPointer->GetUpdateCount() == 2);
+
+  // Test to make sure ClearAllEntities actuall clears all active entities
+  auto eid4 = entityMan.NewEntity();
+  auto eid5 = entityMan.NewEntity();
+  auto eid6 = entityMan.NewEntity();
+  compMan.AddComponent(eid4);
+  compMan.AddComponent(eid5);
+  compMan.AddComponent(eid6);
+  compMan.Update();
+  REQUIRE(entityMan.GetEntityCount() == 5);
+
+  entityMan.ClearAllEntities();
+  entityMan.Cleanup();
+  REQUIRE(entityMan.GetEntityCount() == 0);
+
+  testPointer = compMan.GetComponent(eid6);
+  REQUIRE(testPointer == NULL);
+
 }
 
 TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]") {
