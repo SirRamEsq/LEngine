@@ -8,6 +8,7 @@
 
 #include <map>
 #include <set>
+#include <unordered_set>
 #include <vector>
 
 class GameStateManager;
@@ -122,12 +123,14 @@ class EntityManager {
   void MapNameToEID(EID eid, const std::string &entityName);
 
   /// Current highest EID in use
-  EID entityNumber;
-  /// Current number of living entities
-  unsigned int entityCount;
+  EID maxInUseEID;
 
   /// Set of entities to be deleted next frame
-  std::set<EID> deadEntities;
+  std::unordered_set<EID> deadEntities;
+
+  /// Set of in use EIDS
+  std::unordered_set<EID> aliveEntities;
+
   /// container of EIDS that have been deleted and can be reused
   std::vector<EID> reclaimedEIDs;
 
