@@ -160,7 +160,6 @@ TEST_CASE("EntityManager set delete all", "[EntityManager][regression]") {
 
   testPointer = compMan.GetComponent(eid6);
   REQUIRE(testPointer == NULL);
-
 }
 
 TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]") {
@@ -224,4 +223,27 @@ TEST_CASE("EntityManager Deactivation/Activation testing", "[EntityManager]") {
   REQUIRE(compPointer->GetUpdateCount() == 2);
   compPointer = compMan.GetComponent(eid3);
   REQUIRE(compPointer->GetUpdateCount() == 4);
+}
+
+TEST_CASE("Break EntityCount", "[EntityManager]") {
+  GameStateManager_Mock dummyManager(NULL);
+  EntityManager entityMan(&dummyManager);
+  auto eid1 = entityMan.NewEntity();
+  auto eid2 = entityMan.NewEntity();
+  auto eid3 = entityMan.NewEntity();
+  REQUIRE(entityMan.GetEntityCount() == 3);
+
+  //this entity is valid, try to delete it three times
+  entityMan.DeleteEntity(eid1);
+  entityMan.DeleteEntity(eid1);
+  entityMan.DeleteEntity(eid1);
+  //even though cleanup isn't called, they're still considered to be deleted
+  REQUIRE(entityMan.GetEntityCount() == 2);
+
+  //these eids don't exist, shouldn't reduce entityCount
+  entityMan.DeleteEntity(31337);
+  entityMan.DeleteEntity(eid3 + 1);
+  entityMan.DeleteEntity(entityMan.NewEntity());
+  REQUIRE(entityMan.GetEntityCount() == 2);
+
 }

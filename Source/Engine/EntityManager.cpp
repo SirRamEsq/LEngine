@@ -4,16 +4,19 @@
 
 EntityManager::EntityManager(GameStateManager *gsm) : mStateManager(gsm) {
   ASSERT(gsm != NULL);
-  entityNumber = EID_MIN;
-  entityCount = 0;
+  maxInUseEID = EID_MIN;
 }
 
 void EntityManager::DeleteEntity(EID id) {
+  // if the id is alive and not alerady deleted
+  if (aliveEntities.find(id) != aliveEntities.end()) {
   deadEntities.insert(id);
-  entityCount -= 1;
+  }
 }
 
-unsigned int EntityManager::GetEntityCount() { return entityCount; }
+unsigned int EntityManager::GetEntityCount() {
+	return aliveEntities.size() - deadEntities.size();
+}
 
 void EntityManager::DispatchEvent(const Event *event) {
   for (auto i = componentsRegistered.begin(); i != componentsRegistered.end();
@@ -55,6 +58,7 @@ void EntityManager::Cleanup() {
     }
 
     reclaimedEIDs.push_back(id);
+    aliveEntities.erase(id);
   }
 
   deadEntities.clear();
@@ -85,13 +89,13 @@ EID EntityManager::NewEntity(const std::string &entityName) {
   }
   // If there are no old eids to use, make a new one
   else {
-    newEntityID = entityNumber;
-    entityNumber++;
+    newEntityID = maxInUseEID;
+    maxInUseEID++;
   }
 
   MapNameToEID(newEntityID, entityName);
+  aliveEntities.insert(newEntityID);
   // Increment number of living entities
-  entityCount++;
 
   return newEntityID;
 }
@@ -109,7 +113,7 @@ void EntityManager::MapNameToEID(EID eid, const std::string &entityName) {
 }
 
 void EntityManager::ClearAllEntities() {
-  for (EID i = EID_MIN; i < entityNumber; i++) {
+  for (EID i = EID_MIN; i < maxInUseEID; i++) {
     DeleteEntity(i);
   }
 }
