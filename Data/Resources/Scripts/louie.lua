@@ -5,11 +5,10 @@ Roll
 Long Jump
 Wall Slide
 Wall Jump
+Skid jump
 
 To Implement
 KLONOA style enemy/item grab
-side jump / skid jump ala Mario 64
-
 
 Each map will have challenges
 pink - harm no ememies
@@ -59,6 +58,7 @@ function container.NewLouie(baseclass)
 		louie.c.ROLL_SPEED= louie.c.ACCELERATION_TOP+1;
 		louie.c.ROLL_TIMER=15;
 		louie.c.ROLL_COOLDOWN=20;
+		louie.c.MIN_ROLL_SPEED=3;
 		louie.roll_timer=0;
 
 		louie.c.FRICTION_AIR=.1;
@@ -562,6 +562,11 @@ function container.NewLouie(baseclass)
 		if(louie.currentState == louie.c.STATE_ROLL)then
 			if(louie.tileCollision.ceilingTouch == true)then
 				louie.ChangeState(louie.c.STATE_ROLL)
+				if louie.input.key[louie.c.K_LEFT] then
+					louie.facingDir = louie.c.FACING_LEFT
+				elseif louie.input.key[louie.c.K_RIGHT] then
+					louie.facingDir = louie.c.FACING_RIGHT
+				end
 				return false
 			end
 		end
@@ -649,8 +654,14 @@ function container.NewLouie(baseclass)
 			louie.UnlockInput();
 
 		elseif(newState == louie.c.STATE_ROLL) then
-			louie.tileCollision.UseShortBoxes();
-			louie.LockInput(louie.c.ROLL_TIMER);
+			--Need to be moving fast enough to trigger a roll
+			if (louie.groundSpeed >= louie.c.MIN_ROLL_SPEED) then
+				louie.tileCollision.UseShortBoxes();
+				louie.LockInput(louie.c.ROLL_TIMER);
+			else
+				louie.ChangeState(louie.c.STATE_NORMAL)
+				return
+			end
 
 		elseif(newState==louie.c.STATE_WALLSLIDE) then
 			louie.xspd=0;
@@ -1053,7 +1064,7 @@ function container.NewLouie(baseclass)
 
 		louie.xspd=0; --for when in the air
 		louie.groundSpeed=0;
-		
+
 	end
 
 	function louie.OnTileUp(newPosition, layer, tx, ty)
