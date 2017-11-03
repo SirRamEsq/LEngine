@@ -5,9 +5,9 @@ CollisionBox::CollisionBox(int order, uint8_t flags, const Shape *shape,
                            ComponentPosition *pos)
     : mOrder(order), mFlags(flags), mPos(pos) {
   mActive = true;
-  ASSERT(mShape.get() != NULL);
 
   SetShape(shape);
+  ASSERT(mShape.get() != NULL);
 }
 
 void CollisionBox::SetShape(const Shape *shape) {
