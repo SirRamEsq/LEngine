@@ -634,9 +634,9 @@ void RenderManager::LoadDefaultShaders() {
   defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
 
   if (defaultProgramSprite == NULL) {
-	#ifdef DEBUG_MODE
+#ifdef DEBUG_MODE
     std::string shaderFrag = "fragmentSpriteDebug.glsl";
-	#else
+#else
     std::string shaderFrag = "fragmentSpriteMain.glsl";
 #endif
     std::string shaderVert = "vertexSpriteMain.glsl";
@@ -652,9 +652,9 @@ void RenderManager::LoadDefaultShaders() {
 
   if (defaultProgramTile == NULL) {
     std::string shaderVert = "vertexTileMain.glsl";
-	#ifdef DEBUG_MODE
+#ifdef DEBUG_MODE
     std::string shaderFrag = "fragmentTileDebug.glsl";
-	#else
+#else
     std::string shaderFrag = "fragmentTileMain.glsl";
 #endif
     auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
@@ -669,9 +669,9 @@ void RenderManager::LoadDefaultShaders() {
 
   if (defaultProgramImage == NULL) {
     std::string shaderVert = "vertexImage.glsl";
-	#ifdef DEBUG_MODE
+#ifdef DEBUG_MODE
     std::string shaderFrag = "fragmentImageDebug.glsl";
-	#else
+#else
     std::string shaderFrag = "fragmentImage.glsl";
 #endif
 
