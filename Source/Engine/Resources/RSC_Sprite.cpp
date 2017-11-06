@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
+
+Image::Image(const Rect &r, float len) : rect(r), frameLength(len) {}
 //////////////
 // LAnimation//
 //////////////
@@ -18,10 +20,10 @@ void LAnimation::CalculateUV(int textureWidth, int textureHeight) {
 
   UVCoords.clear();
   for (auto i = images.begin(); i != images.end(); i++) {
-    float leftUV = ((float)(*i).GetLeft()) / textureWidth;
-    float topUV = ((float)(*i).GetTop()) / textureHeight;
-    float rightUV = ((float)(*i).GetRight()) / textureWidth;
-    float bottomUV = ((float)(*i).GetBottom()) / textureHeight;
+    float leftUV = ((float)(*i).rect.GetLeft()) / textureWidth;
+    float topUV = ((float)(*i).rect.GetTop()) / textureHeight;
+    float rightUV = ((float)(*i).rect.GetRight()) / textureWidth;
+    float bottomUV = ((float)(*i).rect.GetBottom()) / textureHeight;
 
     UVCoords.push_back(std::pair<Coord2df, Coord2df>(
         Coord2df(leftUV, topUV), Coord2df(rightUV, bottomUV)));
@@ -29,6 +31,50 @@ void LAnimation::CalculateUV(int textureWidth, int textureHeight) {
   isUVCalculated = true;
 }
 
+float LAnimation::GetMaxTime() const {
+  float total = 0;
+  for (auto i = images.begin(); i != images.end(); i++) {
+    total += i->frameLength;
+  }
+
+  return total;
+}
+
+float LAnimation::GetTime(int index) const {
+  if (!ValidateIndex(index)) {
+    return 0;
+  }
+
+  float totalTime = 0;
+  for (auto i = 0; i < index; i++) {
+    totalTime += images[index].frameLength;
+  }
+
+  return totalTime;
+}
+
+int LAnimation::GetFrameFromTimeElapsed(float time) const {
+  float maxTime = GetMaxTime();
+  // Get time in range
+  while (time > maxTime) {
+    time -= maxTime;
+  }
+
+  int index = 0;
+  for (auto i = images.begin(); i != images.end(); i++) {
+    if (time > i->frameLength) {
+      time -= i->frameLength;
+    } else {
+      return index;
+    }
+    index++;
+  }
+
+  // shouldn't happen
+  ASSERT("Total time is not in Animation time range" == "");
+
+  return index;
+}
 std::pair<Coord2df, Coord2df> LAnimation::GetUVRandom(int index) const {
   if ((ValidateIndex(index)) and (isUVCalculated)) {
     // Get float between 0.0 and 1.0
@@ -71,18 +117,21 @@ void LAnimation::SetColorKey(int image, unsigned int r, unsigned int g,
   //    images[image]->SetColorKey(r,g,b);
 }
 
-void LAnimation::AppendImage(const Rect &img) { images.push_back(Rect(img)); }
+void LAnimation::AppendImage(const Rect &rect, float frameLength = 1.0f) {
+  Image img(rect, frameLength);
+  images.push_back(img);
+}
 
 int LAnimation::GetWidth(int index) const {
   if (ValidateIndex(index)) {
-    return images[index].w;
+    return images[index].rect.w;
   }
   return 0;
 }
 
 int LAnimation::GetHeight(int index) const {
   if (ValidateIndex(index)) {
-    return images[index].h;
+    return images[index].rect.h;
   }
   return 0;
 }
@@ -99,7 +148,7 @@ LAnimation::LAnimation(const double &spd, AnimationLoadTag t) : loadTag(t) {
 
 const Rect &LAnimation::GetRectAtIndex(int imageIndex) const {
   if (ValidateIndex(imageIndex)) {
-    return images[imageIndex];
+    return images[imageIndex].rect;
   }
   throw LEngineException("Invalid index for animation");
 }
@@ -299,6 +348,7 @@ LAnimation *RSC_Sprite::LoadAnimation(rapidxml::xml_node<> *animationNode) {
       animationName, LAnimation((atof(speed.c_str())), LOAD_TAG_ANIMATION)));
   animation = &animations.find(animationName)->second;
 
+  float imageLength = 1.0f;
   for (imageNode = animationNode->first_node(); imageNode != 0;
        imageNode = imageNode->next_sibling()) {  // Get all images
     attribute = imageNode->first_attribute("x");
@@ -321,7 +371,12 @@ LAnimation *RSC_Sprite::LoadAnimation(rapidxml::xml_node<> *animationNode) {
       rect.h = strtol(attribute->value(), NULL, 10);
     }
 
-    animation->AppendImage(rect);
+    attribute = imageNode->first_attribute("length");
+    if (attribute != NULL) {
+      imageLength = strtof(attribute->value(), NULL);
+    }
+
+    animation->AppendImage(rect, imageLength);
   }
   return animation;
 }

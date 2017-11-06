@@ -22,9 +22,14 @@ enum AnimationLoadTag {
 };
 
 class RSC_Sprite;
+struct Image {
+  Image(const Rect &r, float len);
+  Rect rect;
+  float frameLength;
+};
 
 class LAnimation {
-  typedef std::vector<Rect> imageVec;
+  typedef std::vector<Image> imageVec;
   friend RSC_Sprite;
 
  public:
@@ -33,7 +38,11 @@ class LAnimation {
   ~LAnimation();
   void Clear();
 
-  void AppendImage(const Rect &img);
+  void AppendImage(const Rect &rect, float frameLength);
+  float GetMaxTime() const;
+  ///Returns how much time must elapse to reach the specified index
+  float GetTime(int index) const;
+  int GetFrameFromTimeElapsed(float time) const;
 
   imageVec::iterator ItBegin() { return images.begin(); }
   imageVec::iterator ItEnd() { return images.end(); }

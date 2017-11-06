@@ -1060,6 +1060,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
       .addFunction("SetAnimation", &ComponentSprite::SetAnimation)
       .addFunction("SetAnimationSpeed", &ComponentSprite::SetAnimationSpeed)
+      .addFunction("DefaultAnimationSpeed", &ComponentSprite::DefaultAnimationSpeed)
       .addFunction("SetImageIndex", &ComponentSprite::SetImageIndex)
 
       .addFunction("SetRotation", &ComponentSprite::SetRotation)

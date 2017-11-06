@@ -3,9 +3,11 @@
 
 AnimationData::AnimationData(const TAnimationMap *aniMap) : animations(aniMap) {
   animate = true;
+  currentTime = 0;
   currentImageIndex = 0;
-  currentImageIndexInt = 0;
   animationSpeed = 0.0f;
+  currentAnimation = NULL;
+  currentAnimationName="";
   SetAnimation(animations->begin()->first);
 }
 
@@ -14,11 +16,11 @@ void AnimationData::Update() {
     return;
   }
 
-  currentImageIndex += animationSpeed;
-  if (floor(currentImageIndex + 0.5f) >= maxFrames) {
-    currentImageIndex -= maxFrames;
+  currentTime += animationSpeed;
+  if (floor(currentTime + 0.5f) >= maxFrames) {
+    currentTime -= maxFrames;
   }
-  currentImageIndexInt = floor(currentImageIndex + 0.5f);
+  currentImageIndex = currentAnimation->GetFrameFromTimeElapsed(currentTime);
 }
 
 bool AnimationData::SetImageIndex(const int &imageIndex) {
@@ -26,14 +28,14 @@ bool AnimationData::SetImageIndex(const int &imageIndex) {
     return false;
   }
 
+  currentTime = currentAnimation->GetTime(imageIndex);
   currentImageIndex = imageIndex;
-  currentImageIndexInt = imageIndex;
 
   return true;
 }
 
 bool AnimationData::SetAnimation(const std::string &aniName) {
-  if (currentAnimation == aniName) {
+  if (currentAnimationName == aniName) {
     return true;
   }
   auto animation = animations->find(aniName);
@@ -41,11 +43,14 @@ bool AnimationData::SetAnimation(const std::string &aniName) {
     return false;
   }
 
-  currentAnimation = aniName;
-  currentImageIndex = 0.0f;
-  currentImageIndexInt = 0;
+  currentAnimationName = aniName;
+  currentTime = 0.0f;
+  currentImageIndex = 0;
   maxFrames = animation->second.NumberOfImages();
+  maxTime = animation->second.GetMaxTime();
   animationSpeed = animation->second.GetSpeed();
+  currentAnimation = &animation->second;
+  defaultAnimationSpeed = animationSpeed;
 
   return true;
 }
@@ -306,6 +311,13 @@ void ComponentSprite::SetAnimationSpeed(int index, float speed) {
     return;
   }
   mAnimationData[index].animationSpeed = speed;
+}
+
+float ComponentSprite::DefaultAnimationSpeed(int index){
+  if (!SpriteExists(index)) {
+    return 0.0f;
+  }
+  return mAnimationData[index].defaultAnimationSpeed;
 }
 
 void ComponentSprite::SetImageIndex(int index, int imageIndex) {

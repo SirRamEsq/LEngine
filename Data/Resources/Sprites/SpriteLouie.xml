@@ -21,8 +21,8 @@
 	</animation>
 
 	<animation name="Climb" speed="1.0">
-		<image x="0"  y="64" w="18" h="32"/>
-		<image x="18" y="64" w="18" h="32"/>
+		<image x="0"  y="64" w="18" h="32" length="1.5"/>
+		<image x="18" y="64" w="18" h="32" length="0.5"/>
 	</animation>
 
 	<animation name="Skid" speed="1.0">
