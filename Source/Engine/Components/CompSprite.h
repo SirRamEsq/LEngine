@@ -18,19 +18,22 @@ struct AnimationData {
   void Update();
   bool SetAnimation(const std::string &aniName);
   bool SetImageIndex(const int &imageIndex);
-  const std::string &GetAnimation() { return currentAnimation; }
-  const int &GetImageIndex() { return currentImageIndexInt; }
+  const std::string &GetAnimation() { return currentAnimationName; }
+  const int &GetImageIndex() { return currentImageIndex; }
 
   bool animate;
   float animationSpeed;
+  float defaultAnimationSpeed;
 
   const TAnimationMap *animations;
 
  private:
-  int currentImageIndexInt;
-  float currentImageIndex;
+  int currentImageIndex;
+  float currentTime;
+  float maxTime;
   int maxFrames;
-  std::string currentAnimation;
+  std::string currentAnimationName;
+  const LAnimation* currentAnimation;
 };
 
 class ComponentSprite : public BaseComponent {
@@ -68,6 +71,8 @@ class ComponentSprite : public BaseComponent {
   bool SpriteExists(int index);
 
   void CalculateVerticies(int index);
+
+  float DefaultAnimationSpeed(int index);
 
  protected:
   ComponentPosition *myPos;
