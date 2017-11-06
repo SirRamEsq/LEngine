@@ -40,6 +40,21 @@ function newCollisionSystemMock()
 		box.h = h
 	end
 
+	function mock.Deactivate(self, id)
+		local box = self:GetBox(id)
+		box.active = false
+	end
+
+	function mock.Activate(self, id)
+		local box = self:GetBox(id)
+		box.active = true
+	end
+
+	function mock.SetShape(self, id, shape)
+		local box = self:GetBox(id)
+		box.shape = shape
+	end
+
 	return mock
 end
 return newCollisionSystemMock()

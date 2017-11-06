@@ -2,27 +2,30 @@ require 'busted.runner'()
 require "lfs"
 
 local result=0;
+local cwd = lfs.currentdir()
 CPP = {}
-result, CPP = pcall(loadfile(lfs.currentdir () .. "/Mocks/mock_cpp.lua"))
+result, CPP = pcall(loadfile(cwd .. "/Mocks/mock_cpp.lua"))
 
 local newENV = _ENV
 newENV.CPP=CPP
 
 local collision;
-result, collision = pcall(loadfile(lfs.currentdir () .. "/../Common/entityCollisionSystemNew.lua", "t", newENV))
+result, collision = pcall(loadfile(cwd .. "/../Common/entityCollisionSystemNew.lua", "t", newENV))
 
 local tileCollision;
-result, tileCollision = pcall(loadfile(lfs.currentdir () .. "/../Common/tileCollisionSystemNew.lua", "t", newENV))
+result, tileCollision = pcall(loadfile(cwd .. "/../Common/tileCollisionSystemNew.lua", "t", newENV))
 
 local packetGenerator;
-packetGenerator= loadfile(lfs.currentdir () .. "/Mocks/mock_tileCollisionPacket.lua", "t", newENV)
+packetGenerator= loadfile(cwd .. "/Mocks/mock_tileCollisionPacket.lua", "t", newENV)
+
 local hmapGenerator;
-hmapGenerator= loadfile(lfs.currentdir () .. "/Mocks/mock_hmap.lua", "t", newENV)
+hmapGenerator= loadfile(cwd .. "/Mocks/mock_hmap.lua", "t", newENV)
+
 local layerGenerator;
-layerGenerator= loadfile(lfs.currentdir () .. "/Mocks/mock_tileLayer.lua", "t", newENV)
+layerGenerator= loadfile(cwd .. "/Mocks/mock_tileLayer.lua", "t", newENV)
 
 local col
-result, col = pcall(loadfile(lfs.currentdir () .. "/Mocks/mock_collisionComponent.lua", "t", newENV))
+result, col = pcall(loadfile(cwd .. "/Mocks/mock_collisionComponent.lua", "t", newENV))
 
 local eid = 10
 
@@ -55,15 +58,10 @@ describe("Tile Collision Basic Test", function()
 	end)
 
 	it("Can Initialize and Set Width / Height", function()
-		local w = 32
-		local h = 32
-		tileCollision:Init(w, h, CPP, col, eid)
-		assert.is_equal(w,tileCollision.WIDTH)
-		assert.is_equal(h,tileCollision.HEIGHT)
-
-		w = 16
-		h = 16
-		tileCollision:SetWidthHeight(w,h)
+		local w = 16
+		local h = 16
+		local eid = 111
+		tileCollision.Init(w,h,CPP, col, eid)
 		assert.is_equal(w,tileCollision.WIDTH)
 		assert.is_equal(h,tileCollision.HEIGHT)
 	end)
@@ -75,7 +73,7 @@ describe("Tile Collision Basic Test", function()
 		--yspd is moving downward, t>herefore the box should be longer after updating
 		local previousBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
 		local previousBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
-		tileCollision:Update(xspd, yspd)
+		tileCollision.Update(xspd, yspd)
 		local newBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
 		local newBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		assert.is_true(newBoxHeight > previousBoxHeight)
@@ -89,7 +87,7 @@ describe("Tile Collision Basic Test", function()
 		--(therefore having a larget width)
 		previousBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
 		previousBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
-		tileCollision:Update(xspd, yspd)
+		tileCollision.Update(xspd, yspd)
 		newBoxHeight = col:GetBox(tileCollision.boxID.TILE_DOWN_R).h
 		newBoxWidth = col:GetBox(tileCollision.boxID.TILE_LEFT).w
 		assert.is_true(newBoxHeight < previousBoxHeight)
@@ -117,7 +115,7 @@ describe("Tile Collision Basic Test", function()
 		local exactX = 24
 		local exactY = 31
 
-		tileCollision:OnTileCollision(tilePacket, xspd, yspd, exactX, exactY)
+		tileCollision.OnTileCollision(tilePacket, xspd, yspd, exactX, exactY)
 	end)
 end)
 
@@ -165,7 +163,7 @@ describe("Tile Collision detection", function()
 
 		local w = 16
 		local h = 16
-		tileCollision:Init(w, h, CPP, col, eid)
+		tileCollision.Init(w, h, CPP, col, eid)
 	end)
 
 	it("Getting HeightMap Value works", function()
@@ -182,7 +180,7 @@ describe("Tile Collision detection", function()
 		globalTilePacket.y = tileY
 		local absolutex = (tileX * tileW) + 15 - boxOffset
 
-		tileCollision:GetHeightMapValue(absolutex, globalTilePacket)
+		tileCollision.GetHeightMapValue(absolutex, globalTilePacket)
 	end)
 
 	it("Registers collisions when they should obviously work", function()
@@ -199,7 +197,7 @@ describe("Tile Collision detection", function()
 		local entityW = 16
 		local entityH = 16
 
-		tileCollision:Init(entityW, entityH, CPP, col, eid)
+		tileCollision.Init(entityW, entityH, CPP, col, eid)
 
 		globalTilePacket.id = tileCollision.boxID.TILE_DOWN_L
 		globalTilePacket.x = tileX
@@ -208,8 +206,8 @@ describe("Tile Collision detection", function()
 		local callbackStatus
 		tileDownCallback, callbackStatus= callbackDummy()	
 		tileCollision.callbackFunctions.TileDown = tileDownCallback
-		tileCollision:Update(xspd, yspd)
-		tileCollision:OnTileCollision(globalTilePacket, xspd, yspd, (tileX * tileW), (tileY * tileH)) 
+		tileCollision.Update(xspd, yspd)
+		tileCollision.OnTileCollision(globalTilePacket, xspd, yspd, (tileX * tileW), (tileY * tileH)) 
 
 		local args
 		local timesCalled
