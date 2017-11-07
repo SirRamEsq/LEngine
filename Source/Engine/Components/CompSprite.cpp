@@ -17,8 +17,8 @@ void AnimationData::Update() {
   }
 
   currentTime += animationSpeed;
-  if (floor(currentTime + 0.5f) >= maxFrames) {
-    currentTime -= maxFrames;
+  if (floor(currentTime + 0.5f) >= maxTime) {
+    currentTime -= maxTime;
   }
   currentImageIndex = currentAnimation->GetFrameFromTimeElapsed(currentTime);
 }
@@ -392,9 +392,11 @@ ComponentSpriteManager::ComponentSpriteManager(EventDispatcher *e)
 std::unique_ptr<ComponentSprite> ComponentSpriteManager::ConstructComponent(
     EID id, ComponentSprite *parent) {
   auto sprite = std::make_unique<ComponentSprite>(
-      id, (ComponentPosition *)Kernel::stateMan.GetCurrentState()
-              ->comPosMan.GetComponent(id),
+      id, (ComponentPosition *)dependencyPosition->GetComponent(id),
       this);
 
   return std::move(sprite);
+}
+void ComponentSpriteManager::SetDependencies(ComponentPositionManager *pos) {
+  dependencyPosition = pos;
 }

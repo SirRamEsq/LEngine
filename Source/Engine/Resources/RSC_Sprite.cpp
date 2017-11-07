@@ -62,7 +62,7 @@ int LAnimation::GetFrameFromTimeElapsed(float time) const {
 
   int index = 0;
   for (auto i = images.begin(); i != images.end(); i++) {
-    if (time > i->frameLength) {
+    if (time >= i->frameLength) {
       time -= i->frameLength;
     } else {
       return index;

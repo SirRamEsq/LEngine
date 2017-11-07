@@ -656,13 +656,13 @@ function container.NewLouie(baseclass)
 		elseif(newState == louie.c.STATE_ROLL) then
 			--Need to be moving fast enough to trigger a roll
 			--or already be rolling
-			if (louie.c.currentState ~= louie.c.STATE_ROLL) and (math.abs(louie.groundSpeed) >= louie.c.MIN_ROLL_SPEED) then
+			--if (louie.c.currentState ~= louie.c.STATE_ROLL) and (math.abs(louie.groundSpeed) >= louie.c.MIN_ROLL_SPEED) then
 				louie.tileCollision.UseShortBoxes();
 				louie.LockInput(louie.c.ROLL_TIMER);
-			else
-				louie.ChangeState(louie.c.STATE_NORMAL)
-				return
-			end
+			--else
+				--louie.ChangeState(louie.c.STATE_NORMAL)
+				--return
+			--end
 
 		elseif(newState==louie.c.STATE_WALLSLIDE) then
 			louie.xspd=0;

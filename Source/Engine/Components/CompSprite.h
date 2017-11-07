@@ -99,7 +99,9 @@ class ComponentSpriteManager
     : public BaseComponentManager_Impl<ComponentSprite> {
  public:
   ComponentSpriteManager(EventDispatcher *e);
+  void SetDependencies(ComponentPositionManager *pos);
 
+  ComponentPositionManager *dependencyPosition;
   std::unique_ptr<ComponentSprite> ConstructComponent(EID id,
                                                       ComponentSprite *parent);
 };
