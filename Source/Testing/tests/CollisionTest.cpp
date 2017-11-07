@@ -6,7 +6,6 @@
 #include "../mocks/RSC_MapMock.h"
 #include "../mocks/StateManager.h"
 
-GameStateManager_Mock dummyManager(NULL);
 TEST_CASE("Test RSC_Map Mock and Tile Layer", "[collision][rsc_map]") {
   RSC_MapMock testMap("TEST", 64, 64);
   REQUIRE(NULL == testMap.GetTileLayerCollision(2, 2, true));
@@ -28,6 +27,7 @@ void CallbackFunction(const Event *event) {
 }
 
 TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
+  GameStateManager_Mock dummyManager(NULL);
   REQUIRE(0 == callbackValue);
 
   RSC_MapMock testMap("TEST", 64, 64);
@@ -175,6 +175,7 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
 }
 
 TEST_CASE("Entity Collision tests", "[collision]") {
+  GameStateManager_Mock dummyManager(NULL);
   callbackValueEntity = 0;
 
   EventDispatcher eventDispatcher;
