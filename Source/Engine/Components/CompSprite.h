@@ -33,14 +33,14 @@ struct AnimationData {
   float maxTime;
   int maxFrames;
   std::string currentAnimationName;
-  const LAnimation* currentAnimation;
+  const LAnimation *currentAnimation;
 };
 
 class ComponentSprite : public BaseComponent {
   friend class ComponentSpriteManager;
 
  public:
-  ComponentSprite(EID id, ComponentPosition *pos,
+  ComponentSprite(EID id, ComponentPosition *pos, RenderManager *r,
                   ComponentSpriteManager *manager);
   ~ComponentSprite();
 
@@ -76,6 +76,7 @@ class ComponentSprite : public BaseComponent {
 
  protected:
   ComponentPosition *myPos;
+  RenderManager *rm;
 
  private:
   int mNumberOfLoadedSprites;
@@ -99,9 +100,12 @@ class ComponentSpriteManager
     : public BaseComponentManager_Impl<ComponentSprite> {
  public:
   ComponentSpriteManager(EventDispatcher *e);
-  void SetDependencies(ComponentPositionManager *pos);
+  void SetDependencies(ComponentPositionManager *pos, RenderManager *rm);
 
   ComponentPositionManager *dependencyPosition;
+  RenderManager *dependencyRenderManager;
+  ;
+
   std::unique_ptr<ComponentSprite> ConstructComponent(EID id,
                                                       ComponentSprite *parent);
 };

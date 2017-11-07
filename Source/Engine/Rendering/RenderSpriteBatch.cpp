@@ -5,7 +5,8 @@
 // RenderableSprite//
 ////////////////////
 
-RenderSpriteBatch::Sprite::Sprite(const std::string &texture,
+RenderSpriteBatch::Sprite::Sprite(RenderManager *rm,
+                                  const std::string &texture,
                                   const unsigned int &w, const unsigned int &h,
                                   const MAP_DEPTH &d, const Vec2 &off)
     : textureName(texture),
@@ -13,8 +14,7 @@ RenderSpriteBatch::Sprite::Sprite(const std::string &texture,
       textureHeight(h),
       depth(d),
       offset(off) {
-  spriteBatch = Kernel::stateMan.GetCurrentState()->renderMan.GetSpriteBatch(
-      textureName, depth, 1);
+  spriteBatch = rm->GetSpriteBatch(textureName, depth, 1);
   spriteBatch->AddSprite(this);
 
   data.color.x = 1.0f;

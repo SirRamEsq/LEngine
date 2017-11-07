@@ -1,5 +1,5 @@
 #include "RenderableObject.h"
-#include "../Kernel.h"
+#include "../RenderManager.h"
 
 ////////////////////
 // RenderableObject//

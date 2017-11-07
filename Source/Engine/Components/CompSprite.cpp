@@ -7,7 +7,7 @@ AnimationData::AnimationData(const TAnimationMap *aniMap) : animations(aniMap) {
   currentImageIndex = 0;
   animationSpeed = 0.0f;
   currentAnimation = NULL;
-  currentAnimationName="";
+  currentAnimationName = "";
   SetAnimation(animations->begin()->first);
 }
 
@@ -56,8 +56,10 @@ bool AnimationData::SetAnimation(const std::string &aniName) {
 }
 
 ComponentSprite::ComponentSprite(EID id, ComponentPosition *pos,
+                                 RenderManager *r,
                                  ComponentSpriteManager *manager)
     : BaseComponent(id, manager) {
+  rm = r;
   mEntityID = id;
   myPos = pos;
   mNumberOfLoadedSprites = 0;
@@ -313,7 +315,7 @@ void ComponentSprite::SetAnimationSpeed(int index, float speed) {
   mAnimationData[index].animationSpeed = speed;
 }
 
-float ComponentSprite::DefaultAnimationSpeed(int index){
+float ComponentSprite::DefaultAnimationSpeed(int index) {
   if (!SpriteExists(index)) {
     return 0.0f;
   }
@@ -370,7 +372,7 @@ int ComponentSprite::AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
   mSprites.push_back(sprite);
   mAnimationData.push_back(data);
   mRenderableSprites.push_back(std::make_unique<RenderSpriteBatch::Sprite>(
-      sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(),
+      rm, sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(),
       depth, offset));
 
   CalculateVerticies(mNumberOfLoadedSprites);
@@ -393,10 +395,12 @@ std::unique_ptr<ComponentSprite> ComponentSpriteManager::ConstructComponent(
     EID id, ComponentSprite *parent) {
   auto sprite = std::make_unique<ComponentSprite>(
       id, (ComponentPosition *)dependencyPosition->GetComponent(id),
-      this);
+      dependencyRenderManager, this);
 
   return std::move(sprite);
 }
-void ComponentSpriteManager::SetDependencies(ComponentPositionManager *pos) {
+void ComponentSpriteManager::SetDependencies(ComponentPositionManager *pos,
+                                             RenderManager *rm) {
   dependencyPosition = pos;
+  dependencyRenderManager = rm;
 }
