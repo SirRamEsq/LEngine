@@ -17,7 +17,7 @@ void AnimationData::Update() {
   }
 
   currentTime += animationSpeed;
-  if (floor(currentTime + 0.5f) >= maxTime) {
+  if (currentTime >= maxTime) {
     currentTime -= maxTime;
   }
   currentImageIndex = currentAnimation->GetFrameFromTimeElapsed(currentTime);
@@ -88,62 +88,6 @@ void ComponentSprite::Update() {
     spriteData = mSprites[it];
 
     animation->Update();
-
-    /*
-const Rect coordinateRect =
-spriteData->GetAnimation(animation->GetAnimation())->GetRectAtIndex(animation->GetImageIndex());
-
-textureW = renderSprite->textureWidth;
-textureH = renderSprite->textureHeight;
-
-renderSprite->data.texture1.x= (float)coordinateRect.x                      /
-(float)(textureW); //Top Left
-renderSprite->data.texture1.y= (float)coordinateRect.y                      /
-(float)(textureH);
-
-renderSprite->data.texture2.x= (float)(coordinateRect.x + coordinateRect.w) /
-(float)(textureW); //Top Right
-renderSprite->data.texture2.y= (float) coordinateRect.y                     /
-(float)(textureH);
-
-renderSprite->data.texture3.x= (float)(coordinateRect.x + coordinateRect.w) /
-(float)(textureW); //Bottom Right
-renderSprite->data.texture3.y= (float)(coordinateRect.y + coordinateRect.h) /
-(float)(textureH);
-
-renderSprite->data.texture4.x= (float) coordinateRect.x                     /
-(float)(textureW); //Bottom Left
-renderSprite->data.texture4.y= (float)(coordinateRect.y + coordinateRect.h) /
-(float)(textureH);
-
-//Render Using only full integers for translation to get that pixel-perfect look
-int xPos= floor (pos.x + renderSprite->offset.x + 0.5f);
-int yPos= floor (pos.y + renderSprite->offset.y + 0.5f);
-
-Vec2 temp(0,0);
-temp.x = renderSprite->data.vertexOrigin1.x;
-temp.y = renderSprite->data.vertexOrigin1.y;
-renderSprite->data.vertex1 = temp;
-
-temp.x = renderSprite->data.vertexOrigin2.x;
-temp.y = renderSprite->data.vertexOrigin2.y;
-renderSprite->data.vertex2 = temp;
-
-temp.x = renderSprite->data.vertexOrigin3.x;
-temp.y = renderSprite->data.vertexOrigin3.y;
-renderSprite->data.vertex3 = temp;
-
-temp.x = renderSprite->data.vertexOrigin4.x;
-temp.y = renderSprite->data.vertexOrigin4.y;
-renderSprite->data.vertex4 = temp;
-
-renderSprite->data.scalingRotation.x = renderSprite->scaleX;
-renderSprite->data.scalingRotation.y = renderSprite->scaleY;
-renderSprite->data.scalingRotation.z = renderSprite->rotation;
-
-renderSprite->data.translate.x = xPos;
-renderSprite->data.translate.y = yPos;
-    */
 
     auto ani = spriteData->GetAnimation(animation->GetAnimation());
     auto index = animation->GetImageIndex();
