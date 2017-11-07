@@ -1,5 +1,4 @@
 #include "RenderImageLayer.h"
-#include "../Kernel.h"
 #include "../RenderManager.h"
 
 //////////////
