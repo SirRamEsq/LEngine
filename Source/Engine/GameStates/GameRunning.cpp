@@ -30,9 +30,9 @@ void GameRunningState::Init(const RSC_Script *stateScript) {
   pause = false;
 
   CommandLineArgs &cmd = (K_CommandLine);
-  std::string mapName = cmd.GetValue(L_CMD_LEVELNAME);
 
   std::unique_ptr<const RSC_Map> mapData;
+  std::string mapName = "";
   if (mapName == "") {
     mapName = "MAP1.tmx";
   }
