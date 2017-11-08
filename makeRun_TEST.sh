@@ -22,7 +22,10 @@ then
 	colormake --file ./Makefile_TEST
 
 	printf "Running CPP Tests...\r\n"
-	./bin/LEngine_TEST
+	#Before the '--' are arguments for catch
+	#After the '--' are arguments for program
+	#See 'https://github.com/catchorg/Catch2/issues/386'
+	./bin/LEngine_TEST -- --luaTestDir "Data/Resources/Scripts/Testing"
 fi
 
 if [[ ($RUN == 0) || ($RUN == 2) ]]
