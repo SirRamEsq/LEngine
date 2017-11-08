@@ -20,6 +20,10 @@ TEST_CASE("Log can write to file", "[log]") {
 
     testLog.WriteEntriesToFile(testLog.GetEntries(), "UnitTestLog1");
   }());
+
+
+  testLog.CloseFileHandle();
+  PHYSFS_deinit();
 }
 
 TEST_CASE("Log can write to file ", "[log]") {
@@ -39,4 +43,7 @@ TEST_CASE("Log can write to file ", "[log]") {
     testLog.Write("Error5", Log::SEVERITY::DEBUG);
     testLog.Write("Error6", Log::SEVERITY::TRACE);
   }());
+
+  testLog.CloseFileHandle();
+  PHYSFS_deinit();
 }

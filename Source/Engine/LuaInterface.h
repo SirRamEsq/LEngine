@@ -57,8 +57,11 @@ struct EntityCreationPacket{
   luabridge::LuaRef mPropertyTable;
 };
 
+class GS_Test;
+
 class LuaInterface {
   friend GameState;
+  friend GS_Test;
 
  public:
   typedef void (*ErrorCallback)(EID id, const std::string &errorMessage);

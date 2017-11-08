@@ -12,7 +12,6 @@
 #include <vector>
 
 class Log {
-  ;
 
  public:
   class Exception : public LEngineException {
@@ -80,6 +79,8 @@ class Log {
 
   static Log staticLog;
 
+  /// Closes currently opened file
+  void CloseFileHandle();
  protected:
   /// All entries written to this log
   mutable std::vector<Entry> entries;
@@ -92,8 +93,6 @@ class Log {
 
   PHYSFS_File *fileHandle;
 
-  /// Closes currently opened file
-  void CloseFileHandle();
 
   /// Returns the date formated specially for fileNames
   static std::string GetDateString();

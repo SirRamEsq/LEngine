@@ -6,6 +6,7 @@
 #include "main.h"
 #include "catch.hpp"
 
+#include "../Engine/Errorlog.h"
 #include "../Engine/CommandLineArgs.h"
 
 struct TEST_DIR_BLANK : std::exception {
@@ -15,6 +16,7 @@ struct TEST_DIR_BLANK : std::exception {
 std::string LUA_TEST_DIR = "";
 
 int main(int argc, char* argv[]) {
+	Log::staticLog.CloseFileHandle();
   Catch::Session session;
 
   int result = 20;
