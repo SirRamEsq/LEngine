@@ -25,6 +25,7 @@ TEST_CASE("Test CommandLineArgs", "[commandLine]") {
   checkExists = cmd.Exists(std::string("-luaTestDir"));
   REQUIRE(checkExists == true);
 
+  //Should not exist
   checkExists = cmd.Exists(std::string("Scripts"));
   REQUIRE(checkExists == false);
 
@@ -33,6 +34,11 @@ TEST_CASE("Test CommandLineArgs", "[commandLine]") {
   value = cmd.GetValue(std::string("-luaTestDir"));
   REQUIRE(*value.c_str() == *arg3);
 
+  //Will return the next argument in the list as the value
   value = cmd.GetValue(std::string("-f"));
   REQUIRE(*value.c_str() == *arg2);
+
+  //Has no value
+  value = cmd.GetValue(std::string(arg3));
+  REQUIRE(value == "");
 }
