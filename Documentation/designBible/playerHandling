@@ -1,0 +1,35 @@
+=============
+ACCELLERATION
+=============
+Mario3 style accel
+Doesn't take long to get to max speed, but isn't instantanious
+
+=======
+ACTIONS
+=======
+Dodge roll
+	Should be able to be executed at any moment
+	Should not be able to spammed
+
+Several movement options at any given time
+	dodge
+	move
+	jump
+		wall jump
+		side jump
+
+Jumping and rolling can serve as attacks
+	Foes with upper armor (helemt) cannot be taken out via jumping
+	Foes with lower armor cannot be taken out with a roll
+
+Pick up and throw things? Enemies?
+	Enemies smaller than you can be picked up and thrown
+	Fully armored enemies can be taken out with thrown items
+
+====
+FLOW
+====
+Should be able to keep momentum going once moving if the player doesn't make any mistakes
+Need to be able to see far enough ahead that you can see what's coming, but the resolution should be small enough to keep the retro look
+No actions should kill your momentum. They must either preserve or create momentum
+
