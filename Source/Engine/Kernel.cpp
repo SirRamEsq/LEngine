@@ -77,6 +77,8 @@ void Kernel::Close() {
   guiState.Reset();
 
   ImGui::Shutdown();
+  log->CloseFileHandle();
+  PHYSFS_deinit();
 }
 
 void Kernel::Inst() {

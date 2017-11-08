@@ -2,9 +2,15 @@
 #include "../../Engine/Defines.h"
 #include "../../Engine/Kernel.h"
 #include "../../Engine/LuaInterface.h"
+#include "../../Engine/GameStates/GS_Test.h"
+
 #include "../catch.hpp"
 #include "../mocks/GameStateMock.h"
 #include "../mocks/RSC_MapMock.h"
+#include "../main.h"
+
+#include <memory>
+#include <sstream>
 
 std::string lastError = "";
 EID lastErrorID = 0;
@@ -119,8 +125,8 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     REQUIRE(lastError == "Observing 31337");
 
     auto luaInterface = state->GetLuaInterface();
-	//process and link up observers
-	luaInterface->Update();
+    // process and link up observers
+    luaInterface->Update();
 
     luaInterface->EventLuaSendToObservers(newEID, eventDescription);
     std::stringstream ss1;
@@ -153,4 +159,61 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   }
 
   Kernel::Close();
+}
+
+TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
+  std::string dir = LUA_TEST_DIR;
+  REQUIRE(dir != "");
+
+  if (PHYSFS_isInit()) {
+    PHYSFS_deinit();
+  }
+
+  auto initValue = PHYSFS_init(NULL);
+  if (initValue == 0) {
+    REQUIRE(PHYSFS_getLastError() == NULL);
+  }
+
+  std::string searchPath = "Data/";
+  PHYSFS_addToSearchPath(searchPath.c_str(), 0);
+  PHYSFS_setWriteDir("Data/");
+REQUIRE(PHYSFS_getLastError() == NULL);
+  Log testLog;
+  testLog.WriteToFile("TEST_LOG_LUA");
+
+  InputManager inputMan;
+  auto gsm = GameStateManager_Impl(&inputMan);
+
+    //REQUIRE(PHYSFS_getLastError() == NULL);
+  PHYSFS_mount(dir.c_str(), dir.c_str(), 0);
+    //REQUIRE(PHYSFS_getLastError() == NULL);
+
+  std::vector<std::string> fileNames;
+  char **rc = PHYSFS_enumerateFiles("savegames");
+  for (auto i = rc; *i != NULL; i++) {
+    fileNames.push_back(std::string(*i));
+  }
+	std::stringstream ss;
+	ss << "Getting Files from dir '" << dir << "'";
+  testLog.Write(ss.str());
+  std::vector<std::unique_ptr<RSC_Script> > scripts;
+  for (auto fname = fileNames.begin(); fname != fileNames.end(); fname++) {
+    // If fname is a file
+    if (PHYSFS_isDirectory(fname->c_str()) == 0) {
+      auto script = RSC_Script::LoadResource(*fname);
+	  testLog.Write(*fname);
+      if (script.get() != NULL) {
+        scripts.push_back(std::move(script));
+      }
+    }
+  }
+    //REQUIRE(PHYSFS_getLastError() == NULL);
+
+  for(auto script = scripts.begin(); script != scripts.end(); script++){
+	GS_Test testState(&gsm);
+	testState.Init(script->get());
+  }
+
+  testLog.CloseFileHandle();
+ PHYSFS_deinit();
 }

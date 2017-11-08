@@ -26,7 +26,7 @@ class GS_Script : public GameState {
   void Draw();
 
   ////////////////////
-  // SCRIPT INTERFACE//
+  //SCRIPT INTERFACE//
   ////////////////////
   EID GetStateEID() const;
 
@@ -35,7 +35,7 @@ class GS_Script : public GameState {
   void PushedStateDelete(int index);
   void PushedStateDeleteAll();
 
- private:
+ protected:
   bool quit;
   ComponentScript *entityScript;
 
