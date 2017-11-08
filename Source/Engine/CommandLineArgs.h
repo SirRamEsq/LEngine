@@ -1,19 +1,19 @@
 #ifndef L_ENGINE_CMD_ARGS
 #define L_ENGINE_CMD_ARGS
 
-#include "Defines.h"
 #include <string>
+#include <vector>
 
-struct CommandLineArgs {
+class CommandLineArgs {
+ public:
   CommandLineArgs();
   void ParseArgs(int argc, char *argv[]);
 
-  std::string GetValue(L_CMD_ENUM value);
-  bool Exists(L_CMD_ENUM);
+  std::string GetValue(std::string name);
+  bool Exists(std::string name);
 
  private:
-  char *switchNames[L_CMD_LAST];
-  std::string switchValues[L_CMD_LAST];
+  std::vector<std::string> tokens;
 };
 
 #endif  // L_ENGINE_CMD_ARGS

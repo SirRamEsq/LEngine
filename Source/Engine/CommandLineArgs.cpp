@@ -1,33 +1,43 @@
 #include "CommandLineArgs.h"
 #include "Errorlog.h"
 #include <string.h>
+#include <algorithm>
 
-CommandLineArgs::CommandLineArgs() {
-  switchNames[L_CMD_LEVELNAME] = "-map";
-  switchNames[L_CMD_RESOLUTION_W] = "-rW";
-  switchNames[L_CMD_RESOLUTION_H] = "-rH";
-  switchNames[L_CMD_DEBUG] = "-debug";
-}
+CommandLineArgs::CommandLineArgs() {}
 
 void CommandLineArgs::ParseArgs(int argc, char *argv[]) {
-  for (int ii = L_CMD_FIRST; ii < L_CMD_LAST; ii++) {
-    switchValues[ii] = "";
+  for (int i = 1; i < argc; ++i) {
+    tokens.push_back(std::string(argv[i]));
   }
+}
 
-  // start with i=1 because argv[0] is the program name
-  for (int i = 1; i < argc; i += 2) {
-    for (int ii = L_CMD_FIRST; ii < L_CMD_LAST; ii++) {
-      if (strcmp(argv[i], switchNames[ii]) == 0) {
-        switchValues[ii] = argv[i + 1];
+std::string CommandLineArgs::GetValue(std::string name) {
+  /*
+for (auto i = tokens.begin(); i != tokens.end(); i++) {
+  if ((*i == name) and (i + 1 != tokens.end())) {
+    return *(i + 1);
+  }
+}
+
+return "";
+*/
+  std::vector<std::string>::const_iterator itr;
+  itr = std::find(tokens.begin(), tokens.end(), name);
+  if (itr != tokens.end() && ++itr != tokens.end()) {
+    return *itr;
+  }
+  const std::string empty_string("");
+  return empty_string;
+}
+
+bool CommandLineArgs::Exists(std::string name) {
+  /*
+  for (auto i = tokens.begin(); i != tokens.end(); i++){
+      if (*i == name){
+          return true;
       }
-    }
   }
-}
-
-std::string CommandLineArgs::GetValue(L_CMD_ENUM value) {
-  return switchValues[value];
-}
-
-bool CommandLineArgs::Exists(L_CMD_ENUM value) {
-  return (switchValues[value] == "");
+  return false;
+  */
+  return std::find(tokens.begin(), tokens.end(), name) != tokens.end();
 }
