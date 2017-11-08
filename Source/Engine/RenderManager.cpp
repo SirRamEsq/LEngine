@@ -325,12 +325,15 @@ void RenderManager::Render() {
 void RenderManager::AssignCameraUBO(RSC_GLProgram *program) {
   // Get program and uniform buffer handles
   GLuint programHandle = program->GetHandle();
-  GLuint programUniformBlockHandle =
-      program->GetUniformBlockHandle("CameraData");
+  try {
+    GLuint programUniformBlockHandle =
+        program->GetUniformBlockHandle("CameraData");
 
-  // Bind program GPU buffer to the index
-  glUniformBlockBinding(programHandle, programUniformBlockHandle,
-                        CameraDataBindingIndex);
+    // Bind program GPU buffer to the index
+    glUniformBlockBinding(programHandle, programUniformBlockHandle,
+                          CameraDataBindingIndex);
+  } catch (LEngineShaderProgramException e) {
+  }
 }
 
 RenderSpriteBatch *RenderManager::GetSpriteBatch(const std::string &textureName,
@@ -574,13 +577,13 @@ std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(
 }
 
 void RenderManager::LinkShaderProgram(RSC_GLProgram *program) {
+  try {
   GLuint programHandle = program->GetHandle();
   GLuint programUniformBlockHandle =
       program->GetUniformBlockHandle("CameraData");
   // Bind program GPU buffer to the index
   glUniformBlockBinding(programHandle, programUniformBlockHandle,
                         CameraDataBindingIndex);
-  try {
     GLuint programUniformBlockHandleProgramData =
         program->GetUniformBlockHandle("ProgramData");
     glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData,

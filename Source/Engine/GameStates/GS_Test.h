@@ -17,6 +17,7 @@ class GS_Test : public GS_Script {
 
   void HandleEvent(const Event *event);
   bool Update();
+  void Test();
   void Draw();
 
   //Testing interface functions
@@ -24,8 +25,7 @@ class GS_Test : public GS_Script {
   ///Will expose all of the states functionality to lua
   void ExposeTestingInterface(lua_State* state);
 
-  void AssertEqual(luabridge::LuaRef r1, luabridge::LuaRef r2);
-  void AssertNotEqual(luabridge::LuaRef r1, luabridge::LuaRef r2);
+  void Assert(std::string message);
 
 
 };

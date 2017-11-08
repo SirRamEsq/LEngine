@@ -161,7 +161,23 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   Kernel::Close();
 }
 
+std::unique_ptr<RSC_Script> LoadScript(const std::string &fullPath) {
+  std::unique_ptr<RSC_Script> script = NULL;
+
+  auto data = LoadGenericFile(fullPath);
+  if (data.get()->GetData() == NULL) {
+    return NULL;
+  }
+  script = std::make_unique<RSC_Script>(fullPath, data.get()->GetData(),
+                                        data.get()->length);
+
+  return script;
+}
 TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
+  // need to init opengl as depenency
+  auto SDLMan = SDLInit::Inst();
+  SDLMan->InitSDL();
+
   std::string dir = LUA_TEST_DIR;
   REQUIRE(dir != "");
 
@@ -177,43 +193,46 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
   std::string searchPath = "Data/";
   PHYSFS_addToSearchPath(searchPath.c_str(), 0);
   PHYSFS_setWriteDir("Data/");
-REQUIRE(PHYSFS_getLastError() == NULL);
+  REQUIRE(PHYSFS_getLastError() == NULL);
   Log testLog;
   testLog.WriteToFile("TEST_LOG_LUA");
 
   InputManager inputMan;
   auto gsm = GameStateManager_Impl(&inputMan);
 
-    //REQUIRE(PHYSFS_getLastError() == NULL);
   PHYSFS_mount(dir.c_str(), dir.c_str(), 0);
-    //REQUIRE(PHYSFS_getLastError() == NULL);
 
   std::vector<std::string> fileNames;
-  char **rc = PHYSFS_enumerateFiles("savegames");
+  char **rc = PHYSFS_enumerateFiles(dir.c_str());
   for (auto i = rc; *i != NULL; i++) {
     fileNames.push_back(std::string(*i));
   }
-	std::stringstream ss;
-	ss << "Getting Files from dir '" << dir << "'";
+  std::stringstream ss;
+  ss << "Getting Files from dir '" << dir << "'";
   testLog.Write(ss.str());
   std::vector<std::unique_ptr<RSC_Script> > scripts;
   for (auto fname = fileNames.begin(); fname != fileNames.end(); fname++) {
     // If fname is a file
+    testLog.Write(*fname);
     if (PHYSFS_isDirectory(fname->c_str()) == 0) {
-      auto script = RSC_Script::LoadResource(*fname);
-	  testLog.Write(*fname);
+      testLog.Write("fname is file; Good");
+      auto script = LoadScript(dir + "/" + *fname);
       if (script.get() != NULL) {
+        testLog.Write("Pushing back script");
         scripts.push_back(std::move(script));
+      } else {
+        testLog.Write("SCRIPT IS NULL");
       }
     }
   }
-    //REQUIRE(PHYSFS_getLastError() == NULL);
 
-  for(auto script = scripts.begin(); script != scripts.end(); script++){
-	GS_Test testState(&gsm);
-	testState.Init(script->get());
+  for (auto script = scripts.begin(); script != scripts.end(); script++) {
+    GS_Test testState(&gsm);
+    testState.Init(script->get());
+	testState.Test();
   }
 
   testLog.CloseFileHandle();
- PHYSFS_deinit();
+  SDLMan->CloseSDL();
+  PHYSFS_deinit();
 }

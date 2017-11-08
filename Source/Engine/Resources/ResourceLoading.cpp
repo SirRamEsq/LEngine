@@ -2,6 +2,9 @@
 #include "../Kernel.h"
 
 std::unique_ptr<FileData> LoadGenericFile(const std::string &fileName) {
+  // Clear previous errors
+  PHYSFS_getLastError() ;
+
   if (PHYSFS_exists(fileName.c_str()) == 0) {
     std::stringstream ss;
     ss << "Couldn't find Generic file: " << fileName

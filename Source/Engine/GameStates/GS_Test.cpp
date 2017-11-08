@@ -56,10 +56,47 @@ bool GS_Test::Update() {
   return !quit;
 }
 
+void GS_Test::Test() {
+  luabridge::LuaRef testTable = entityScript->GetScriptPointer()["TESTS"];
+  ASSERT(testTable.isNil() == false);
+  /*
+  Table must be declared like
+      table = {val1, val2, etc...}
+  */
+  for (int i = 0; i < testTable.length(); i++) {
+    // note the i + 1 here, it's because arrays in Lua start with 1
+    entityScript->RunFunction("Setup");
+    luabridge::LuaRef testFunction = testTable[i + 1];
+    ASSERT(testFunction.isNil() == false);
+    testFunction(this);
+    entityScript->RunFunction("Teardown");
+  }
+}
+
 void GS_Test::Draw() {}
 
 // Testing
-void GS_Test::ExposeTestingInterface(lua_State *state) {}
+void GS_Test::ExposeTestingInterface(lua_State *state) {
+  using namespace luabridge;
+  getGlobalNamespace(state)            // global namespace to lua
+      .beginNamespace("CPP")           //'CPP' table
+      .beginClass<GS_Test>("GS_Test")  // define class object
+      .addFunction("Assert", &GS_Test::Assert)
+      .endClass()
+      .endNamespace();
+}
 
-void GS_Test::AssertEqual(luabridge::LuaRef r1, luabridge::LuaRef r2) {}
-void GS_Test::AssertNotEqual(luabridge::LuaRef r1, luabridge::LuaRef r2) {}
+void GS_Test::Assert(std::string message) {
+  lua_Debug ar;
+  auto L = luaInterface.GetState();
+  lua_getstack(L, 1, &ar);
+  lua_getinfo(L, "nSl", &ar);
+  int line = ar.currentline;
+	std::stringstream ss;
+  ss << "Lua Testing Assertion " << std::endl
+	  << "Line: " << line << std::endl
+	  << "Message: '" << message << "'" << std::endl;
+
+  std::cout << ss.str();
+
+}
