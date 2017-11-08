@@ -31,8 +31,10 @@ TEST_CASE("Log can write to file ", "[log]") {
   std::string searchPath = "Data/";
   PHYSFS_addToSearchPath(searchPath.c_str(), 0);
   PHYSFS_setWriteDir("Data/");
+  REQUIRE(PHYSFS_getLastError() == NULL);
   Log testLog;
   testLog.WriteToFile("UnitTestLog2");
+  //REQUIRE(PHYSFS_getLastError() == NULL);
   // Using C11 Lambda
   REQUIRE_NOTHROW([&]() {
     testLog.Write("TEST");

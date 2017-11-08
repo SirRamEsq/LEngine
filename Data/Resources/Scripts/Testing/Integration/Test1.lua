@@ -4,7 +4,6 @@ local container = {}
 function container.NewState(baseclass)
 	local state = baseclass or {}
 
-	state.TESTS = {}
 
 	--Run at instantiation
 	function state.Init()
@@ -18,9 +17,8 @@ function container.NewState(baseclass)
 		CPP.interface:LoadMap("Hub.tmx", 0)
 	end
 
-	function state.Test1()
-		CPP.testing:AssertEqual(1,1)
-		CPP.testing:AssertNotEqual(0,1)
+	function state.Test1(testing)
+		testing:Assert("Failure")
 	end
 
 	--Run after every Test
@@ -28,9 +26,7 @@ function container.NewState(baseclass)
 
 	end
 
-
-	state.TESTS[0]=state.Test1
-
+	state.TESTS = {state.Test1}
 
 	return state;
 end
