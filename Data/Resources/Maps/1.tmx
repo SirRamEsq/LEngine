@@ -30124,6 +30124,7 @@
  </layer>
  <layer name="SECRET1" width="100" height="50">
   <properties>
+   <property name="DEPTH" type="int" value="-1000"/>
    <property name="isSecret" type="bool" value="true"/>
   </properties>
   <data>
