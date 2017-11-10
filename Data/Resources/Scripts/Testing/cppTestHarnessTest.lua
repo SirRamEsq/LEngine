@@ -34,6 +34,8 @@ function container.NewState(baseclass)
 		testing:REQUIRE_EQUAL(state.setupValue, 5)
 
 		state.setupValue = 6
+
+		--should FAIL (fail 1)
 		testing:Error("Failure")
 	end
 
@@ -48,8 +50,11 @@ function container.NewState(baseclass)
 		--should PASS
 		testing:REQUIRE_EQUAL(state.setupValue, 5)
 
-		--should FAIL
+		--should FAIL (fail 2)
 		local pass = testing:REQUIRE_EQUAL({}, {})
+
+		--should FAIL (fail 3)
+		local pass2 = testing:REQUIRE_NOT_EQUAL(1, 1)
 
 		--should PASS
 		testing:REQUIRE_EQUAL(1, 1)
@@ -65,7 +70,7 @@ function container.NewState(baseclass)
 		testing:REQUIRE_NOT_EQUAL(2,"2")
 		testing:REQUIRE_NOT_EQUAL({},{})
 
-		if (not pass) then
+		if (not pass)and(not pass2) then
 			return;
 		end
 

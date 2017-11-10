@@ -213,7 +213,7 @@ TEST_CASE("Test Lua Test Harness (yes really)", "[lua]") {
     }
   }
 
-  REQUIRE(failedTests == 2);
+  REQUIRE(failedTests == 3);
   Kernel::Close();
 }
 
