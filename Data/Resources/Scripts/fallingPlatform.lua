@@ -59,7 +59,7 @@ function NewFallingPlatform(baseclass)
         ----------------
         platform.sprite = platform.CPPInterface:LoadSprite("SpritePlatform.xml");
         if(platform.sprite==nil) then
-          platform.CPPInterface:WriteError(platform.EID, "sprite is NIL");
+          platform.CPPInterface:LogError(platform.EID, "sprite is NIL");
         end
 
         --Logical origin is as at the top left; (0,0) is top left

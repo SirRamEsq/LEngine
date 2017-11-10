@@ -72,7 +72,7 @@ function yellowGrunt.Initialize()
 	----------------
 	yellowGrunt.mySprite = yellowGrunt.CPPInterface:LoadSprite("SpriteYellowGrunt.xml");
 	if(yellowGrunt.mySprite==nil) then
-		yellowGrunt.CPPInterface:WriteError("sprite is NIL");
+		yellowGrunt.CPPInterface:LogError("sprite is NIL");
   end
 
   --Logical origin is as at the top left; (0,0) is top left

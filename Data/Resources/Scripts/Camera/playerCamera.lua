@@ -52,11 +52,11 @@ function NewCamera(baseclass)
 
 		local map = CPP.interface:GetMap()
 		if(map == nil)then 
-			CPP.interface:WriteError(camera.EID, "Tried to get map from CPP.interface, map is nil");
+			CPP.interface:LogError(camera.EID, "Tried to get map from CPP.interface, map is nil");
 		end
 		camera.mapWidth = map:GetWidthPixels()
 		camera.mapHeight = map:GetHeightPixels()
-		CPP.interface:WriteError(camera.EID, "Camera Initialized");
+		CPP.interface:LogError(camera.EID, "Camera Initialized");
 	end
 
 	function camera.Update()

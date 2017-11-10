@@ -44,7 +44,7 @@ function container.NewGui(baseclass)
 	
 		gui.sprite1 = CPP.interface:LoadSprite("test.xml");
 		if(gui.sprite1 == nil)then
-			CPP.interface:WriteError(gui.EID, "Sprite is NIL!")
+			CPP.interface:LogError(gui.EID, "Sprite is NIL!")
 		end
 		gui.maxFrames=3
 		gui.currentFrame=0
@@ -183,10 +183,10 @@ function container.NewGui(baseclass)
 			remap = CPP.ImGui.Button("Remap Input")
 
 		if(buttonPress == true)then
-			CPP.interface:WriteError(gui.EID, "Button Pressed!")
+			CPP.interface:LogError(gui.EID, "Button Pressed!")
 		end
 		if(spriteButtonPress == true)then
-			CPP.interface:WriteError(gui.EID, "Sprite Button Pressed!")
+			CPP.interface:LogError(gui.EID, "Sprite Button Pressed!")
 		end
 
 		gui.frameCounter = gui.frameCounter + 1

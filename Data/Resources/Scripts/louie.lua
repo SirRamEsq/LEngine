@@ -184,7 +184,7 @@ function container.NewLouie(baseclass)
 		louie.EID	= louie.LEngineData.entityID;
 		louie.name = louie.LEngineData.name
 		louie.objType = louie.LEngineData.objType
-		CPP.interface:WriteError(louie.EID, "parent ID is: " .. tostring(louie.parentEID))
+		CPP.interface:LogError(louie.EID, "parent ID is: " .. tostring(louie.parentEID))
 
 		local EID = louie.EID
 		CPP.interface:ListenForInput(EID, louie.c.K_UP);
@@ -215,10 +215,10 @@ function container.NewLouie(baseclass)
 		louie.baldSpriteRoll = CPP.interface:LoadSprite("SpriteLouieBaldRoll.xml");
 
 		if( louie.mainSprite==nil ) then
-			CPP.interface:WriteError(louie.EID, "sprite is NIL");
+			CPP.interface:LogError(louie.EID, "sprite is NIL");
 		end
 		if( louie.baldSprite==nil ) then
-			CPP.interface:WriteError(louie.EID, "bald sprite is NIL");
+			CPP.interface:LogError(louie.EID, "bald sprite is NIL");
 		end
 
 		--Logical origin is as at the top left; (0,0) is top left
@@ -677,7 +677,7 @@ function container.NewLouie(baseclass)
 		if (newState==nil)then
 			assert(nil, "NEWSTATE IS NIL")
 
-			CPP.interface:WriteError(louie.EID, "NIL");
+			CPP.interface:LogError(louie.EID, "NIL");
 		end
 
 		louie.currentState = newState;
@@ -936,7 +936,7 @@ function container.NewLouie(baseclass)
 
 	function louie.OnEntityCollision(entityID, packet)
 		--Need to get height and collision type
-		CPP.interface:WriteError(louie.EID, "entity ID is: " .. tostring(entityID))
+		CPP.interface:LogError(louie.EID, "entity ID is: " .. tostring(entityID))
 		local leeway=10;
 		local myBoxID=packet:GetID();
 		local objectType=packet:GetType();

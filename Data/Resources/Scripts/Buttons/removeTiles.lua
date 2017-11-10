@@ -66,7 +66,7 @@ local entity = baseclass or {}
 		----------------
 		entity.sprite = entity.CPPInterface:LoadSprite(entity.spriteName);
 		if(entity.sprite==nil) then
-			entity.CPPInterface:WriteError(entity.EID, "sprite is NIL");
+			entity.CPPInterface:LogError(entity.EID, "sprite is NIL");
 		end
 
 		--Logical origin is as at the top left; (0,0) is top left

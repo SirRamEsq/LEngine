@@ -1,7 +1,7 @@
 function mockCPP()
 	local mock = {}
 
-	function mock.WriteError(self, eid, errorString)
+	function mock.LogError(self, eid, errorString)
 		error("[EID " .. eid .. "] " .. errorString)
 	end
 

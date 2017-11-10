@@ -115,7 +115,9 @@ std::string TiledTileLayer::GetTileProperty(GID id,
 // RSC_MapImpl//
 ////////
 
-RSC_MapImpl::RSC_MapImpl(std::unique_ptr<TiledData> td) {
+RSC_MapImpl::RSC_MapImpl(const std::string &mapName,
+                         std::unique_ptr<TiledData> td)
+    : mMapName(mapName) {
   tiledData.reset();
   tiledData = std::move(td);
 }
@@ -125,8 +127,7 @@ EID RSC_MapImpl::GetEIDFromName(const std::string &name) const { return 0; }
 std::string RSC_MapImpl::GetMapName() const { return mMapName; }
 TiledData *RSC_MapImpl::GetTiledData() { return tiledData.get(); }
 
-RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl &rhs) {
-  mMapName = rhs.mMapName;
+RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl &rhs) : mMapName(rhs.mMapName) {
   firstGID = rhs.firstGID;
 
   tiledData = std::make_unique<TiledData>(*rhs.tiledData.get());
@@ -363,7 +364,7 @@ std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string &fname) {
     try {
       auto tiledData = TiledData::LoadResourceFromTMX(
           fname, data.get()->GetData(), data.get()->length);
-      rscMap = std::make_unique<RSC_MapImpl>(std::move(tiledData));
+      rscMap = std::make_unique<RSC_MapImpl>(fname, std::move(tiledData));
     } catch (RSC_Map::Exception e) {
       LOG_INFO(e.what());
       throw e;
@@ -388,7 +389,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   std::string XML = std::string(dat, fsize);
 
   std::stringstream mapInitializeDebugMessage;
-  mapInitializeDebugMessage << "[C++; RSC_MapImpl:LoadTMX] Filename is: "
+  mapInitializeDebugMessage << "Loading TMX Map: "
                             << TMXname;
 
   LOG_INFO(mapInitializeDebugMessage.str());
@@ -446,7 +447,9 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   // Main loop, gets all of <map> children
   for (; node != 0; node = node->next_sibling()) {
     std::string nn(node->name());
-    LOG_INFO(nn);
+    std::stringstream ss;
+    ss << "TiledData::LoadResourceFromTMX() Currently reading a " << nn;
+    // LOG_TRACE(ss.str());
 
     if (nn == "properties") {  // Map properties; only one of these in the whole
                                // map file; specifies the global script and what
@@ -820,7 +823,6 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
       TMXProcessEventListeners(listenString, newObj.eventSources);
 
       // Process more complicated properties
-      LOG_INFO(newObj.type);
       if (newObj.type != "") {
         if (newObj.type == global_TiledStrings[TILED_EVT_MAP_ENTRANCE]) {
           MapEntrance e;

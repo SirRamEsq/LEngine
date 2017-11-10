@@ -217,8 +217,8 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 
 	--Got the heightmap index value, now actually get the height value and set the proper y-value
 	if((HMAP_index_value>15)or(HMAP_index_value<0))then
-		collision.cpp:WriteError(collision.EID, "Uh-Oh, index '" .. HMAP_index_value .. "' is out of bounds with boxValue '" .. box_value .. "' and tx '" .. tx .. "'");
-		collision.cpp:WriteError(collision.EID, tostring(HMAP_index_value));
+		collision.cpp:LogError(collision.EID, "Uh-Oh, index '" .. HMAP_index_value .. "' is out of bounds with boxValue '" .. box_value .. "' and tx '" .. tx .. "'");
+		collision.cpp:LogError(collision.EID, tostring(HMAP_index_value));
 		return;
 	end
 

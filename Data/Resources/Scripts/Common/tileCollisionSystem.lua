@@ -197,8 +197,8 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 
     --Got the heightmap index value, now actually get the height value and set the proper y-value
     if((HMAP_index_value>15)or(HMAP_index_value<0))then
-      collision.interface:WriteError(collision.EID, "Uh-Oh, HMAP Value out of bounds");
-      collision.interface:WriteError(collision.EID, tostring(HMAP_index_value));
+      collision.interface:LogError(collision.EID, "Uh-Oh, HMAP Value out of bounds");
+      collision.interface:LogError(collision.EID, tostring(HMAP_index_value));
       return;
     end
     return hmap:GetHeightMapH( HMAP_index_value );

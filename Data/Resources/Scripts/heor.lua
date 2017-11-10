@@ -228,7 +228,7 @@ function heor.Initialize()
 	heor.mySpriteBaldRoll  = heor.CPPInterface:LoadSprite("SpriteLouieBaldRoll.xml");
 
 	if( heor.mySprite==nil ) then
-		heor.CPPInterface:WriteError(heor.EID, "sprite is NIL");
+		heor.CPPInterface:LogError(heor.EID, "sprite is NIL");
 	end
 
 	--Logical origin is as at the top left; (0,0) is top left
@@ -401,7 +401,7 @@ function heor.NewRopeSwing(maxTime, distanceFromCenter, direction)
 		y= CalculateY(x, distanceFromCenter);
 
 		heor.CompSprite:SetRotation(heor.mySpriteID, -75*moveDirection);
-		--CPPInterface:WriteError(tostring(math.sqrt( (x^2) * (y^2) ) / distanceFromCenter));
+		--CPPInterface:LogError(tostring(math.sqrt( (x^2) * (y^2) ) / distanceFromCenter));
 
 		--return movement vector
 		return CPP.Coord2df(x-xPrevious, y-yPrevious);
@@ -699,7 +699,7 @@ function heor.ChangeState(newState)
 	if (newState==nil)then
 		assert(nil, "NEWSTATE IS NIL")
 
-		heor.CPPInterface:WriteError(heor.EID, "NIL");
+		heor.CPPInterface:LogError(heor.EID, "NIL");
 	end
 
 	heor.currentState=newState;
@@ -866,7 +866,7 @@ function heor.Update()
 
 	else
 		heor.AnimateOther();
-		--heor.CPPInterface:WriteError(heor.EID, tostring(heor.currentState));
+		--heor.CPPInterface:LogError(heor.EID, tostring(heor.currentState));
 	end
 
 	----------------------

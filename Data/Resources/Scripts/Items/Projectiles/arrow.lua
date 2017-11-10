@@ -68,7 +68,7 @@ function arrow.Initialize()
 
 	arrow.mySprite = arrow.CPPInterface:LoadSprite("SpriteArrow.xml");
 	if(arrow.mySprite==nil) then
-		arrow.CPPInterface:WriteError("sprite is NIL");
+		arrow.CPPInterface:LogError("sprite is NIL");
 	end
 
 	--Logical origin is as at the top left; (0,0) is top left

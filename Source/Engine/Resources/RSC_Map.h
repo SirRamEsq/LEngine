@@ -160,7 +160,7 @@ class RSC_MapImpl : public RSC_Map {
   friend GameState;
 
  public:
-  RSC_MapImpl(std::unique_ptr<TiledData> td);
+  RSC_MapImpl(const std::string& mapName, std::unique_ptr<TiledData> td);
   RSC_MapImpl(const RSC_MapImpl &rhs);
   ~RSC_MapImpl();
 
@@ -185,7 +185,7 @@ class RSC_MapImpl : public RSC_Map {
   TiledData *GetTiledData();
 
  private:
-  std::string mMapName;
+  const std::string mMapName;
 
   //! Every child's GID is incremented by the first (lowest) gid allowed for the
   //! map

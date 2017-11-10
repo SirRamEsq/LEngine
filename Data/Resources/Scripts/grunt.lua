@@ -57,7 +57,7 @@ function grunt.Initialize()
 	----------------
   grunt.mySprite = grunt.CPPInterface:LoadSprite("SpriteWhiteGrunt.xml");
 	if(grunt.mySprite==nil) then
-		grunt.CPPInterface:WriteError("sprite is NIL");
+		grunt.CPPInterface:LogError("sprite is NIL");
   end
 
   --Logical origin is as at the top left; (0,0) is top left

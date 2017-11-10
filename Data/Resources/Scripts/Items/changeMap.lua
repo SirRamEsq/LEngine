@@ -26,7 +26,7 @@ function NewChangeMap(baseclass)
 		----------------
 		cMap.sprite = CPP.interface:LoadSprite(cMap.spriteName);
 		if(cMap.sprite==nil) then
-			CPP.interface:WriteError("sprite is NIL");
+			CPP.interface:LogError("sprite is NIL");
 		end
 		cMap.sprWidth = cMap.sprite:Width()
 		cMap.sprHeight = cMap.sprite:Height()

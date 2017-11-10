@@ -12,7 +12,6 @@
 #include <vector>
 
 class Log {
-
  public:
   class Exception : public LEngineException {
     using LEngineException::LEngineException;
@@ -81,6 +80,7 @@ class Log {
 
   /// Closes currently opened file
   void CloseFileHandle();
+
  protected:
   /// All entries written to this log
   mutable std::vector<Entry> entries;
@@ -93,23 +93,25 @@ class Log {
 
   PHYSFS_File *fileHandle;
 
-
   /// Returns the date formated specially for fileNames
   static std::string GetDateString();
 };
 
+void LOG_CPP(std::string message, Log::SEVERITY severity, int line,
+             std::string file);
+
 // more laconic access
 #define LOG_FATAL(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::FATAL);
+  LOG_CPP(stdString, Log::SEVERITY::FATAL, __LINE__, __FILE__);
 #define LOG_ERROR(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::ERROR);
+  LOG_CPP(stdString, Log::SEVERITY::ERROR, __LINE__, __FILE__);
 #define LOG_WARN(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::WARN);
+  LOG_CPP(stdString, Log::SEVERITY::WARN, __LINE__, __FILE__);
 #define LOG_INFO(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::INFO);
+  LOG_CPP(stdString, Log::SEVERITY::INFO, __LINE__, __FILE__);
 #define LOG_DEBUG(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::DEBUG);
+  LOG_CPP(stdString, Log::SEVERITY::DEBUG, __LINE__, __FILE__);
 #define LOG_TRACE(stdString) \
-  Log::staticLog.Write(stdString, Log::SEVERITY::TRACE);
+  LOG_CPP(stdString, Log::SEVERITY::TRACE, __LINE__, __FILE__);
 
 #endif
