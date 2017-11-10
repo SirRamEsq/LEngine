@@ -1,6 +1,52 @@
 #include "GS_Test.h"
 #include "../Kernel.h"
 
+std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
+  std::stringstream ss;
+  switch (r1.type()) {
+    case LUA_TNIL:
+      ss << "NIL";
+      break;
+
+    case LUA_TBOOLEAN:
+      ss << "boolean: " << (r1.cast<bool>() ? "true" : "false");
+      break;
+
+    case LUA_TNUMBER:
+      ss << "number: " << r1.cast<lua_Number>();
+      break;
+
+    case LUA_TSTRING:
+      ss << "string: \"" << r1.cast<std::string>() << '"';
+      break;
+
+    case LUA_TTABLE:
+      ss <<  r1.tostring();
+      break;
+
+    case LUA_TFUNCTION:
+      ss << r1.tostring();
+      break;
+
+    case LUA_TTHREAD:
+      ss << r1.tostring();
+      break;
+
+    case LUA_TUSERDATA:
+      ss << r1.tostring();
+      break;
+
+    case LUA_TLIGHTUSERDATA:
+      ss << r1.tostring();
+      break;
+
+    default:
+      ss << "???";
+  }
+
+  return ss.str();
+}
+
 Assertion::Assertion(const std::string &desc, bool p)
     : mDescription(desc), mPass(p) {}
 
@@ -110,21 +156,33 @@ void GS_Test::ExposeTestingInterface(lua_State *state) {
 }
 
 bool GS_Test::REQUIRE_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
+  std::string strR1 = StringRepresentationOfRef(r1);
+  std::string strR2 = StringRepresentationOfRef(r2);
+
+  std::stringstream ss;
+  ss << std::endl << "    " <<  strR1 << " == " << strR2 << std::endl;
+
   if (r1 == r2) {
-    Pass("r1 == r2");
+    Pass(ss.str());
     return true;
   }
 
-  Error("r1 != r2");
+  Error(ss.str());
   return false;
 }
 
 bool GS_Test::REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
+  std::string strR1 = StringRepresentationOfRef(r1);
+  std::string strR2 = StringRepresentationOfRef(r2);
+
+  std::stringstream ss;
+  ss << std::endl << "    " <<  strR1 << " == " << strR2 << std::endl;
+
   if (r1 == r2) {
-    Error("r1 == r2");
+    Error(ss.str());
     return false;
   }
-  Pass("r1 != r2");
+  Pass(ss.str());
   return true;
 }
 
@@ -135,11 +193,11 @@ std::string GS_Test::GenerateAssertionString(const std::string &message) {
   lua_getinfo(L, "nSl", &ar);
   int line = ar.currentline;
   std::stringstream ss;
-  ss << "Lua Testing Assertion " << std::endl
+  ss << std::endl << "Lua Testing Assertion " << std::endl
      << "ScriptName: " << mCurrentScriptName << std::endl
      << "TestFunction#: " << mCurrentTest << std::endl
      << "Line: " << line << std::endl
-     << "Message: '" << message << "'";
+     << "Message: '" << message << "'" << std::endl;
 
   return ss.str();
 }
