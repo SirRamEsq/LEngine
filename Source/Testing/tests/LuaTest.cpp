@@ -202,7 +202,7 @@ TEST_CASE("Test Lua Test Harness (yes really)", "[lua]") {
 
   auto testState = std::make_shared<GS_Test>(&K_StateMan, script.get());
   K_StateMan.PushState(testState);
-  Kernel::Run();
+  Kernel::Update();
 
   auto assertions = testState->Test();
   int failedTests = 0;
@@ -258,7 +258,7 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
   for (auto script = scripts.begin(); script != scripts.end(); script++) {
     auto testState = std::make_shared<GS_Test>(&K_StateMan, script->get());
     K_StateMan.PushState(testState);
-    Kernel::Run();
+    Kernel::Update();
 
     auto assertions = testState->Test();
     CheckLuaAssertions(assertions);
