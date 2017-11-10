@@ -34,7 +34,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string &fileName) {
     ss << "Physfs Error in Generic File '" << fileName
        << "' Error: " << physfsError;
     LOG_INFO(ss.str());
-    throw LEngineFileException(ss.str(), fileName);
+    //throw LEngineFileException(ss.str(), fileName);
   }
 
   PHYSFS_close(file);

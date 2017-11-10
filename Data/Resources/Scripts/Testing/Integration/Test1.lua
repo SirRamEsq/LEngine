@@ -18,15 +18,21 @@ function container.NewState(baseclass)
 	end
 
 	function state.Test1(testing)
-		testing:Assert("Failure")
+		--testing:Assert("Failure")
 	end
 
+	function state.Test2(testing)
+	end
+
+	function state.Test3(testing)
+		--testing:Assert("Not really a failure")
+	end
 	--Run after every Test
 	function state.Teardown()
 
 	end
 
-	state.TESTS = {state.Test1}
+	state.TESTS = {state.Test1, state.Test2, state.Test3}
 
 	return state;
 end
