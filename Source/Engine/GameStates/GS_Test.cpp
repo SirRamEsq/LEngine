@@ -4,7 +4,8 @@
 Assertion::Assertion(const std::string &desc, bool p)
     : mDescription(desc), mPass(p) {}
 
-GS_Test::GS_Test(GameStateManager *gsm, const RSC_Script *stateScript) : GS_Script(gsm) {
+GS_Test::GS_Test(GameStateManager *gsm, const RSC_Script *stateScript)
+    : GS_Script(gsm) {
   if (stateScript == NULL) {
     throw LEngineException("GS_Test::Init, stateScript is NULL");
     quit = true;
@@ -20,14 +21,13 @@ GS_Test::~GS_Test() {
   mCurrentScriptName = "";
 }
 
-void GS_Test::Init(const RSC_Script* ignore) {
+void GS_Test::Init(const RSC_Script *ignore) {
   std::string scriptName = "STATE";
   std::string scriptType = "__BaseState";
   MAP_DEPTH depth = 0;
   EID parent = 0;
   EID eid = EID_RESERVED_STATE_ENTITY;
   quit = false;
-
 
   comScriptMan.AddComponent(eid);
   luaInterface.RunScript(eid, mStateScript, depth, parent, scriptName,
@@ -52,6 +52,10 @@ void GS_Test::HandleEvent(const Event *event) {
   }
 }
 
+void GS_Test::KernelUpdate() { Kernel::Update(); }
+
+/*
+GS_TEST will simply use the inhereted function
 bool GS_Test::Update() {
   if (nextMap != NULL) {
     auto tempMap = nextMap;
@@ -63,6 +67,7 @@ bool GS_Test::Update() {
   UpdateComponentManagers();
   return !quit;
 }
+*/
 
 std::vector<Assertion> GS_Test::Test() {
   mCurrentTestAssertions.clear();
@@ -81,9 +86,9 @@ std::vector<Assertion> GS_Test::Test() {
     luabridge::LuaRef testFunction = testTable[i + 1];
     ASSERT(testFunction.isNil() == false);
 
-	setupFunction(this);
+    setupFunction(this);
     testFunction(this);
-	teardownFunction(this);
+    teardownFunction(this);
   }
   return mCurrentTestAssertions;
 }
@@ -97,7 +102,7 @@ void GS_Test::ExposeTestingInterface(lua_State *state) {
       .beginNamespace("CPP")           //'CPP' table
       .beginClass<GS_Test>("GS_Test")  // define class object
       .addFunction("Error", &GS_Test::Error)
-      .addFunction("Update", &GS_Test::Update)
+      .addFunction("Update", &GS_Test::KernelUpdate)
       .addFunction("REQUIRE_EQUAL", &GS_Test::REQUIRE_EQUAL)
       .addFunction("REQUIRE_NOT_EQUAL", &GS_Test::REQUIRE_NOT_EQUAL)
       .endClass()

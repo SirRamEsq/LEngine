@@ -3,6 +3,7 @@ local result=0;
 local container = {}
 function container.NewState(baseclass)
 	local state = baseclass or {}
+	state.updateCount = 0
 
 	--Run at instantiation
 	function state.Init()
@@ -11,13 +12,21 @@ function container.NewState(baseclass)
 		state.EID		= state.LEngineData.entityID;
 	end
 
+	--Run at every invocation of testing:Update
+	function state.Update()
+		state.updateCount = state.updateCount + 1
+	end
+
 	--Run Before every test
 	function state.Setup(testing)
 		state.setupValue = 5
+		state.updateCount = 0
 		--Set next map to load
 		CPP.interface:LoadMap("Hub.tmx", 0)
+
 		--Load map
 		testing:Update();
+		testing:REQUIRE_EQUAL(state.updateCount, 1)
 	end
 
 	function state.Test1(testing)
