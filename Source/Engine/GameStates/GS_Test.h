@@ -7,6 +7,8 @@
 #include "../StateManager.h"
 #include "GS_Script.h"
 
+std::string StringRepresentationOfRef(const luabridge::LuaRef &r1);
+
 struct Assertion {
   Assertion(const std::string &desc, bool p);
   std::string mDescription;
