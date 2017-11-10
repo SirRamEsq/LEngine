@@ -78,7 +78,7 @@ void Log::WriteToFile(const std::string &fileName) {
 void Log::CloseFileHandle() {
   if (fileHandle != NULL) {
     if (PHYSFS_close(fileHandle) == 0) {
-      throw LEngineException("PHYSFS Couldn't Close");
+      //throw LEngineException("PHYSFS Couldn't Close");
     }
     fileHandle = NULL;
   }

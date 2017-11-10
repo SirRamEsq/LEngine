@@ -173,32 +173,61 @@ std::unique_ptr<RSC_Script> LoadScript(const std::string &fullPath) {
 
   return script;
 }
+
+void CheckLuaAssertions(std::vector<Assertion> assertions) {
+  for (auto i = assertions.begin(); i != assertions.end(); i++) {
+    if (!i->mPass) {
+      CHECK(i->mDescription == "");
+    }
+  }
+}
+
+TEST_CASE("Test Lua Test Harness (yes really)", "[lua]") {
+  Kernel::Inst();
+  std::string dir = "Resources/Scripts/Testing/cppTestHarnessTest.lua";
+
+  REQUIRE(PHYSFS_getLastError() == NULL);
+
+  InputManager inputMan;
+
+  PHYSFS_mount(dir.c_str(), dir.c_str(), 0);
+
+  std::vector<std::string> fileNames;
+  char **rc = PHYSFS_enumerateFiles(dir.c_str());
+  for (auto i = rc; *i != NULL; i++) {
+    fileNames.push_back(std::string(*i));
+  }
+  auto script = LoadScript(dir);
+  REQUIRE(script.get() != NULL);
+
+  auto testState = std::make_shared<GS_Test>(&K_StateMan, script.get());
+  K_StateMan.PushState(testState);
+  Kernel::Run();
+
+  auto assertions = testState->Test();
+  int failedTests = 0;
+  for (auto i = assertions.begin(); i != assertions.end(); i++) {
+    if (!i->mPass) {
+      failedTests++;
+      CHECK(i->mDescription != "");
+    }
+  }
+
+  REQUIRE(failedTests == 2);
+  Kernel::Close();
+}
+
 TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
-  // need to init opengl as depenency
-  auto SDLMan = SDLInit::Inst();
-  SDLMan->InitSDL();
+  Kernel::Inst();
 
   std::string dir = LUA_TEST_DIR;
   REQUIRE(dir != "");
 
-  if (PHYSFS_isInit()) {
-    PHYSFS_deinit();
-  }
-
-  auto initValue = PHYSFS_init(NULL);
-  if (initValue == 0) {
-    REQUIRE(PHYSFS_getLastError() == NULL);
-  }
-
-  std::string searchPath = "Data/";
-  PHYSFS_addToSearchPath(searchPath.c_str(), 0);
-  PHYSFS_setWriteDir("Data/");
   REQUIRE(PHYSFS_getLastError() == NULL);
   Log testLog;
   testLog.WriteToFile("TEST_LOG_LUA");
 
   InputManager inputMan;
-  auto gsm = GameStateManager_Impl(&inputMan);
 
   PHYSFS_mount(dir.c_str(), dir.c_str(), 0);
 
@@ -227,12 +256,15 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
   }
 
   for (auto script = scripts.begin(); script != scripts.end(); script++) {
-    GS_Test testState(&gsm);
-    testState.Init(script->get());
-	testState.Test();
+    auto testState = std::make_shared<GS_Test>(&K_StateMan, script->get());
+    K_StateMan.PushState(testState);
+    Kernel::Run();
+
+    auto assertions = testState->Test();
+    CheckLuaAssertions(assertions);
+    K_StateMan.PopState();
   }
 
   testLog.CloseFileHandle();
-  SDLMan->CloseSDL();
-  PHYSFS_deinit();
+  Kernel::Close();
 }

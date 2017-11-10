@@ -1,13 +1,26 @@
 #include "GS_Test.h"
 #include "../Kernel.h"
 
-GS_Test::GS_Test(GameStateManager *gsm) : GS_Script(gsm) {
+Assertion::Assertion(const std::string &desc, bool p)
+    : mDescription(desc), mPass(p) {}
+
+GS_Test::GS_Test(GameStateManager *gsm, const RSC_Script *stateScript) : GS_Script(gsm) {
+  if (stateScript == NULL) {
+    throw LEngineException("GS_Test::Init, stateScript is NULL");
+    quit = true;
+    return;
+  }
+
+  mStateScript = stateScript;
   ExposeTestingInterface(luaInterface.GetState());
 }
 
-GS_Test::~GS_Test() {}
+GS_Test::~GS_Test() {
+  mCurrentTest = 0;
+  mCurrentScriptName = "";
+}
 
-void GS_Test::Init(const RSC_Script *stateScript) {
+void GS_Test::Init(const RSC_Script* ignore) {
   std::string scriptName = "STATE";
   std::string scriptType = "__BaseState";
   MAP_DEPTH depth = 0;
@@ -15,14 +28,9 @@ void GS_Test::Init(const RSC_Script *stateScript) {
   EID eid = EID_RESERVED_STATE_ENTITY;
   quit = false;
 
-  if (stateScript == NULL) {
-    throw LEngineException("GS_Test::Init, stateScript is NULL");
-    quit = true;
-    return;
-  }
 
   comScriptMan.AddComponent(eid);
-  luaInterface.RunScript(eid, stateScript, depth, parent, scriptName,
+  luaInterface.RunScript(eid, mStateScript, depth, parent, scriptName,
                          scriptType, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
 }
@@ -56,21 +64,28 @@ bool GS_Test::Update() {
   return !quit;
 }
 
-void GS_Test::Test() {
+std::vector<Assertion> GS_Test::Test() {
+  mCurrentTestAssertions.clear();
   luabridge::LuaRef testTable = entityScript->GetScriptPointer()["TESTS"];
   ASSERT(testTable.isNil() == false);
+  mCurrentScriptName = entityScript->scriptName;
+  auto setupFunction = entityScript->GetFunction("Setup");
+  auto teardownFunction = entityScript->GetFunction("Teardown");
   /*
   Table must be declared like
       table = {val1, val2, etc...}
   */
   for (int i = 0; i < testTable.length(); i++) {
     // note the i + 1 here, it's because arrays in Lua start with 1
-    entityScript->RunFunction("Setup");
+    mCurrentTest = i;
     luabridge::LuaRef testFunction = testTable[i + 1];
     ASSERT(testFunction.isNil() == false);
+
+	setupFunction(this);
     testFunction(this);
-    entityScript->RunFunction("Teardown");
+	teardownFunction(this);
   }
+  return mCurrentTestAssertions;
 }
 
 void GS_Test::Draw() {}
@@ -81,22 +96,55 @@ void GS_Test::ExposeTestingInterface(lua_State *state) {
   getGlobalNamespace(state)            // global namespace to lua
       .beginNamespace("CPP")           //'CPP' table
       .beginClass<GS_Test>("GS_Test")  // define class object
-      .addFunction("Assert", &GS_Test::Assert)
+      .addFunction("Error", &GS_Test::Error)
+      .addFunction("Update", &GS_Test::Update)
+      .addFunction("REQUIRE_EQUAL", &GS_Test::REQUIRE_EQUAL)
+      .addFunction("REQUIRE_NOT_EQUAL", &GS_Test::REQUIRE_NOT_EQUAL)
       .endClass()
       .endNamespace();
 }
 
-void GS_Test::Assert(std::string message) {
+bool GS_Test::REQUIRE_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
+  if (r1 == r2) {
+    Pass("r1 == r2");
+    return true;
+  }
+
+  Error("r1 != r2");
+  return false;
+}
+
+bool GS_Test::REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
+  if (r1 == r2) {
+    Error("r1 == r2");
+    return false;
+  }
+  Pass("r1 != r2");
+  return true;
+}
+
+std::string GS_Test::GenerateAssertionString(const std::string &message) {
   lua_Debug ar;
   auto L = luaInterface.GetState();
   lua_getstack(L, 1, &ar);
   lua_getinfo(L, "nSl", &ar);
   int line = ar.currentline;
-	std::stringstream ss;
+  std::stringstream ss;
   ss << "Lua Testing Assertion " << std::endl
-	  << "Line: " << line << std::endl
-	  << "Message: '" << message << "'" << std::endl;
+     << "ScriptName: " << mCurrentScriptName << std::endl
+     << "TestFunction#: " << mCurrentTest << std::endl
+     << "Line: " << line << std::endl
+     << "Message: '" << message << "'";
 
-  std::cout << ss.str();
+  return ss.str();
+}
 
+void GS_Test::Error(const std::string &message) {
+  auto debugInfo = GenerateAssertionString(message);
+  mCurrentTestAssertions.push_back(Assertion(debugInfo, false));
+}
+
+void GS_Test::Pass(const std::string &message) {
+  auto debugInfo = GenerateAssertionString(message);
+  mCurrentTestAssertions.push_back(Assertion(debugInfo, true));
 }

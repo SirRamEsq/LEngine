@@ -269,22 +269,23 @@ LuaRef ComponentScript::GetEntityInterface() {
   return scriptPointer["EntityInterface"];
 }
 
-void ComponentScript::RunFunction(const std::string &fname) {
+LuaRef ComponentScript::GetFunction(const std::string &fname) {
+  LuaRef nil(GetState());
   try {
     // get function from instance table
     LuaRef fN = scriptPointer[fname.c_str()];
     if (fN.isNil()) {
       LOG_ERROR("Tried to run lua function; " + fname);
       LOG_ERROR("Function not found in script with EID " + (mEntityID));
-      return;
+      return nil;
     }
     if (!fN.isFunction()) {
       LOG_ERROR("Tried to run lua function; " + fname);
       LOG_ERROR("Passed name is not function in script with EID " +
                 (mEntityID));
-      return;
+      return nil;
     }
-    fN();
+    return fN;
 
   } catch (const LuaException &e) {
     std::stringstream ss;
@@ -295,6 +296,15 @@ void ComponentScript::RunFunction(const std::string &fname) {
     std::cout << ss.str() << std::endl;
     throw e;
 #endif
+  }
+
+  return nil;
+}
+
+void ComponentScript::RunFunction(const std::string &fname) {
+  auto func = GetFunction(fname);
+  if (!func.isNil()) {
+    func();
   }
 }
 

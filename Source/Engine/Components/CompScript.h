@@ -52,6 +52,7 @@ class ComponentScript : public BaseComponent {
   luabridge::LuaRef GetEntityInterface();
 
   void RunFunction(const std::string &fname);
+  luabridge::LuaRef GetFunction(const std::string &fname);
 
   lua_State *GetState() { return lState; }
 
