@@ -2,23 +2,25 @@
 #include "../catch.hpp"
 
 TEST_CASE("Can Load and Bind Texture", "[resources][texture]") {
-	/*
   Kernel::Inst();
 
   auto itemCount = Kernel::rscTexMan.GetSize();
   REQUIRE(itemCount == 0);
 
-  auto resource = Kernel::rscTexMan.GetLoadItem("TEX1", "emerald.png");
+  std::string texName = "testImage.png";
+  int expectedW = 72;
+  int expectedH = 72;
+  auto resource = Kernel::rscTexMan.GetLoadItem(texName, texName);
   REQUIRE(resource != NULL);
 
   auto name = resource->GetName();
-  REQUIRE(name == "emerald.png");
+  REQUIRE(name == texName);
 
   auto width = resource->GetWidth();
-  REQUIRE(width == 48);
+  REQUIRE(width == expectedW);
 
   auto height = resource->GetHeight();
-  REQUIRE(height == 32);
+  REQUIRE(height == expectedH);
 
   resource->Bind();
   auto id = resource->GetOpenGLID();
@@ -31,5 +33,4 @@ TEST_CASE("Can Load and Bind Texture", "[resources][texture]") {
 
   itemCount = Kernel::rscTexMan.GetSize();
   REQUIRE(itemCount == 0);
-  */
 }
