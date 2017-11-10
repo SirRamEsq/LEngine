@@ -78,7 +78,7 @@ void Log::WriteToFile(const std::string &fileName) {
 void Log::CloseFileHandle() {
   if (fileHandle != NULL) {
     if (PHYSFS_close(fileHandle) == 0) {
-      //throw LEngineException("PHYSFS Couldn't Close");
+      // throw LEngineException("PHYSFS Couldn't Close");
     }
     fileHandle = NULL;
   }
@@ -111,4 +111,13 @@ void Log::WriteEntriesToFile(const std::vector<const Entry *> _entries,
       throw LEngineException("PHYSFS Couldn't write");
     }
   }
+}
+
+void LOG_CPP(std::string message, Log::SEVERITY severity, int line,
+             std::string file) {
+  std::stringstream fullMessage;
+  fullMessage << std::endl
+              << "    [C++ | " << file << " | " << line << "]" << std::endl
+              << "    \"" << message << "\"";
+  Log::staticLog.Write(fullMessage.str(), severity);
 }

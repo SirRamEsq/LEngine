@@ -316,7 +316,7 @@ void RenderManager::Render() {
       default:
         errorString = "?";
     }
-    ss << "GL Error: " << errorString << std::endl;
+    ss << "RenderManager::Render GL Error: " << errorString;
     LOG_ERROR(ss.str());
   }
 #endif

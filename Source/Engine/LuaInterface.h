@@ -30,8 +30,8 @@ class ComponentCollision;
 class ComponentParticle;
 class GS_Script;
 
-///This struct is passed to the GameState to instantiate a new entity from lua
-struct EntityCreationPacket{
+/// This struct is passed to the GameState to instantiate a new entity from lua
+struct EntityCreationPacket {
   /**
    * Called from lua scripts
    * \param scriptName Name of Script to run for the entity
@@ -43,15 +43,16 @@ struct EntityCreationPacket{
    * \param propertyTable Extra lua properties
    */
   EntityCreationPacket(const std::string &scriptName, Coord2df pos,
-                      MAP_DEPTH depth, EID parent, const std::string &name,
-                      const std::string &type, luabridge::LuaRef propertyTable);
+                       MAP_DEPTH depth, EID parent, const std::string &name,
+                       const std::string &type,
+                       luabridge::LuaRef propertyTable);
 
   EID mParent;
   EID mNewEID;
   MAP_DEPTH mDepth;
   Coord2df mPos;
   std::string mScriptName;
-  const RSC_Script* mScript;
+  const RSC_Script *mScript;
   std::string mEntityName;
   std::string mEntityType;
   luabridge::LuaRef mPropertyTable;
@@ -79,7 +80,13 @@ class LuaInterface {
   // General//
   ///////////
   void ListenForInput(EID id, const std::string &inputName);
-  void WriteError(EID id, const std::string &error);
+  void LogFatal(EID id, const std::string &error);
+  void LogError(EID id, const std::string &error);
+  void LogWarn(EID id, const std::string &error);
+  void LogInfo(EID id, const std::string &error);
+  void LogDebug(EID id, const std::string &error);
+  void LogTrace(EID id, const std::string &error);
+  std::string GenerateLogEntry(EID id, const std::string &error);
   // sends event to audio subsystem
   void PlaySound(const std::string &sndName, int volume);
   void PlayMusic(const std::string &musName, int volume, int loops);
@@ -162,7 +169,7 @@ class LuaInterface {
   /// Set parent for all component managers defined in the EntityManager
   void SetParent(EID child, EID parent);
 
-  ///update once per frame
+  /// update once per frame
   void Update();
 
   /// Will push a new GS_Script state onto the stack with a script

@@ -648,24 +648,51 @@ void LuaInterface::ListenForInput(EID id, const std::string &inputName) {
   comInput->ListenForInput(inputName);
 }
 
-void LuaInterface::WriteError(EID id, const std::string &error) {
-  ComponentScript *component = parentState->comScriptMan.GetComponent(id);
-  if (component == NULL) {
-    std::stringstream ss;
-    ss << "[ LUA"
-       << " | ??? | EID given: " << id << " ]	" << error;
-    LOG_ERROR(ss.str());
-    return;
-  }
-  const std::string &name = component->scriptName;
-  std::stringstream ss;
-  ss << "[ LUA"
-     << " | " << name << " | EID: " << id << " ]	" << error;
+std::string LuaInterface::GenerateLogEntry(EID id, const std::string &error) {
+  lua_Debug ar;
+  auto L = GetState();
+  lua_getstack(L, 1, &ar);
+  lua_getinfo(L, "nSl", &ar);
+  int line = ar.currentline;
 
-  LOG_ERROR(ss.str());
+  ComponentScript *component = parentState->comScriptMan.GetComponent(id);
+  std::stringstream ss;
+
+  std::string name = component->scriptName;
+  if (component == NULL) {
+    name = "?????";
+  } else {
+    name = component->scriptName;
+  }
+  ss << "[LUA"
+     << " | " << name << " | EID: " << id << " | Line: " << line << "]"
+     << std::endl
+     << "        " << error;
+
   if (errorCallbackFunction != NULL) {
     errorCallbackFunction(id, error);
   }
+
+  return ss.str();
+}
+
+void LuaInterface::LogFatal(EID id, const std::string &message) {
+  LOG_FATAL(GenerateLogEntry(id, message));
+}
+void LuaInterface::LogError(EID id, const std::string &message) {
+  LOG_ERROR(GenerateLogEntry(id, message));
+}
+void LuaInterface::LogWarn(EID id, const std::string &message) {
+  LOG_WARN(GenerateLogEntry(id, message));
+}
+void LuaInterface::LogInfo(EID id, const std::string &message) {
+  LOG_INFO(GenerateLogEntry(id, message));
+}
+void LuaInterface::LogDebug(EID id, const std::string &message) {
+  LOG_DEBUG(GenerateLogEntry(id, message));
+}
+void LuaInterface::LogTrace(EID id, const std::string &message) {
+  LOG_TRACE(GenerateLogEntry(id, message));
 }
 
 void LuaInterface::PlaySound(const std::string &sndName, int volume) {
@@ -795,18 +822,16 @@ void LuaInterface::ProcessObservers() {
           (parentState->comScriptMan.GetComponent(listenerID));
 
       if (senderScript == NULL) {
-		  std::stringstream ss;
-		  ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
-            <<"with id: " <<
-            (senderID);
+        std::stringstream ss;
+        ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
+           << "with id: " << (senderID);
         LOG_ERROR(ss.str())
         continue;
       }
       if (listenerScript == NULL) {
-		  std::stringstream ss;
-		  ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
-            <<"with id: " <<
-            (listenerID);
+        std::stringstream ss;
+        ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
+           << "with id: " << (listenerID);
         LOG_ERROR(ss.str())
         continue;
       }
@@ -874,11 +899,11 @@ void LuaInterface::SwapState(const std::string &scriptPath) {
 bool LuaInterface::LoadMap(const std::string &mapPath,
                            unsigned int entranceID) {
   const RSC_Map *m = K_MapMan.GetLoadItem(mapPath, mapPath);
-  if(m == NULL){
-	std::stringstream ss;
-	ss << "Map '" << mapPath << "' not found";
-	LOG_ERROR(ss.str());
-	return false;
+  if (m == NULL) {
+    std::stringstream ss;
+    ss << "Map '" << mapPath << "' not found";
+    LOG_ERROR(ss.str());
+    return false;
   }
   parentState->SetMapNextFrame(m, entranceID);
 }
@@ -953,7 +978,12 @@ void LuaInterface::ExposeCPP() {
 
       .addFunction("LoadSprite", &LuaInterface::LoadSprite)
 
-      .addFunction("WriteError", &LuaInterface::WriteError)
+      .addFunction("LogFatal", &LuaInterface::LogFatal)
+      .addFunction("LogError", &LuaInterface::LogError)
+      .addFunction("LogWarn", &LuaInterface::LogWarn)
+      .addFunction("LogInfo", &LuaInterface::LogInfo)
+      .addFunction("LogDebug", &LuaInterface::LogDebug)
+      .addFunction("LogTrace", &LuaInterface::LogTrace)
 
       .addFunction("GetSpriteComponent", &LuaInterface::GetSpriteComponent)
       .addFunction("GetCollisionComponent",
@@ -1060,7 +1090,8 @@ void LuaInterface::ExposeCPP() {
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
       .addFunction("SetAnimation", &ComponentSprite::SetAnimation)
       .addFunction("SetAnimationSpeed", &ComponentSprite::SetAnimationSpeed)
-      .addFunction("DefaultAnimationSpeed", &ComponentSprite::DefaultAnimationSpeed)
+      .addFunction("DefaultAnimationSpeed",
+                   &ComponentSprite::DefaultAnimationSpeed)
       .addFunction("SetImageIndex", &ComponentSprite::SetImageIndex)
 
       .addFunction("SetRotation", &ComponentSprite::SetRotation)
