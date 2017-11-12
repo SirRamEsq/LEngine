@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="22">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="27">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
  <tileset firstgid="257" source="TileSets/items.tsx"/>
+ <tileset firstgid="513" source="TileSets/icons.tsx"/>
  <imagelayer name="BG1">
   <image source="rapciu_horizon.png"/>
   <properties>
@@ -25054,51 +25055,9 @@
   <properties>
    <property name="DEPTH" type="int" value="-10"/>
   </properties>
-  <object id="4" name="Player" x="217.5" y="419.5" width="61" height="61">
+  <object id="19" name="Camera" x="144" y="64" width="217" height="80">
    <properties>
-    <property name="SCRIPT" value="louie.lua"/>
-   </properties>
-  </object>
-  <object id="8" name="yellowGrunt1" x="656" y="292">
-   <properties>
-    <property name="SCRIPT" value="yellowGrunt.lua"/>
-    <property name="direction" value="left"/>
-    <property name="follow" value="Player"/>
-   </properties>
-  </object>
-  <object id="9" name="emerald1" gid="258" x="401.5" y="756" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="12" name="emerald2" gid="258" x="337.5" y="293.5" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="13" name="emerald3" gid="258" x="744" y="487" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="14" name="emerald4" gid="258" x="650" y="245" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="15" name="emerald5" gid="258" x="951.5" y="510.5" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="16" name="emerald6" gid="258" x="1210" y="411.5" width="16" height="16">
-   <properties>
-    <property name="SCRIPT" value="Items/emeraldPiece.lua"/>
-   </properties>
-  </object>
-  <object id="19" name="Camera" x="145" y="6" width="217" height="80">
-   <properties>
-    <property name="PARENT" type="int" value="4"/>
+    <property name="PARENT" type="int" value="25"/>
     <property name="SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
@@ -25111,6 +25070,18 @@
     <property name="tilesW" type="int" value="2"/>
     <property name="tilesX" type="int" value="88"/>
     <property name="tilesY" type="int" value="22"/>
+   </properties>
+  </object>
+  <object id="25" name="Player" gid="513" x="240" y="464" width="18" height="32">
+   <properties>
+    <property name="SCRIPT" value="louie.lua"/>
+   </properties>
+  </object>
+  <object id="26" gid="515" x="656" y="304" width="16" height="16">
+   <properties>
+    <property name="SCRIPT" value="yellowGrunt.lua"/>
+    <property name="direction" value="left"/>
+    <property name="follow" value="Player"/>
    </properties>
   </object>
  </objectgroup>
