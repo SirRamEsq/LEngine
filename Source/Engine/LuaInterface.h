@@ -100,7 +100,6 @@ class LuaInterface {
 
   std::string GetTileProperty(const TiledTileLayer *layer, GID id,
                               const std::string &property);
-  EID GetEIDFromName(const std::string &name);
   GS_Script *GetCurrentGameState();
 
   //////////////
@@ -115,7 +114,7 @@ class LuaInterface {
   ////////////
   // Entities//
   ////////////
-  EID EntityGetInterfaceByName(const std::string &name);
+  const std::vector<EID> *EntityGetFromName(const std::string &name);
   luabridge::LuaRef EntityGetInterface(const EID &id);
   Coord2df EntityGetPositionWorld(EID entity);
   Coord2df EntityGetMovement(EID entity);

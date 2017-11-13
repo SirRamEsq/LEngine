@@ -3,13 +3,13 @@ local result=0;
 local container = {}
 function container.NewState(baseclass)
 	local state = baseclass or {}
-	state.updateCount = 0
 
 	--Run at instantiation
-	function state.Init()
+	function state.Initialize()
 		state.depth		= state.LEngineData.depth;
 		state.parent	= state.LEngineData.parent;
 		state.EID		= state.LEngineData.entityID;
+		state.updateCount = 0
 	end
 
 	--Run at every invocation of testing:Update
