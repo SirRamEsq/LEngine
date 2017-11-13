@@ -93,10 +93,10 @@ void Kernel::Inst(int argc, char *argv[]) {
   PHYSFS_setWriteDir("Data/");
 
 #ifndef DEBUG_MODE
-  log->WriteToFile("Log");
+  log->WriteToFile("Log", Log::SEVERITY::WARN);
   debugMode = false;
 #else
-  log->WriteToFile("Log_DEBUG");
+  log->WriteToFile("Log_DEBUG", Log::SEVERITY::DEBUG);
   debugMode = true;
 #endif
   log->Write("Starting up...");
