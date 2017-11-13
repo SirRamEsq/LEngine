@@ -749,11 +749,14 @@ ComponentCamera *LuaInterface::GetCameraComponent(const EID &id) {
 ////////////
 // Entities//
 ////////////
-EID LuaInterface::EntityGetInterfaceByName(const std::string &name) {}
+const std::vector<EID> *LuaInterface::EntityGetFromName(
+    const std::string &name) {
+  auto eids = parentState->GetEIDFromName(name);
+  return eids;
+}
 
 luabridge::LuaRef LuaInterface::EntityGetInterface(const EID &id) {
-  return (Kernel::stateMan.GetCurrentState()->comScriptMan.GetComponent(id))
-      ->GetEntityInterface();
+  return (parentState->comScriptMan.GetComponent(id))->GetEntityInterface();
 }
 
 Coord2df LuaInterface::EntityGetPositionWorld(EID entity) {
@@ -950,10 +953,6 @@ bool LuaInterface::RecordKeysBegin() {}
 
 bool LuaInterface::RecordKeysEnd() {}
 
-EID LuaInterface::GetEIDFromName(const std::string &name) {
-  return parentState->GetEIDFromName(name);
-}
-
 GS_Script *LuaInterface::GetCurrentGameState() {
   if (parentState->IsLuaState() == true) {
     return (GS_Script *)parentState;
@@ -995,8 +994,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("EntityNew", &LuaInterface::EntityNew)
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)
       .addFunction("EntityDelete", &LuaInterface::EntityDelete)
-      .addFunction("EntityGetInterfaceByName",
-                   &LuaInterface::EntityGetInterfaceByName)
+      .addFunction("EntityGetFromName", &LuaInterface::EntityGetFromName)
       .addFunction("EntityGetPositionWorld",
                    &LuaInterface::EntityGetPositionWorld)
       .addFunction("EntityGetMovement", &LuaInterface::EntityGetMovement)
@@ -1032,8 +1030,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
 
-      .addFunction("GetEIDFromName", &LuaInterface::GetEIDFromName)
-      .addFunction("GetCurrentGameState", &LuaInterface::GetEIDFromName)
+      .addFunction("GetCurrentGameState", &LuaInterface::GetCurrentGameState)
       .endClass()
 
       .beginClass<TiledTileLayer>("TiledTileLayer")  // define class object
@@ -1166,6 +1163,13 @@ void LuaInterface::ExposeCPP() {
       .addData("g", &Color4f::g)
       .addData("b", &Color4f::b)
       .addData("a", &Color4f::a)
+      .endClass()
+
+      .beginClass<std::vector<EID> >("VectorEID")
+      .addFunction("size", &std::vector<EID>::size)
+      .addFunction<std::vector<EID>::const_reference (std::vector<EID>::*)(
+          std::vector<EID>::size_type) const>("at", &std::vector<EID>::at)
+      .addFunction("empty", &std::vector<EID>::empty)
       .endClass()
 
       .beginClass<BaseComponent>("BaseComponent")

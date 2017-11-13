@@ -1,4 +1,5 @@
 #include "GS_Test.h"
+//#include "../../Testing/catch.hpp"
 #include "../Kernel.h"
 
 std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
@@ -21,7 +22,7 @@ std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
       break;
 
     case LUA_TTABLE:
-      ss <<  r1.tostring();
+      ss << r1.tostring();
       break;
 
     case LUA_TFUNCTION:
@@ -79,6 +80,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   luaInterface.RunScript(eid, mStateScript, depth, parent, scriptName,
                          scriptType, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
+  ////REQUIRE(entityScript != NULL);
 }
 
 void GS_Test::HandleEvent(const Event *event) {
@@ -117,24 +119,35 @@ bool GS_Test::Update() {
 
 std::vector<Assertion> GS_Test::Test() {
   mCurrentTestAssertions.clear();
-  luabridge::LuaRef testTable = entityScript->GetScriptPointer()["TESTS"];
-  ASSERT(testTable.isNil() == false);
-  mCurrentScriptName = entityScript->scriptName;
-  auto setupFunction = entityScript->GetFunction("Setup");
-  auto teardownFunction = entityScript->GetFunction("Teardown");
-  /*
-  Table must be declared like
-      table = {val1, val2, etc...}
-  */
-  for (int i = 0; i < testTable.length(); i++) {
-    // note the i + 1 here, it's because arrays in Lua start with 1
-    mCurrentTest = i;
-    luabridge::LuaRef testFunction = testTable[i + 1];
-    ASSERT(testFunction.isNil() == false);
+  try {
+    luabridge::LuaRef testTable = entityScript->GetScriptPointer()["TESTS"];
+    // REQUIRE(testTable.isNil() == false);
+    mCurrentScriptName = entityScript->scriptName;
+    auto setupFunction = entityScript->GetFunction("Setup");
+    auto teardownFunction = entityScript->GetFunction("Teardown");
+    /*
+    Table must be declared like
+        table = {val1, val2, etc...}
+    */
+    for (int i = 0; i < testTable.length(); i++) {
+      // note the i + 1 here, it's because arrays in Lua start with 1
+      mCurrentTest = i;
+      luabridge::LuaRef testFunction = testTable[i + 1];
+      // REQUIRE(testFunction.isNil() == false);
 
-    setupFunction(this);
-    testFunction(this);
-    teardownFunction(this);
+      if (setupFunction.isNil() == false) {
+        setupFunction(this);
+      }
+
+      testFunction(this);
+
+      if (teardownFunction.isNil() == false) {
+        teardownFunction(this);
+      }
+    }
+
+  } catch (const luabridge::LuaException &e) {
+    mCurrentTestAssertions.push_back(Assertion(e.what(), false));
   }
   return mCurrentTestAssertions;
 }
@@ -160,7 +173,7 @@ bool GS_Test::REQUIRE_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
   std::string strR2 = StringRepresentationOfRef(r2);
 
   std::stringstream ss;
-  ss << std::endl << "    " <<  strR1 << " == " << strR2 << std::endl;
+  ss << std::endl << "    " << strR1 << " == " << strR2 << std::endl;
 
   if (r1 == r2) {
     Pass(ss.str());
@@ -176,7 +189,7 @@ bool GS_Test::REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
   std::string strR2 = StringRepresentationOfRef(r2);
 
   std::stringstream ss;
-  ss << std::endl << "    " <<  strR1 << " == " << strR2 << std::endl;
+  ss << std::endl << "    " << strR1 << " == " << strR2 << std::endl;
 
   if (r1 == r2) {
     Error(ss.str());
@@ -193,7 +206,8 @@ std::string GS_Test::GenerateAssertionString(const std::string &message) {
   lua_getinfo(L, "nSl", &ar);
   int line = ar.currentline;
   std::stringstream ss;
-  ss << std::endl << "Lua Testing Assertion " << std::endl
+  ss << std::endl
+     << "Lua Testing Assertion " << std::endl
      << "ScriptName: " << mCurrentScriptName << std::endl
      << "TestFunction#: " << mCurrentTest << std::endl
      << "Line: " << line << std::endl

@@ -339,7 +339,7 @@ void GameState::SetMapLinkEntities(
 
       // Map Names to EIDs
       if (objectIt->second.name != "") {
-        nameLookupEID[objectIt->second.name] = child;
+        AddNameEIDLookup(objectIt->second.name, child);
       }
 
       if (scriptName != "") {
@@ -409,13 +409,13 @@ void GameState::SetMapNextFrame(const RSC_Map *m, unsigned int entranceID) {
   nextMapEntrance = entranceID;
 }
 
-EID GameState::GetEIDFromName(const std::string &name) const {
-  auto i = nameLookupEID.find(name);
-  if (i == nameLookupEID.end()) {
-    return 0;
+const std::vector<EID>* GameState::GetEIDFromName(const std::string &name) const {
+  auto i = mNameLookup.find(name);
+  if (i == mNameLookup.end()) {
+    return NULL;
   }
 
-  return i->second;
+  return &i->second;
 }
 
 bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
@@ -423,7 +423,7 @@ bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
     LOG_ERROR("GameState::SetCurrentTiledMap was passed a NULL Pointer");
     return false;
   }
-  
+
   std::stringstream ss;
   ss << "Changing Map To: " << m->GetMapName();
   LOG_INFO(ss.str());
@@ -436,7 +436,7 @@ bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
   entityMan.ClearAllEntities();
   // Actually delete all entities
   entityMan.Cleanup();
-  nameLookupEID.clear();
+  mNameLookup.clear();
 
   // Copy map passed
   mCurrentMap.reset();
@@ -479,6 +479,15 @@ EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
   return newEID;
 }
 
+void GameState::AddNameEIDLookup(const std::string &name, EID id) {
+  auto vecIt = mNameLookup.find(name);
+  if (vecIt == mNameLookup.end()) {
+    mNameLookup[name] = std::vector<EID>();
+  }
+
+  mNameLookup[name].push_back(id);
+}
+
 void GameState::CreateNewEntities() {
   if (mEntitiesToCreate.empty() == true) {
     return;
@@ -501,6 +510,7 @@ void GameState::CreateNewEntities() {
       LOG_ERROR("Couldn't Create a new Entity");
       continue;
     }
+    AddNameEIDLookup((*newEnt)->mEntityName, (*newEnt)->mNewEID);
   }
 
   mEntitiesToCreate.clear();
