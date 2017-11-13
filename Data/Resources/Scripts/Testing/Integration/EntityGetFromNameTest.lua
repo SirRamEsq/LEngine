@@ -1,11 +1,7 @@
-local result=0;
-
 local container = {}
 function container.NewState(baseclass)
 	local state = baseclass or {}
 
-
-	--Run at instantiation
 	function state.Initialize()
 		state.depth		= state.LEngineData.depth;
 		state.parent	= state.LEngineData.parent;
@@ -24,7 +20,6 @@ function container.NewState(baseclass)
 		state.entity3 = CPP.interface:EntityNew( "dummy.lua", posX, posY, depth,  0, name, type, {} )
 	end
 
-	--Run Before every test
 	function state.Setup(testing)
 		testing:REQUIRE_NOT_EQUAL(state.entity1, 0)
 		testing:REQUIRE_NOT_EQUAL(state.entity2, 0)
@@ -46,10 +41,6 @@ function container.NewState(baseclass)
 		end
 
 		testing:REQUIRE_EQUAL(count, 3)
-	end
-	--Run after every Test
-	function state.Teardown(testing)
-
 	end
 
 	state.TESTS = {state.LookupEntitiesFromName}

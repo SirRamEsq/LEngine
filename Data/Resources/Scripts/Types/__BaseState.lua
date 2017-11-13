@@ -33,6 +33,10 @@ function container.NewState(baseclass)
 		data[key] = value
 	end
 
+	function state.OnLuaEvent(eid, description)
+
+	end
+
 	state.EntityInterface = {
 		GetData = state.GetData,
 		SetData = state.SetData

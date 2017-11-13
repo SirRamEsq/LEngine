@@ -15,6 +15,14 @@ function BaseEntity.new(ignoringThis)
 	base.xspd = 0
 	base.yspd = 0
 
+	function base.Initialize()
+
+	end
+
+	function base.Update()
+
+	end
+
 	function base.Attacked(damage)
 		return false;
 	end
