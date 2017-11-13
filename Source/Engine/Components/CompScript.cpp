@@ -135,131 +135,51 @@ void ComponentScript::ExposeProperties(
 }
 
 void ComponentScript::HandleEvent(const Event *event) {
-  if (event->message == Event::MSG::KEYDOWN) {
-    if (scriptPointer.isNil()) {
-      return;
-    }
-    try {
-      LuaRef fKDown = scriptPointer["OnKeyDown"];
-      if (fKDown.isNil()) {
-        LOG_ERROR("OnKeyDown not found in script with EID " + (mEntityID));
-        return;
-      }
-      if (!fKDown.isFunction()) {
-        LOG_ERROR("OnKeyDown not function in script with EID " + (mEntityID));
-        return;
-      }
-      std::string key = event->description;
-      fKDown(key);
-    } catch (LuaException const &e) {
-      std::stringstream ss;
-      ss << "Lua Exception: " << e.what();
-      LOG_INFO(ss.str());
-    }
-  }
-
-  else if (event->message == Event::MSG::KEYUP) {
-    if (scriptPointer.isNil()) {
-      return;
-    }
-    try {
-      LuaRef fKUp = scriptPointer["OnKeyUp"];
-      if (fKUp.isNil()) {
-        LOG_ERROR("OnKeyUp not found in script with EID " + (mEntityID));
-        return;
-      }
-      if (!fKUp.isFunction()) {
-        LOG_ERROR("OnKeyUp not found in script with EID " + (mEntityID));
-        return;
-      }
-      std::string key = event->description;
-      fKUp(key);
-    } catch (LuaException const &e) {
-      std::stringstream ss;
-      ss << "In OnKeyUp event in script with EID " << mEntityID << "\n"
-         << "   ...Lua Exception " << e.what();
-      LOG_ERROR(ss.str());
-    }
-  }
-
-  else if (event->message == Event::MSG::COLLISION_ENTITY) {
-    if (scriptPointer.isNil()) {
-      return;
-    }
-    try {
-      LuaRef fEC = scriptPointer["OnEntityCollision"];
-      if (fEC.isNil()) {
-        LOG_ERROR("OnEntityCollision not found in script with EID " +
-                  (mEntityID));
-        return;
-      }
-      if (!fEC.isFunction()) {
-        LOG_ERROR("OnEntityCollision not function in script with EID " +
-                  (mEntityID));
-        return;
-      }
-      auto packet = EColPacket::ExtraDataDefinition::GetExtraData(event);
-      fEC(event->sender,
-          *packet);  // pass other entity's id and the collision packet
-    } catch (LuaException const &e) {
-      std::stringstream ss;
-      ss << "Lua Exception: " << e.what();
-      LOG_ERROR(ss.str());
-    }
-  }
-
-  else if (event->message == Event::MSG::COLLISION_TILE) {
-    if (scriptPointer.isNil()) {
-      return;
-    }
-    try {
-      LuaRef fTC = scriptPointer["OnTileCollision"];
-      if (fTC.isNil()) {
-        std::stringstream ss;
-        ss << "OnTileCollision not found in script with EID " << (mEntityID)
-           << " Name is: " << scriptName;
-        LOG_ERROR(ss.str());
-        return;
-      }
-      if (!fTC.isFunction()) {
-        LOG_ERROR("OnTileCollision not found in script with EID " +
-                  (mEntityID));
-        return;
-      }
-      auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
-      fTC(*packet);
-    } catch (LuaException const &e) {
-      std::stringstream ss;
-      ss << "Lua Exception: " << e.what();
-      LOG_ERROR(ss.str());
-    }
-  } else if (event->message == Event::MSG::LUA_EVENT) {
-    if (scriptPointer.isNil()) {
-      return;
-    }
-    try {
-      LuaRef fTC = scriptPointer["OnLuaEvent"];
-      std::stringstream ss;
-      ss << "OnLuaEvent not found in script with EID " << (mEntityID)
-         << " Name is: " << scriptName;
-      if (fTC.isNil()) {
-        LOG_ERROR(ss.str());
-        return;
-      }
-      if (!fTC.isFunction()) {
-        LOG_ERROR("OnLuaEvent not found in script with EID " + (mEntityID));
-        return;
-      }
-
-      fTC(event->sender,
-          event->description);  // pass other entity's id and description
-    } catch (LuaException const &e) {
-      std::stringstream ss;
-      ss << "Lua Exception: " << e.what();
-      LOG_ERROR(ss.str());
-    }
-  } else if (event->message == Event::MSG::ENTITY_DELETED) {
+  // This event doesn't need the script pointer to be valid
+  if (event->message == Event::MSG::ENTITY_DELETED) {
     EventLuaRemoveObserver(event->sender);
+  }
+
+  // The following events need the script pointer to be valid
+  if (scriptPointer.isNil()) {
+    return;
+  }
+
+  try {
+    if (event->message == Event::MSG::KEYDOWN) {
+      auto func = GetFunction("OnKeyDown");
+      if (not func.isNil()) {
+        auto key = event->description;
+        func(key);
+      }
+    } else if (event->message == Event::MSG::KEYUP) {
+      auto func = GetFunction("OnKeyUp");
+      if (not func.isNil()) {
+        auto key = event->description;
+        func(key);
+      }
+    } else if (event->message == Event::MSG::COLLISION_ENTITY) {
+      auto func = GetFunction("OnEntityCollision");
+      if (not func.isNil()) {
+        auto packet = EColPacket::ExtraDataDefinition::GetExtraData(event);
+        func(event->sender, *packet);
+      }
+    } else if (event->message == Event::MSG::COLLISION_TILE) {
+      auto func = GetFunction("OnTileCollision");
+      if (not func.isNil()) {
+        auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
+        func(*packet);
+      }
+    } else if (event->message == Event::MSG::LUA_EVENT) {
+      auto func = GetFunction("OnLuaEvent");
+      if (not func.isNil()) {
+        func(event->sender, event->description);
+      }
+    }
+  } catch (LuaException const &e) {
+    std::stringstream ss;
+    ss << "Lua Exception: " << e.what();
+    LOG_ERROR(ss.str());
   }
 }
 
@@ -274,15 +194,12 @@ LuaRef ComponentScript::GetFunction(const std::string &fname) {
   try {
     // get function from instance table
     LuaRef fN = scriptPointer[fname.c_str()];
-    if (fN.isNil()) {
-      LOG_ERROR("Tried to run lua function; " + fname);
-      LOG_ERROR("Function not found in script with EID " + (mEntityID));
-      return nil;
-    }
-    if (!fN.isFunction()) {
-      LOG_ERROR("Tried to run lua function; " + fname);
-      LOG_ERROR("Passed name is not function in script with EID " +
-                (mEntityID));
+    if ((fN.isNil()) or (!fN.isFunction())) {
+      std::stringstream ss;
+      ss << "Failed to find lua function '" << fname << "'" << std::endl
+         << "    Name '" << scriptName << "' | "
+         << "EID [" << mEntityID << "]";
+      LOG_WARN(ss.str());
       return nil;
     }
     return fN;
