@@ -177,7 +177,11 @@ std::unique_ptr<RSC_Script> LoadScript(const std::string &fullPath) {
 void CheckLuaAssertions(std::vector<Assertion> assertions) {
   for (auto i = assertions.begin(); i != assertions.end(); i++) {
     if (!i->mPass) {
+      // Record failing assertion
       CHECK(i->mDescription == "");
+    } else {
+      // Record passing assertion
+      CHECK(0 == 0);
     }
   }
 }

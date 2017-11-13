@@ -56,7 +56,6 @@ function NewCamera(baseclass)
 		end
 		camera.mapWidth = map:GetWidthPixels()
 		camera.mapHeight = map:GetHeightPixels()
-		CPP.interface:LogError(camera.EID, "Camera Initialized");
 	end
 
 	function camera.Update()

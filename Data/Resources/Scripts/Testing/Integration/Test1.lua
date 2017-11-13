@@ -17,6 +17,7 @@ function container.NewState(baseclass)
 	end
 
 	function state.Test3(testing)
+
 	end
 	--Run after every Test
 	function state.Teardown()

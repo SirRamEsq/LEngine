@@ -231,7 +231,7 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
   if (lState == NULL) {
     std::stringstream ss;
     ss << "Lua state couldn't be created";
-    LOG_INFO(ss.str());
+    LOG_FATAL(ss.str());
     return;
   }
 
@@ -473,7 +473,7 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
     if (typeFunction != -1) {
       // push type function along with base class argument and call function
       lua_rawgeti(lState, LUA_REGISTRYINDEX, typeFunction);
-      LOG_DEBUG("Pushed Type " + type);
+      LOG_TRACE("Pushed Type " + type);
     }
   }
   // Push the result of baseClass as an argument for the type function
@@ -567,8 +567,8 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
     returnedTable["LEngineData"] = engineTableRef;
   } catch (std::exception e) {
-    LOG_INFO("Couldn't Run LEngineInit; ");
-    LOG_INFO(e.what());
+    LOG_ERROR("Couldn't Run LEngineInit; ");
+    LOG_ERROR(e.what());
   }
 
   //////////////////////////////////////////////////
@@ -641,7 +641,7 @@ void LuaInterface::ListenForInput(EID id, const std::string &inputName) {
       std::stringstream ss;
       ss << "Couldn't listen for input for script with eid " << id
          << " no input component";
-      LOG_DEBUG(ss.str());
+      LOG_ERROR(ss.str());
       return;
     }
   }
