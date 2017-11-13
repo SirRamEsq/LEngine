@@ -30,6 +30,7 @@ Log Log::staticLog = Log();
 
 Log::Log() {
   entryFilter = NULL;
+  mMinimumWriteSeverity = DEBUG;
   fileHandle = NULL;
 }
 
@@ -59,7 +60,7 @@ std::vector<const Log::Entry *> Log::GetEntries() const {
 void Log::Write(const std::string &text, Log::SEVERITY severity,
                 const std::string &type) const {
   entries.push_back(Entry(text, severity, type, SDL_GetTicks()));
-  if (fileHandle != NULL) {
+  if ((fileHandle != NULL) and (severity >= mMinimumWriteSeverity)) {
     std::string str = entries.back().ToString();
     if (PHYSFS_write(fileHandle, str.c_str(), str.size(), 1) == 0) {
       throw LEngineException("PHYSFS Couldn't write");
@@ -67,7 +68,8 @@ void Log::Write(const std::string &text, Log::SEVERITY severity,
   }
 }
 
-void Log::WriteToFile(const std::string &fileName) {
+void Log::WriteToFile(const std::string &fileName, SEVERITY minSeverity) {
+  mMinimumWriteSeverity = minSeverity;
   CloseFileHandle();
   std::stringstream fPath;
   auto currentDate = GetDateString();

@@ -17,12 +17,12 @@ class Log {
     using LEngineException::LEngineException;
   };
   enum SEVERITY {
-    FATAL = 1,
-    ERROR = 2,
-    WARN = 4,
-    INFO = 8,
-    DEBUG = 16,
-    TRACE = 32
+    TRACE = 1,
+    DEBUG = 2,
+    INFO = 4,
+    WARN = 8,
+    ERROR = 16,
+    FATAL = 32
   };
 
   struct Entry {
@@ -61,7 +61,7 @@ class Log {
              const std::string &type = Log::typeDefault) const;
 
   /// If called, all entries will henceforth be written to this file
-  void WriteToFile(const std::string &fileName);
+  void WriteToFile(const std::string &fileName, SEVERITY minSeverity = DEBUG);
 
   /// Default value for Entry::type
   static const std::string typeDefault;
@@ -95,6 +95,8 @@ class Log {
 
   /// Returns the date formated specially for fileNames
   static std::string GetDateString();
+
+  SEVERITY mMinimumWriteSeverity;
 };
 
 void LOG_CPP(std::string message, Log::SEVERITY severity, int line,
