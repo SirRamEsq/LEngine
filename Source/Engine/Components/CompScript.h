@@ -29,7 +29,7 @@ class ComponentScriptManager;
 class ComponentInput;
 class ComponentScript;
 class ComponentCollision;
-class EColPacket;
+struct EColPacket;
 class LuaInterface;
 
 class ComponentScript : public BaseComponent {
@@ -112,7 +112,7 @@ class ComponentScript : public BaseComponent {
   RenderManager *dependencyRenderManager;
 };
 
-class TiledObject;
+struct TiledObject;
 class ComponentScriptManager
     : public BaseComponentManager_Impl<ComponentScript> {
  public:
