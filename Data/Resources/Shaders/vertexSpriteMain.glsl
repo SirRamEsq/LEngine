@@ -1,4 +1,5 @@
 #version 300 es
+precision highp float;
 
 layout (location = 0) in vec2 position; 	//vertex data
 layout (location = 1) in vec2 texture; 		//texture

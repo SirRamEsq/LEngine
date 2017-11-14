@@ -19,7 +19,7 @@ CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++14 -ggdb3 -pg
 CFLAGS_LINK	:= -pg
 
 #without efence debug
-LIB		:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lfreetype
+LIB		:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW 
 #with efence debug
 #LIB			:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lfreetype -lefence
 
