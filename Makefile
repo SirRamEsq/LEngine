@@ -6,7 +6,7 @@ TARGET					:= LEngine
 
 #The Directories, Source, Includes, Objects, Binary and Resources
 SRCDIR		:= Source/Engine
-INCDIR		:= -I./LinuxDependencies/rapidxml-1.13 -I./LinuxDependencies/LuaBridge-master/Source/LuaBridge
+INCDIR		:= -I./Source/LinuxDependencies/rapidxml-1.13 -I./Source/LinuxDependencies/LuaBridge-master/Source/LuaBridge
 BUILDDIR		:= obj
 TARGETDIR	:= bin
 RESDIR		:= Data
