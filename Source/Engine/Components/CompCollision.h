@@ -75,7 +75,7 @@ struct EColPacket {
 
 class ComponentCollision : public BaseComponent {
   friend class ComponentCollisionManager;
-  friend class CollisionGrid;
+  friend struct CollisionGrid;
 
  public:
   ComponentCollision(EID id, ComponentPosition *pos,

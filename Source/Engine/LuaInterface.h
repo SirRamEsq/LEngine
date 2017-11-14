@@ -3,6 +3,13 @@
 
 // Engine headers
 #include "Defines.h"
+// Lua headers
+extern "C" {
+#include "lua5.2/lauxlib.h"
+#include "lua5.2/lua.h"
+#include "lua5.2/lualib.h"
+}
+#include <LuaBridge.h>
 
 #include "Components/CompCollision.h"
 #include "Components/CompParticle.h"
@@ -12,14 +19,8 @@
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_Script.h"
 
-// Lua headers
-extern "C" {
-#include "lua5.2/lauxlib.h"
-#include "lua5.2/lua.h"
-#include "lua5.2/lualib.h"
-}
 
-#include <LuaBridge.h>
+
 
 #include <unordered_set>
 
