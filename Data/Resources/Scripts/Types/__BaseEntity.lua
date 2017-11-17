@@ -7,20 +7,24 @@ function BaseEntity.new(ignoringThis)
 	--baseclass can be passed, but is completely ignored
 	local base = {}
 
-	--Constant variables, meant to be set once
+	--Constant variables, meant to be set once by other scripts
 	base.C = {}
-	base.C.WIDTH  = 0
+	base.C.WIDTH = 0
 	base.C.HEIGHT = 0
-
-	base.xspd = 0
-	base.yspd = 0
+	base.UpdateFunctions = {}
+	base.InitFunctions = {}
+	base.LuaEventFunctions = {}
 
 	function base.Initialize()
-
+		for k,v in pairs(base.InitFunctions) do
+			v()
+		end
 	end
 
 	function base.Update()
-
+		for k,v in pairs(base.UpdateFunctions) do
+			v()
+		end
 	end
 
 	function base.Attacked(damage)
@@ -28,19 +32,20 @@ function BaseEntity.new(ignoringThis)
 	end
 
 	function base.OnLuaEvent(eid, description)
-
+		for k,v in pairs(base.LuaEventFunctions) do
+			v(eid, description)
+		end
 	end
 
 	base.EntityInterface = {
-	  Activate	  = function () end,
-	  IsSolid	  = function () return true;  end,
-	  IsCollectable	  = function () return 0;  end,
-	  CanBounce   = function () return false; end, --the 'goomba' property
-	  CanClimb	  = function () return false; end, --rope
-	  CanGrab	  = function () return false; end,
-	  --This instance being attacked, returns true if attack hit, false if not
-	  Attack	  = function (damage) return base.Attacked(damage); end,  --this instance being attacked
-	  Land		  = function () return 1; end--This instance being landed on
+		Activate      = function () end,
+		IsSolid		  = function () return true;  end,
+		IsCollectable = function () return 0;  end,
+		CanBounce     = function () return false; end, --the 'goomba' property
+		CanGrab		  = function () return false; end,
+		--This instance being attacked, returns true if attack hit, false if not
+		Attack        = function (damage) return base.Attacked(damage); end,  --this instance being attacked
+		Land          = function () return 1; end--This instance being landed on
 	}
 
 	return base;
