@@ -1,3 +1,15 @@
+--[[
+--TO USE:
+--Make sure that at some point during the update funciton
+--type.tileCollision.Update(xspd,yspd) is called
+--
+--Can override the following functions before Init is called
+--	type.tileCollision.OnTileRight
+--	type.tileCollision.OnTileDown
+--	type.tileCollision.OnTileLeft
+--	type.tileCollision.OnTileRight
+--	type.OnTileCollision
+--]]
 local container = {}
 
 function container.new(base)
@@ -26,10 +38,10 @@ function container.new(base)
 		position:SetPositionLocalY(newPosition.y)
 
 		if CPP.interface.HasSpriteComponent(eid) then
-			local compSprite = CPP.interface.GetSpriteComponent(eid) 
+			local sprite = CPP.interface.GetSpriteComponent(eid)
 			--Will rotate the first sprite loaded into the SpriteComponent
 			local firstSpriteLoadedID = 0
-			compSprite:SetRotation(firstSpriteLoadedID, newAngle);
+			sprite:SetRotation(firstSpriteLoadedID, newAngle);
 		end
 	end
 
@@ -54,11 +66,14 @@ function container.new(base)
 		position:SetPositionLocalY(newPosition.y)
 	end
 
-	function tileUpdate()
-
+	function type.OnTileCollision(packet)
+		local position = CPP.interface:GetPositionComponent(eid)
+		local absolutePos = position:GetPositionWorld():Round()
+		local speed = position:GetMovement():Round()
+		type.tileCollision.OnTileCollision(packet, speed.x, speed.y, absolutePos.x, absolutePos.y)
 	end
 
-	table.insert(type.UpdateFunctions, tileUpdate)
+	--Add to sequence of init functions to call
 	table.insert(type.InitFunctions, tileInit)
 
 	return type;
