@@ -301,6 +301,11 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
   return tiledIDtoEntityID;
 }
 
+std::vector<std::string> GetTypesFromString(std::string typeString) {
+  auto types = StringSplit(typeString.c_str(), ',');
+  return types;
+}
+
 void GameState::SetMapLinkEntities(
     const std::vector<std::unique_ptr<TiledObjectLayer>> &layers,
     std::map<EID, EID> &tiledIDtoEntityID,
@@ -354,9 +359,10 @@ void GameState::SetMapLinkEntities(
           }
         }
         if (script != NULL) {
+			auto types = GetTypesFromString(objectIt->second.type);
           // entities have been created so that parents can be assigned properly
           luaInterface.RunScript(child, script, (*ii)->GetDepth(), parentEID,
-                                 objectIt->second.name, objectIt->second.type,
+                                 objectIt->second.name, types,
                                  &objectIt->second, NULL);
         }
       }
@@ -409,7 +415,8 @@ void GameState::SetMapNextFrame(const RSC_Map *m, unsigned int entranceID) {
   nextMapEntrance = entranceID;
 }
 
-const std::vector<EID>* GameState::GetEIDFromName(const std::string &name) const {
+const std::vector<EID> *GameState::GetEIDFromName(
+    const std::string &name) const {
   auto i = mNameLookup.find(name);
   if (i == mNameLookup.end()) {
     return NULL;

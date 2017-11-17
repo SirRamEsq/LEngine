@@ -11,6 +11,7 @@
 #endif
 
 #include <string>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -178,6 +179,20 @@ std::string NumberToString(T Number) {
   ss << Number;
   return ss.str();
 }
+template <typename Iter>
+Iter IteratorNext(Iter iter) {
+  return ++iter;
+}
+template <typename Iter, typename Data>
+bool IteratorIsLast(Iter iter, const Data &data) {
+  return (iter != data.end()) && (IteratorNext(iter) == data.end());
+}
+template <typename Iter, typename Data>
+bool IteratorIsRLast(Iter iter, const Data &data) {
+  return (iter != data.rend()) && (IteratorNext(iter) == data.rend());
+}
+
+std::vector<std::string> StringSplit(const char *str, char c);
 
 // Herb sutters std::make_unique function
 // https://herbsutter.com/gotw/_102/

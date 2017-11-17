@@ -13,6 +13,8 @@ GS_Script::~GS_Script() {
 void GS_Script::Init(const RSC_Script *stateScript) {
   std::string scriptName = "STATE";
   std::string scriptType = "__BaseState";
+  std::vector<std::string> types;
+  types.push_back(scriptType);
   MAP_DEPTH depth = 0;
   EID parent = 0;
   EID eid = EID_RESERVED_STATE_ENTITY;
@@ -26,7 +28,7 @@ void GS_Script::Init(const RSC_Script *stateScript) {
 
   comScriptMan.AddComponent(eid);
   luaInterface.RunScript(eid, stateScript, depth, parent, scriptName,
-                         scriptType, NULL, NULL);
+                         types, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
 }
 
