@@ -780,7 +780,6 @@ ComponentParticle *LuaInterface::GetParticleComponent(const EID &id) {
   }
   return parentState->comParticleMan.GetComponent(id);
 }
-
 ComponentCamera *LuaInterface::GetCameraComponent(const EID &id) {
   if (parentState->comCameraMan.HasComponent(id) == false) {
     parentState->comCameraMan.AddComponent(id);
@@ -788,6 +787,21 @@ ComponentCamera *LuaInterface::GetCameraComponent(const EID &id) {
   return parentState->comCameraMan.GetComponent(id);
 }
 
+bool LuaInterface::HasPositionComponent(const EID &id) {
+	return parentState->comPosMan.HasComponent(id);
+}
+bool LuaInterface::HasSpriteComponent(const EID &id) {
+	return parentState->comSpriteMan.HasComponent(id);
+}
+bool LuaInterface::HasCollisionComponent(const EID &id) {
+	return parentState->comCollisionMan.HasComponent(id);
+}
+bool LuaInterface::HasParticleComponent(const EID &id) {
+	return parentState->comParticleMan.HasComponent(id);
+}
+bool LuaInterface::HasCameraComponent(const EID &id) {
+	return parentState->comCameraMan.HasComponent(id);
+}
 ////////////
 // Entities//
 ////////////
@@ -1064,6 +1078,13 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetPositionComponent", &LuaInterface::GetPositionComponent)
       .addFunction("GetParticleComponent", &LuaInterface::GetParticleComponent)
       .addFunction("GetCameraComponent", &LuaInterface::GetCameraComponent)
+
+      .addFunction("HasSpriteComponent", &LuaInterface::HasSpriteComponent)
+      .addFunction("HasCollisionComponent",
+                   &LuaInterface::HasCollisionComponent)
+      .addFunction("HasPositionComponent", &LuaInterface::HasPositionComponent)
+      .addFunction("HasParticleComponent", &LuaInterface::HasParticleComponent)
+      .addFunction("HasCameraComponent", &LuaInterface::HasCameraComponent)
 
       .addFunction("EntityNew", &LuaInterface::EntityNew)
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)

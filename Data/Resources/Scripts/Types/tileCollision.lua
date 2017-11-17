@@ -24,6 +24,13 @@ function container.new(base)
 		local position = CPP.interface:GetPositionComponent(eid)
 		local newPosition= position:TranslateWorldToLocal(newPosition)
 		position:SetPositionLocalY(newPosition.y)
+
+		if CPP.interface.HasSpriteComponent(eid) then
+			local compSprite = CPP.interface.GetSpriteComponent(eid) 
+			--Will rotate the first sprite loaded into the SpriteComponent
+			local firstSpriteLoadedID = 0
+			compSprite:SetRotation(firstSpriteLoadedID, newAngle);
+		end
 	end
 
 	function type.tileCollision.OnTileRight(newPosition)

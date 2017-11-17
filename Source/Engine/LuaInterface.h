@@ -111,6 +111,12 @@ class LuaInterface {
   ComponentCollision *GetCollisionComponent(const EID &id);
   ComponentParticle *GetParticleComponent(const EID &id);
   ComponentCamera *GetCameraComponent(const EID &id);
+  
+  bool HasPositionComponent(const EID &id);
+  bool HasSpriteComponent(const EID &id);
+  bool HasCollisionComponent(const EID &id);
+  bool HasParticleComponent(const EID &id);
+  bool HasCameraComponent(const EID &id);
 
   ////////////
   // Entities//

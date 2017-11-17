@@ -302,6 +302,9 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
 }
 
 std::vector<std::string> GetTypesFromString(std::string typeString) {
+  if (typeString == "") {
+    return std::vector<std::string>();
+  }
   auto types = StringSplit(typeString.c_str(), ',');
   return types;
 }
@@ -359,7 +362,7 @@ void GameState::SetMapLinkEntities(
           }
         }
         if (script != NULL) {
-			auto types = GetTypesFromString(objectIt->second.type);
+          auto types = GetTypesFromString(objectIt->second.type);
           // entities have been created so that parents can be assigned properly
           luaInterface.RunScript(child, script, (*ii)->GetDepth(), parentEID,
                                  objectIt->second.name, types,
