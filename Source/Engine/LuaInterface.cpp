@@ -39,6 +39,29 @@ void stackdump_g(lua_State *l, const std::string &logFile) {
   LOG_DEBUG(ss.str());
 }
 
+std::unordered_map<std::string, luabridge::LuaRef> GetKeyValueMap(
+    const luabridge::LuaRef &table) {
+  using namespace luabridge;
+  std::unordered_map<std::string, LuaRef> result;
+  if (table.isNil()) {
+    return result;
+  }
+
+  auto L = table.state();
+  push(L, table);  // push table
+
+  lua_pushnil(L);  // push nil, so lua_next removes it from stack and puts (k,
+                   // v) on stack
+  while (lua_next(L, -2) != 0) {  // -2, because we have table at -1
+    if (lua_isstring(L, -2)) {    // only store stuff with string keys
+      result.emplace(lua_tostring(L, -2), LuaRef::fromStack(L, -1));
+    }
+    lua_pop(L, 1);  // remove value, keep key for lua_next
+  }
+
+  lua_pop(L, 1);  // pop table
+  return result;
+}
 int GetErrorInfo(lua_State *L) {
   lua_Debug d;
   lua_getstack(L, 1, &d);
@@ -449,8 +472,8 @@ int LuaInterface::GetTypeFunction(const std::string &type) {
 // Clears stack
 bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
                              EID parent, const std::string &name,
-                             const std::string &type, const TiledObject *obj,
-                             LuaRef *initTable) {
+                             const std::vector<std::string> &types,
+                             const TiledObject *obj, LuaRef *initTable) {
   // check if entity has script component
   ComponentScript *scriptComponent = parentState->comScriptMan.GetComponent(id);
   if (scriptComponent == NULL) {
@@ -466,14 +489,23 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
   // pushes class factory function on the stack
   lua_rawgeti(lState, LUA_REGISTRYINDEX, functionReference);
 
-  // Push type function if one exists
-  int typeFunction = -1;
-  if (type != "") {
-    typeFunction = GetTypeFunction(type);
-    if (typeFunction != -1) {
-      // push type function along with base class argument and call function
-      lua_rawgeti(lState, LUA_REGISTRYINDEX, typeFunction);
-      LOG_TRACE("Pushed Type " + type);
+  // Push type functions if they exist
+  std::unordered_map<std::string, int> typeFunctions;
+
+  // Use Rbegin and REnd so that type functions are called in the order
+  // that they are declared in
+  // last one declared is at the bottom of the stack
+  // First one declared is at the top
+  for (auto i = types.rbegin(); i != types.rend(); i++) {
+    auto typeName = *i;
+    if (typeName != "") {
+      auto typeFunction = GetTypeFunction(typeName);
+      typeFunctions[typeName] = (typeFunction);
+      if (typeFunction != -1) {
+        // push type function along with base class argument and call function
+        lua_rawgeti(lState, LUA_REGISTRYINDEX, typeFunction);
+        LOG_TRACE("Pushed Type " + typeName);
+      }
     }
   }
   // Push the result of baseClass as an argument for the type function
@@ -499,21 +531,31 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
     lua_pushnil(lState);
   }
 
-  // call type function if one exists
-  if (typeFunction != -1) {
-    // Call function with 1 arg and place table at the top of the stack
-    if (int error = lua_pcall(lState, 1, 1, 0) != 0) {
-      std::stringstream ss;
-      ss << "type did not return a callable function\n"
-         << "   ...Error code " << error << "\n";
-      ss << "Error String is '" << lua_tostring(lState, -1) << "'\n";
-      ss << "Type is: " << type;
-      // completely clear the stack before return
-      lua_settop(lState, 0);
-      LOG_ERROR(ss.str());
+  std::stringstream fullyQualifiedType;
+  // call type functions if they exist
+  for (auto i = typeFunctions.begin(); i != typeFunctions.end(); i++) {
+    auto typeFunction = i->second;
+    auto typeName = i->first;
+    fullyQualifiedType << typeName;
+    if (!IteratorIsLast(i, typeFunctions)) {
+      fullyQualifiedType << ",";
+    }
+    if (typeFunction != -1) {
+      // Call function with 1 arg and place returned table at the top of the
+      // stack
+      if (int error = lua_pcall(lState, 1, 1, 0) != 0) {
+        std::stringstream ss;
+        ss << "type did not return a callable function\n"
+           << "   ...Error code " << error << "\n";
+        ss << "Error String is '" << lua_tostring(lState, -1) << "'\n";
+        ss << "Type is: " << typeName;
+        // completely clear the stack before return
+        lua_settop(lState, 0);
+        LOG_ERROR(ss.str());
 
-      throw LEngineException(ss.str());
-      return false;
+        throw LEngineException(ss.str());
+        return false;
+      }
     }
   }
 
@@ -532,8 +574,8 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
   }
 
   int stackTop = lua_gettop(lState);
-  if (lua_istable(lState, stackTop) ==
-      false) {  // Returned value isn't table; cannot be used
+  if (!lua_istable(lState, stackTop)) {
+    // Returned value isn't table; cannot be used
     std::stringstream errorMsg;
     errorMsg << "Returned value from lua function is not a table in script ["
              << script->scriptName << "] with EID [" << id << "] \n"
@@ -560,8 +602,8 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
     LuaRef engineRef = getGlobal(lState, "NewLEngine");
     LuaRef engineTableRef = engineRef();
 
-    engineTableRef["Initialize"](id, name, type, depth, parent,
-                                 Kernel::IsInDebugMode());
+    engineTableRef["Initialize"](id, name, fullyQualifiedType.str(), depth,
+                                 parent, Kernel::IsInDebugMode());
 
     // Assign Instance to generated table
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
@@ -779,10 +821,38 @@ Coord2df LuaInterface::EntityGetMovement(EID entity) {
 
 EID LuaInterface::EntityNew(const std::string &scriptName, int x, int y,
                             MAP_DEPTH depth, EID parent,
-                            const std::string &name, const std::string &type,
+                            const std::string &name, LuaRef types,
                             luabridge::LuaRef propertyTable) {
+  std::vector<std::string> typeVector;
+  // if passed type is a simple string
+  if (types.type() == LUA_TSTRING) {
+    auto type = types.cast<std::string>();
+    typeVector.push_back(type);
+  }
+
+  // if passed type is a table
+  else if (types.type() == LUA_TTABLE) {
+    auto kvPairs = GetKeyValueMap(types);
+    for (auto i = kvPairs.begin(); i != kvPairs.end(); i++) {
+      auto tempRef = i->second;
+      if (tempRef.type() == LUA_TSTRING) {
+        auto type = tempRef.cast<std::string>();
+        typeVector.push_back(type);
+      } else {
+        LOG_WARN(
+            "LuaRef 'types' was passed a table containing a value that is not "
+            "a string");
+      }
+    }
+  }
+
+  else {
+    LOG_WARN("LuaRef 'types' was passed a type not supported");
+  }
+
   auto packet = std::make_unique<EntityCreationPacket>(
-      scriptName, Coord2df(x, y), depth, parent, name, type, propertyTable);
+      scriptName, Coord2df(x, y), depth, parent, name, typeVector,
+      propertyTable);
 
   return parentState->CreateLuaEntity(std::move(packet));
 }
@@ -889,6 +959,7 @@ GS_Script *LuaInterface::PushState(const std::string &scriptPath) {
   if (parentState->IsLuaState() == true) {
     return ((GS_Script *)(parentState))->PushState(scriptPath);
   }
+  return NULL;
 }
 
 void LuaInterface::PopState() { Kernel::stateMan.PopState(); }
@@ -909,6 +980,7 @@ bool LuaInterface::LoadMap(const std::string &mapPath,
     return false;
   }
   parentState->SetMapNextFrame(m, entranceID);
+  return true;
 }
 
 void LuaInterface::RemapInputToNextKeyPress(const std::string &key) {
@@ -949,9 +1021,9 @@ void LuaInterface::SimulateKeyRelease(const std::string &keyName) {
   Kernel::inputManager.SimulateKeyRelease(keyName);
 }
 
-bool LuaInterface::RecordKeysBegin() {}
+bool LuaInterface::RecordKeysBegin() { return false; }
 
-bool LuaInterface::RecordKeysEnd() {}
+bool LuaInterface::RecordKeysEnd() { return false; }
 
 GS_Script *LuaInterface::GetCurrentGameState() {
   if (parentState->IsLuaState() == true) {
@@ -961,6 +1033,8 @@ GS_Script *LuaInterface::GetCurrentGameState() {
 }
 
 void LuaInterface::ExposeCPP() {
+  typedef std::vector<EID> VectorEID;
+  typedef std::vector<EID> VectorString;
   /*
    * if a const pointer is passed to lua
    * it WILL NOT CONTAIN non-const methods
@@ -1165,11 +1239,18 @@ void LuaInterface::ExposeCPP() {
       .addData("a", &Color4f::a)
       .endClass()
 
-      .beginClass<std::vector<EID> >("VectorEID")
-      .addFunction("size", &std::vector<EID>::size)
-      .addFunction<std::vector<EID>::const_reference (std::vector<EID>::*)(
-          std::vector<EID>::size_type) const>("at", &std::vector<EID>::at)
-      .addFunction("empty", &std::vector<EID>::empty)
+      .beginClass<VectorEID>("VectorEID")
+      .addFunction("size", &VectorEID::size)
+      .addFunction<VectorEID::const_reference (VectorEID::*)(
+          VectorEID::size_type) const>("at", &VectorEID::at)
+      .addFunction("empty", &VectorEID::empty)
+      .endClass()
+
+      .beginClass<VectorString>("VectorString")
+      .addFunction("size", &VectorString::size)
+      .addFunction<VectorString::const_reference (VectorString::*)(
+          VectorString::size_type) const>("at", &VectorString::at)
+      .addFunction("empty", &VectorString::empty)
       .endClass()
 
       .beginClass<BaseComponent>("BaseComponent")
@@ -1327,18 +1408,17 @@ void LuaInterface::SetErrorCallbackFunction(ErrorCallback func) {
   errorCallbackFunction = func;
 }
 
-EntityCreationPacket::EntityCreationPacket(const std::string &scriptName,
-                                           Coord2df pos, MAP_DEPTH depth,
-                                           EID parent, const std::string &name,
-                                           const std::string &type,
-                                           luabridge::LuaRef propertyTable)
+EntityCreationPacket::EntityCreationPacket(
+    const std::string &scriptName, Coord2df pos, MAP_DEPTH depth, EID parent,
+    const std::string &name, const std::vector<std::string> &types,
+    luabridge::LuaRef propertyTable)
     : mPropertyTable(propertyTable) {
   mScriptName = scriptName;
   mPos = pos;
   mDepth = depth;
   mParent = parent;
   mEntityName = name;
-  mEntityType = type;
+  mEntityType = types;
   mScript = NULL;
   mNewEID = 0;
 }

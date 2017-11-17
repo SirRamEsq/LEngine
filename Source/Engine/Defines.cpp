@@ -33,6 +33,25 @@ const int COLLISION_GRID_SIZE = 64;
 
 // float ASPECT_RATIO=   (float)SCREEN_W / (float)SCREEN_H;
 
+std::vector<std::string> StringSplit(const char *str, char c) {
+  // store Result
+  std::vector<std::string> result;
+  do {
+    // start of string
+    const char *begin = str;
+
+    // Keep incrementing the str pointer until it matches c or is null
+    while (*str != c && *str) str++;
+
+    // add resulting sub-string to results
+    result.push_back(std::string(begin, str));
+
+    // Continue until str is null
+  } while (0 != *str++);
+
+  return result;
+}
+
 bool GET_ENDIAN() {
   int32_t i = 1;
   unsigned char *p = (unsigned char *)&i;

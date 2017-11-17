@@ -19,9 +19,6 @@ extern "C" {
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_Script.h"
 
-
-
-
 #include <unordered_set>
 
 // Forward declares
@@ -30,6 +27,9 @@ class ComponentPosition;
 class ComponentCollision;
 class ComponentParticle;
 class GS_Script;
+
+std::unordered_map<std::string, luabridge::LuaRef> GetKeyValueMap(
+    const luabridge::LuaRef &table);
 
 /// This struct is passed to the GameState to instantiate a new entity from lua
 struct EntityCreationPacket {
@@ -40,12 +40,12 @@ struct EntityCreationPacket {
    * \param depth Depth of entity
    * \param parent Entity's parent
    * \param name Name of entity
-   * \param type Type of entity
+   * \param type Types that an entity uses
    * \param propertyTable Extra lua properties
    */
   EntityCreationPacket(const std::string &scriptName, Coord2df pos,
                        MAP_DEPTH depth, EID parent, const std::string &name,
-                       const std::string &type,
+                       const std::vector<std::string> &types,
                        luabridge::LuaRef propertyTable);
 
   EID mParent;
@@ -55,7 +55,7 @@ struct EntityCreationPacket {
   std::string mScriptName;
   const RSC_Script *mScript;
   std::string mEntityName;
-  std::string mEntityType;
+  std::vector<std::string> mEntityType;
   luabridge::LuaRef mPropertyTable;
 };
 
@@ -73,7 +73,7 @@ class LuaInterface {
   ~LuaInterface();
 
   bool RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth, EID parent,
-                 const std::string &name, const std::string &type,
+                 const std::string &name, const std::vector<std::string> &types,
                  /*optional args*/ const TiledObject *obj,
                  luabridge::LuaRef *initTable);
 
@@ -121,7 +121,7 @@ class LuaInterface {
   Coord2df EntityGetMovement(EID entity);
 
   EID EntityNew(const std::string &scriptName, int x, int y, MAP_DEPTH depth,
-                EID parent, const std::string &name, const std::string &type,
+                EID parent, const std::string &name, luabridge::LuaRef types,
                 luabridge::LuaRef propertyTable);
   void EntityDelete(EID entity);
 
