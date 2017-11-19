@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="27">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="50" tilewidth="16" tileheight="16" backgroundcolor="#0f8aa6" nextobjectid="30">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
  <tileset firstgid="257" source="TileSets/items.tsx"/>
  <tileset firstgid="513" source="TileSets/icons.tsx"/>
@@ -25084,6 +25084,12 @@
     <property name="follow" value="Player"/>
    </properties>
   </object>
+  <object id="27" type="entityCollision" gid="516" x="1008" y="368" width="24" height="24">
+   <properties>
+    <property name="SCRIPT" value="bat.lua"/>
+   </properties>
+  </object>
+  <object id="29" gid="516" x="1088" y="496" width="24" height="24"/>
  </objectgroup>
  <layer name="WATER" width="100" height="50" opacity="0.8">
   <properties>

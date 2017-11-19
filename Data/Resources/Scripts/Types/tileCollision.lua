@@ -1,5 +1,6 @@
 --[[
 --TO USE:
+--Make sure type.C.WIDTH and HEIGHT are set before calling Init
 --Make sure that at some point during the update funciton
 --type.tileCollision.Update(xspd,yspd) is called
 --
@@ -18,7 +19,6 @@ function container.new(base)
 	result, type.tileCollision = pcall(loadfile(commonPath .. "/collisionSystem.lua", _ENV))
 
 	type.InitFunctions = type.InitFunctions or {}
-	type.UpdateFunctions = type.UpdateFunctions or {}
 
 	function tileInit()
 		local eid = type.LEngineData.entityID
