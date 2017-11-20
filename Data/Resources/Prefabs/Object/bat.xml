@@ -2,10 +2,13 @@
 
 <prefab>
 	<!--order of scripts matters -->
-	<script name = "Common/entityCollision.lua"/>
-	<script name = "bat.lua"/>
+	<scripts>
+		<script name = "Common/entityCollision.lua"/>
+		<script name = "bat.lua"/>
+	</scripts>
 
-	<arguments>
-		
-	</arguments>
+	<properties>
+		<!-- string type by default -->
+		<property name = "YADDA" balue = "ADDAY"/>
+	</properties>
 </prefab>
