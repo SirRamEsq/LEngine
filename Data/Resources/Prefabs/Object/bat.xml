@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<prefab>
+	<!--order of scripts matters -->
+	<script name = "Common/entityCollision.lua"/>
+	<script name = "bat.lua"/>
+
+	<arguments>
+		
+	</arguments>
+</prefab>
