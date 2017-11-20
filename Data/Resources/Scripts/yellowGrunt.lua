@@ -32,8 +32,8 @@ function NewYellowGrunt(baseclass)
   yellowGrunt.cboxPrimary=nil;
   local result=0;
   --security hole here, user can just use '..' to go wherever they want
-  result, yellowGrunt.collision = pcall(loadfile(commonPath .. "/collisionSystem.lua", _ENV))
-  result, yellowGrunt.timing    = pcall(loadfile(commonPath .. "/timing.lua", _ENV))
+  result, yellowGrunt.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
+  result, yellowGrunt.timing    = pcall(loadfile(utilityPath .. "/timing.lua", _ENV))
 
 
   yellowGrunt.ALARM_NAME1=1;

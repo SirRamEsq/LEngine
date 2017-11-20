@@ -1,5 +1,5 @@
 local Coin = {}
-result, collectableFlags = pcall(loadfile(commonPath .. "/collectableFlags.lua", _ENV))
+result, collectableFlags = pcall(loadfile(utilityPath .. "/collectableFlags.lua", _ENV))
 
 function Coin.new(base)
 	local coin = base or {}

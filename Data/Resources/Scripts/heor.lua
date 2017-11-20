@@ -179,7 +179,7 @@ function NewHeor(baseclass)
 --Collision boxes and ID Numbers
 	local result=0;
 	--security hole here? user can just use '..' to go wherever they want
-	result, heor.tileCollision = pcall(loadfile(commonPath .. "/tileCollisionSystem.lua", _ENV))
+	result, heor.tileCollision = pcall(loadfile(utilityPath .. "/tileCollisionSystem.lua", _ENV))
 
 --Sound Effects
 	heor.SoundJump=nil;

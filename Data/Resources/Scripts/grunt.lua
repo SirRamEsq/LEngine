@@ -23,7 +23,7 @@ function NewGrunt(baseclass)
   grunt.CBOX_H=16;
 
   grunt.cboxPrimary=nil;
-  result, grunt.collision = pcall(loadfile(commonPath .. "/collisionSystem.lua", _ENV))
+  result, grunt.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
 
   --C++ Interfacing
 		grunt.CPPInterface=nil;

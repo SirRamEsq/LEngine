@@ -1,5 +1,5 @@
 local Collectable = {}
-result, collectableFlags = pcall(loadfile(commonPath .. "/collectableFlags.lua", _ENV))
+result, collectableFlags = pcall(loadfile(utilityPath .. "/collectableFlags.lua", _ENV))
 
 function Collectable.new(base)
 	local collectable = base or {}

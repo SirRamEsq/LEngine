@@ -20,7 +20,7 @@ Red - Use no special abilities (roll)
 ]]--
 
 local result=0;
-result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV))
+result, imGuiFlags = pcall(loadfile(utilityPath .. "/imGuiWindowFlags.lua", _ENV))
 
 local container = {}
 function container.NewLouie(baseclass)
@@ -92,7 +92,7 @@ function container.NewLouie(baseclass)
 		--Useful functions
 		local result
 		local common
-		result, common = pcall(loadfile(commonPath .. "/commonFunctions.lua", _ENV))
+		result, common = pcall(loadfile(utilityPath .. "/commonFunctions.lua", _ENV))
 		louie.common = common
 
 		--General Movement Variables
@@ -122,7 +122,7 @@ function container.NewLouie(baseclass)
 		louie.climb.LAYER_NAME = "CLIMB"
 
 		--Input
-		result, louie.input = pcall(loadfile(commonPath .. "/input.lua", _ENV))
+		result, louie.input = pcall(loadfile(utilityPath .. "/input.lua", _ENV))
 
 		--Standing on Moving Platforms
 		louie.platformVelocityX=0;
@@ -165,7 +165,7 @@ function container.NewLouie(baseclass)
 
 		--Collision
 		--security hole here? user can just use '..' to go wherever they want
-		result, louie.tileCollision = pcall(loadfile(commonPath .. "/tileCollisionSystemNew.lua", _ENV))
+		result, louie.tileCollision = pcall(loadfile(utilityPath .. "/tileCollisionSystemNew.lua", _ENV))
 
 		--Sound Effects
 		louie.SoundJump = "smw_jump.wav";

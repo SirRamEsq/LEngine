@@ -87,7 +87,7 @@ using namespace luabridge;
 
 // Base Entity needs to be inside Type_Dir
 const std::string LuaInterface::BASE_SCRIPT_NAME = "__BaseEntity.lua";
-const std::string LuaInterface::TYPE_DIR = "Types/";
+const std::string LuaInterface::TYPE_DIR = "Common/";
 
 const std::string LuaInterface::DEBUG_LOG = "LUA_INTERFACE";
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
@@ -125,7 +125,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // before running this string
     "CPP = CPP,								"
     "									\n"
-    "commonPath= commonPath,						"
+    "utilityPath= utilityPath,						"
     "	"
     "						\n"
     // Use secure wrapper around loadfile
@@ -290,10 +290,10 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
   // \"/Data/Resources/Scripts/Common/LEngineInit.lua\" ";
 
   std::string lfsLoad2 =
-      "commonPath		= lfs.currentdir() .. "
-      "\"/Data/Resources/Scripts/Common\" ";
+      "utilityPath		= lfs.currentdir() .. "
+      "\"/Data/Resources/Scripts/Utility\" ";
   std::string lfsLoad3 =
-      "LEngineInitPath	= commonPath .. \"/LEngineInit.lua\" ";
+      "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" ";
 
   // run InitLEngine script using the restricted environment
   std::string lEngineLoad1 =
@@ -788,19 +788,19 @@ ComponentCamera *LuaInterface::GetCameraComponent(const EID &id) {
 }
 
 bool LuaInterface::HasPositionComponent(const EID &id) {
-	return parentState->comPosMan.HasComponent(id);
+  return parentState->comPosMan.HasComponent(id);
 }
 bool LuaInterface::HasSpriteComponent(const EID &id) {
-	return parentState->comSpriteMan.HasComponent(id);
+  return parentState->comSpriteMan.HasComponent(id);
 }
 bool LuaInterface::HasCollisionComponent(const EID &id) {
-	return parentState->comCollisionMan.HasComponent(id);
+  return parentState->comCollisionMan.HasComponent(id);
 }
 bool LuaInterface::HasParticleComponent(const EID &id) {
-	return parentState->comParticleMan.HasComponent(id);
+  return parentState->comParticleMan.HasComponent(id);
 }
 bool LuaInterface::HasCameraComponent(const EID &id) {
-	return parentState->comCameraMan.HasComponent(id);
+  return parentState->comCameraMan.HasComponent(id);
 }
 ////////////
 // Entities//

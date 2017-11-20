@@ -3,7 +3,7 @@
 
 
 local result=0;
-result, imGuiFlags = pcall(loadfile(commonPath .. "/imGuiWindowFlags.lua", _ENV))
+result, imGuiFlags = pcall(loadfile(utilityPath .. "/imGuiWindowFlags.lua", _ENV))
 
 local container = {}
 function container.NewMain(baseclass)

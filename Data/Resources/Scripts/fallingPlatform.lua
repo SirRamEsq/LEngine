@@ -37,8 +37,8 @@ function NewFallingPlatform(baseclass)
 
       local result=0;
       --security hole here, user can just use '..' to go wherever they want
-      result, platform.collision = pcall(loadfile(commonPath .. "/collisionSystem.lua", _ENV))
-      result, platform.timing    = pcall(loadfile(commonPath .. "/timing.lua", _ENV))
+      result, platform.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
+      result, platform.timing    = pcall(loadfile(utilityPath .. "/timing.lua", _ENV))
 
       function platform.Initialize()
         -----------------------

@@ -10,10 +10,10 @@ local newENV = _ENV
 newENV.CPP=CPP
 
 local collision;
-result, collision = pcall(loadfile(cwd .. "/../Common/entityCollisionSystemNew.lua", "t", newENV))
+result, collision = pcall(loadfile(cwd .. "/../Utility/entityCollisionSystemNew.lua", "t", newENV))
 
 local tileCollision;
-result, tileCollision = pcall(loadfile(cwd .. "/../Common/tileCollisionSystemNew.lua", "t", newENV))
+result, tileCollision = pcall(loadfile(cwd .. "/../Utility/tileCollisionSystemNew.lua", "t", newENV))
 
 local packetGenerator;
 packetGenerator= loadfile(cwd .. "/Mocks/mock_tileCollisionPacket.lua", "t", newENV)

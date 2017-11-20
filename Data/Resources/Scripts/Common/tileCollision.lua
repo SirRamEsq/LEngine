@@ -16,7 +16,7 @@ local container = {}
 function container.new(base)
 	local type = base or {}
 	local result
-	result, type.tileCollision = pcall(loadfile(commonPath .. "/collisionSystem.lua", _ENV))
+	result, type.tileCollision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
 
 	type.InitFunctions = type.InitFunctions or {}
 

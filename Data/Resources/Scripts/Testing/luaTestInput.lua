@@ -9,7 +9,7 @@ local newENV = _ENV
 newENV.CPP=CPP
 
 local input;
-result, input = pcall(loadfile(lfs.currentdir () .. "/../Common/input.lua", "t", newENV))
+result, input = pcall(loadfile(lfs.currentdir () .. "/../Utility/input.lua", "t", newENV))
 
 describe("Input Test", function()
 	it("Can pass sanity test", function()
