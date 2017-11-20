@@ -19,6 +19,9 @@ std::string DEPTH = "_DEPTH";
 /// [BOOL] Engine will not Load this layer if true
 std::string IGNORE = "_IGNORE";
 
+/// [STRING] Name of shader to use for this layer
+std::string SHADER = "_SHADER";
+
 /**
  * Properties that apply to all Tile Layers.
  * Setting a prefab will apply all prefab properties to the layer
@@ -39,6 +42,12 @@ namespace object {
 std::string SCRIPT = "_SCRIPT";
 /// [INT] Specifies what TiledID this entity's parent is
 std::string PARENT = "_PARENT";
+/// [BOOL] Whether or not this object uses an entrance
+std::string USE_ENTRANCE = "_USE_ENTRANCE";
+/// [STRING] What TiledEntities to recieve LuaEvents from
+std::string LISTEN_ID = "_LISTEN_ID";
+/// [STRING] What LuaEvent Descriptions to listen to
+std::string LISTEN_TYPE = "_LISTEN_TYPE";
 }
 
 /**

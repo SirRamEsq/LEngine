@@ -621,20 +621,20 @@ bool LuaInterface::RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth,
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
     LuaRef lengineData = returnedTable["LEngineData"];
     LuaRef initTable = lengineData["InitializationTable"];
-    for (auto i = obj->boolProperties.begin(); i != obj->boolProperties.end();
+    for (auto i = obj->properties.bools.begin(); i != obj->properties.bools.end();
          i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->intProperties.begin(); i != obj->intProperties.end();
+    for (auto i = obj->properties.ints.begin(); i != obj->properties.ints.end();
          i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->floatProperties.begin(); i != obj->floatProperties.end();
+    for (auto i = obj->properties.floats.begin(); i != obj->properties.floats.end();
          i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->stringProperties.begin();
-         i != obj->stringProperties.end(); i++) {
+    for (auto i = obj->properties.strings.begin();
+         i != obj->properties.strings.end(); i++) {
       initTable[i->first] = i->second;
     }
   }

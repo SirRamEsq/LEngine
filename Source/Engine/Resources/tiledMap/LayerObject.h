@@ -24,12 +24,25 @@ struct TiledObject {
   int flags;
 
   std::vector<EID> eventSources;
+  TiledMapProperties properties;
+};
+/*
+struct TiledObject {
+  std::string name, type;
+  Rect position;
 
+  bool useEntrance;
+  EID parent;
+
+  EID tiledID;
+  std::vector<EID> listenersID;
+  std::vector<std::string> listenersType;
   std::map<std::string, int> intProperties;
   std::map<std::string, bool> boolProperties;
   std::map<std::string, float> floatProperties;
   std::map<std::string, std::string> stringProperties;
 };
+*/
 
 class TiledObjectLayer : public TiledLayerGeneric {
  public:
