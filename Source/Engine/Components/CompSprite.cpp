@@ -133,8 +133,10 @@ void ComponentSprite::Update() {
     // look
     int xPos = floor(pos.x + renderSprite->offset.x + 0.5f);
     int yPos = floor(pos.y + renderSprite->offset.y + 0.5f);
-    renderSprite->data.translate.x = xPos;
-    renderSprite->data.translate.y = yPos;
+
+	//Translate position back from the origin offset
+    renderSprite->data.translate.x = xPos - renderSprite->data.vertexOrigin1.x;
+    renderSprite->data.translate.y = yPos - renderSprite->data.vertexOrigin1.y;
   }
 }
 
