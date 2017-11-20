@@ -223,10 +223,10 @@ function container.NewLouie(baseclass)
 		--Logical origin is as at the top left; (0,0) is top left
 		--Renderable origin is at center;				(-width/2, -width/2) is top left
 		--To consolodate the difference, use the Vec2 offset (WIDTH/2, HEIGHT/2)
-		louie.mainSpriteID		= louie.CompSprite:AddSprite(louie.mainSprite,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+1);
-		louie.mainSpriteRollID = louie.CompSprite:AddSprite(louie.mainSpriteRoll,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+8);
-		louie.baldSpriteID		= louie.CompSprite:AddSprite(louie.baldSprite,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+1);
-		louie.baldSpriteRollID = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, (louie.c.COL_WIDTH/2), (louie.c.COL_HEIGHT/2)+8);
+		louie.mainSpriteID		= louie.CompSprite:AddSprite(louie.mainSprite,	louie.depth, 0, 0);
+		louie.mainSpriteRollID = louie.CompSprite:AddSprite(louie.mainSpriteRoll,	louie.depth, 0, (0)+8);
+		louie.baldSpriteID		= louie.CompSprite:AddSprite(louie.baldSprite,	louie.depth, 0, 0);
+		louie.baldSpriteRollID = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, 0, (0)+8);
 
 		louie.CompSprite:SetAnimation		(louie.mainSpriteID, "Stand");
 		louie.CompSprite:SetAnimationSpeed  (louie.mainSpriteID, 1);
