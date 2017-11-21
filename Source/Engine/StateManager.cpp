@@ -287,14 +287,18 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
 
       // Add script Component and set to be initialized later during linking
       // stage after all entities have EIDs
-      if (objectIt->second.script != "") {
+	  auto scripts = objectIt->second.scripts;
+	  auto prefabName = objectIt->second.prefabName;
+      if ((!scripts.empty()) or (prefabName != "")) {
         comScriptMan.AddComponent(ent);
       }
 
       // Set up Light source (if applicable)
+      /*
       if (objectIt->second.light == true) {
         comLightMan.AddComponent(ent);
       }
+      */
     }
   }
 
@@ -343,14 +347,14 @@ void GameState::SetMapLinkEntities(
       ASSERT(tiledIDtoEntityID.find(parent) != tiledIDtoEntityID.end());
 
       // Initialize Script
-      std::string &scriptsString = objectIt->second.script;
+      std::string &scriptsString = objectIt->second.scripts;
 
       // Map Names to EIDs
       if (objectIt->second.name != "") {
         AddNameEIDLookup(objectIt->second.name, child);
       }
 
-      auto prefabName = objectIt->second.type;
+      auto prefabName = objectIt->second.prefabName;
       auto scripts = GetScriptsFromString(scriptsString);
       if ((!scripts.empty()) or (prefabName != "")) {
         std::vector<std::string> scriptNames;
@@ -490,12 +494,18 @@ EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
         K_ScriptMan.GetLoadItem(scriptName, scriptName);
 
     if (scriptData == NULL) {
-      LOG_ERROR("LuaInterface::EntityNew; Couldn't Load Script Named: " +
-                scriptName);
-      return 0;
+      std::stringstream ss;
+      ss << "LuaInterface::EntityNew; Couldn't Load Script Named: "
+         << scriptName;
+      LOG_ERROR(ss.str());
+      ASSERT(ss.str() == "");
     }
 
     scripts.push_back(scriptData);
+  }
+
+  if (scripts.empty()) {
+    return 0;
   }
 
   mEntitiesToCreate.push_back(

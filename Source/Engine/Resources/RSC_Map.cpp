@@ -2,6 +2,8 @@
 #include "../Exceptions.h"
 #include "../Kernel.h"
 
+#include "../TiledProperties.h"
+
 #include <sstream>
 #include <stdlib.h>
 /////////////
@@ -178,7 +180,6 @@ const TiledTileLayer *RSC_MapImpl::GetTileLayerCollision(
   }
   return NULL;
 }
-
 
 std::string RSC_MapImpl::GetProperty(const std::string &property) const {
   tiledData->GetProperty(property);
@@ -473,10 +474,12 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   TMXLoadProperties(subnode, properties);
 
   attributes.clear();
-  attributes["DEPTH"] = Attribute("int", &depth);
-  attributes["COLLISION"] = Attribute("bool", &propertyCollision);
-  attributes["USEHMAP"] = Attribute("bool", &propertyHMap);
-  attributes["ANIMATIONSPEED"] = Attribute("unsigned int", &animationRate);
+  attributes[tiledProperties::DEPTH] = Attribute("int", &depth);
+  attributes[tiledProperties::tile::SOLID] =
+      Attribute("bool", &propertyCollision);
+  attributes[tiledProperties::tile::HMAP] = Attribute("bool", &propertyHMap);
+  attributes[tiledProperties::tile::ANIMATION_SPEED] =
+      Attribute("unsigned int", &animationRate);
   TMXLoadAttributesFromProperties(&properties,
                                   attributes);  // store unspecified properties
                                                 // in tileLayer->extraproperties
@@ -567,7 +570,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
   for (auto subnodeObject = subnodeProperties->next_sibling();
        subnodeObject != 0; subnodeObject = subnodeObject->next_sibling()) {
     int objID, objX, objY, objWidth, objHeight;
-    std::string objName, objType;
+    std::string objName, objPrefab;
 
     attributes.clear();
     attributes["id"] = Attribute("int", &objID);
@@ -575,7 +578,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     attributes["y"] = Attribute("int", &objY);
     attributes["width"] = Attribute("int", &objWidth);
     attributes["height"] = Attribute("int", &objHeight);
-    attributes["type"] = Attribute("string", &objType);
+    attributes["type"] = Attribute("string", &objPrefab);
     attributes["name"] = Attribute("string", &objName);
     TMXLoadAttributes(subnodeObject, attributes);
 
@@ -584,9 +587,9 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     TiledObject &newObj = (objectLayer->objects[objID]);
 
     // assign values
-    newObj.script = "";
+    // newObj.scripts = "";
     newObj.name = objName;
-    newObj.type = objType;
+    newObj.prefabName = objPrefab;
     newObj.extraData = NULL;
     newObj.x = objX;
     newObj.y = objY;
@@ -610,6 +613,8 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
       newObj.useEntrance = false;
       newObj.parent = 0;
 
+      /// \TODO use TMX helper funcitons
+      /// \TODO Remove Exits
       // User defined properties for this particular object
       // Going to read this raw, without TMX hepler functions
       // more efficent, more contorl.
@@ -636,26 +641,28 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
         }
 
         // Assign property to correct variable
-        if (name == "SCRIPT") {
-          newObj.script = value;
+        if (name == tiledProperties::object::SCRIPT) {
+          newObj.scripts = value;
         }
+        /*
         if (name == "LIGHT") {
           if (valueString == "true") {
             newObj.light = true;
           } else {
             newObj.light = false;
           }
-        } else if (name == "ID") {
+        }*/
+        else if (name == tiledProperties::object::ENTRANCE_ID) {
           eventNum = strtol(value.c_str(), NULL, 10);
         } else if (name == "MAP") {
           eventString = value;
-        } else if (name == "USE_ENTRANCE") {
+        } else if (name == tiledProperties::object::USE_ENTRANCE) {
           if (valueString == "true") {
             newObj.useEntrance = true;
           }
-        } else if (name == "LISTEN") {
+        } else if (name == tiledProperties::object::LISTEN_ID) {
           listenString = value;
-        } else if (name == "PARENT") {
+        } else if (name == tiledProperties::object::PARENT) {
           newObj.parent = strtol(value.c_str(), NULL, 10);
         }
 
@@ -676,6 +683,7 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
       TMXProcessEventListeners(listenString, newObj.eventSources);
 
       // Process more complicated properties
+      /*
       if (newObj.type != "") {
         if (newObj.type == global_TiledStrings[TILED_EVT_MAP_ENTRANCE]) {
           MapEntrance e;
@@ -698,10 +706,11 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
           newObj.extraData = &tiledData->mMapExits[eventNum];
         } else if (newObj.type == global_TiledStrings[TILED_CAMERA]) {
           if (newObj.properties.bools["MAIN_CAMERA"] == true) {
-            newObj.flags = (newObj.flags | TILED_OBJECT_IS_MAIN_CAMERA);
+            //newObj.flags = (newObj.flags | TILED_OBJECT_IS_MAIN_CAMERA);
           }
         }
       }
+      */
     }
   }
   return objectLayer;
@@ -753,13 +762,15 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
 
   PropertyMap properties;
   attributes.clear();
-  attributes["PARALLAX_X"] = Attribute("float", &paralaxX);
-  attributes["PARALLAX_Y"] = Attribute("float", &paralaxY);
-  attributes["STRETCH_TO_MAP_X"] = Attribute("bool", &stretchX);
-  attributes["STRETCH_TO_MAP_Y"] = Attribute("bool", &stretchY);
-  attributes["REPEAT_X"] = Attribute("bool", &repeatX);
-  attributes["REPEAT_Y"] = Attribute("bool", &repeatY);
-  attributes["DEPTH"] = Attribute("int", &depth);
+  attributes[tiledProperties::image::PARALLAX_X] =
+      Attribute("float", &paralaxX);
+  attributes[tiledProperties::image::PARALLAX_Y] =
+      Attribute("float", &paralaxY);
+  attributes[tiledProperties::image::STRETCH_X] = Attribute("bool", &stretchX);
+  attributes[tiledProperties::image::STRETCH_Y] = Attribute("bool", &stretchY);
+  attributes[tiledProperties::image::REPEAT_X] = Attribute("bool", &repeatX);
+  attributes[tiledProperties::image::REPEAT_Y] = Attribute("bool", &repeatY);
+  attributes[tiledProperties::DEPTH] = Attribute("int", &depth);
   TMXLoadProperties(subNodeProperties, properties);
   TMXLoadAttributesFromProperties(&properties, attributes);
 
@@ -817,8 +828,6 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
   attributes.clear();
   attributes["source"] = Attribute("string", &textureName);
   attributes["trans"] = Attribute("string", &transparentColor);
-  // attributes["width"]         = Attribute("unsigned long", &ts->imageWidth);
-  // attributes["height"]        = Attribute("unsigned long", &ts->imageHeight);
   TMXLoadAttributes(subNodeImage, attributes);
 
   // Load tileset into engine and set firstGID
@@ -862,8 +871,10 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     // Store animation data in the tileAnimations data structure
     std::string spriteName = "";
     std::string animationName = "";
-    attributes["SPRITE"] = Attribute("string", &spriteName);
-    attributes["ANIMATION"] = Attribute("string", &animationName);
+    attributes[tiledProperties::tSet::SPRITE] =
+        Attribute("string", &spriteName);
+    attributes[tiledProperties::tSet::ANIMATION] =
+        Attribute("string", &animationName);
     // Store all other properties in the tileProperties data structure of type
     // map<string, string>
     TMXLoadAttributesFromProperties(&properties, attributes);

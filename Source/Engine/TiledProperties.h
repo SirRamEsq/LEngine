@@ -31,6 +31,8 @@ namespace tile {
 std::string SOLID = "_SOLID";
 /// [BOOL] Will generate and use heightmaps for this layer
 std::string HMAP = "_HMAP";
+/// [INT] how many frames to update before animations update
+std::string ANIMATION_SPEED = "_ANIMATION_SPEED";
 }
 
 /**
@@ -44,6 +46,8 @@ std::string SCRIPT = "_SCRIPT";
 std::string PARENT = "_PARENT";
 /// [BOOL] Whether or not this object uses an entrance
 std::string USE_ENTRANCE = "_USE_ENTRANCE";
+/// [INT] This entity acts as an entrance; ID of this entrance
+std::string ENTRANCE_ID = "_ENTRANCE_ID";
 /// [STRING] What TiledEntities to recieve LuaEvents from
 std::string LISTEN_ID = "_LISTEN_ID";
 /// [STRING] What LuaEvent Descriptions to listen to
@@ -74,6 +78,17 @@ std::string REPEAT_X = "_REPEAT_X";
 /// stretched
 std::string REPEAT_Y = "_REPEAT_Y";
 }
+
+/**
+ * Properties that apply to all tileSets
+ */
+namespace tSet{
+/// [STRING] Default sprite for a certain tile to have
+std::string SPRITE = "_SPRITE";
+/// [STRING] Default Animation for a certain tile to have
+std::string ANIMATION = "_ANIMATION";
+}
+
 }
 
 #endif
