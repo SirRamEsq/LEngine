@@ -44,7 +44,6 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
 
   auto mapDepth = 10;
   auto parent = 0;
-  auto scriptType = "TEST";
   std::vector<const RSC_Script *> scripts;
 	  scripts.push_back(script.get());
   luaInterface->RunScript(eid, scripts, mapDepth, parent, scriptName,
@@ -109,9 +108,6 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
 
     scriptComponent->RunFunction("PrintName");
     REQUIRE(lastError == scriptName);
-
-    scriptComponent->RunFunction("PrintType");
-    REQUIRE(lastError == scriptType);
   }
 
   SECTION("Ensure Lua events can be sent, recieved, and interpeted") {
@@ -250,7 +246,6 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
     // If fname is a file
     testLog.Write(*fname);
     if (PHYSFS_isDirectory(fname->c_str()) == 0) {
-      testLog.Write("fname is file; Good");
       auto script = LoadScript(dir + "/" + *fname);
       if (script.get() != NULL) {
         testLog.Write("Pushing back script");
