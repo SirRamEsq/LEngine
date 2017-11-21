@@ -12,7 +12,7 @@ GS_Script::~GS_Script() {
 
 void GS_Script::Init(const RSC_Script *stateScript) {
   std::string scriptName = "STATE";
-  std::string scriptType = "__BaseState";
+  std::string scriptType = "Common/__BaseState.lua";
   std::vector<std::string> types;
   types.push_back(scriptType);
   MAP_DEPTH depth = 0;

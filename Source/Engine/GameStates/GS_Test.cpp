@@ -1,5 +1,5 @@
 #include "GS_Test.h"
-//#include "../../Testing/catch.hpp"
+#include "../../Testing/catch.hpp"
 #include "../Kernel.h"
 
 std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
@@ -70,15 +70,14 @@ GS_Test::~GS_Test() {
 
 void GS_Test::Init(const RSC_Script *ignore) {
   std::string scriptName = "STATE";
-  std::string scriptType = "__BaseState";
-  std::vector<std::string> types;
-  types.push_back(scriptType);
+  std::string scriptType = "Common/__BaseState.lua";
   MAP_DEPTH depth = 0;
   EID parent = 0;
   EID eid = EID_RESERVED_STATE_ENTITY;
   quit = false;
 
   auto baseScript = K_ScriptMan.GetLoadItem(scriptType, scriptType);
+  REQUIRE (baseScript != NULL);
 
   comScriptMan.AddComponent(eid);
   std::vector<const RSC_Script *> scripts;
@@ -86,7 +85,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   scripts.push_back(mStateScript);
   luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
-  ////REQUIRE(entityScript != NULL);
+  REQUIRE(entityScript != NULL);
 }
 
 void GS_Test::HandleEvent(const Event *event) {
@@ -195,7 +194,7 @@ bool GS_Test::REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
   std::string strR2 = StringRepresentationOfRef(r2);
 
   std::stringstream ss;
-  ss << std::endl << "    " << strR1 << " == " << strR2 << std::endl;
+  ss << std::endl << "    " << strR1 << " != " << strR2 << std::endl;
 
   if (r1 == r2) {
     Error(ss.str());

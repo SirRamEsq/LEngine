@@ -114831,12 +114831,12 @@
     <property name="SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
-  <object id="31" name="player" type="PLAYER" x="24" y="1020" width="48" height="40">
+  <object id="31" name="player" type="" x="24" y="1020" width="48" height="40">
    <properties>
     <property name="SCRIPT" value="louie.lua"/>
    </properties>
   </object>
-  <object id="36" name="CAMERA_MAIN" type="CAMERA" x="188" y="1616" width="56" height="32">
+  <object id="36" name="CAMERA_MAIN" type="" x="188" y="1616" width="56" height="32">
    <properties>
     <property name="MAIN_CAMERA" type="bool" value="true"/>
     <property name="PARENT" type="int" value="31"/>

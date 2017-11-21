@@ -500,7 +500,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   // Call previously acquired script function ID values
   for (auto i = scriptFunctions.begin(); i != scriptFunctions.end(); i++) {
     auto scriptFunction = i->second;
-    auto scriptName = i->first;
+    auto script = i->first;
+	auto scriptName = script->scriptName;
     fullyQualifiedScriptName << scriptName;
     if (!IteratorIsLast(i, scriptFunctions)) {
       fullyQualifiedScriptName << " : ";
