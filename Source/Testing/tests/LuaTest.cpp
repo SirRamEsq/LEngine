@@ -45,10 +45,10 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   auto mapDepth = 10;
   auto parent = 0;
   auto scriptType = "TEST";
-  std::vector<std::string> types;
-  types.push_back(scriptType);
-  luaInterface->RunScript(eid, script.get(), mapDepth, parent, scriptName,
-                          types, NULL, NULL);
+  std::vector<const RSC_Script *> scripts;
+	  scripts.push_back(script.get());
+  luaInterface->RunScript(eid, scripts, mapDepth, parent, scriptName,
+                          NULL, NULL);
 
   REQUIRE(lastError == "Interface Working");
 

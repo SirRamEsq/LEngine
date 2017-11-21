@@ -76,7 +76,7 @@ class GameState {
   void UpdateComponentManagers();
 
   /// Get eid from data structure nameLookupEID
-  const std::vector<EID>* GetEIDFromName(const std::string &name) const;
+  const std::vector<EID> *GetEIDFromName(const std::string &name) const;
 
   LuaInterface luaInterface;
   EventDispatcher eventDispatcher;
@@ -125,7 +125,9 @@ class GameState {
   std::unordered_map<std::string, std::vector<EID>> mNameLookup;
 
   void CreateNewEntities();
-  std::vector<std::unique_ptr<EntityCreationPacket>> mEntitiesToCreate;
+  std::vector<std::pair<std::vector<const RSC_Script *>,
+                        std::unique_ptr<EntityCreationPacket>>>
+      mEntitiesToCreate;
 };
 
 // Interface
