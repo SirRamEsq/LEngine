@@ -5,18 +5,18 @@
  <imagelayer name="Image Layer 1">
   <image source="rapciu_horizon.png"/>
   <properties>
-   <property name="DEPTH" type="int" value="500"/>
+   <property name="_DEPTH" type="int" value="500"/>
    <property name="PARALLAX_X" type="float" value="0"/>
    <property name="PARALLAX_Y" type="float" value="0"/>
    <property name="REPEAT_X" type="bool" value="false"/>
    <property name="REPEAT_Y" type="bool" value="false"/>
-   <property name="STRETCH_TO_MAP_X" type="bool" value="true"/>
-   <property name="STRETCH_TO_MAP_Y" type="bool" value="true"/>
+   <property name="_STRETCH_X" type="bool" value="true"/>
+   <property name="_STRETCH_Y" type="bool" value="true"/>
   </properties>
  </imagelayer>
  <layer name="BG1" width="128" height="128">
   <properties>
-   <property name="DEPTH" type="int" value="30"/>
+   <property name="_DEPTH" type="int" value="30"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -16408,7 +16408,7 @@
  <layer name="CLIMB" width="128" height="128">
   <properties>
    <property name="CLIMB" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="15"/>
+   <property name="_DEPTH" type="int" value="15"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -32799,8 +32799,8 @@
  </layer>
  <layer name="Solid" width="128" height="128">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="10"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="10"/>
   </properties>
   <data>
    <tile gid="35"/>
@@ -49191,9 +49191,9 @@
  </layer>
  <layer name="Slopes" width="128" height="128">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="0"/>
-   <property name="USEHMAP" type="bool" value="true"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="0"/>
+   <property name="_HMAP" type="bool" value="true"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -65582,10 +65582,10 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="IGNORE_LAYER" width="128" height="128">
+ <layer name="_IGNORE_LAYER" width="128" height="128">
   <properties>
-   <property name="DEPTH" type="int" value="1000"/>
-   <property name="IGNORE" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="1000"/>
+   <property name="_IGNORE" type="bool" value="true"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -81976,8 +81976,8 @@
  </layer>
  <layer name="BOXES" width="128" height="128">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="-15"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="-15"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -98368,7 +98368,7 @@
  </layer>
  <layer name="WaterLayer" width="128" height="128" opacity="0.67">
   <properties>
-   <property name="DEPTH" type="int" value="-20"/>
+   <property name="_DEPTH" type="int" value="-20"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -114759,98 +114759,98 @@
  </layer>
  <objectgroup name="objects">
   <properties>
-   <property name="DEPTH" type="int" value="-10"/>
+   <property name="_DEPTH" type="int" value="-10"/>
   </properties>
   <object id="14" x="864" y="1536" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="15" x="960" y="1536" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="16" x="1056" y="1536" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="17" x="1008" y="1488" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="18" x="912" y="1488" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="20" x="960" y="1440" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="21" x="912" y="1392" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="22" x="864" y="1344" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="23" x="704" y="1296" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="24" x="608" y="1232" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="25" x="512" y="1168" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="27" x="400" y="1456" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="28" x="288" y="1424" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="29" x="176" y="1392" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="31" name="player" type="" x="24" y="1020" width="48" height="40">
    <properties>
-    <property name="SCRIPT" value="louie.lua"/>
+    <property name="_SCRIPT" value="louie.lua"/>
    </properties>
   </object>
   <object id="36" name="CAMERA_MAIN" type="" x="188" y="1616" width="56" height="32">
    <properties>
     <property name="MAIN_CAMERA" type="bool" value="true"/>
-    <property name="PARENT" type="int" value="31"/>
-    <property name="SCRIPT" value="Camera/playerCamera.lua"/>
+    <property name="_PARENT" type="int" value="31"/>
+    <property name="_SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
   <object id="37" x="276" y="1696" width="32" height="16">
    <properties>
-    <property name="SCRIPT" value="fallingPlatform.lua"/>
+    <property name="_SCRIPT" value="fallingPlatform.lua"/>
    </properties>
   </object>
   <object id="42" name="BUTTON" x="464" y="2000" width="28" height="16">
    <properties>
-    <property name="SCRIPT" value="Buttons/removeTiles.lua"/>
+    <property name="_SCRIPT" value="Buttons/removeTiles.lua"/>
     <property name="tileLayerName" value="Solid"/>
     <property name="tilesH" type="int" value="4"/>
     <property name="tilesW" type="int" value="0"/>
@@ -114860,26 +114860,26 @@
   </object>
   <object id="43" name="YellowGrunt" x="644" y="900" width="56" height="28">
    <properties>
-    <property name="SCRIPT" value="yellowGrunt.lua"/>
+    <property name="_SCRIPT" value="yellowGrunt.lua"/>
     <property name="direction" value="left"/>
    </properties>
   </object>
   <object id="45" name="Fountain" x="176" y="1088" width="56" height="28">
    <properties>
-    <property name="SCRIPT" value="waterFountain.lua"/>
+    <property name="_SCRIPT" value="waterFountain.lua"/>
     <property name="direction" value="right"/>
    </properties>
   </object>
   <object id="46" name="Exit" x="1560" y="601.333" width="66.6667" height="46.6667">
    <properties>
-    <property name="SCRIPT" value="Items/changeMap.lua"/>
+    <property name="_SCRIPT" value="Items/changeMap.lua"/>
     <property name="map" value="Hub.tmx"/>
    </properties>
   </object>
  </objectgroup>
  <layer name="Foreground" width="128" height="128">
   <properties>
-   <property name="DEPTH" type="int" value="-30"/>
+   <property name="_DEPTH" type="int" value="-30"/>
   </properties>
   <data>
    <tile gid="0"/>

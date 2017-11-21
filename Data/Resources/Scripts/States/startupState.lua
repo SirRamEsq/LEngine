@@ -15,7 +15,9 @@ function container.NewMain(baseclass)
 		main.EID		= main.LEngineData.entityID;
 
 		main.defaultWindowPos = CPP.Coord2df(450, 300)
-		main.childEID = CPP.interface:EntityNew("GUI/guiTest.lua", 0,0, main.depth, main.EID, "NAME", "TYPE")
+		local guiName = ""
+		local guiScript = "GUI/guiTest.lua"
+		main.childEID = CPP.interface:EntityNew(guiScript, 0,0, main.depth, main.EID, guiScript, {})
 		--main.font = "extra_fonts/Roboto-Medium.ttf"
 		main.font = "ebFonts/wisdom.ttf"
 		main.fontSize = 30

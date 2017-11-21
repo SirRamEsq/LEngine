@@ -1,5 +1,5 @@
 #include "GS_Test.h"
-#include "../../Testing/catch.hpp"
+//#include "../../Testing/catch.hpp"
 #include "../Kernel.h"
 
 std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
@@ -77,7 +77,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   quit = false;
 
   auto baseScript = K_ScriptMan.GetLoadItem(scriptType, scriptType);
-  REQUIRE (baseScript != NULL);
+  //REQUIRE (baseScript != NULL);
 
   comScriptMan.AddComponent(eid);
   std::vector<const RSC_Script *> scripts;
@@ -85,7 +85,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   scripts.push_back(mStateScript);
   luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
-  REQUIRE(entityScript != NULL);
+  //REQUIRE(entityScript != NULL);
 }
 
 void GS_Test::HandleEvent(const Event *event) {

@@ -456,6 +456,11 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
                              const std::string &name, const TiledObject *obj,
                              LuaRef *initTable) {
   if (scripts.empty()) {
+    std::stringstream ss;
+    ss << "Couldn't run script for entity with EID " << id
+       << " as No scripts were passed to be run";
+	LOG_ERROR(ss.str());
+    throw LEngineException(ss.str());
     return false;
   }
   // check if entity has script component
@@ -464,6 +469,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     std::stringstream ss;
     ss << "Couldn't run script for entity with EID " << id
        << " as this entity does not have a script component";
+	LOG_ERROR(ss.str());
     throw LEngineException(ss.str());
   }
 

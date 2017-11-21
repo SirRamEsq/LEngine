@@ -6,14 +6,14 @@
  <imagelayer name="BG1">
   <image source="rapciu_horizon.png"/>
   <properties>
-   <property name="DEPTH" type="int" value="200"/>
-   <property name="STRETCH_TO_MAP_X" type="bool" value="true"/>
-   <property name="STRETCH_TO_MAP_Y" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="200"/>
+   <property name="_STRETCH_X" type="bool" value="true"/>
+   <property name="_STRETCH_Y" type="bool" value="true"/>
   </properties>
  </imagelayer>
  <layer name="BG" width="100" height="50">
   <properties>
-   <property name="DEPTH" type="int" value="30"/>
+   <property name="_DEPTH" type="int" value="30"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -5020,9 +5020,9 @@
  </layer>
  <layer name="Slopes" width="100" height="50">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="20"/>
-   <property name="USEHMAP" type="bool" value="true"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="20"/>
+   <property name="_HMAP" type="bool" value="true"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -10029,8 +10029,8 @@
  </layer>
  <layer name="Solid" width="100" height="50">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="10"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="10"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -15038,7 +15038,7 @@
  <layer name="CLIMB" width="100" height="50">
   <properties>
    <property name="CLIMB" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="9"/>
+   <property name="_DEPTH" type="int" value="9"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -20045,8 +20045,8 @@
  </layer>
  <layer name="BOXES" width="100" height="50">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="5"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="5"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -25053,17 +25053,17 @@
  </layer>
  <objectgroup name="Objects">
   <properties>
-   <property name="DEPTH" type="int" value="-10"/>
+   <property name="_DEPTH" type="int" value="-10"/>
   </properties>
   <object id="19" name="Camera" x="144" y="64" width="217" height="80">
    <properties>
-    <property name="PARENT" type="int" value="25"/>
-    <property name="SCRIPT" value="Camera/playerCamera.lua"/>
+    <property name="_PARENT" type="int" value="25"/>
+    <property name="_SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
   <object id="21" name="Box1 Controller" x="1398" y="271.667" width="62" height="53">
    <properties>
-    <property name="SCRIPT" value="Buttons/removeTiles.lua"/>
+    <property name="_SCRIPT" value="Buttons/removeTiles.lua"/>
     <property name="listenFor" value="0"/>
     <property name="tileLayerName" value="Solid"/>
     <property name="tilesH" type="int" value="2"/>
@@ -25074,26 +25074,26 @@
   </object>
   <object id="25" name="Player" gid="513" x="240" y="464" width="18" height="32">
    <properties>
-    <property name="SCRIPT" value="louie.lua"/>
+    <property name="_SCRIPT" value="louie.lua"/>
    </properties>
   </object>
   <object id="26" gid="515" x="656" y="304" width="16" height="16">
    <properties>
-    <property name="SCRIPT" value="yellowGrunt.lua"/>
+    <property name="_SCRIPT" value="yellowGrunt.lua"/>
     <property name="direction" value="left"/>
     <property name="follow" value="Player"/>
    </properties>
   </object>
   <object id="27" type="entityCollision" gid="516" x="1008" y="368" width="24" height="24">
    <properties>
-    <property name="SCRIPT" value="bat.lua"/>
+    <property name="_SCRIPT" value="bat.lua"/>
    </properties>
   </object>
   <object id="29" gid="516" x="1088" y="496" width="24" height="24"/>
  </objectgroup>
  <layer name="WATER" width="100" height="50" opacity="0.8">
   <properties>
-   <property name="DEPTH" type="int" value="-20"/>
+   <property name="_DEPTH" type="int" value="-20"/>
    <property name="is_water" type="bool" value="true"/>
   </properties>
   <data>
@@ -30101,7 +30101,7 @@
  </layer>
  <layer name="SECRET1" width="100" height="50">
   <properties>
-   <property name="DEPTH" type="int" value="-1000"/>
+   <property name="_DEPTH" type="int" value="-1000"/>
    <property name="isSecret" type="bool" value="true"/>
   </properties>
   <data>
