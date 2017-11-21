@@ -1,8 +1,6 @@
-
 local container = {}
 function container.NewBoxBreak(baseclass)
-	--ignore baseclass
-	local box = {}
+	local box = baseclass or {}
 	--Constants
 	box.WIDTH=8;
 	box.HEIGHT=8;

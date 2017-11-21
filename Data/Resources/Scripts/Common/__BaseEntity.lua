@@ -37,6 +37,14 @@ function BaseEntity.new(ignoringThis)
 		end
 	end
 
+	function base.OnKeyUp(keyname)
+
+	end
+
+	function base.OnKeyDown(keyname)
+
+	end
+
 	base.EntityInterface = {
 		Activate      = function () end,
 		IsSolid		  = function () return true;  end,
