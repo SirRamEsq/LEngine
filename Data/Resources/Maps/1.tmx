@@ -25084,7 +25084,7 @@
     <property name="follow" value="Player"/>
    </properties>
   </object>
-  <object id="27" type="entityCollision" gid="516" x="1008" y="368" width="24" height="24">
+  <object id="27" type="bat.xml" gid="516" x="1008" y="368" width="24" height="24">
    <properties>
     <property name="_SCRIPT" value="bat.lua"/>
    </properties>

@@ -14,25 +14,27 @@
  */
 namespace tiledProperties {
 /// [INT] How Deep into the screen a layer is (negative is closer to camera)
-std::string DEPTH = "_DEPTH";
+extern std::string DEPTH;
 
 /// [BOOL] Engine will not Load this layer if true
-std::string IGNORE = "_IGNORE";
+extern std::string IGNORE;
 
 /// [STRING] Name of shader to use for this layer
-std::string SHADER = "_SHADER";
+extern std::string SHADER;
 
 /**
  * Properties that apply to all Tile Layers.
  * Setting a prefab will apply all prefab properties to the layer
  */
 namespace tile {
+extern std::string PREFAB_PREFIX;
+
 /// [BOOL] Will register Collisions if true
-std::string SOLID = "_SOLID";
+extern std::string SOLID;
 /// [BOOL] Will generate and use heightmaps for this layer
-std::string HMAP = "_HMAP";
+extern std::string HMAP;
 /// [INT] how many frames to update before animations update
-std::string ANIMATION_SPEED = "_ANIMATION_SPEED";
+extern std::string ANIMATION_SPEED;
 }
 
 /**
@@ -40,18 +42,20 @@ std::string ANIMATION_SPEED = "_ANIMATION_SPEED";
  * Setting a prefab will apply all prefab properties to all objects in the layer
  */
 namespace object {
+extern std::string PREFAB_PREFIX;
+
 /// [STRING] List of comma-delimited scripts to be run in a specified order
-std::string SCRIPT = "_SCRIPT";
+extern std::string SCRIPT;
 /// [INT] Specifies what TiledID this entity's parent is
-std::string PARENT = "_PARENT";
+extern std::string PARENT;
 /// [BOOL] Whether or not this object uses an entrance
-std::string USE_ENTRANCE = "_USE_ENTRANCE";
+extern std::string USE_ENTRANCE;
 /// [INT] This entity acts as an entrance; ID of this entrance
-std::string ENTRANCE_ID = "_ENTRANCE_ID";
+extern std::string ENTRANCE_ID;
 /// [STRING] What TiledEntities to recieve LuaEvents from
-std::string LISTEN_ID = "_LISTEN_ID";
+extern std::string LISTEN_ID;
 /// [STRING] What LuaEvent Descriptions to listen to
-std::string LISTEN_TYPE = "_LISTEN_TYPE";
+extern std::string LISTEN_TYPE;
 }
 
 /**
@@ -59,24 +63,26 @@ std::string LISTEN_TYPE = "_LISTEN_TYPE";
  * Setting a prefab will load all the prefab properties into the layer
  */
 namespace image {
+extern std::string PREFAB_PREFIX;
+
 /// [BOOL] If true, Image will be stretched from each end of the X-Axis (Will
 /// not repeat on X-AXIS)
-std::string STRETCH_X = "_STRETCH_X";
+extern std::string STRETCH_X;
 /// [BOOL] If true, Image will be stretched from each end of the Y-Axis (Will
 /// not repeat on Y-Axis)
-std::string STRETCH_Y = "_STRETCH_Y";
+extern std::string STRETCH_Y;
 
 /// [FLOAT] Parallax Value to scroll the screen by on the X-Axis
-std::string PARALLAX_X = "_PARALLAX_X";
+extern std::string PARALLAX_X;
 /// [FLOAT] Parallax Value to scroll the screen by on the Y-Axis
-std::string PARALLAX_Y = "_PARALLAX_Y";
+extern std::string PARALLAX_Y;
 
 /// [BOOL] If true, background will repeat along the X-Axis instead of being
 /// stretched
-std::string REPEAT_X = "_REPEAT_X";
+extern std::string REPEAT_X;
 /// [BOOL] If true, background will repeat along the Y-Axis instead of being
 /// stretched
-std::string REPEAT_Y = "_REPEAT_Y";
+extern std::string REPEAT_Y;
 }
 
 /**
@@ -84,9 +90,9 @@ std::string REPEAT_Y = "_REPEAT_Y";
  */
 namespace tSet{
 /// [STRING] Default sprite for a certain tile to have
-std::string SPRITE = "_SPRITE";
+extern std::string SPRITE;
 /// [STRING] Default Animation for a certain tile to have
-std::string ANIMATION = "_ANIMATION";
+extern std::string ANIMATION;
 }
 
 }

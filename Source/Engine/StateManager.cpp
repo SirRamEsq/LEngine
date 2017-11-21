@@ -1,5 +1,6 @@
 #include "StateManager.h"
 #include "Kernel.h"
+#include "TiledProperties.h"
 
 GameState::GameState(GameStateManager *gsm)
     : gameStateManager(gsm),
@@ -359,6 +360,7 @@ void GameState::SetMapLinkEntities(
       if ((!scripts.empty()) or (prefabName != "")) {
         std::vector<std::string> scriptNames;
         if (prefabName != "") {
+			prefabName = tiledProperties::object::PREFAB_PREFIX + prefabName;
           auto prefab = K_PrefabMan.GetLoadItem(prefabName, prefabName);
           // Prefab scripts will be run first
           if (prefab != NULL) {
