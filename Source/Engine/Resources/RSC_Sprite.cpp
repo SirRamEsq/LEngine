@@ -212,117 +212,122 @@ void RSC_Sprite::SetOrigin(LOrigin o) { origin = o; }
 bool RSC_Sprite::LoadFromXML(const char *dat, unsigned int fsize) {
   std::string XML = std::string(dat, fsize);
 
-  using namespace rapidxml;
-  xml_document<> doc;  // character type defaults to char
-  doc.parse<0>((char *)(XML.c_str()));
+  try {
+    using namespace rapidxml;
+    xml_document<> doc;  // character type defaults to char
+    doc.parse<0>((char *)(XML.c_str()));
 
-  // Find Specific Node
-  xml_node<> *node = doc.first_node("sprite");
+    // Find Specific Node
+    xml_node<> *node = doc.first_node("sprite");
 
-  xml_attribute<> *attribute;
-  attribute = node->first_attribute("origin");
-  if (attribute != NULL) {
-    std::string originString = attribute->value();
-    if (originString == "center") {
-      origin = L_ORIGIN_CENTER;
-    } else if (originString == "topleft") {
-      origin = L_ORIGIN_TOP_LEFT;
-    } else if (originString == "topright") {
-      origin = L_ORIGIN_TOP_RIGHT;
-    } else if (originString == "bottomleft") {
-      origin = L_ORIGIN_BOTTOM_LEFT;
-    } else if (originString == "bottomright") {
-      origin = L_ORIGIN_BOTTOM_RIGHT;
-    } else {
-      origin = L_ORIGIN_CENTER;
+    xml_attribute<> *attribute;
+    attribute = node->first_attribute("origin");
+    if (attribute != NULL) {
+      std::string originString = attribute->value();
+      if (originString == "center") {
+        origin = L_ORIGIN_CENTER;
+      } else if (originString == "topleft") {
+        origin = L_ORIGIN_TOP_LEFT;
+      } else if (originString == "topright") {
+        origin = L_ORIGIN_TOP_RIGHT;
+      } else if (originString == "bottomleft") {
+        origin = L_ORIGIN_BOTTOM_LEFT;
+      } else if (originString == "bottomright") {
+        origin = L_ORIGIN_BOTTOM_RIGHT;
+      } else {
+        origin = L_ORIGIN_CENTER;
+      }
     }
-  }
 
-  attribute = node->first_attribute("width");
-  if (attribute != NULL) {
-    width = strtol(attribute->value(), NULL, 10);
-  }  // Needs width
-  else {
+    attribute = node->first_attribute("width");
+    if (attribute != NULL) {
+      width = strtol(attribute->value(), NULL, 10);
+    }  // Needs width
+    else {
+      return false;
+    }
+
+    attribute = node->first_attribute("height");
+    if (attribute != NULL) {
+      height = strtol(attribute->value(), NULL, 10);
+    }  // Needs height
+    else {
+      return false;
+    }
+
+    std::stringstream transparentColor;
+    std::stringstream transparentColorTemp;
+    std::string red, green, blue;
+    char c;
+    attribute = node->first_attribute("transparentColor");
+    if (attribute != NULL) {
+      int colorIndex = 0;
+      int characterCount = 0;
+      const char *matches =
+          "1234567890aAbBcCdDeEfF";  // Only notice the character
+                                     // if it is A-F or 0-9
+      transparentColor << attribute->value();
+
+      while (transparentColor.get(c)) {
+        if (strchr(matches, c) != NULL) {
+          transparentColorTemp << c;  // Add character to stringstream
+          characterCount++;
+        }
+        if (characterCount >= 2) {
+          if (colorIndex == 0) {
+            transparentColorTemp >> std::hex >> transparentColorRed;
+          } else if (colorIndex == 1) {
+            transparentColorTemp >> std::hex >> transparentColorGreen;
+          } else if (colorIndex == 2) {
+            transparentColorTemp >> std::hex >> transparentColorBlue;
+          }  // Wrong
+          else {
+            break;
+          }  // Colors already have been read; exit loop
+          colorIndex++;
+          characterCount = 0;
+          // Clear string stream
+          transparentColorTemp.str(std::string());
+          transparentColorTemp.clear();
+        }
+      }
+    }
+
+    attribute = node->first_attribute("textureName");
+    if (attribute != NULL) {
+      mTextureName = attribute->value();
+    }
+
+    xml_node<> *animationNode =
+        node->first_node();  // point to the first child of <sprite>
+
+    std::string animationTagName = "";
+    for (; animationNode != 0;
+         animationNode = animationNode->next_sibling()) {  // Get all animations
+      animationTagName = animationNode->name();
+      LAnimation *newAnimation = NULL;
+      if (animationTagName == "animation") {
+        newAnimation = LoadAnimation(animationNode);
+      } else if (animationTagName == "animationSequence") {
+        newAnimation = LoadAnimationSequence(animationNode);
+      } else {
+        std::stringstream ss;
+        ss << "[C++] RSC_Sprite::LoadFromXML, couldn't load xml tag named "
+           << animationNode->name() << " For sprite " << spriteName;
+        LOG_INFO(ss.str());
+        continue;
+      }
+
+      if (newAnimation != NULL) {
+        auto texture = K_TextureMan.GetLoadItem(mTextureName, mTextureName);
+        if (texture != NULL) {
+          newAnimation->CalculateUV(texture->GetWidth(), texture->GetHeight());
+        }
+      }
+    }
+  } catch (rapidxml::parse_error &e) {
+    LOG_ERROR(e.what());
     return false;
-  }
-
-  attribute = node->first_attribute("height");
-  if (attribute != NULL) {
-    height = strtol(attribute->value(), NULL, 10);
-  }  // Needs height
-  else {
-    return false;
-  }
-
-  std::stringstream transparentColor;
-  std::stringstream transparentColorTemp;
-  std::string red, green, blue;
-  char c;
-  attribute = node->first_attribute("transparentColor");
-  if (attribute != NULL) {
-    int colorIndex = 0;
-    int characterCount = 0;
-    const char *matches =
-        "1234567890aAbBcCdDeEfF";  // Only notice the character
-                                   // if it is A-F or 0-9
-    transparentColor << attribute->value();
-
-    while (transparentColor.get(c)) {
-      if (strchr(matches, c) != NULL) {
-        transparentColorTemp << c;  // Add character to stringstream
-        characterCount++;
-      }
-      if (characterCount >= 2) {
-        if (colorIndex == 0) {
-          transparentColorTemp >> std::hex >> transparentColorRed;
-        } else if (colorIndex == 1) {
-          transparentColorTemp >> std::hex >> transparentColorGreen;
-        } else if (colorIndex == 2) {
-          transparentColorTemp >> std::hex >> transparentColorBlue;
-        }  // Wrong
-        else {
-          break;
-        }  // Colors already have been read; exit loop
-        colorIndex++;
-        characterCount = 0;
-        // Clear string stream
-        transparentColorTemp.str(std::string());
-        transparentColorTemp.clear();
-      }
-    }
-  }
-
-  attribute = node->first_attribute("textureName");
-  if (attribute != NULL) {
-    mTextureName = attribute->value();
-  }
-
-  xml_node<> *animationNode =
-      node->first_node();  // point to the first child of <sprite>
-
-  std::string animationTagName = "";
-  for (; animationNode != 0;
-       animationNode = animationNode->next_sibling()) {  // Get all animations
-    animationTagName = animationNode->name();
-    LAnimation *newAnimation = NULL;
-    if (animationTagName == "animation") {
-      newAnimation = LoadAnimation(animationNode);
-    } else if (animationTagName == "animationSequence") {
-      newAnimation = LoadAnimationSequence(animationNode);
-    } else {
-      std::stringstream ss;
-      ss << "[C++] RSC_Sprite::LoadFromXML, couldn't load xml tag named "
-         << animationNode->name() << " For sprite " << spriteName;
-      LOG_INFO(ss.str());
-      continue;
-    }
-
-    if (newAnimation != NULL) {
-      auto texture = K_TextureMan.GetLoadItem(mTextureName, mTextureName);
-      if (texture != NULL) {
-        newAnimation->CalculateUV(texture->GetWidth(), texture->GetHeight());
-      }
-    }
   }
   return true;
 }
