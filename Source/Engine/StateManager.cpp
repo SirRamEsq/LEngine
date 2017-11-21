@@ -301,7 +301,7 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
   return tiledIDtoEntityID;
 }
 
-std::vector<std::string> GetTypesFromString(std::string typeString) {
+std::vector<std::string> GetScriptsFromString(std::string typeString) {
   if (typeString == "") {
     return std::vector<std::string>();
   }
@@ -343,33 +343,44 @@ void GameState::SetMapLinkEntities(
       ASSERT(tiledIDtoEntityID.find(parent) != tiledIDtoEntityID.end());
 
       // Initialize Script
-      std::string &scriptName = objectIt->second.script;
+      std::string &scriptsString = objectIt->second.script;
 
       // Map Names to EIDs
       if (objectIt->second.name != "") {
         AddNameEIDLookup(objectIt->second.name, child);
       }
 
-      if (scriptName != "") {
-        const RSC_Script *script = K_ScriptMan.GetItem(scriptName);
-        if (script == NULL) {
-          K_ScriptMan.LoadItem(scriptName, scriptName);
-          script = K_ScriptMan.GetItem(scriptName);
-          if (script == NULL) {
-            LOG_INFO(
-                "StateManager::SetCurrentMap; Couldn't Load Script Named: " +
-                objectIt->second.script);
+      auto prefabName = objectIt->second.type;
+      auto scripts = GetScriptsFromString(scriptsString);
+      if ((!scripts.empty()) or (prefabName != "")) {
+        std::vector<std::string> scriptNames;
+        if (prefabName != "") {
+          auto prefab = K_PrefabMan.GetLoadItem(prefabName, prefabName);
+          // Prefab scripts will be run first
+          if (prefab != NULL) {
+            for (auto i = prefab->mScripts.begin(); i != prefab->mScripts.end();
+                 i++) {
+              scriptNames.push_back(*i);
+            }
           }
         }
-        if (script != NULL) {
-          auto types = GetTypesFromString(objectIt->second.type);
-          // entities have been created so that parents can be assigned properly
-          luaInterface.RunScript(child, script, (*ii)->GetDepth(), parentEID,
-                                 objectIt->second.name, types,
-                                 &objectIt->second, NULL);
+        for (auto i = scripts.begin(); i != scripts.end(); i++) {
+          scriptNames.push_back(*i);
         }
-      }
+        std::vector<const RSC_Script *> finalScripts;
+        for (auto i = scriptNames.begin(); i != scriptNames.end(); i++) {
+          auto scriptName = *i;
+          auto script = K_ScriptMan.GetLoadItem(scriptName, scriptName);
+          if (script != NULL) {
+            finalScripts.push_back(script);
+          }
+        }
 
+        // entities have been created so that parents can be assigned properly
+        luaInterface.RunScript(child, finalScripts, (*ii)->GetDepth(),
+                               parentEID, objectIt->second.name,
+                               &objectIt->second, NULL);
+      }
       // Event Linking
       // Can move into scriptManager
       for (auto eventSource = objectIt->second.eventSources.begin();
@@ -470,21 +481,26 @@ EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
   EID newEID = entityMan.NewEntity();
   p->mNewEID = newEID;
 
+  std::vector<const RSC_Script *> scripts;
+
   // Get script Data
-  const RSC_Script *scriptData = K_ScriptMan.GetItem(p->mScriptName);
-  if (scriptData == NULL) {
-    K_ScriptMan.LoadItem(p->mScriptName, p->mScriptName);
-    scriptData = K_ScriptMan.GetItem(p->mScriptName);
+  for (auto i = p->mScriptNames.begin(); i != p->mScriptNames.end(); i++) {
+    std::string scriptName = *i;
+    const RSC_Script *scriptData =
+        K_ScriptMan.GetLoadItem(scriptName, scriptName);
+
     if (scriptData == NULL) {
       LOG_ERROR("LuaInterface::EntityNew; Couldn't Load Script Named: " +
-                p->mScriptName);
+                scriptName);
       return 0;
     }
+
+    scripts.push_back(scriptData);
   }
 
-  p->mScript = scriptData;
-
-  mEntitiesToCreate.push_back(std::move(p));
+  mEntitiesToCreate.push_back(
+      std::pair<std::vector<const RSC_Script *>,
+                std::unique_ptr<EntityCreationPacket>>(scripts, std::move(p)));
 
   return newEID;
 }
@@ -505,22 +521,23 @@ void GameState::CreateNewEntities() {
 
   for (auto newEnt = mEntitiesToCreate.begin();
        newEnt != mEntitiesToCreate.end(); newEnt++) {
+    auto scripts = std::get<0>(*newEnt);
+    auto packet = std::get<1>(*newEnt).get();
+
     // New Position Component for Entity
-    comPosMan.AddComponent((*newEnt)->mNewEID);
-    comPosMan.GetComponent((*newEnt)->mNewEID)
-        ->SetPositionLocal((*newEnt)->mPos);
+    comPosMan.AddComponent(packet->mNewEID);
+    comPosMan.GetComponent(packet->mNewEID)->SetPositionLocal(packet->mPos);
 
     // Add script component and run script
-    comScriptMan.AddComponent((*newEnt)->mNewEID);
+    comScriptMan.AddComponent(packet->mNewEID);
 
-    if (luaInterface.RunScript((*newEnt)->mNewEID, (*newEnt)->mScript,
-                               (*newEnt)->mDepth, (*newEnt)->mParent,
-                               (*newEnt)->mEntityName, (*newEnt)->mEntityType,
-                               NULL, &(*newEnt)->mPropertyTable) == false) {
+    if (luaInterface.RunScript(packet->mNewEID, scripts, packet->mDepth,
+                               packet->mParent, packet->mEntityName, NULL,
+                               &packet->mPropertyTable) == false) {
       LOG_ERROR("Couldn't Create a new Entity");
       continue;
     }
-    AddNameEIDLookup((*newEnt)->mEntityName, (*newEnt)->mNewEID);
+    AddNameEIDLookup(packet->mEntityName, packet->mNewEID);
   }
 
   mEntitiesToCreate.clear();

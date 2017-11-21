@@ -71,16 +71,20 @@ GS_Test::~GS_Test() {
 void GS_Test::Init(const RSC_Script *ignore) {
   std::string scriptName = "STATE";
   std::string scriptType = "__BaseState";
-  std::vector<std::string>types;
+  std::vector<std::string> types;
   types.push_back(scriptType);
   MAP_DEPTH depth = 0;
   EID parent = 0;
   EID eid = EID_RESERVED_STATE_ENTITY;
   quit = false;
 
+  auto baseScript = K_ScriptMan.GetLoadItem(scriptType, scriptType);
+
   comScriptMan.AddComponent(eid);
-  luaInterface.RunScript(eid, mStateScript, depth, parent, scriptName,
-                         types, NULL, NULL);
+  std::vector<const RSC_Script *> scripts;
+  scripts.push_back(baseScript);
+  scripts.push_back(mStateScript);
+  luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
   ////REQUIRE(entityScript != NULL);
 }
