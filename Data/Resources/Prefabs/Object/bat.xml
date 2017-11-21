@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <prefab>
-	<!--order of scripts matters -->
 	<scripts>
 		<script name = "Common/entityCollision.lua"/>
 		<script name = "bat.lua"/>
 	</scripts>
-
-	<properties>
-		<!-- string type by default -->
-		<property name = "YADDA" balue = "ADDAY"/>
-	</properties>
 </prefab>
