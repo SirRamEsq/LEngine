@@ -119,10 +119,10 @@ class RSC_Map {
 
   RSC_Map();
   virtual ~RSC_Map();
-  virtual int GetWidthTiles() const = 0;
-  virtual int GetHeightTiles() const = 0;
-  virtual int GetWidthPixels() const = 0;
-  virtual int GetHeightPixels() const = 0;
+  virtual unsigned int GetWidthTiles() const = 0;
+  virtual unsigned int GetHeightTiles() const = 0;
+  virtual unsigned int GetWidthPixels() const = 0;
+  virtual unsigned int GetHeightPixels() const = 0;
 
   virtual std::string GetProperty(const std::string &property) const = 0;
   virtual std::string GetMapName() const = 0;
@@ -131,7 +131,7 @@ class RSC_Map {
   virtual EID GetEIDFromName(const std::string &name) const = 0;
 
   virtual const TiledTileLayer *GetTileLayerCollision(
-      int x, int y, bool areTheseTileCoords) const = 0;
+      unsigned int x, unsigned int y, bool areTheseTileCoords) const = 0;
 
   /// \TODO remove 'GetTiledData' from RSC_MAP Interface, the user of this class
   /// should not need to access the Tiled Data
@@ -151,17 +151,17 @@ class RSC_MapImpl : public RSC_Map {
 
   static std::unique_ptr<RSC_Map> LoadResource(const std::string &fname);
 
-  int GetWidthTiles() const;
-  int GetHeightTiles() const;
-  int GetWidthPixels() const;
-  int GetHeightPixels() const;
+  unsigned int GetWidthTiles() const;
+  unsigned int GetHeightTiles() const;
+  unsigned int GetWidthPixels() const;
+  unsigned int GetHeightPixels() const;
 
   std::string GetProperty(const std::string &property) const;
   std::string GetMapName() const;
   TiledTileLayer *GetTileLayer(const std::string &name);
   EID GetEIDFromName(const std::string &name) const;
 
-  const TiledTileLayer *GetTileLayerCollision(int x, int y,
+  const TiledTileLayer *GetTileLayerCollision(unsigned int x, unsigned int y,
                                               bool areTheseTileCoords) const;
 
   TiledData *GetTiledData();

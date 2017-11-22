@@ -358,10 +358,9 @@ void ParticleCreator::WriteData(const unsigned int &writeLocation,
 
   unsigned int writeLocationVertex =
       writeLocation * 4;  // convert to actual vertex index
-  unsigned int writeSizeVertex = writeSize * 4;
   unsigned int maxParticlesVertex = mMaxParticles * 4;
 
-  for (int i = 0; i < writeSize; i++) {
+  for (unsigned int i = 0; i < writeSize; i++) {
     // Treat buffer as Ring
     if (writeLocationVertex >= maxParticlesVertex) {
       writeLocationVertex -= maxParticlesVertex;

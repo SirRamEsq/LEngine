@@ -20,6 +20,8 @@ class VAOWrapper {
 
   GLuint GetVAOID() { return vao; }
 
+  unsigned int GetMaxSize();
+
  private:
   GLuint vboVertex;
   GLuint vboTexture;

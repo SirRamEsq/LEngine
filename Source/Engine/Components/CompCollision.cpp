@@ -111,12 +111,14 @@ CollisionBox *ComponentCollision::GetPrimary() {
 }
 
 void ComponentCollision::OrderList() {
+	/*
   auto cmp = [](std::pair<int, CollisionBox> const &a,
                 std::pair<int, CollisionBox> const &b) {
     return a.second < b.second;
   };
   // primary comes first,
-  // std::sort(boxes.begin(), boxes.end(), cmp);
+  std::sort(boxes.begin(), boxes.end(), cmp);
+  */
 }
 
 ///////////////////////////////

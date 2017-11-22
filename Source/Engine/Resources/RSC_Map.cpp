@@ -137,20 +137,20 @@ RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl &rhs) : mMapName(rhs.mMapName) {
 
 RSC_MapImpl::~RSC_MapImpl() {}
 
-int RSC_MapImpl::GetWidthTiles() const { return tiledData->tileWidth; }
-int RSC_MapImpl::GetHeightTiles() const { return tiledData->tileWidth; }
-int RSC_MapImpl::GetWidthPixels() const { return tiledData->width; }
-int RSC_MapImpl::GetHeightPixels() const { return tiledData->height; }
+unsigned int RSC_MapImpl::GetWidthTiles() const { return tiledData->tileWidth; }
+unsigned int RSC_MapImpl::GetHeightTiles() const { return tiledData->tileWidth; }
+unsigned int RSC_MapImpl::GetWidthPixels() const { return tiledData->width; }
+unsigned int RSC_MapImpl::GetHeightPixels() const { return tiledData->height; }
 
 const TiledTileLayer *RSC_MapImpl::GetTileLayerCollision(
-    int x, int y, bool areTheseTileCoords) const {
+    unsigned int x, unsigned int y, bool areTheseTileCoords) const {
   // Return first tile layer collided with
   if (tiledData.get()->tiledTileLayers.empty()) {
     return NULL;
   }
 
-  int xt = x;
-  int yt = y;
+  unsigned int xt = x;
+  unsigned int yt = y;
   if (!areTheseTileCoords) {
     CoordToGrid(xt, yt);
   }
@@ -160,12 +160,6 @@ const TiledTileLayer *RSC_MapImpl::GetTileLayerCollision(
     return NULL;
   }
   if (y >= i->get()->data2D[xt].size()) {
-    return NULL;
-  }
-  if (x < 0) {
-    return NULL;
-  }
-  if (y < 0) {
     return NULL;
   }
 
@@ -182,7 +176,7 @@ const TiledTileLayer *RSC_MapImpl::GetTileLayerCollision(
 }
 
 std::string RSC_MapImpl::GetProperty(const std::string &property) const {
-  tiledData->GetProperty(property);
+  return tiledData->GetProperty(property);
 }
 
 std::string TiledData::GetProperty(const std::string &property) {
@@ -194,7 +188,7 @@ std::string TiledData::GetProperty(const std::string &property) {
 }
 
 TiledTileLayer *RSC_MapImpl::GetTileLayer(const std::string &property) {
-  tiledData->GetTileLayer(property);
+  return tiledData->GetTileLayer(property);
 }
 
 TiledTileLayer *TiledData::GetTileLayer(const std::string &name) {
@@ -257,8 +251,6 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   // WILL CAUSE PROBLEMS IF std::string XML IS USED BEYOND THIS POINT
   doc.parse<0>((char *)(XML.c_str()));  // 0 means default parse flags
 
-  GID id;
-
   std::string errorString;
 
   // Find Specific Node
@@ -296,7 +288,6 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   // pointer=NULL;
 
   node = node->first_node();  // point to the first child of <map>
-  xml_node<> *subnode;
 
   // Main loop, gets all of <map> children
   for (; node != 0; node = node->next_sibling()) {
@@ -507,12 +498,11 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
 
     data.push_back(id);
   }
-  int tilesWide = tileLayer->tileWidth;
-  int tilesHigh = tileLayer->tileHeight;
+  unsigned int tilesWide = tileLayer->tileWidth;
 
   // load the correct data into 2dmap
-  int x = 0;
-  int y = 0;
+  unsigned int x = 0;
+  unsigned int y = 0;
 
   // Want to figure out what tileset this layer uses
   // All tilesets should be loaded by this point
@@ -605,7 +595,6 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
       std::string eventString = "";
       std::string listenString = "";
       std::string type = "";
-      int eventNum;
       newObj.useEntrance = false;
       newObj.parent = 0;
 
@@ -647,10 +636,13 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
           } else {
             newObj.light = false;
           }
-        }*/
+        }
         else if (name == tiledProperties::object::ENTRANCE_ID) {
           eventNum = strtol(value.c_str(), NULL, 10);
-        } else if (name == "MAP") {
+        }
+		*/
+		
+		else if (name == "MAP") {
           eventString = value;
         } else if (name == tiledProperties::object::USE_ENTRANCE) {
           if (valueString == "true") {

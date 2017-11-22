@@ -105,6 +105,7 @@ bool RSC_Texture::ExportTexture(const char *path) const {
     LOG_INFO(errorString);
     throw Exception(errorString);
   }
+  return true;
 }
 
 RSC_Texture::~RSC_Texture() { DeleteGRSC_Texture(); }
@@ -113,7 +114,7 @@ void RSC_Texture::LoadFile(const std::string &fName) {
   // Generate a new image Id and bind it with the
   // current image.
 
-  int *channels;  // stores the original image's number channels (ex. RGBA, RGB,
+  int *channels = NULL;  // stores the original image's number channels (ex. RGBA, RGB,
                   // Greyscale, etc...)
   mTexData.data.reset(SOIL_load_image(
       fName.c_str(), (int *)&mTexData.width, (int *)&mTexData.height,

@@ -2,10 +2,10 @@
 
 void TiledTileLayer::InitializeMap() {
   // Build 2D array
-  for (int x = 0; x < tileWidth; x++) {
+  for (unsigned int x = 0; x < tileWidth; x++) {
     std::vector<GID> g;
     data2D.push_back(g);
-    for (int y = 0; y < tileHeight; y++) {
+    for (unsigned int y = 0; y < tileHeight; y++) {
       data2D.back().push_back(0);
     }
   }
@@ -21,15 +21,15 @@ TiledTileLayer::TiledTileLayer(const unsigned int &w, const unsigned int &h,
 TiledTileLayer::TiledTileLayer(const TiledTileLayer &rhs, const GIDManager *g)
     : TiledLayerGeneric(rhs.tileWidth, rhs.tileHeight, rhs.layerName,
                         rhs.GetDepth(), g, rhs.layerType) {
-  for (int x = 0; x < rhs.tileWidth; x++) {
+  for (unsigned int x = 0; x < rhs.tileWidth; x++) {
     std::vector<GID> g;
     data2D.push_back(g);
-    for (int y = 0; y < rhs.tileHeight; y++) {
+    for (unsigned int y = 0; y < rhs.tileHeight; y++) {
       data2D.back().push_back(31337);
     }
   }
-  for (int i = 0; i < rhs.tileWidth; i++) {
-    for (int ii = 0; ii < rhs.tileHeight; ii++) {
+  for (unsigned int i = 0; i < rhs.tileWidth; i++) {
+    for (unsigned int ii = 0; ii < rhs.tileHeight; ii++) {
       data2D[i][ii] = rhs.data2D[i][ii];
     }
   }

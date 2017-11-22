@@ -116,8 +116,6 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
   }
 
   // Get Texture and TiledSet to be used
-  const GIDManager *gid = layer->GIDM;
-
   tiledSet = layer->GetTiledSet();
   BuildVAO();
 

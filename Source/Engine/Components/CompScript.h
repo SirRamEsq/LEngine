@@ -94,17 +94,23 @@ class ComponentScript : public BaseComponent {
   static const std::string entityDeletedDescription;
 
   // Throws if script is already assigned
-  void SetScriptPointerOnce(luabridge::LuaRef lp);
+  void SetScriptPointerOnce(luabridge::LuaRef lp,
+                            const std::vector<const RSC_Script *> *scripts);
   luabridge::LuaRef GetScriptPointer() { return scriptPointer; }
+
+  bool UsesScript(const RSC_Script *script);
+  bool UsesScript(const std::string &scriptName);
 
  protected:
   lua_State *lState;
   LuaInterface *lInterface;
   EventDispatcher *dependencyEventDispatcher;
-  // pointer to this script's location in the lua state
+  // pointer to this final table's location in the lua state
   luabridge::LuaRef scriptPointer;
 
  private:
+  /// What scripts were used to generate the table pointed to by scriptPointer
+  std::vector<const RSC_Script *> mScriptsUsed;
   // List of EIDs that are listening to this EID's events
   std::map<EID, ComponentScript *> mEventLuaObservers;
   // The renderable objects that this script is responsible for deleting

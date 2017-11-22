@@ -41,9 +41,9 @@ class TiledSet : public GIDEnabled {
   RSC_Heightmap GetHeightMap(GID id) const {
     return tileHMAPs.find(id)->second;
   }
-  int GetTilesWide() const { return tilesWide; }
-  int GetTilesHigh() const { return tilesHigh; }
-  int GetTilesTotal() const { return tilesTotal; }
+  unsigned int GetTilesWide() const { return tilesWide; }
+  unsigned int GetTilesHigh() const { return tilesHigh; }
+  unsigned int GetTilesTotal() const { return tilesTotal; }
   std::string GetTextureName() const { return textureName; }
   std::string GetTileProperty(GID id, const std::string &property) const;
   const RSC_Texture *GetTexture() const { return texture; }
@@ -66,9 +66,9 @@ class TiledSet : public GIDEnabled {
  private:
   bool initializationOK;
 
-  int tilesWide;
-  int tilesHigh;
-  int tilesTotal;
+  unsigned int tilesWide;
+  unsigned int tilesHigh;
+  unsigned int tilesTotal;
 
   std::map<GID, PropertyMap> tileProperties;
 
