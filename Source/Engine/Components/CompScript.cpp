@@ -28,7 +28,23 @@ ComponentScript::~ComponentScript() {
   EventLuaSendToObservers(entityDeletedDescription);
 }
 
-void ComponentScript::SetScriptPointerOnce(luabridge::LuaRef lp) {
+bool ComponentScript::UsesScript(const std::string &scriptName) {
+  auto script = K_ScriptMan.GetItem(scriptName);
+  if(script == NULL){return false;}
+  return UsesScript(script);
+}
+bool ComponentScript::UsesScript(const RSC_Script *script) {
+  for (auto i = mScriptsUsed.begin(); i != mScriptsUsed.end(); i++) {
+    if (script == *i) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void ComponentScript::SetScriptPointerOnce(
+    luabridge::LuaRef lp, const std::vector<const RSC_Script *> *scripts) {
+  mScriptsUsed = *scripts;
   if (!scriptPointer.isNil()) {
     std::stringstream ss;
     ss << "LuaPointer already set in script " << scriptName << " with EID "

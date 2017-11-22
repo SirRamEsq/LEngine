@@ -41,6 +41,15 @@ class Coord2df {
   // in IM_VEC2_CLASS_EXTRA macro
 };
 
+inline void CoordToGrid(unsigned int &x, unsigned int &y) {
+  x = x / LENGINE_DEF_TILE_W;
+  y = y / LENGINE_DEF_TILE_H;
+};
+
+inline void GridToCoord(unsigned int &x, unsigned int &y) {
+  x = x * LENGINE_DEF_TILE_W;
+  y = y * LENGINE_DEF_TILE_H;
+};
 inline void CoordToGrid(int &x, int &y) {
   x = x / LENGINE_DEF_TILE_W;
   y = y / LENGINE_DEF_TILE_H;

@@ -614,7 +614,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
 
   // Initialize Component which has already been created
-  scriptComponent->SetScriptPointerOnce(returnedTable);
+  scriptComponent->SetScriptPointerOnce(returnedTable, &scripts);
   scriptComponent->scriptName = fullyQualifiedScriptName.str();
   scriptComponent->RunFunction("Initialize");
 

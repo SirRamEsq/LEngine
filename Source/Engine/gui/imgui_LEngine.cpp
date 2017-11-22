@@ -13,7 +13,7 @@ void ImGui::SetWindowSizeWrapper(const char *name, const Coord2df &size,
 
 Coord2df ImGui::GetWindowSizeWrapper() { return ImGui::GetWindowSize(); }
 
-bool ImGui::ButtonWrapper(const char *label) { ImGui::Button(label); }
+bool ImGui::ButtonWrapper(const char *label) { return ImGui::Button(label); }
 
 void ImGui::TextWrapper(const std::string &str) { ImGui::Text(str.c_str()); }
 
@@ -73,7 +73,7 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
 
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
 
-  ImGui::ImageButton(textureID, size, startUV, endUV, 0,
+  return ImGui::ImageButton(textureID, size, startUV, endUV, 0,
                      ImColor(255, 255, 255, 125));
 }
 

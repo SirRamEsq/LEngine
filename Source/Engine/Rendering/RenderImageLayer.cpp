@@ -61,6 +61,9 @@ VAOWrapper::VAOWrapper(const unsigned int &maxSize)
   glEnableVertexAttribArray(2);
 }
 
+unsigned int VAOWrapper::GetMaxSize(){
+	return vboMaxSize;
+}
 void VAOWrapper::UpdateGPU() {
   // upload vertexTexture array along with any changed data
   glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
@@ -96,8 +99,6 @@ RenderImageLayer::RenderImageLayer(RenderManager *rm, TiledImageLayer *l)
 
 void RenderImageLayer::BuildVAO(Rect camera) {
   const RSC_Texture *tex = layer->GetTexture();
-  int tWidth = tex->GetWidth();
-  int tHeight = tex->GetHeight();
 
   Vec2 topLeftVertex(camera.GetLeft(), camera.GetTop());
   Vec2 topRightVertex(camera.GetRight(), camera.GetTop());

@@ -74,9 +74,6 @@ void ComponentSprite::Update() {
 
   Coord2df pos = myPos->GetPositionWorld();
 
-  unsigned int textureW = 0;
-  unsigned int textureH = 0;
-
   // Update animationData and RenderagbleSprite info
   for (int it = 0; it != mNumberOfLoadedSprites; it++) {
     renderSprite = mRenderableSprites[it].get();

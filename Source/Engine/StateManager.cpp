@@ -519,6 +519,7 @@ EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
 
 void GameState::AddNameEIDLookup(const std::string &name, EID id) {
   auto vecIt = mNameLookup.find(name);
+  //Create new vector for this name if one doesn't exist
   if (vecIt == mNameLookup.end()) {
     mNameLookup[name] = std::vector<EID>();
   }

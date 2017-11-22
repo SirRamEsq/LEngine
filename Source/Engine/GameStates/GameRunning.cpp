@@ -29,8 +29,6 @@ void GameRunningState::Init(const RSC_Script *stateScript) {
   countdown = 1;
   pause = false;
 
-  CommandLineArgs &cmd = (K_CommandLine);
-
   std::unique_ptr<const RSC_Map> mapData;
   std::string mapName = "";
   if (mapName == "") {

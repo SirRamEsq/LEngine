@@ -86,6 +86,7 @@ EID GS_Script::GetStateEID() const {
   if (entityScript != NULL) {
     entityScript->GetEID();
   }
+  return 0;
 }
 
 GS_Script *GS_Script::PushState(const std::string &scriptPath) {
