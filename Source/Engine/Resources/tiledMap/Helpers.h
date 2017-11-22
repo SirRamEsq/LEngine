@@ -24,18 +24,16 @@ enum L_TILED_IMAGE_LAYER_FLAGS {
 };
 
 // These Types are used as helpers in the TMX loading functions
-// Attributes have a name and reference a variable to store data in
+// XML_Attributes have a name and reference a variable to store data in
 // They do not contain type information, you are expected to know what type they
 // are
 // and provide storage for their values
 // These are used for built in variables in Tiled, the types of which are
 // already known.
 // Type, Value
-/// \TODO rename to XML_Attribute
-typedef std::pair<std::string, void *> Attribute;
+typedef std::pair<std::string, void *> XML_Attribute;
 //<Name                  <Type, value> >
-/// \TODO rename to XML_AttributeMap
-typedef std::map<std::string, Attribute> AttributeMap;
+typedef std::map<std::string, XML_Attribute> XML_AttributeMap;
 
 // Properties are made of three strings, a name, a type, and a value in string
 // form
@@ -44,11 +42,11 @@ typedef std::map<std::string, Attribute> AttributeMap;
 // Type      Value
 typedef std::pair<std::string, std::string> StringPair;
 // Name
-/// \TODO rename to XML_PropertyMap
-typedef std::map<std::string, StringPair> PropertyMap;
+typedef std::map<std::string, StringPair> XML_PropertyMap;
 
 // insert these into a 'tiled' namespace
-void CopyPropertyMap(const PropertyMap &source, PropertyMap &destination);
+void CopyPropertyMap(const XML_PropertyMap &source,
+                     XML_PropertyMap &destination);
 
 /*TERMINOLOGY
 A Map Entrance is a ID with a position
@@ -73,11 +71,10 @@ struct MapExit {
 
 /// This class encapsulates a tiled map entity's properties and is sorted by
 /// type
-/// \TODO rename to TiledProperties
-struct TiledMapProperties {
-  TiledMapProperties(const TiledMapProperties *rhs);
-  TiledMapProperties(const PropertyMap *properties);
-  TiledMapProperties();
+struct TiledProperties {
+  TiledProperties(const TiledProperties *rhs);
+  TiledProperties(const XML_PropertyMap *properties);
+  TiledProperties();
   std::map<std::string, int> ints;
   std::map<std::string, bool> bools;
   std::map<std::string, float> floats;
@@ -90,16 +87,16 @@ void TMXProcessType(std::string &type, std::string &value, void *data);
 // for use with an empty property map, stores all properties found with type
 // information
 void TMXLoadProperties(rapidxml::xml_node<> *rootPropertyNode,
-                       PropertyMap &properties);
+                       XML_PropertyMap &properties);
 
 // Will insert data from the property map into the data pointed by the
 // attribute map
-void TMXLoadAttributesFromProperties(const PropertyMap *properties,
-                                     AttributeMap &attributes);
+void TMXLoadAttributesFromProperties(const XML_PropertyMap *properties,
+                                     XML_AttributeMap &attributes);
 
 // For use with either an empty or populated attribute map
 void TMXLoadAttributes(rapidxml::xml_node<> *rootAttributeNode,
-                       AttributeMap &attributes);
+                       XML_AttributeMap &attributes);
 void TMXProcessEventListeners(std::string &listenersString,
                               std::vector<EID> &listeners);
 

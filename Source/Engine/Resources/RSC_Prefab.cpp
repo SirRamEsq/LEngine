@@ -7,13 +7,13 @@
 #include "../Defines.h"
 
 RSC_Prefab::RSC_Prefab(const std::vector<std::string> scripts,
-                       const TiledMapProperties *properties)
+                       const TiledProperties *properties)
     : mScripts(scripts), mProperties(properties) {}
 
 std::unique_ptr<RSC_Prefab> RSC_Prefab::LoadFromXML(const char *dat,
                                                     unsigned int size) {
   std::vector<std::string> finalScripts;
-  TiledMapProperties finalProperties;
+  TiledProperties finalProperties;
   std::string XML = std::string(dat, size);
 
   try {
@@ -27,9 +27,9 @@ std::unique_ptr<RSC_Prefab> RSC_Prefab::LoadFromXML(const char *dat,
     xml_node<> *nodeProperties = node->first_node("properties");
 
     if (nodeProperties != NULL) {
-      PropertyMap properties;
+      XML_PropertyMap properties;
       TMXLoadProperties(nodeProperties, properties);
-      finalProperties = TiledMapProperties(&properties);
+      finalProperties = TiledProperties(&properties);
     }
 
     if (nodeScripts != NULL) {

@@ -3,15 +3,16 @@
 #include <string.h>
 #include <sstream>
 
-void CopyPropertyMap(const PropertyMap &source, PropertyMap &destination) {
+void CopyPropertyMap(const XML_PropertyMap &source,
+                     XML_PropertyMap &destination) {
   destination.clear();
   for (auto i = source.begin(); i != source.end(); i++) {
     destination[i->first] = i->second;
   }
 }
 
-TiledMapProperties::TiledMapProperties() {}
-TiledMapProperties::TiledMapProperties(const TiledMapProperties *rhs) {
+TiledProperties::TiledProperties() {}
+TiledProperties::TiledProperties(const TiledProperties *rhs) {
   if (rhs == NULL) {
     return;
   }
@@ -29,11 +30,11 @@ TiledMapProperties::TiledMapProperties(const TiledMapProperties *rhs) {
   }
 }
 
-TiledMapProperties::TiledMapProperties(const PropertyMap *rhs) {
+TiledProperties::TiledProperties(const XML_PropertyMap *rhs) {
   for (auto i = rhs->begin(); i != rhs->end(); i++) {
-	auto name = i->first;
-	auto type = std::get<0>(i->second);
-	auto value = std::get<1>(i->second);
+    auto name = i->first;
+    auto type = std::get<0>(i->second);
+    auto value = std::get<1>(i->second);
     if (type == "string") {
       strings[name] = value;
     } else if (type == "bool") {
@@ -46,8 +47,8 @@ TiledMapProperties::TiledMapProperties(const PropertyMap *rhs) {
   }
 }
 
-void TMXLoadAttributesFromProperties(const PropertyMap *properties,
-                                     AttributeMap &attributes) {
+void TMXLoadAttributesFromProperties(const XML_PropertyMap *properties,
+                                     XML_AttributeMap &attributes) {
   std::string data;
   std::string type;
   std::string name;
@@ -64,7 +65,7 @@ void TMXLoadAttributesFromProperties(const PropertyMap *properties,
 }
 // root node passed should point to <properties> tag
 void TMXLoadProperties(rapidxml::xml_node<> *rootPropertyNode,
-                       PropertyMap &properties) {
+                       XML_PropertyMap &properties) {
   using namespace rapidxml;
   xml_node<> *propertyNode =
       rootPropertyNode->first_node();  // pointing to property
@@ -160,10 +161,10 @@ void TMXProcessType(std::string &type, std::string &value, void *data) {
 // Pass a map with keys to get their respective values from the xml file
 // Pass an empty map to get everything
 void TMXLoadAttributes(rapidxml::xml_node<> *rootAttributeNode,
-                       AttributeMap &attributes) {
+                       XML_AttributeMap &attributes) {
   using namespace rapidxml;
   std::string key, value, type;
-  AttributeMap::iterator i;
+  XML_AttributeMap::iterator i;
   bool emptyMap = attributes.empty();  // returns true if map is empty
 
   // Iterate through each attribute in the given node
@@ -177,7 +178,7 @@ void TMXLoadAttributes(rapidxml::xml_node<> *rootAttributeNode,
     // If the attribute map passed in is empty, simply fill it with every
     // attribute found
     if (emptyMap) {
-      attributes[key] = Attribute(value, NULL);
+      attributes[key] = XML_Attribute(value, NULL);
     }
     // If the attribute map is not empty, match each found key in the node with
     // it's corresponding value in the map
