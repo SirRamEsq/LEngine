@@ -28,6 +28,7 @@ GenericContainer<RSC_Map> Kernel::rscMapMan;
 GenericContainer<RSC_GLShader> Kernel::rscShaderMan;
 GenericContainer<RSC_GLProgram> Kernel::rscShaderProgramMan;
 GenericContainer<RSC_Font> Kernel::rscFontMan;
+GenericContainer<RSC_Prefab> Kernel::rscPrefabMan;
 
 ImGuiState Kernel::guiState;
 
@@ -73,6 +74,7 @@ void Kernel::Close() {
   rscShaderMan.Clear();
   rscShaderProgramMan.Clear();
   rscFontMan.Clear();
+  rscPrefabMan.Clear();
 
   guiState.Reset();
 
@@ -145,6 +147,7 @@ void Kernel::Inst(int argc, char *argv[]) {
   rscScriptMan.SetLoadFunction(&RSC_Script::LoadResource);
   rscMapMan.SetLoadFunction(&RSC_MapImpl::LoadResource);
   rscFontMan.SetLoadFunction(&RSC_Font::LoadResource);
+  rscPrefabMan.SetLoadFunction(&RSC_Prefab::LoadResource);
 
   rscTexMan.SetLog(log);
   rscSpriteMan.SetLog(log);
@@ -153,6 +156,7 @@ void Kernel::Inst(int argc, char *argv[]) {
   rscScriptMan.SetLog(log);
   rscMapMan.SetLog(log);
   rscFontMan.SetLog(log);
+  rscPrefabMan.SetLog(log);
 
   gameLoops = 0;
   nextGameTick = SDL_GetTicks() - 1;

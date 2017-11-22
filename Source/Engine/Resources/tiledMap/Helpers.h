@@ -6,6 +6,7 @@
 
 #include <map>
 #include <string>
+#include <rapidxml.hpp>
 
 enum L_TILED_LAYER_TYPE {
   LAYER_GENERIC = 0,
@@ -30,8 +31,10 @@ enum L_TILED_IMAGE_LAYER_FLAGS {
 // These are used for built in variables in Tiled, the types of which are
 // already known.
 // Type, Value
+/// \TODO rename to XML_Attribute
 typedef std::pair<std::string, void *> Attribute;
 //<Name                  <Type, value> >
+/// \TODO rename to XML_AttributeMap
 typedef std::map<std::string, Attribute> AttributeMap;
 
 // Properties are made of three strings, a name, a type, and a value in string
@@ -41,6 +44,7 @@ typedef std::map<std::string, Attribute> AttributeMap;
 // Type      Value
 typedef std::pair<std::string, std::string> StringPair;
 // Name
+/// \TODO rename to XML_PropertyMap
 typedef std::map<std::string, StringPair> PropertyMap;
 
 // insert these into a 'tiled' namespace
@@ -66,4 +70,37 @@ struct MapExit {
   Rect mPosition;
   std::string mMapName;
 };
+
+/// This class encapsulates a tiled map entity's properties and is sorted by
+/// type
+/// \TODO rename to TiledProperties
+struct TiledMapProperties {
+  TiledMapProperties(const TiledMapProperties *rhs);
+  TiledMapProperties(const PropertyMap *properties);
+  TiledMapProperties();
+  std::map<std::string, int> ints;
+  std::map<std::string, bool> bools;
+  std::map<std::string, float> floats;
+  std::map<std::string, std::string> strings;
+};
+
+// Give the function a string, its type, and where to store the data
+void TMXProcessType(std::string &type, std::string &value, void *data);
+
+// for use with an empty property map, stores all properties found with type
+// information
+void TMXLoadProperties(rapidxml::xml_node<> *rootPropertyNode,
+                       PropertyMap &properties);
+
+// Will insert data from the property map into the data pointed by the
+// attribute map
+void TMXLoadAttributesFromProperties(const PropertyMap *properties,
+                                     AttributeMap &attributes);
+
+// For use with either an empty or populated attribute map
+void TMXLoadAttributes(rapidxml::xml_node<> *rootAttributeNode,
+                       AttributeMap &attributes);
+void TMXProcessEventListeners(std::string &listenersString,
+                              std::vector<EID> &listeners);
+
 #endif

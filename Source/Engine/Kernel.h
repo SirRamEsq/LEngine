@@ -20,6 +20,7 @@
 #include "Resources/RSC_Sound.h"
 #include "Resources/RSC_Sprite.h"
 #include "Resources/RSC_Texture.h"
+#include "Resources/RSC_Prefab.h"
 #include "Resources/ResourceLoading.h"
 
 #include "AudioSubsystem.h"
@@ -70,6 +71,7 @@ class Kernel {
   static GenericContainer<RSC_Music> rscMusicMan;
   static GenericContainer<RSC_Script> rscScriptMan;
   static GenericContainer<RSC_Texture> rscTexMan;
+  static GenericContainer<RSC_Prefab> rscPrefabMan;
   static GenericContainer<RSC_Map> rscMapMan;
   static GenericContainer<RSC_Font> rscFontMan;
 
@@ -124,6 +126,7 @@ class Kernel {
 #define K_SoundMan Kernel::rscSoundMan
 #define K_MusicMan Kernel::rscMusicMan
 #define K_ScriptMan Kernel::rscScriptMan
+#define K_PrefabMan Kernel::rscPrefabMan
 #define K_MapMan Kernel::rscMapMan
 #define K_FontMan Kernel::rscFontMan
 #define K_ShaderMan Kernel::rscShaderMan

@@ -84,10 +84,6 @@ bool TiledTileLayer::HasTile(unsigned int x, unsigned int y) const {
   return (GetGID(x, y) != 0);
 }
 
-bool TiledTileLayer::IsDestructible() const {
-  return ((layerFlags & TF_destructable) == TF_destructable);
-}
-
 bool TiledTileLayer::IsSolid() const {
   return ((layerFlags & TF_solid) == TF_solid);
 }

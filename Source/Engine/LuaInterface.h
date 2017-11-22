@@ -43,19 +43,16 @@ struct EntityCreationPacket {
    * \param type Types that an entity uses
    * \param propertyTable Extra lua properties
    */
-  EntityCreationPacket(const std::string &scriptName, Coord2df pos,
+  EntityCreationPacket(std::vector<std::string> scripts, Coord2df pos,
                        MAP_DEPTH depth, EID parent, const std::string &name,
-                       const std::vector<std::string> &types,
                        luabridge::LuaRef propertyTable);
 
   EID mParent;
   EID mNewEID;
   MAP_DEPTH mDepth;
   Coord2df mPos;
-  std::string mScriptName;
-  const RSC_Script *mScript;
+  std::vector<std::string> mScriptNames;
   std::string mEntityName;
-  std::vector<std::string> mEntityType;
   luabridge::LuaRef mPropertyTable;
 };
 
@@ -72,8 +69,8 @@ class LuaInterface {
   LuaInterface(GameState *state);
   ~LuaInterface();
 
-  bool RunScript(EID id, const RSC_Script *script, MAP_DEPTH depth, EID parent,
-                 const std::string &name, const std::vector<std::string> &types,
+  bool RunScript(EID id, std::vector<const RSC_Script *> scripts,
+                 MAP_DEPTH depth, EID parent, const std::string &name,
                  /*optional args*/ const TiledObject *obj,
                  luabridge::LuaRef *initTable);
 
@@ -111,7 +108,7 @@ class LuaInterface {
   ComponentCollision *GetCollisionComponent(const EID &id);
   ComponentParticle *GetParticleComponent(const EID &id);
   ComponentCamera *GetCameraComponent(const EID &id);
-  
+
   bool HasPositionComponent(const EID &id);
   bool HasSpriteComponent(const EID &id);
   bool HasCollisionComponent(const EID &id);
@@ -126,9 +123,8 @@ class LuaInterface {
   Coord2df EntityGetPositionWorld(EID entity);
   Coord2df EntityGetMovement(EID entity);
 
-  EID EntityNew(const std::string &scriptName, int x, int y, MAP_DEPTH depth,
-                EID parent, const std::string &name, luabridge::LuaRef types,
-                luabridge::LuaRef propertyTable);
+  EID EntityNew(std::string name, int x, int y, MAP_DEPTH depth, EID parent,
+                luabridge::LuaRef scripts, luabridge::LuaRef propertyTable);
   void EntityDelete(EID entity);
 
   /////////////
@@ -209,16 +205,15 @@ class LuaInterface {
   void ExposeCPP();
 
  private:
+  /// Will Get the loaded lua function associated with the passed lua script
+  int LookupFunction(const RSC_Script *script);
   /// Will process mEntitiesToObserve
   void ProcessObservers();
-  int GetTypeFunction(const std::string &type);
 
   ErrorCallback errorCallbackFunction;
   /// All entities derive from this
   const RSC_Script *baseScript;
   int baseLuaClass;
-  /// Map type names to lua generator functions
-  std::map<std::string, int> types;
 
   // RunScript Helper Functions
   int RunScriptLoadFromChunk(const RSC_Script *script);
@@ -232,7 +227,7 @@ class LuaInterface {
 
   /// Map of scripts to (a reference of) their lua functions that return a new
   /// instance.
-  std::map<const RSC_Script *, int> classes;
+  std::map<const RSC_Script *, int> mFunctionLookup;
 
   /// Contains entities that will be setup to observe each other next frame
   std::map<EID, std::unordered_set<EID> > mEntitiesToObserve;
