@@ -51,23 +51,7 @@
 enum TILE_FLAGS {
   TF_solid = 1,
   TF_useHMap = 2,
-  TF_destructable = 4,
-  TF_instantDeath = 8
 };
-enum BG_FLAGS { BG_REPEATX = 1, BG_REPEATY = 2 };
-
-enum TiledEventTypes {
-  TILED_EVT_FIRST = 0,
-  TILED_EVT_MAP_ENTRANCE = 0,  // an area that can be used as an entrance from
-                               // another map and that can used to pop the
-                               // current map
-  TILED_EVT_MAP_EXIT = 1,      // An area that can be used to enter a new map
-  TILED_EVT_MAP_CHANGE = 2,
-  TILED_CAMERA = 3,
-  TILED_EVT_LAST = 4
-};
-
-enum TiledObjectFlagsCamera { TILED_OBJECT_IS_MAIN_CAMERA = 2 };
 
 // for Command Line
 enum L_CMD_ENUM {
@@ -166,8 +150,6 @@ extern const std::string BLANK_TILE_NAME;
 extern const std::string BLANK_ANIMATION_NAME;
 extern const std::string BLANK_SPRITE_NAME;
 extern const std::string BLANK_HMAP_NAME;
-
-extern const char *global_TiledStrings[TILED_EVT_LAST];
 
 extern const int TICKS_PER_SECOND;
 extern const int SKIP_TICKS;

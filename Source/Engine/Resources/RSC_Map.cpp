@@ -466,7 +466,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   testString = subnode->name();
 
   bool propertyCollision = false;
-  bool propertyDestructible = false;
   bool propertyHMap = false;
   std::map<std::string, std::string> extraProperties;
 
@@ -492,9 +491,6 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
 
   if (propertyCollision) {
     tileLayer->layerFlags = tileLayer->layerFlags | TF_solid;
-  }
-  if (propertyDestructible) {
-    tileLayer->layerFlags = tileLayer->layerFlags | TF_destructable;
   }
   if (propertyHMap) {
     tileLayer->layerFlags = tileLayer->layerFlags | TF_useHMap;
@@ -681,36 +677,6 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
       }  // End for loop, go to next sibling (Next property)
 
       TMXProcessEventListeners(listenString, newObj.eventSources);
-
-      // Process more complicated properties
-      /*
-      if (newObj.type != "") {
-        if (newObj.type == global_TiledStrings[TILED_EVT_MAP_ENTRANCE]) {
-          MapEntrance e;
-          e.mPosition.x = newObj.x;
-          e.mPosition.y = newObj.y;
-          e.mPosition.w = newObj.w;
-          e.mPosition.h = newObj.h;
-          e.mEntranceID = eventNum;
-          tiledData->mMapEntrances[eventNum] = e;
-          newObj.extraData = &tiledData->mMapEntrances[eventNum];
-        } else if (newObj.type == global_TiledStrings[TILED_EVT_MAP_EXIT]) {
-          MapExit e;
-          e.mPosition.x = newObj.x;
-          e.mPosition.y = newObj.y;
-          e.mPosition.w = newObj.w;
-          e.mPosition.h = newObj.h;
-          e.mEntranceID = eventNum;
-          e.mMapName = eventString;
-          tiledData->mMapExits[eventNum] = e;
-          newObj.extraData = &tiledData->mMapExits[eventNum];
-        } else if (newObj.type == global_TiledStrings[TILED_CAMERA]) {
-          if (newObj.properties.bools["MAIN_CAMERA"] == true) {
-            //newObj.flags = (newObj.flags | TILED_OBJECT_IS_MAIN_CAMERA);
-          }
-        }
-      }
-      */
     }
   }
   return objectLayer;
