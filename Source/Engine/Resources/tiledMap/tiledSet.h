@@ -70,7 +70,7 @@ class TiledSet : public GIDEnabled {
   unsigned int tilesHigh;
   unsigned int tilesTotal;
 
-  std::map<GID, PropertyMap> tileProperties;
+  std::map<GID, XML_PropertyMap> tileProperties;
 
   const RSC_Texture *texture;
 

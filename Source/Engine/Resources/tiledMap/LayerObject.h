@@ -26,7 +26,7 @@ struct TiledObject {
   int flags;
 
   std::vector<EID> eventSources;
-  TiledMapProperties properties;
+  TiledProperties properties;
 };
 
 class TiledObjectLayer : public TiledLayerGeneric {

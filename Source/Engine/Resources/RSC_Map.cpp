@@ -243,7 +243,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   LOG_INFO(mapInitializeDebugMessage.str());
   using namespace rapidxml;
   xml_document<> doc;  // character type defaults to char
-  AttributeMap
+  XML_AttributeMap
       attributes;  // this will contain all of the attributes of a given
                    // part of the map as the function goes on
   // Convert const char to char
@@ -265,11 +265,11 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   // Map Properties
   std::string bgColorString;
   unsigned int tilesWide, tilesHigh, sizeOfTileWidth, sizeOfTileHeight;
-  attributes["backgroundcolor"] = Attribute("string", &bgColorString);
-  attributes["width"] = Attribute("unsigned int", &tilesWide);
-  attributes["height"] = Attribute("unsigned int", &tilesHigh);
-  attributes["tilewidth"] = Attribute("unsigned int", &sizeOfTileWidth);
-  attributes["tileheight"] = Attribute("unsigned int", &sizeOfTileHeight);
+  attributes["backgroundcolor"] = XML_Attribute("string", &bgColorString);
+  attributes["width"] = XML_Attribute("unsigned int", &tilesWide);
+  attributes["height"] = XML_Attribute("unsigned int", &tilesHigh);
+  attributes["tilewidth"] = XML_Attribute("unsigned int", &sizeOfTileWidth);
+  attributes["tileheight"] = XML_Attribute("unsigned int", &sizeOfTileHeight);
   TMXLoadAttributes(node, attributes);
   auto tiledData = std::make_unique<TiledData>(tilesWide, tilesHigh);
 
@@ -305,8 +305,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
       TMXLoadProperties(node, tiledData->properties);
 
       attributes.clear();
-      attributes["SCRIPT"] = Attribute("string", &scriptString);
-      attributes["LISTEN"] = Attribute("string", &listenString);
+      attributes["SCRIPT"] = XML_Attribute("string", &scriptString);
+      attributes["LISTEN"] = XML_Attribute("string", &listenString);
       TMXLoadAttributesFromProperties(&tiledData->properties, attributes);
 
       if (scriptString == "") {
@@ -323,8 +323,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
           "";  // If the tileset is an external file, store its path here
 
       attributes.clear();
-      attributes["firstgid"] = Attribute("GID", &tilesetFirstGID);
-      attributes["source"] = Attribute("string", &tileSetSource);
+      attributes["firstgid"] = XML_Attribute("GID", &tilesetFirstGID);
+      attributes["source"] = XML_Attribute("string", &tileSetSource);
       TMXLoadAttributes(node, attributes);
 
       // If there is a 'source' attribute defined in the tileset node, then that
@@ -444,13 +444,13 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
 
   std::string testString, valueString;
 
-  AttributeMap attributes;
+  XML_AttributeMap attributes;
 
   attributes.clear();
-  attributes["name"] = Attribute("string", &name);
-  attributes["width"] = Attribute("unsigned int", &width);
-  attributes["height"] = Attribute("unsigned int", &height);
-  attributes["opacity"] = Attribute("float", &alpha);
+  attributes["name"] = XML_Attribute("string", &name);
+  attributes["width"] = XML_Attribute("unsigned int", &width);
+  attributes["height"] = XML_Attribute("unsigned int", &height);
+  attributes["opacity"] = XML_Attribute("float", &alpha);
   TMXLoadAttributes(rootNode, attributes);
 
   rapidxml::xml_node<> *subnode = rootNode->first_node();
@@ -460,16 +460,16 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   bool propertyHMap = false;
   std::map<std::string, std::string> extraProperties;
 
-  PropertyMap properties;
+  XML_PropertyMap properties;
   TMXLoadProperties(subnode, properties);
 
   attributes.clear();
-  attributes[tiledProperties::DEPTH] = Attribute("int", &depth);
+  attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
   attributes[tiledProperties::tile::SOLID] =
-      Attribute("bool", &propertyCollision);
-  attributes[tiledProperties::tile::HMAP] = Attribute("bool", &propertyHMap);
+      XML_Attribute("bool", &propertyCollision);
+  attributes[tiledProperties::tile::HMAP] = XML_Attribute("bool", &propertyHMap);
   attributes[tiledProperties::tile::ANIMATION_SPEED] =
-      Attribute("unsigned int", &animationRate);
+      XML_Attribute("unsigned int", &animationRate);
   TMXLoadAttributesFromProperties(&properties,
                                   attributes);  // store unspecified properties
                                                 // in tileLayer->extraproperties
@@ -530,21 +530,21 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
 
 std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     rapidxml::xml_node<> *rootNode, TiledData *tiledData) {
-  AttributeMap attributes;
+  XML_AttributeMap attributes;
   std::string objectLayerName = rootNode->first_attribute()->value();
 
   /// \TODO what if the layer HAS NO ATTRIBUTES?
 
   // Object Layer properties
   rapidxml::xml_node<> *subnodeProperties = rootNode->first_node();
-  PropertyMap properties;
+  XML_PropertyMap properties;
   // Load properties into layer
   TMXLoadProperties(subnodeProperties, properties);
 
   // Extract expected attributes
   int depth = 0;
   attributes.clear();
-  attributes["DEPTH"] = Attribute("int", &depth);
+  attributes["DEPTH"] = XML_Attribute("int", &depth);
   TMXLoadAttributesFromProperties(&properties, attributes);
 
   std::unique_ptr<TiledObjectLayer> objectLayer =
@@ -559,13 +559,13 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     std::string objName, objPrefab;
 
     attributes.clear();
-    attributes["id"] = Attribute("int", &objID);
-    attributes["x"] = Attribute("int", &objX);
-    attributes["y"] = Attribute("int", &objY);
-    attributes["width"] = Attribute("int", &objWidth);
-    attributes["height"] = Attribute("int", &objHeight);
-    attributes["type"] = Attribute("string", &objPrefab);
-    attributes["name"] = Attribute("string", &objName);
+    attributes["id"] = XML_Attribute("int", &objID);
+    attributes["x"] = XML_Attribute("int", &objX);
+    attributes["y"] = XML_Attribute("int", &objY);
+    attributes["width"] = XML_Attribute("int", &objWidth);
+    attributes["height"] = XML_Attribute("int", &objHeight);
+    attributes["type"] = XML_Attribute("string", &objPrefab);
+    attributes["name"] = XML_Attribute("string", &objName);
     TMXLoadAttributes(subnodeObject, attributes);
 
     // create new object
@@ -680,18 +680,18 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
   rapidxml::xml_node<> *subNodeImage = rootNode->first_node();
 
   std::string name;
-  AttributeMap attributes;
-  attributes["name"] = Attribute("string", &name);
+  XML_AttributeMap attributes;
+  attributes["name"] = XML_Attribute("string", &name);
   TMXLoadAttributes(rootNode, attributes);
 
   std::string texturePath;
   int w, h;
   float alpha = 1.0f;
   attributes.clear();
-  attributes["source"] = Attribute("string", &texturePath);
-  attributes["width"] = Attribute("int", &w);
-  attributes["height"] = Attribute("int", &h);
-  attributes["opacity"] = Attribute("float", &alpha);
+  attributes["source"] = XML_Attribute("string", &texturePath);
+  attributes["width"] = XML_Attribute("int", &w);
+  attributes["height"] = XML_Attribute("int", &h);
+  attributes["opacity"] = XML_Attribute("float", &alpha);
   TMXLoadAttributes(subNodeImage, attributes);
 
   rapidxml::xml_node<> *subNodeProperties = subNodeImage->next_sibling();
@@ -718,17 +718,17 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
   bool stretchX = false;
   bool stretchY = false;
 
-  PropertyMap properties;
+  XML_PropertyMap properties;
   attributes.clear();
   attributes[tiledProperties::image::PARALLAX_X] =
-      Attribute("float", &paralaxX);
+      XML_Attribute("float", &paralaxX);
   attributes[tiledProperties::image::PARALLAX_Y] =
-      Attribute("float", &paralaxY);
-  attributes[tiledProperties::image::STRETCH_X] = Attribute("bool", &stretchX);
-  attributes[tiledProperties::image::STRETCH_Y] = Attribute("bool", &stretchY);
-  attributes[tiledProperties::image::REPEAT_X] = Attribute("bool", &repeatX);
-  attributes[tiledProperties::image::REPEAT_Y] = Attribute("bool", &repeatY);
-  attributes[tiledProperties::DEPTH] = Attribute("int", &depth);
+      XML_Attribute("float", &paralaxY);
+  attributes[tiledProperties::image::STRETCH_X] = XML_Attribute("bool", &stretchX);
+  attributes[tiledProperties::image::STRETCH_Y] = XML_Attribute("bool", &stretchY);
+  attributes[tiledProperties::image::REPEAT_X] = XML_Attribute("bool", &repeatX);
+  attributes[tiledProperties::image::REPEAT_Y] = XML_Attribute("bool", &repeatY);
+  attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
   TMXLoadProperties(subNodeProperties, properties);
   TMXLoadAttributesFromProperties(&properties, attributes);
 
@@ -773,19 +773,19 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
   unsigned int tileWidth;
   unsigned int tileHeight;
 
-  AttributeMap attributes;
-  attributes["name"] = Attribute("string", &name);
-  attributes["tilewidth"] = Attribute("unsigned int", &tileWidth);
-  attributes["tileheight"] = Attribute("unsigned int", &tileHeight);
+  XML_AttributeMap attributes;
+  attributes["name"] = XML_Attribute("string", &name);
+  attributes["tilewidth"] = XML_Attribute("unsigned int", &tileWidth);
+  attributes["tileheight"] = XML_Attribute("unsigned int", &tileHeight);
   TMXLoadAttributes(tiledSetRootNode, attributes);
 
-  // IMAGE Attributes
+  // IMAGE XML_Attributes
   std::string transparentColor = "ff00ff";
   std::string textureName;
 
   attributes.clear();
-  attributes["source"] = Attribute("string", &textureName);
-  attributes["trans"] = Attribute("string", &transparentColor);
+  attributes["source"] = XML_Attribute("string", &textureName);
+  attributes["trans"] = XML_Attribute("string", &transparentColor);
   TMXLoadAttributes(subNodeImage, attributes);
 
   // Load tileset into engine and set firstGID
@@ -822,7 +822,7 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     rapidxml::xml_node<> *subNodeTileProperty =
         subNodeTileRoot->first_node();  // Points toward <properties>
 
-    PropertyMap properties;
+    XML_PropertyMap properties;
     TMXLoadProperties(subNodeTileProperty, properties);
 
     attributes.clear();
@@ -830,9 +830,9 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     std::string spriteName = "";
     std::string animationName = "";
     attributes[tiledProperties::tSet::SPRITE] =
-        Attribute("string", &spriteName);
+        XML_Attribute("string", &spriteName);
     attributes[tiledProperties::tSet::ANIMATION] =
-        Attribute("string", &animationName);
+        XML_Attribute("string", &animationName);
     // Store all other properties in the tileProperties data structure of type
     // map<string, string>
     TMXLoadAttributesFromProperties(&properties, attributes);

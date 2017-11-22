@@ -54,7 +54,7 @@ class TiledLayerGeneric {
   float layerOpacity;
   bool layerVisible;
 
-  PropertyMap properties;
+  XML_PropertyMap properties;
 };
 
 #endif

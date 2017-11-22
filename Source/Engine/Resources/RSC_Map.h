@@ -102,7 +102,7 @@ class TiledData {
       rapidxml::xml_node<> *rootNode, const GIDManager &gidManager,
       int mapTilesW, int mapTilesH);
 
-  PropertyMap properties;
+  XML_PropertyMap properties;
 };
 
 class ComponentScript;
