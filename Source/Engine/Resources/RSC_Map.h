@@ -90,24 +90,6 @@ class TiledData {
   tEntrances mMapEntrances;
 
  private:
-  // Give the function a string, its type, and where to store the data
-  static void TMXProcessType(std::string &type, std::string &value, void *data);
-
-  // for use with an empty property map, stores all properties found with type
-  // information
-  static void TMXLoadProperties(rapidxml::xml_node<> *rootPropertyNode,
-                                PropertyMap &properties);
-
-  // Will insert data from the property map into the data pointed by the
-  // attribute map
-  static void TMXLoadAttributesFromProperties(const PropertyMap *properties,
-                                              AttributeMap &attributes);
-
-  // For use with either an empty or populated attribute map
-  static void TMXLoadAttributes(rapidxml::xml_node<> *rootAttributeNode,
-                                AttributeMap &attributes);
-  static void TMXProcessEventListeners(std::string &listenersString,
-                                       std::vector<EID> &listeners);
 
   static std::unique_ptr<TiledSet> TMXLoadTiledSet(
       rapidxml::xml_node<> *tiledSetRootNode, const GID &firstGID,

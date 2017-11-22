@@ -4,8 +4,8 @@ from os.path import isfile, join
 import subprocess
 
 cwd = getcwd()
-separator = "=========================================="
-separator += separator
+separator = "======================================="
+separator += separator + "="
 
 
 def main():
@@ -16,6 +16,13 @@ def main():
     for f in files:
         if not f.startswith("luaTest"):
             continue
+
+        # Right align filename
+        whitespace = ""
+        for x in range(0, len(separator) - len(f) - 6):
+            whitespace += " "
+        print(whitespace + "|| " + f + " ||")
+
         bustedCall = 'busted' 
         argument = "./" + f
         subprocess.call([bustedCall, argument])

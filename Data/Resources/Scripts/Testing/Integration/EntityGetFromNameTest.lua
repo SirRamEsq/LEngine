@@ -12,12 +12,12 @@ function container.NewState(baseclass)
 		local posY = 16
 		local depth = 100
 		local name = state.name
-		local type =""
+		local scriptName ="dummy.lua"
 
 		--Create Entities
-		state.entity1 = CPP.interface:EntityNew( "dummy.lua", posX, posY, depth,  0, name, type, {} )
-		state.entity2 = CPP.interface:EntityNew( "dummy.lua", posX, posY, depth,  0, name, type, {} )
-		state.entity3 = CPP.interface:EntityNew( "dummy.lua", posX, posY, depth,  0, name, type, {} )
+		state.entity1 = CPP.interface:EntityNew( name, posX, posY, depth,  0, scriptName, {} )
+		state.entity2 = CPP.interface:EntityNew( name, posX, posY, depth,  0, scriptName, {} )
+		state.entity3 = CPP.interface:EntityNew( name, posX, posY, depth,  0, scriptName, {} )
 	end
 
 	function state.Setup(testing)

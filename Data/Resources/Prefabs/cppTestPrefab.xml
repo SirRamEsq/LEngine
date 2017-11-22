@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<prefab>
+	<!--order of scripts matters -->
+	<scripts>
+		<script name = "Common/entityCollision.lua"/>
+		<script name = "Common/tileCollision.lua"/>
+		<script name = "mainScript.lua"/>
+	</scripts>
+
+	<properties>
+		<!-- string type by default -->
+		<property name = "YADDA" value = "ADDAY"/>
+		<property name = "YADDA2" value = "2ADDAY"/>
+		<property name = "point" type = "int" value = "21"/>
+		<property name = "truthy" type = "bool" value = "true"/>
+		<property name = "truthy2" type = "bool" value = "false"/>
+		<property name = "truthy3" type = "bool" value = "true"/>
+		<property name = "decimal" type = "float" value = "324.25"/>
+	</properties>
+</prefab>

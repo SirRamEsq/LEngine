@@ -1010,7 +1010,9 @@ function container.NewLouie(baseclass)
 			layer:UpdateRenderArea(CPP.Rect(tx,ty, 0,0))
 
 			--Display box break effect
-			CPP.interface:EntityNew('Effects/boxBreak.lua',tx*16,ty*16, louie.depth, 0, "BOXBREAK", "",
+			local name = ""
+			local scriptName = "Effects/boxBreak.lua"
+			CPP.interface:EntityNew(name,tx*16,ty*16, louie.depth, 0, scriptName,
 			{boxType = boxType1})
 
 			--Return true, indicating box was broken
@@ -1084,7 +1086,9 @@ function container.NewLouie(baseclass)
 		louie.health = louie.health-hitpoints;
 		if (louie.health == 1) then
 			local pos = louie.CompPosition:GetPositionWorld()
-			CPP.interface:EntityNew('Effects/fallingHat.lua', pos.x, pos.y, louie.depth, 0,"FALLING_HAT", "",
+			local name = ""
+			local scriptName = "Effects/fallingHat.lua"
+			CPP.interface:EntityNew(name, pos.x, pos.y, louie.depth, 0, scriptName,
 			{direction = louie.facingDir * -1})
 			CPP.interface:PlaySound(louie.SoundFireball, 100);
 		end

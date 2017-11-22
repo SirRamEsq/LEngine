@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="TileSets/GrassTerrain.tsx"/>
  <layer name="BG Layer" width="64" height="64">
   <properties>
-   <property name="DEPTH" type="int" value="20"/>
+   <property name="_DEPTH" type="int" value="20"/>
   </properties>
   <data>
    <tile gid="131"/>
@@ -4106,7 +4106,7 @@
  </layer>
  <layer name="Tile Layer 1" width="64" height="64">
   <properties>
-   <property name="DEPTH" type="int" value="10"/>
+   <property name="_DEPTH" type="int" value="10"/>
   </properties>
   <data>
    <tile gid="17"/>
@@ -8209,25 +8209,25 @@
  </layer>
  <objectgroup name="OBJs">
   <properties>
-   <property name="DEPTH" type="int" value="0"/>
+   <property name="_DEPTH" type="int" value="0"/>
   </properties>
   <object id="1" name="PLAYER" x="312" y="480" width="40" height="36">
    <properties>
-    <property name="SCRIPT" value="heor.lua"/>
+    <property name="_SCRIPT" value="heor.lua"/>
    </properties>
   </object>
   <object id="2" name="CAMERA_MAIN" type="CAMERA" x="4" y="284" width="640" height="480">
    <properties>
-    <property name="DEPTH" type="int" value="0"/>
+    <property name="_DEPTH" type="int" value="0"/>
     <property name="MAIN_CAMERA" type="bool" value="true"/>
-    <property name="PARENT" type="int" value="1"/>
+    <property name="_PARENT" type="int" value="1"/>
    </properties>
   </object>
  </objectgroup>
  <layer name="Collision" width="64" height="64">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="-10"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="-10"/>
    <property name="VISIBLE" type="bool" value="false"/>
   </properties>
   <data>
@@ -12331,9 +12331,9 @@
  </layer>
  <layer name="SlopeCollision" width="64" height="64">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="-20"/>
-   <property name="USEHMAP" type="bool" value="true"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="-20"/>
+   <property name="_HMAP" type="bool" value="true"/>
    <property name="VISIBLE" type="bool" value="false"/>
   </properties>
   <data>

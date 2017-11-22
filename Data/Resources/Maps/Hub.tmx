@@ -4,14 +4,14 @@
  <imagelayer name="BG1">
   <image source="rapciu_horizon.png"/>
   <properties>
-   <property name="DEPTH" type="int" value="200"/>
-   <property name="STRETCH_TO_MAP_X" type="bool" value="true"/>
-   <property name="STRETCH_TO_MAP_Y" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="200"/>
+   <property name="_STRETCH_X" type="bool" value="true"/>
+   <property name="_STRETCH_Y" type="bool" value="true"/>
   </properties>
  </imagelayer>
  <layer name="Background" width="100" height="64">
   <properties>
-   <property name="DEPTH" type="int" value="20"/>
+   <property name="_DEPTH" type="int" value="20"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -6418,7 +6418,7 @@
  </layer>
  <layer name="CLIMB" width="100" height="64">
   <properties>
-   <property name="DEPTH" type="int" value="10"/>
+   <property name="_DEPTH" type="int" value="10"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -12825,8 +12825,8 @@
  </layer>
  <layer name="Tile Layer 1" width="100" height="64">
   <properties>
-   <property name="COLLISION" type="bool" value="true"/>
-   <property name="DEPTH" type="int" value="0"/>
+   <property name="_SOLID" type="bool" value="true"/>
+   <property name="_DEPTH" type="int" value="0"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -19233,22 +19233,22 @@
  </layer>
  <objectgroup name="objects">
   <properties>
-   <property name="DEPTH" type="int" value="-10"/>
+   <property name="_DEPTH" type="int" value="-10"/>
   </properties>
   <object id="3" name="Player" x="82.3333" y="773.333" width="88.6667" height="57.6667">
    <properties>
-    <property name="SCRIPT" value="louie.lua"/>
+    <property name="_SCRIPT" value="louie.lua"/>
    </properties>
   </object>
   <object id="4" name="CAMERA" x="99.3333" y="697.333" width="68.6667" height="41">
    <properties>
-    <property name="PARENT" type="int" value="3"/>
-    <property name="SCRIPT" value="Camera/playerCamera.lua"/>
+    <property name="_PARENT" type="int" value="3"/>
+    <property name="_SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
   <object id="6" name="MAP1.tmx" x="378.333" y="608.667" width="9.33333" height="10.6667">
    <properties>
-    <property name="SCRIPT" value="Items/changeMap.lua"/>
+    <property name="_SCRIPT" value="Items/changeMap.lua"/>
     <property name="animation" value="default"/>
     <property name="animationSpeed" type="float" value="0.1"/>
     <property name="map" value="MAP1.tmx"/>
@@ -19258,7 +19258,7 @@
   </object>
   <object id="8" name="1.tmx" x="684.833" y="852.167" width="9.33333" height="10.6667">
    <properties>
-    <property name="SCRIPT" value="Items/changeMap.lua"/>
+    <property name="_SCRIPT" value="Items/changeMap.lua"/>
     <property name="animation" value="default"/>
     <property name="animationSpeed" type="float" value="0.1"/>
     <property name="map" value="1.tmx"/>

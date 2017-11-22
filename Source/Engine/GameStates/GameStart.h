@@ -27,8 +27,6 @@ class GameStartState : public GameState {
   bool Update();
   void Draw();
 
- private:
-  EID ent;
 };
 
 #endif

@@ -12,7 +12,7 @@ GS_Script::~GS_Script() {
 
 void GS_Script::Init(const RSC_Script *stateScript) {
   std::string scriptName = "STATE";
-  std::string scriptType = "__BaseState";
+  std::string scriptType = "Common/__BaseState.lua";
   std::vector<std::string> types;
   types.push_back(scriptType);
   MAP_DEPTH depth = 0;
@@ -26,9 +26,13 @@ void GS_Script::Init(const RSC_Script *stateScript) {
     return;
   }
 
+  auto baseScript = K_ScriptMan.GetLoadItem(scriptType, scriptType);
+
   comScriptMan.AddComponent(eid);
-  luaInterface.RunScript(eid, stateScript, depth, parent, scriptName,
-                         types, NULL, NULL);
+  std::vector<const RSC_Script *> scripts;
+  scripts.push_back(baseScript);
+  scripts.push_back(stateScript);
+  luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
 }
 
@@ -63,8 +67,8 @@ void GS_Script::HandleEvent(const Event *event) {
 
 bool GS_Script::Update() {
   if (nextMap != NULL) {
-	auto tempMap = nextMap;
-	auto tempEntrance = nextMapEntrance;
+    auto tempMap = nextMap;
+    auto tempEntrance = nextMapEntrance;
     SetCurrentMap(tempMap, tempEntrance);
     nextMap = NULL;
     nextMapEntrance = 0;

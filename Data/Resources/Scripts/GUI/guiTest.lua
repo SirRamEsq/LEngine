@@ -261,6 +261,9 @@ function container.NewGui(baseclass)
 			gui.noBG = not gui.noBG
 		end
 	end
+	function gui.OnKeyUp(keyname)
+
+	end
 
 	return gui;
 end

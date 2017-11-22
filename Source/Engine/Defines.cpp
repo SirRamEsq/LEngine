@@ -9,9 +9,6 @@ const std::string BLANK_ANIMATION_NAME = "BLANK_ANIMATION";
 const std::string BLANK_SPRITE_NAME = "BLANK_SPRITE";
 const std::string BLANK_HMAP_NAME = "BLANK_HMAP";
 
-const char *global_TiledStrings[TILED_EVT_LAST]{
-    "EVT_MAP_ENTRANCE", "EVT_MAP_EXIT", "EVT_MAP_CHANGE", "CAMERA"};
-
 Color4f Color4f_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 Color4f Color4f_RED(1.0f, 0.0f, 0.0f, 1.0f);
 Color4f Color4f_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
