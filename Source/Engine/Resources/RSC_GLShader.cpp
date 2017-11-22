@@ -117,6 +117,9 @@ RSC_GLProgram::~RSC_GLProgram() {
 }
 
 bool RSC_GLProgram::AddShader(const RSC_GLShader *shader) {
+  if (shader == NULL) {
+    return false;
+  }
   if (shader->GetShaderID() == 0) {
     LOG_INFO("ERROR: RSC_GLProgram: Shader passed has invalid handle of 0");
     return false;

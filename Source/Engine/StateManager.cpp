@@ -236,6 +236,10 @@ void GameState::SetMapHandleRenderableLayers(
     if (i->second->layerType == LAYER_TILE) {
       auto layer = std::make_unique<RenderTileLayer>(
           &renderMan, (TiledTileLayer *)i->second);
+      auto shader = i->second->GetShader();
+      if (shader != NULL) {
+        layer->SetShaderProgram(shader);
+      }
       mCurrentMapTileLayers.push_back(std::move(layer));
     }
 
@@ -288,8 +292,8 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
 
       // Add script Component and set to be initialized later during linking
       // stage after all entities have EIDs
-	  auto scripts = objectIt->second.scripts;
-	  auto prefabName = objectIt->second.prefabName;
+      auto scripts = objectIt->second.scripts;
+      auto prefabName = objectIt->second.prefabName;
       if ((!scripts.empty()) or (prefabName != "")) {
         comScriptMan.AddComponent(ent);
       }
@@ -360,7 +364,7 @@ void GameState::SetMapLinkEntities(
       if ((!scripts.empty()) or (prefabName != "")) {
         std::vector<std::string> scriptNames;
         if (prefabName != "") {
-			prefabName = tiledProperties::object::PREFAB_PREFIX + prefabName;
+          prefabName = tiledProperties::object::PREFAB_PREFIX + prefabName;
           auto prefab = K_PrefabMan.GetLoadItem(prefabName, prefabName);
           // Prefab scripts will be run first
           if (prefab != NULL) {
@@ -519,7 +523,7 @@ EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
 
 void GameState::AddNameEIDLookup(const std::string &name, EID id) {
   auto vecIt = mNameLookup.find(name);
-  //Create new vector for this name if one doesn't exist
+  // Create new vector for this name if one doesn't exist
   if (vecIt == mNameLookup.end()) {
     mNameLookup[name] = std::vector<EID>();
   }

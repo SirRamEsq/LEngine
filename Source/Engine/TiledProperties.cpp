@@ -3,7 +3,9 @@
 namespace tiledProperties {
 std::string DEPTH = "_DEPTH";
 std::string IGNORE = "_IGNORE";
-std::string SHADER = "_SHADER";
+std::string SHADER_FRAG = "_SHADER_FRAG";
+std::string SHADER_VERT = "_SHADER_VERT";
+std::string SHADER_GEO = "_SHADER_GEO";
 
 namespace tile {
 std::string PREFAB_PREFIX = "Tile/";
