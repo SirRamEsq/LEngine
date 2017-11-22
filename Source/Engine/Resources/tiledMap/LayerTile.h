@@ -36,7 +36,6 @@ class TiledTileLayer : public TiledLayerGeneric {
 
   // Lua Functions
   bool IsSolid() const;
-  bool IsDestructible() const;
   bool UsesHMaps() const;
   float GetFriction() const;
   // All set tiles will be updated on the GPU
