@@ -224,9 +224,9 @@ function container.NewLouie(baseclass)
 		--Renderable origin is at center;				(-width/2, -width/2) is top left
 		--To consolodate the difference, use the Vec2 offset (WIDTH/2, HEIGHT/2)
 		louie.mainSpriteID		= louie.CompSprite:AddSprite(louie.mainSprite,	louie.depth, 0, 0);
-		louie.mainSpriteRollID = louie.CompSprite:AddSprite(louie.mainSpriteRoll,	louie.depth, 0, (0)+8);
+		louie.mainSpriteRollID = louie.CompSprite:AddSprite(louie.mainSpriteRoll,	louie.depth, 0, 8);
 		louie.baldSpriteID		= louie.CompSprite:AddSprite(louie.baldSprite,	louie.depth, 0, 0);
-		louie.baldSpriteRollID = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, 0, (0)+8);
+		louie.baldSpriteRollID = louie.CompSprite:AddSprite(louie.baldSpriteRoll,	louie.depth, 0, 8);
 
 		louie.CompSprite:SetAnimation		(louie.mainSpriteID, "Stand");
 		louie.CompSprite:SetAnimationSpeed  (louie.mainSpriteID, 1);

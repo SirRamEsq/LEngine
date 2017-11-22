@@ -20,7 +20,9 @@ extern std::string DEPTH;
 extern std::string IGNORE;
 
 /// [STRING] Name of shader to use for this layer
-extern std::string SHADER;
+extern std::string SHADER_FRAG;
+extern std::string SHADER_VERT;
+extern std::string SHADER_GEO;
 
 /**
  * Properties that apply to all Tile Layers.

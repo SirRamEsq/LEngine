@@ -1,8 +1,12 @@
 #ifndef LENGINE_TILED_LAYER_GENERIC
 #define LENGINE_TILED_LAYER_GENERIC
 
+#include <memory>
+
 #include "GID.h"
 #include "Helpers.h"
+
+#include "../RSC_GLShader.h"
 
 class RSC_MapImpl;
 class TiledData;
@@ -45,6 +49,10 @@ class TiledLayerGeneric {
   bool Ignore() const;
   MAP_DEPTH GetDepth() const { return layerDepth; }
 
+  void SetShader(const RSC_GLProgram* shader);
+  const RSC_GLProgram* GetShader();
+  void BindShader();
+
   std::string GetPropertyValue(const std::string &propertyName) const;
   bool PropertyExists(const std::string &propertyName) const;
 
@@ -53,6 +61,8 @@ class TiledLayerGeneric {
   MAP_DEPTH layerDepth;
   float layerOpacity;
   bool layerVisible;
+
+  const RSC_GLProgram* mShaderProgram;
 
   XML_PropertyMap properties;
 };

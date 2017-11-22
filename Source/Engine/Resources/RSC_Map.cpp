@@ -40,8 +40,11 @@ TiledData::TiledData(const TiledData &rhs)
        i++) {
     std::unique_ptr<TiledLayerGeneric> layer(
         new TiledTileLayer(*(i->get()), &gid));
-
-    AddLayer(std::unique_ptr<TiledLayerGeneric>(layer.release()));
+    auto shader = layer->GetShader();
+	if(shader!=NULL){
+		layer->SetShader(shader);
+	}
+    AddLayer(std::move(layer));
   }
   for (auto i = rhs.tiledObjectLayers.begin(); i != rhs.tiledObjectLayers.end();
        i++) {
@@ -138,7 +141,9 @@ RSC_MapImpl::RSC_MapImpl(const RSC_MapImpl &rhs) : mMapName(rhs.mMapName) {
 RSC_MapImpl::~RSC_MapImpl() {}
 
 unsigned int RSC_MapImpl::GetWidthTiles() const { return tiledData->tileWidth; }
-unsigned int RSC_MapImpl::GetHeightTiles() const { return tiledData->tileWidth; }
+unsigned int RSC_MapImpl::GetHeightTiles() const {
+  return tiledData->tileWidth;
+}
 unsigned int RSC_MapImpl::GetWidthPixels() const { return tiledData->width; }
 unsigned int RSC_MapImpl::GetHeightPixels() const { return tiledData->height; }
 
@@ -459,6 +464,9 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   bool propertyCollision = false;
   bool propertyHMap = false;
   std::map<std::string, std::string> extraProperties;
+  std::string vertShaderName;
+  std::string fragShaderName;
+  std::string geoShaderName;
 
   XML_PropertyMap properties;
   TMXLoadProperties(subnode, properties);
@@ -467,15 +475,49 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
   attributes[tiledProperties::tile::SOLID] =
       XML_Attribute("bool", &propertyCollision);
-  attributes[tiledProperties::tile::HMAP] = XML_Attribute("bool", &propertyHMap);
+  attributes[tiledProperties::tile::HMAP] =
+      XML_Attribute("bool", &propertyHMap);
+  attributes[tiledProperties::SHADER_FRAG] =
+      XML_Attribute("string", &vertShaderName);
+  attributes[tiledProperties::SHADER_VERT] =
+      XML_Attribute("string", &fragShaderName);
+  attributes[tiledProperties::SHADER_GEO] =
+      XML_Attribute("string", &geoShaderName);
   attributes[tiledProperties::tile::ANIMATION_SPEED] =
       XML_Attribute("unsigned int", &animationRate);
   TMXLoadAttributesFromProperties(&properties,
                                   attributes);  // store unspecified properties
                                                 // in tileLayer->extraproperties
 
+  auto fragShader = K_ShaderMan.GetLoadItem(fragShaderName, fragShaderName);
+  auto vertShader = K_ShaderMan.GetLoadItem(vertShaderName, vertShaderName);
+  auto geoShader = K_ShaderMan.GetLoadItem(geoShaderName, geoShaderName);
+
+  std::stringstream shaderProgramName;
+  shaderProgramName << fragShaderName << vertShaderName << geoShaderName;
+  auto currentProgram = K_ShaderProgramMan.GetItem(shaderProgramName.str());
+  if (currentProgram == NULL) {
+    std::unique_ptr<const RSC_GLProgram> *program = NULL;
+    if ((fragShader != NULL) or (geoShader != NULL) or (vertShader != NULL)) {
+      std::unique_ptr<RSC_GLProgram> newProgram =
+          std::make_unique<RSC_GLProgram>();
+      newProgram->AddShader(fragShader);
+      newProgram->AddShader(vertShader);
+      newProgram->AddShader(geoShader);
+      newProgram->LinkProgram();
+      newProgram->Bind();
+      std::unique_ptr<const RSC_GLProgram> constProgram;
+      constProgram.reset(newProgram.release());
+      K_ShaderProgramMan.LoadItem(shaderProgramName.str(), constProgram);
+      currentProgram = K_ShaderProgramMan.GetItem(shaderProgramName.str());
+    }
+  }
+
   std::unique_ptr<TiledTileLayer> tileLayer(
       new TiledTileLayer(width, height, name, depth, &gidManager));
+  if (currentProgram != NULL) {
+    tileLayer->SetShader(currentProgram);
+  }
   tileLayer->layerFlags = 0;
   tileLayer->layerOpacity = alpha;
   CopyPropertyMap(properties, tileLayer->properties);
@@ -640,9 +682,9 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
         else if (name == tiledProperties::object::ENTRANCE_ID) {
           eventNum = strtol(value.c_str(), NULL, 10);
         }
-		*/
-		
-		else if (name == "MAP") {
+        */
+
+        else if (name == "MAP") {
           eventString = value;
         } else if (name == tiledProperties::object::USE_ENTRANCE) {
           if (valueString == "true") {
@@ -724,10 +766,14 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
       XML_Attribute("float", &paralaxX);
   attributes[tiledProperties::image::PARALLAX_Y] =
       XML_Attribute("float", &paralaxY);
-  attributes[tiledProperties::image::STRETCH_X] = XML_Attribute("bool", &stretchX);
-  attributes[tiledProperties::image::STRETCH_Y] = XML_Attribute("bool", &stretchY);
-  attributes[tiledProperties::image::REPEAT_X] = XML_Attribute("bool", &repeatX);
-  attributes[tiledProperties::image::REPEAT_Y] = XML_Attribute("bool", &repeatY);
+  attributes[tiledProperties::image::STRETCH_X] =
+      XML_Attribute("bool", &stretchX);
+  attributes[tiledProperties::image::STRETCH_Y] =
+      XML_Attribute("bool", &stretchY);
+  attributes[tiledProperties::image::REPEAT_X] =
+      XML_Attribute("bool", &repeatX);
+  attributes[tiledProperties::image::REPEAT_Y] =
+      XML_Attribute("bool", &repeatY);
   attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
   TMXLoadProperties(subNodeProperties, properties);
   TMXLoadAttributesFromProperties(&properties, attributes);

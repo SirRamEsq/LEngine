@@ -36,3 +36,15 @@ std::string TiledLayerGeneric::GetPropertyValue(
 bool TiledLayerGeneric::PropertyExists(const std::string &propertyName) const {
   return (properties.find(propertyName) != properties.end());
 }
+
+void TiledLayerGeneric::SetShader(const RSC_GLProgram* shader) {
+  mShaderProgram = shader;
+}
+const RSC_GLProgram *TiledLayerGeneric::GetShader() {
+  return mShaderProgram;
+}
+void TiledLayerGeneric::BindShader() {
+  if (mShaderProgram != NULL) {
+    mShaderProgram->Bind();
+  }
+}
