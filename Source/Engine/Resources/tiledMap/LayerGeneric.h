@@ -49,20 +49,19 @@ class TiledLayerGeneric {
   bool Ignore() const;
   MAP_DEPTH GetDepth() const { return layerDepth; }
 
-  void SetShader(const RSC_GLProgram* shader);
-  const RSC_GLProgram* GetShader();
-  void BindShader();
 
   std::string GetPropertyValue(const std::string &propertyName) const;
   bool PropertyExists(const std::string &propertyName) const;
 
+  std::string mShaderVert;
+  std::string mShaderGeo;
+  std::string mShaderFrag;
  protected:
   int layerFlags;
   MAP_DEPTH layerDepth;
   float layerOpacity;
   bool layerVisible;
 
-  const RSC_GLProgram* mShaderProgram;
 
   XML_PropertyMap properties;
 };

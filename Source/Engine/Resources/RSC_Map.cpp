@@ -40,10 +40,7 @@ TiledData::TiledData(const TiledData &rhs)
        i++) {
     std::unique_ptr<TiledLayerGeneric> layer(
         new TiledTileLayer(*(i->get()), &gid));
-    auto shader = layer->GetShader();
-	if(shader!=NULL){
-		layer->SetShader(shader);
-	}
+
     AddLayer(std::move(layer));
   }
   for (auto i = rhs.tiledObjectLayers.begin(); i != rhs.tiledObjectLayers.end();
@@ -478,9 +475,9 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   attributes[tiledProperties::tile::HMAP] =
       XML_Attribute("bool", &propertyHMap);
   attributes[tiledProperties::SHADER_FRAG] =
-      XML_Attribute("string", &vertShaderName);
-  attributes[tiledProperties::SHADER_VERT] =
       XML_Attribute("string", &fragShaderName);
+  attributes[tiledProperties::SHADER_VERT] =
+      XML_Attribute("string", &vertShaderName);
   attributes[tiledProperties::SHADER_GEO] =
       XML_Attribute("string", &geoShaderName);
   attributes[tiledProperties::tile::ANIMATION_SPEED] =
@@ -489,35 +486,13 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
                                   attributes);  // store unspecified properties
                                                 // in tileLayer->extraproperties
 
-  auto fragShader = K_ShaderMan.GetLoadItem(fragShaderName, fragShaderName);
-  auto vertShader = K_ShaderMan.GetLoadItem(vertShaderName, vertShaderName);
-  auto geoShader = K_ShaderMan.GetLoadItem(geoShaderName, geoShaderName);
-
-  std::stringstream shaderProgramName;
-  shaderProgramName << fragShaderName << vertShaderName << geoShaderName;
-  auto currentProgram = K_ShaderProgramMan.GetItem(shaderProgramName.str());
-  if (currentProgram == NULL) {
-    std::unique_ptr<const RSC_GLProgram> *program = NULL;
-    if ((fragShader != NULL) or (geoShader != NULL) or (vertShader != NULL)) {
-      std::unique_ptr<RSC_GLProgram> newProgram =
-          std::make_unique<RSC_GLProgram>();
-      newProgram->AddShader(fragShader);
-      newProgram->AddShader(vertShader);
-      newProgram->AddShader(geoShader);
-      newProgram->LinkProgram();
-      newProgram->Bind();
-      std::unique_ptr<const RSC_GLProgram> constProgram;
-      constProgram.reset(newProgram.release());
-      K_ShaderProgramMan.LoadItem(shaderProgramName.str(), constProgram);
-      currentProgram = K_ShaderProgramMan.GetItem(shaderProgramName.str());
-    }
-  }
-
   std::unique_ptr<TiledTileLayer> tileLayer(
       new TiledTileLayer(width, height, name, depth, &gidManager));
-  if (currentProgram != NULL) {
-    tileLayer->SetShader(currentProgram);
-  }
+
+  tileLayer->mShaderFrag = fragShaderName;
+  tileLayer->mShaderVert = vertShaderName;
+  tileLayer->mShaderGeo = geoShaderName;
+
   tileLayer->layerFlags = 0;
   tileLayer->layerOpacity = alpha;
   CopyPropertyMap(properties, tileLayer->properties);
