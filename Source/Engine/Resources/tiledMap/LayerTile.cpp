@@ -42,6 +42,10 @@ TiledTileLayer::TiledTileLayer(const TiledTileLayer &rhs, const GIDManager *g)
   layerDepth = rhs.layerDepth;
   layerOpacity = rhs.layerOpacity;
   layerVisible = rhs.layerVisible;
+
+  mShaderFrag = rhs.mShaderFrag;
+  mShaderVert = rhs.mShaderVert;
+  mShaderGeo = rhs.mShaderGeo;
   CopyPropertyMap(rhs.properties, properties);
 }
 

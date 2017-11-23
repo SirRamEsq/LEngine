@@ -208,6 +208,7 @@ void RenderTileLayer::Render(const RenderCamera *camera,
                              const RSC_GLProgram *program) {
   /// \TODO divide tileMaps into chunks and render only visible chunks
 
+  program->Bind();
   if (layer->updatedAreas.size() > 0) {
     for (auto i = layer->updatedAreas.begin(); i != layer->updatedAreas.end();
          i++) {
@@ -219,7 +220,6 @@ void RenderTileLayer::Render(const RenderCamera *camera,
     vao.UpdateGPU();
   }
 
-  program->Bind();
   glBindVertexArray(vao.GetVAOID());
   tiledSet->GetTexture()->Bind();
   // draw points 0-4 from the currently bound VAO with current in-use shader

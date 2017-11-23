@@ -113,6 +113,10 @@ class RenderManager {
                                     const int &numSprites);
   MAP_DEPTH nextTextID;
 
+  std::unique_ptr<RSC_GLProgram> LoadShaderProgram(
+      const std::string &vertexName, const std::string &fragName);
+  void LinkShaderProgram(RSC_GLProgram *program);
+
  protected:
   /**
    * Will add camera to list of cameras to be rendered
@@ -140,9 +144,6 @@ class RenderManager {
   void RemoveObjectWorld(RenderableObjectWorld *obj);
 
  private:
-  std::unique_ptr<RSC_GLProgram> LoadShaderProgram(
-      const std::string &vertexName, const std::string &fragName);
-  void LinkShaderProgram(RSC_GLProgram *program);
 
   /**
    * Will Load default shaders for Tile, Light Sprite, Image if not already

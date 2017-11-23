@@ -233,21 +233,40 @@ void GameStateManager_Impl::Draw() {
 void GameState::SetMapHandleRenderableLayers(
     const std::map<MAP_DEPTH, TiledLayerGeneric *> &layers) {
   for (auto i = layers.begin(); i != layers.end(); i++) {
-    if (i->second->layerType == LAYER_TILE) {
-      auto layer = std::make_unique<RenderTileLayer>(
-          &renderMan, (TiledTileLayer *)i->second);
-      auto shader = i->second->GetShader();
-      if (shader != NULL) {
-        layer->SetShaderProgram(shader);
-      }
-      mCurrentMapTileLayers.push_back(std::move(layer));
-    }
+	auto layerType = i->second->layerType;
+	if((layerType == LAYER_TILE)or(layerType==LAYER_IMAGE)){
+		RenderableObject* layerRawPointer = NULL;
+		if (i->second->layerType == LAYER_TILE) {
+		  auto layer = std::make_unique<RenderTileLayer>(
+			  &renderMan, (TiledTileLayer *)i->second);
+		  layerRawPointer = layer.get();
 
-    if (i->second->layerType == LAYER_IMAGE) {
-      auto layer = std::make_unique<RenderImageLayer>(
-          &renderMan, (TiledImageLayer *)i->second);
-      mCurrentMapTileLayers.push_back(std::move(layer));
-    }
+		  mCurrentMapTileLayers.push_back(std::move(layer));
+		}
+
+		else if (i->second->layerType == LAYER_IMAGE) {
+		  auto layer = std::make_unique<RenderImageLayer>(
+			  &renderMan, (TiledImageLayer *)i->second);
+		  layerRawPointer = layer.get();
+
+		  mCurrentMapTileLayers.push_back(std::move(layer));
+		}
+		if(layerRawPointer != NULL){
+		if( (i->second->mShaderFrag != "")or(i->second->mShaderVert != "")or(i->second->mShaderGeo!="") ){
+			auto shaderProgram = renderMan.LoadShaderProgram(i->second->mShaderVert, i->second->mShaderFrag);
+			renderMan.LinkShaderProgram(shaderProgram.get());
+			std::stringstream programName;
+			programName << i->second->mShaderFrag << i->second->mShaderVert;
+
+			std::unique_ptr<const RSC_GLProgram> constProgram =
+				std::move(shaderProgram);
+			K_ShaderProgramMan.LoadItem(programName.str(), constProgram);
+
+			auto program = K_ShaderProgramMan.GetItem(programName.str());
+			layerRawPointer->SetShaderProgram(program);
+		}
+		}
+	}
   }
 }
 

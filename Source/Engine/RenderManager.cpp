@@ -403,6 +403,7 @@ void RenderManager::AddObjectWorld(RenderableObjectWorld *obj) {
   listChange = true;
 
   // Set Correct Shader
+  if(obj->GetShaderProgram() == NULL){
   if (obj->type == RenderableObject::TYPE::SpriteBatch) {
     obj->SetShaderProgram(defaultProgramSprite);
   }
@@ -411,6 +412,7 @@ void RenderManager::AddObjectWorld(RenderableObjectWorld *obj) {
   }
   if (obj->type == RenderableObject::TYPE::Image) {
     obj->SetShaderProgram(defaultProgramImage);
+  }
   }
 }
 
@@ -578,12 +580,21 @@ std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(
 
 void RenderManager::LinkShaderProgram(RSC_GLProgram *program) {
   try {
-  GLuint programHandle = program->GetHandle();
-  GLuint programUniformBlockHandle =
+  	GLuint programHandle = program->GetHandle();
+  	GLuint programUniformBlockHandle =
       program->GetUniformBlockHandle("CameraData");
-  // Bind program GPU buffer to the index
-  glUniformBlockBinding(programHandle, programUniformBlockHandle,
+  	// Bind program GPU buffer to the index
+  	glUniformBlockBinding(programHandle, programUniformBlockHandle,
                         CameraDataBindingIndex);
+  } catch (LEngineShaderProgramException e) {
+    // It's fine if gl can't link the uniform block
+    // if the program doesn't use the program data block, the compiled code
+    // won't have one
+    // which will throw an error
+	LOG_WARN(e.what());
+  }
+  try{
+  	GLuint programHandle = program->GetHandle();
     GLuint programUniformBlockHandleProgramData =
         program->GetUniformBlockHandle("ProgramData");
     glUniformBlockBinding(programHandle, programUniformBlockHandleProgramData,
@@ -593,6 +604,7 @@ void RenderManager::LinkShaderProgram(RSC_GLProgram *program) {
     // if the program doesn't use the program data block, the compiled code
     // won't have one
     // which will throw an error
+	LOG_WARN(e.what());
   }
 }
 
