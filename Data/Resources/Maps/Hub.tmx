@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="64" tilewidth="16" tileheight="16" backgroundcolor="#0088c7" nextobjectid="9">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="100" height="64" tilewidth="16" tileheight="16" backgroundcolor="#0088c7" nextobjectid="12">
  <tileset firstgid="1" source="TileSets/terrainGrassy.tsx"/>
+ <tileset firstgid="257" source="TileSets/icons.tsx"/>
  <imagelayer name="BG1">
   <image source="rapciu_horizon.png"/>
   <properties>
@@ -12825,10 +12826,10 @@
  </layer>
  <layer name="Tile Layer 1" width="100" height="64">
   <properties>
-   <property name="_SOLID" type="bool" value="true"/>
    <property name="_DEPTH" type="int" value="0"/>
    <property name="_SHADER_FRAG" value="fragmentTileInvert.glsl"/>
    <property name="_SHADER_VERT" value="vertexTileMain.glsl"/>
+   <property name="_SOLID" type="bool" value="true"/>
   </properties>
   <data>
    <tile gid="0"/>
@@ -19248,7 +19249,7 @@
     <property name="_SCRIPT" value="Camera/playerCamera.lua"/>
    </properties>
   </object>
-  <object id="6" name="MAP1.tmx" x="378.333" y="608.667" width="9.33333" height="10.6667">
+  <object id="10" gid="261" x="352" y="640" width="64" height="64">
    <properties>
     <property name="_SCRIPT" value="Items/changeMap.lua"/>
     <property name="animation" value="default"/>
@@ -19258,7 +19259,7 @@
     <property name="sprite" value="vortex.xml"/>
    </properties>
   </object>
-  <object id="8" name="1.tmx" x="684.833" y="852.167" width="9.33333" height="10.6667">
+  <object id="11" gid="261" x="704" y="896" width="64" height="64">
    <properties>
     <property name="_SCRIPT" value="Items/changeMap.lua"/>
     <property name="animation" value="default"/>

@@ -585,6 +585,9 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     attributes["name"] = XML_Attribute("string", &objName);
     TMXLoadAttributes(subnodeObject, attributes);
 
+	//Convert bottom-left origin to top-left origin
+	objY -= objHeight;
+
     // create new object
     objectLayer->objects[objID] = TiledObject();
     TiledObject &newObj = (objectLayer->objects[objID]);

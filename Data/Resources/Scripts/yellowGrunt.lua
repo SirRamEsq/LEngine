@@ -78,7 +78,7 @@ function NewYellowGrunt(baseclass)
 		--Logical origin is as at the top left; (0,0) is top left
 		--Renderable origin is at center;       (-width/2, -width/2) is top left
 		--To consolodate the difference, use the Vec2 offset (WIDTH/2, HEIGHT/2)
-		yellowGrunt.mySpriteID = yellowGrunt.mySpriteComp:AddSprite(yellowGrunt.mySprite, yellowGrunt.depth, (yellowGrunt.WIDTH/2), (yellowGrunt.HEIGHT/2)+1);
+		yellowGrunt.mySpriteID = yellowGrunt.mySpriteComp:AddSprite(yellowGrunt.mySprite, yellowGrunt.depth,0,0)
 		yellowGrunt.mySpriteComp:SetAnimation(yellowGrunt.mySpriteID, "Stand");
 		yellowGrunt.mySpriteComp:SetRotation(yellowGrunt.mySpriteID, 0);
 

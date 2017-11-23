@@ -74,7 +74,7 @@ function arrow.Initialize()
 	--Logical origin is as at the top left; (0,0) is top left
 	--Renderable origin is at center;				(-width/2, -width/2) is top left
 	--To consolodate the difference, use the Vec2 offset (WIDTH/2, HEIGHT/2)
-	arrow.mySpriteID=arrow.mySpriteComp:AddSprite(arrow.mySprite, arrow.depth, (arrow.WIDTH/2), (arrow.HEIGHT/2)+1);
+	arrow.mySpriteID=arrow.mySpriteComp:AddSprite(arrow.mySprite, arrow.depth, 0,0);
 	arrow.mySpriteComp:SetAnimation(arrow.mySpriteID, "Fire");
 	arrow.mySpriteComp:SetRotation(arrow.mySpriteID, 0);
 
