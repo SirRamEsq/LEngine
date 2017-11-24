@@ -21,6 +21,7 @@ Red - Use no special abilities (roll)
 
 local result=0;
 result, imGuiFlags = pcall(loadfile(utilityPath .. "/imGuiWindowFlags.lua", _ENV))
+result, fadeOut = pcall(loadfile(utilityPath .. "/fadeOutLayer.lua", _ENV))
 
 local container = {}
 function container.NewLouie(baseclass)
@@ -260,6 +261,10 @@ function container.NewLouie(baseclass)
 
 		louie.currentMap = CPP.interface:GetMap()
 		louie.climb.LAYER = louie.currentMap:GetTileLayer(louie.climb.LAYER_NAME)
+		local secretLayer = louie.currentMap:GetTileLayer("SECRET1")
+		if(secretLayer ~= nil)then
+			louie.secretLayer = fadeOut.FadeOut(secretLayer)
+		end
 	end
 
 	function louie.OnKeyDown(keyname)
@@ -280,6 +285,9 @@ function container.NewLouie(baseclass)
 	end
 
 	function louie.Update()
+		if(louie.secretLayer ~= nil)then
+			louie.secretLayer = louie.secretLayer()
+		end
 		louie.SetCollisionBoxes()
 		louie.Climb()
 		louie.WallSlide()

@@ -49,6 +49,7 @@ class TiledData {
 
   // returns false if the depth is already taken
   bool AddLayer(std::unique_ptr<TiledLayerGeneric> layer);
+  void DeleteLayer(TiledLayerGeneric* layer);
   bool AddTileSet(std::unique_ptr<TiledSet> tileSet);
 
   unsigned int GetWidth() { return width; }

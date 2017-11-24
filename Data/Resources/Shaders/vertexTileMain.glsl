@@ -2,8 +2,7 @@
 
 layout (location = 0) in vec2 position; 	//vertex data
 layout (location = 1) in vec4 texture; 		//x,y, position (in tileCoords) of first frame of tile on texture, z,w are tex width and height
-layout (location = 2) in vec4 color;		//color
-layout (location = 3) in vec2 animation;	//animation data (x = animation sped (float), y = max frames (int) )
+layout (location = 2) in vec2 animation;	//animation data (x = animation sped (float), y = max frames (int) )
 
 out vec2 texture_coordinates;
 out vec4 colorValue;
@@ -22,6 +21,8 @@ layout(std140) uniform ProgramData
     vec4 time;
 };
 
+uniform vec4 layerColor;
+
 void main() {
 	highp int timeValue = int(animation.x * time.x);
 	highp int maxFrame = int(animation.y);
@@ -31,7 +32,14 @@ void main() {
 	texTemp.x = texture.x +  ( float(timeValue % maxFrame) * (16.0 / texture.z) );
 	texTemp.y = texture.y;
 	texture_coordinates 	= texTemp;
-	colorValue 		= color;
+	/*
+	vec4 layerColor;
+	layerColor.x = 1.0;
+	layerColor.y = 1.0;
+	layerColor.z = 1.0;
+	layerColor.w = 1.0;
+	*/
+	colorValue 		= layerColor;
 	
 	vec2 temp;
 	temp.x = position.x - cameraTranslation.x;

@@ -8,12 +8,10 @@ VAOWrapperTile::VAOWrapperTile(const unsigned int &maxSize)
     : vboMaxSize(maxSize),
       vboVertexSize(maxSize * sizeof(Vec2) * 4),  // 4 verticies per object
       vboTextureSize(maxSize * sizeof(Vec4) * 4),
-      vboColorSize(maxSize * sizeof(Vec4) * 4),
       vboAnimationSize(maxSize * sizeof(Vec2) * 4),
 
       vboVertexArray(new Vec2[maxSize * 4]),
       vboTextureArray(new Vec4[maxSize * 4]),
-      vboColorArray(new Vec4[maxSize * 4]),
       vboAnimationArray(new Vec2[maxSize * 4]) {
   // Vertex VBO
   glGenBuffers(1, &vboVertex);
@@ -26,12 +24,6 @@ VAOWrapperTile::VAOWrapperTile(const unsigned int &maxSize)
   glGenBuffers(1, &vboTexture);
   glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
   glBufferData(GL_ARRAY_BUFFER, vboTextureSize, vboTextureArray.get(),
-               GL_STATIC_DRAW);
-
-  // Color VBO
-  glGenBuffers(1, &vboColor);
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glBufferData(GL_ARRAY_BUFFER, vboColorSize, vboColorArray.get(),
                GL_STATIC_DRAW);
 
   // Animation VBO
@@ -54,20 +46,14 @@ VAOWrapperTile::VAOWrapperTile(const unsigned int &maxSize)
   glVertexAttribPointer(1, textureAttributeSize, textureAttributeType, GL_FALSE,
                         0, NULL);
 
-  // Bind Color to 2
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glVertexAttribPointer(2, colorAttributeSize, colorAttributeType, GL_FALSE, 0,
-                        NULL);
-
-  // Bind Animation to 3
+  // Bind Animation to 2
   glBindBuffer(GL_ARRAY_BUFFER, vboAnimation);
-  glVertexAttribPointer(3, animationAttributeSize, animationAttributeType,
+  glVertexAttribPointer(2, animationAttributeSize, animationAttributeType,
                         GL_FALSE, 0, NULL);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
-  glEnableVertexAttribArray(3);
 }
 
 void VAOWrapperTile::UpdateGPU() {
@@ -79,9 +65,6 @@ void VAOWrapperTile::UpdateGPU() {
   glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
   glBufferSubData(GL_ARRAY_BUFFER, 0, vboVertexSize, vboVertexArray.get());
 
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboColorSize, vboColorArray.get());
-
   glBindBuffer(GL_ARRAY_BUFFER, vboAnimation);
   glBufferSubData(GL_ARRAY_BUFFER, 0, vboAnimationSize,
                   vboAnimationArray.get());
@@ -89,7 +72,6 @@ void VAOWrapperTile::UpdateGPU() {
 
 VAOWrapperTile::~VAOWrapperTile() {
   glDeleteBuffers(1, &vboVertex);
-  glDeleteBuffers(1, &vboColor);
   glDeleteBuffers(1, &vboTexture);
   glDeleteBuffers(1, &vboAnimation);
 
@@ -124,6 +106,7 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
 
 RenderTileLayer::~RenderTileLayer() {}
 
+/// \TODO have ONE COLOR for the whole map, not per tile
 void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   unsigned int vertexIndex = ((y * layer->tileWidth) + x) * 4;
   Vec2 translate;
@@ -175,11 +158,6 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   vao.GetTextureArray()[vertexIndex + 2] = bottomLeftTex;
   vao.GetTextureArray()[vertexIndex + 3] = bottomRightTex;
 
-  vao.GetColorArray()[vertexIndex] = color;
-  vao.GetColorArray()[vertexIndex + 1] = color;
-  vao.GetColorArray()[vertexIndex + 2] = color;
-  vao.GetColorArray()[vertexIndex + 3] = color;
-
   vao.GetAnimationArray()[vertexIndex] = animationVertex;
   vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
   vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
@@ -219,6 +197,13 @@ void RenderTileLayer::Render(const RenderCamera *camera,
     layer->updatedAreas.clear();
     vao.UpdateGPU();
   }
+
+  float colors[4];
+  colors[0] = 1.0;
+  colors[1] = 1.0;
+  colors[2] = 1.0;
+  colors[3] = layer->GetAlpha();
+    glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
 
   glBindVertexArray(vao.GetVAOID());
   tiledSet->GetTexture()->Bind();

@@ -103,6 +103,29 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
   return true;
 }
 
+void TiledData::DeleteLayer(TiledLayerGeneric* layer){
+	for(auto i = tiledImageLayers.begin(); i != tiledImageLayers.end(); i++){
+		if(i->get() == layer){
+			tiledImageLayers.erase(i);
+			return;
+		}
+	}
+
+	for(auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++){
+		if(i->get() == layer){
+			tiledTileLayers.erase(i);
+			return;
+		}
+	}
+
+	for(auto i = tiledObjectLayers.begin(); i != tiledObjectLayers.end(); i++){
+		if(i->get() == layer){
+			tiledObjectLayers.erase(i);
+			return;
+		}
+	}
+}
+
 RSC_Map::RSC_Map() {}
 RSC_Map::~RSC_Map() {}
 

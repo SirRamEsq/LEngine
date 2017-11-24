@@ -100,6 +100,8 @@ class LuaInterface {
                               const std::string &property);
   GS_Script *GetCurrentGameState();
 
+  void DeleteLayer(TiledLayerGeneric* layer);
+
   //////////////
   // Components//
   //////////////
