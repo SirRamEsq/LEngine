@@ -19,25 +19,21 @@ class VAOWrapperTile {
   Vec2 *GetVertexArray() { return vboVertexArray.get(); }
   Vec4 *GetTextureArray() { return vboTextureArray.get(); }
   Vec2 *GetAnimationArray() { return vboAnimationArray.get(); }
-  Vec4 *GetColorArray() { return vboColorArray.get(); }
 
   GLuint GetVAOID() { return vao; }
 
  private:
   GLuint vboVertex;
   GLuint vboTexture;
-  GLuint vboColor;
   GLuint vboAnimation;
   GLuint vao;
 
   std::unique_ptr<Vec2[]> vboVertexArray;
   std::unique_ptr<Vec4[]> vboTextureArray;
   std::unique_ptr<Vec2[]> vboAnimationArray;
-  std::unique_ptr<Vec4[]> vboColorArray;
 
   unsigned int vboVertexSize;
   unsigned int vboTextureSize;
-  unsigned int vboColorSize;
   unsigned int vboAnimationSize;
 
   const unsigned int vboMaxSize;
@@ -51,10 +47,6 @@ class VAOWrapperTile {
   // texW,texH] (vec2)
   const GLint textureAttributeSize = 4;
   const GLenum textureAttributeType = GL_FLOAT;
-
-  // Each Color for each vertex point consists of 4 floats [RGBA], (vec4)
-  const GLint colorAttributeSize = 4;
-  const GLenum colorAttributeType = GL_FLOAT;
 
   // Each animation consists of animation speed and max frames
   // [aniSpeed, aniFrames], (vec2)

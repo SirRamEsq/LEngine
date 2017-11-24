@@ -20,6 +20,7 @@
 
 class LuaInterfaceB;
 class GameStateManager_Impl;
+class TiledLayerGeneric;
 
 class GameState {
   friend GameStateManager_Impl;
@@ -54,6 +55,7 @@ class GameState {
 
   /// Creates a new Entity next frame
   EID CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p);
+  void DeleteMapLayer(TiledLayerGeneric *layer);
 
  protected:
   virtual void Init(const RSC_Script *stateScript = NULL) = 0;
@@ -120,7 +122,9 @@ class GameState {
 
   // is copy of what is stored in resource manager
   std::unique_ptr<RSC_Map> mCurrentMap;
-  std::vector<std::unique_ptr<RenderableObjectWorld>> mCurrentMapTileLayers;
+  std::unordered_map<TiledLayerGeneric *,
+                     std::unique_ptr<RenderableObjectWorld>>
+      mCurrentMapRenderableLayers;
   /// This is used to lookup eids by entity name
   std::unordered_map<std::string, std::vector<EID>> mNameLookup;
 

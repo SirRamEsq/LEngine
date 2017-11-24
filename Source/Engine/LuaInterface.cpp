@@ -232,7 +232,8 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "min = math.min, modf = math.modf, pi = math.pi, pow = math.pow,	"
     "	"
     "	\n"
-    "rad = math.rad, randomseed = math.randomseed, random = math.random, sin = math.sin, sinh = "
+    "rad = math.rad, randomseed = math.randomseed, random = math.random, sin = "
+    "math.sin, sinh = "
     "math.sinh,	"
     "\n"
     "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh			"
@@ -459,7 +460,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     std::stringstream ss;
     ss << "Couldn't run script for entity with EID " << id
        << " as No scripts were passed to be run";
-	LOG_ERROR(ss.str());
+    LOG_ERROR(ss.str());
     throw LEngineException(ss.str());
     return false;
   }
@@ -469,7 +470,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     std::stringstream ss;
     ss << "Couldn't run script for entity with EID " << id
        << " as this entity does not have a script component";
-	LOG_ERROR(ss.str());
+    LOG_ERROR(ss.str());
     throw LEngineException(ss.str());
   }
 
@@ -507,7 +508,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   for (auto i = scriptFunctions.begin(); i != scriptFunctions.end(); i++) {
     auto scriptFunction = i->second;
     auto script = i->first;
-	auto scriptName = script->scriptName;
+    auto scriptName = script->scriptName;
     fullyQualifiedScriptName << scriptName;
     if (!IteratorIsLast(i, scriptFunctions)) {
       fullyQualifiedScriptName << " : ";
@@ -1006,6 +1007,10 @@ GS_Script *LuaInterface::GetCurrentGameState() {
   return NULL;
 }
 
+void LuaInterface::DeleteLayer(TiledLayerGeneric *layer) {
+  parentState->DeleteMapLayer(layer);
+}
+
 void LuaInterface::ExposeCPP() {
   typedef std::vector<EID> VectorEID;
   typedef std::vector<EID> VectorString;
@@ -1085,10 +1090,18 @@ void LuaInterface::ExposeCPP() {
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
 
+      .addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
+
       .addFunction("GetCurrentGameState", &LuaInterface::GetCurrentGameState)
       .endClass()
 
-      .beginClass<TiledTileLayer>("TiledTileLayer")  // define class object
+      .beginClass<TiledLayerGeneric>(
+          "TiledLayerGeneric")  // define class object
+      .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
+      .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)
+      .endClass()
+
+      .deriveClass<TiledTileLayer, TiledLayerGeneric>("TiledTileLayer")
       .addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
       .addFunction("UsesHMaps", &TiledTileLayer::UsesHMaps)
       .addFunction("GetTile", &TiledTileLayer::GetTile)
