@@ -17,8 +17,12 @@ function container.New(baseclass)
 
 		local spriteID	= spriteComp:AddSprite(sprite, depth, 0, 0);
 
+		math.randomseed(os.clock()*100000000000)
+		local newImage =  math.random(0, 5)
+		local newImageSpeed = spriteComp:GetAnimationSpeed(spriteID) - (math.random() / 16)
 		spriteComp:SetAnimation		(spriteID, "Fly");
-		spriteComp:SetAnimationSpeed(spriteID, 1);
+		spriteComp:SetAnimationSpeed(spriteID, newImageSpeed);
+		spriteComp:SetImage         (spriteID, newImage)
 		spriteComp:SetRotation		(spriteID, 0);
 	end
 

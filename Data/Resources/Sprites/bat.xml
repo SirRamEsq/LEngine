@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Sprite width and height is used to calculate where the origin is-->
 <sprite origin="center" width="24" height="24" transparentColor="ff00ff" textureName="bat.png">
-	<animationSequence name="Fly" speed="1.0" startX="0" startY="0" w="24" h="24" imgs="6"/>
+	<animationSequence name="Fly" speed="0.2" startX="0" startY="0" w="24" h="24" imgs="6"/>
 </sprite>
