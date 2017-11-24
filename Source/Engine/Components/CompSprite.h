@@ -19,7 +19,7 @@ struct AnimationData {
   bool SetAnimation(const std::string &aniName);
   bool SetImageIndex(const int &imageIndex);
   const std::string &GetAnimation() { return currentAnimationName; }
-  const int &GetImageIndex() { return currentImageIndex; }
+  int GetImageIndex() { return currentImageIndex; }
 
   bool animate;
   float animationSpeed;
@@ -53,7 +53,9 @@ class ComponentSprite : public BaseComponent {
 
   void SetAnimation(int index, const std::string &animationName);
   void SetAnimationSpeed(int index, float speed);
+  float GetAnimationSpeed(int index);
   void SetImageIndex(int index, int imageIndex);
+  int GetImageIndex(int index);
 
   /// Set whether a given sprite is rendered
   bool RenderSprite(int index, bool render);

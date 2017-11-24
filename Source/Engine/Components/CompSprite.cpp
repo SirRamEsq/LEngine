@@ -34,6 +34,7 @@ bool AnimationData::SetImageIndex(const int &imageIndex) {
   return true;
 }
 
+
 bool AnimationData::SetAnimation(const std::string &aniName) {
   if (currentAnimationName == aniName) {
     return true;
@@ -258,6 +259,13 @@ void ComponentSprite::SetAnimationSpeed(int index, float speed) {
   mAnimationData[index].animationSpeed = speed;
 }
 
+float ComponentSprite::GetAnimationSpeed(int index) {
+  if (!SpriteExists(index)) {
+    return 0;
+  }
+  return mAnimationData[index].animationSpeed;
+}
+
 float ComponentSprite::DefaultAnimationSpeed(int index) {
   if (!SpriteExists(index)) {
     return 0.0f;
@@ -270,6 +278,13 @@ void ComponentSprite::SetImageIndex(int index, int imageIndex) {
     return;
   }
   mAnimationData[index].SetImageIndex(imageIndex);
+}
+
+int ComponentSprite::GetImageIndex(int index) {
+  if (!SpriteExists(index)) {
+    return 0;
+  }
+  mAnimationData[index].GetImageIndex();
 }
 
 bool ComponentSprite::RenderSprite(int index, bool render) {

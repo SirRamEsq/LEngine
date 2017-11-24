@@ -232,7 +232,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "min = math.min, modf = math.modf, pi = math.pi, pow = math.pow,	"
     "	"
     "	\n"
-    "rad = math.rad, random = math.random, sin = math.sin, sinh = "
+    "rad = math.rad, randomseed = math.randomseed, random = math.random, sin = math.sin, sinh = "
     "math.sinh,	"
     "\n"
     "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh			"
@@ -1142,9 +1142,11 @@ void LuaInterface::ExposeCPP() {
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
       .addFunction("SetAnimation", &ComponentSprite::SetAnimation)
       .addFunction("SetAnimationSpeed", &ComponentSprite::SetAnimationSpeed)
+      .addFunction("GetAnimationSpeed", &ComponentSprite::GetAnimationSpeed)
       .addFunction("DefaultAnimationSpeed",
                    &ComponentSprite::DefaultAnimationSpeed)
-      .addFunction("SetImageIndex", &ComponentSprite::SetImageIndex)
+      .addFunction("SetImage", &ComponentSprite::SetImageIndex)
+      .addFunction("GetImage", &ComponentSprite::GetImageIndex)
 
       .addFunction("SetRotation", &ComponentSprite::SetRotation)
       .addFunction("SetScaling", &ComponentSprite::SetScaling)
