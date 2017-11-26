@@ -103,27 +103,27 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
   return true;
 }
 
-void TiledData::DeleteLayer(TiledLayerGeneric* layer){
-	for(auto i = tiledImageLayers.begin(); i != tiledImageLayers.end(); i++){
-		if(i->get() == layer){
-			tiledImageLayers.erase(i);
-			return;
-		}
-	}
+void TiledData::DeleteLayer(TiledLayerGeneric *layer) {
+  for (auto i = tiledImageLayers.begin(); i != tiledImageLayers.end(); i++) {
+    if (i->get() == layer) {
+      tiledImageLayers.erase(i);
+      return;
+    }
+  }
 
-	for(auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++){
-		if(i->get() == layer){
-			tiledTileLayers.erase(i);
-			return;
-		}
-	}
+  for (auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++) {
+    if (i->get() == layer) {
+      tiledTileLayers.erase(i);
+      return;
+    }
+  }
 
-	for(auto i = tiledObjectLayers.begin(); i != tiledObjectLayers.end(); i++){
-		if(i->get() == layer){
-			tiledObjectLayers.erase(i);
-			return;
-		}
-	}
+  for (auto i = tiledObjectLayers.begin(); i != tiledObjectLayers.end(); i++) {
+    if (i->get() == layer) {
+      tiledObjectLayers.erase(i);
+      return;
+    }
+  }
 }
 
 RSC_Map::RSC_Map() {}
@@ -216,14 +216,109 @@ TiledTileLayer *RSC_MapImpl::GetTileLayer(const std::string &property) {
   return tiledData->GetTileLayer(property);
 }
 
+std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
+    const std::string &name, const std::string &value) {
+  return tiledData->GetLayersWithProperty(name, value);
+}
+std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
+    const std::string &name, float value) {
+  return tiledData->GetLayersWithProperty(name, value);
+}
+std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
+    const std::string &name, int value) {
+  return tiledData->GetLayersWithProperty(name, value);
+}
+std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
+    const std::string &name, bool value) {
+  return tiledData->GetLayersWithProperty(name, value);
+}
+
 TiledTileLayer *TiledData::GetTileLayer(const std::string &name) {
-  TiledLayerGeneric *layer = tiledLayers[name];
+  auto layer = GetLayer(name);
   if (layer != NULL) {
     if (layer->layerType == LAYER_TILE) {
       return (TiledTileLayer *)layer;
     }
   }
   return NULL;
+}
+TiledImageLayer *TiledData::GetImageLayer(const std::string &name) {
+  auto layer = GetLayer(name);
+  if (layer != NULL) {
+    if (layer->layerType == LAYER_IMAGE) {
+      return (TiledImageLayer *)layer;
+    }
+  }
+  return NULL;
+}
+TiledObjectLayer *TiledData::GetObjectLayer(const std::string &name) {
+  auto layer = GetLayer(name);
+  if (layer != NULL) {
+    if (layer->layerType == LAYER_OBJECT) {
+      return (TiledObjectLayer *)layer;
+    }
+  }
+  return NULL;
+}
+
+std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
+    const std::string &name, const std::string &value) {
+  std::vector<TiledLayerGeneric *> layers;
+  for (auto i = tiledLayers.begin(); i != tiledLayers.end(); i++) {
+    if (i->second->PropertyExists(name)) {
+      auto stringValue = i->second->GetPropertyValue(name);
+      if (value == stringValue) {
+        layers.push_back(i->second);
+      }
+    }
+  }
+  return layers;
+}
+std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
+    const std::string &name, float value) {
+  std::vector<TiledLayerGeneric *> layers;
+  for (auto i = tiledLayers.begin(); i != tiledLayers.end(); i++) {
+    if (i->second->PropertyExists(name)) {
+      auto stringValue = i->second->GetPropertyValue(name);
+      float floatValue = StringToNumber<float>(stringValue);
+      if (value == floatValue) {
+        layers.push_back(i->second);
+      }
+    }
+  }
+  return layers;
+}
+std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
+    const std::string &name, int value) {
+  std::vector<TiledLayerGeneric *> layers;
+  for (auto i = tiledLayers.begin(); i != tiledLayers.end(); i++) {
+    if (i->second->PropertyExists(name)) {
+      auto stringValue = i->second->GetPropertyValue(name);
+      int intValue = StringToNumber<int>(stringValue);
+      if (value == intValue) {
+        layers.push_back(i->second);
+      }
+    }
+  }
+  return layers;
+}
+std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
+    const std::string &name, bool value) {
+  std::vector<TiledLayerGeneric *> layers;
+  for (auto i = tiledLayers.begin(); i != tiledLayers.end(); i++) {
+    if (i->second->PropertyExists(name)) {
+      auto stringValue = i->second->GetPropertyValue(name);
+      auto boolValue = (stringValue == "true");
+      if (value == boolValue) {
+        layers.push_back(i->second);
+      }
+    }
+  }
+  return layers;
+}
+
+TiledLayerGeneric *TiledData::GetLayer(const std::string &name) {
+  return tiledLayers[name];
 }
 
 std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string &fname) {
@@ -608,8 +703,8 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     attributes["name"] = XML_Attribute("string", &objName);
     TMXLoadAttributes(subnodeObject, attributes);
 
-	//Convert bottom-left origin to top-left origin
-	objY -= objHeight;
+    // Convert bottom-left origin to top-left origin
+    objY -= objHeight;
 
     // create new object
     objectLayer->objects[objID] = TiledObject();
