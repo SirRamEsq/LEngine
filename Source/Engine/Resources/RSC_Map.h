@@ -49,8 +49,19 @@ class TiledData {
 
   // returns false if the depth is already taken
   bool AddLayer(std::unique_ptr<TiledLayerGeneric> layer);
-  void DeleteLayer(TiledLayerGeneric* layer);
+  void DeleteLayer(TiledLayerGeneric *layer);
   bool AddTileSet(std::unique_ptr<TiledSet> tileSet);
+
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, const std::string &value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, float value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, int value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, bool value);
+
+  TiledLayerGeneric *GetLayer(const std::string &name);
 
   unsigned int GetWidth() { return width; }
   unsigned int GetHeight() { return height; }
@@ -78,6 +89,8 @@ class TiledData {
   std::string GetProperty(const std::string &property);
   // Can access tiled layers by their name
   TiledTileLayer *GetTileLayer(const std::string &name);
+  TiledImageLayer *GetImageLayer(const std::string &name);
+  TiledObjectLayer *GetObjectLayer(const std::string &name);
 
  protected:
   // These variable names are brought to you by the redundancy department of
@@ -91,7 +104,6 @@ class TiledData {
   tEntrances mMapEntrances;
 
  private:
-
   static std::unique_ptr<TiledSet> TMXLoadTiledSet(
       rapidxml::xml_node<> *tiledSetRootNode, const GID &firstGID,
       GIDManager &gidManager);
@@ -128,6 +140,15 @@ class RSC_Map {
   virtual std::string GetProperty(const std::string &property) const = 0;
   virtual std::string GetMapName() const = 0;
   virtual TiledTileLayer *GetTileLayer(const std::string &name) = 0;
+
+  virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, const std::string &value) = 0;
+  virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, float value) = 0;
+  virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, int value) = 0;
+  virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, bool value) = 0;
   // returns 0 if name doesn't exist
   virtual EID GetEIDFromName(const std::string &name) const = 0;
 
@@ -143,7 +164,7 @@ class RSC_MapImpl : public RSC_Map {
   friend GameState;
 
  public:
-  RSC_MapImpl(const std::string& mapName, std::unique_ptr<TiledData> td);
+  RSC_MapImpl(const std::string &mapName, std::unique_ptr<TiledData> td);
   RSC_MapImpl(const RSC_MapImpl &rhs);
   ~RSC_MapImpl();
 
@@ -156,6 +177,15 @@ class RSC_MapImpl : public RSC_Map {
   unsigned int GetHeightTiles() const;
   unsigned int GetWidthPixels() const;
   unsigned int GetHeightPixels() const;
+
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, const std::string &value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, float value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, int value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, bool value);
 
   std::string GetProperty(const std::string &property) const;
   std::string GetMapName() const;

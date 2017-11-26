@@ -1011,9 +1011,35 @@ void LuaInterface::DeleteLayer(TiledLayerGeneric *layer) {
   parentState->DeleteMapLayer(layer);
 }
 
+LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
+    const std::string &name, luabridge::LuaRef value) {
+  auto m = GetMap();
+  auto type = value.type();
+  if (m != NULL) {
+    if (type == LUA_TBOOLEAN) {
+      bool boolValue = (value.cast<bool>() ? "true" : "false");
+      auto layers = m->GetLayersWithProperty(name, boolValue);
+      return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+    } else if (type == LUA_TNUMBER) {
+      // case LUA_TNUMBER:
+      // auto boolValue = (value.cast<bool>() ? "true" : "false");
+      //return LB_VEC_WRAPPER<TiledLayerGeneric *>(
+          //m->GetLayersWithProperty(name, boolValue));
+      // break;
+    } else if (type == LUA_TSTRING) {
+      auto stringValue = value.cast<std::string>();
+      // return m->GetLayersWithProperty(name, stringValue);
+    }
+  }
+
+  // return std::vector<TiledLayerGeneric *>();
+  return LB_VEC_WRAPPER<TiledLayerGeneric *>();
+}
+
 void LuaInterface::ExposeCPP() {
   typedef std::vector<EID> VectorEID;
   typedef std::vector<EID> VectorString;
+  typedef LB_VEC_WRAPPER<TiledLayerGeneric *> VectorLayer;
   /*
    * if a const pointer is passed to lua
    * it WILL NOT CONTAIN non-const methods
@@ -1093,12 +1119,14 @@ void LuaInterface::ExposeCPP() {
       .addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
 
       .addFunction("GetCurrentGameState", &LuaInterface::GetCurrentGameState)
+      .addFunction("GetLayersWithProperty",
+                   &LuaInterface::GetLayersWithProperty)
       .endClass()
 
-      .beginClass<TiledLayerGeneric>(
-          "TiledLayerGeneric")  // define class object
-      .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
+      .beginClass<TiledLayerGeneric>("TiledLayerGeneric")
       .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)
+      .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
+      .addFunction("GetFlags", &TiledLayerGeneric::GetFlags)
       .endClass()
 
       .deriveClass<TiledTileLayer, TiledLayerGeneric>("TiledTileLayer")
@@ -1110,7 +1138,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("UpdateRenderArea", &TiledTileLayer::UpdateRenderArea)
       .endClass()
 
-      .beginClass<RSC_Sprite>("RSC_Sprite")  // define class object
+      .beginClass<RSC_Sprite>("RSC_Sprite")
       .addFunction("GetOrigin", &RSC_Sprite::GetOrigin)
       .addFunction("SetOrigin", &RSC_Sprite::SetOrigin)
       .addFunction("SetColorKey", &RSC_Sprite::SetColorKey)
@@ -1249,6 +1277,15 @@ void LuaInterface::ExposeCPP() {
       .addFunction("empty", &VectorString::empty)
       .endClass()
 
+      /// Maybe add lua friendly wrapper?
+      .beginClass<VectorLayer>("VectorLayer")
+      .addConstructor<void (*)()>()
+      .addFunction("size", &VectorLayer::Size)
+      .addFunction("push", &VectorLayer::Push)
+      .addFunction("at", &VectorLayer::At)
+      .addFunction("empty", &VectorLayer::Empty)
+      .endClass()
+
       .beginClass<BaseComponent>("BaseComponent")
       .addFunction("SetParent", &BaseComponent::SetParentEID)
       .endClass()
@@ -1342,6 +1379,10 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetHeightTiles", &RSC_Map::GetHeightTiles)
       .addFunction("GetWidthPixels", &RSC_Map::GetWidthPixels)
       .addFunction("GetHeightPixels", &RSC_Map::GetHeightPixels)
+
+      /// \TODO implement this
+      //.addFunction("GetLayersWithPropertyBool", &RSC_Map::GetHeightPixels)
+
       .endClass()
 
       .beginClass<GS_Script>("GameState")

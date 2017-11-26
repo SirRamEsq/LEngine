@@ -261,9 +261,14 @@ function container.NewLouie(baseclass)
 
 		louie.currentMap = CPP.interface:GetMap()
 		louie.climb.LAYER = louie.currentMap:GetTileLayer(louie.climb.LAYER_NAME)
-		local secretLayer = louie.currentMap:GetTileLayer("SECRET1")
-		if(secretLayer ~= nil)then
-			louie.secretLayer = fadeOut.FadeOut(secretLayer)
+		local secretLayers = CPP.interface:GetLayersWithProperty("isSecret", true)
+		if(secretLayers ~= nil) then
+			if(secretLayers:empty() == false)then
+				local secretLayer = secretLayers:at(0)
+				if(secretLayer ~= nil)then
+					louie.secretLayer = fadeOut.FadeOut(secretLayer)
+				end
+			end
 		end
 	end
 
@@ -664,11 +669,11 @@ function container.NewLouie(baseclass)
 			--Need to be moving fast enough to trigger a roll
 			--or already be rolling
 			--if (louie.c.currentState ~= louie.c.STATE_ROLL) and (math.abs(louie.groundSpeed) >= louie.c.MIN_ROLL_SPEED) then
-				louie.tileCollision.UseShortBoxes();
-				louie.LockInput(louie.c.ROLL_TIMER);
+			louie.tileCollision.UseShortBoxes();
+			louie.LockInput(louie.c.ROLL_TIMER);
 			--else
-				--louie.ChangeState(louie.c.STATE_NORMAL)
-				--return
+			--louie.ChangeState(louie.c.STATE_NORMAL)
+			--return
 			--end
 
 		elseif(newState==louie.c.STATE_WALLSLIDE) then
