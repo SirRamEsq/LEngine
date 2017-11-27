@@ -84,9 +84,8 @@ class ComponentCollision : public BaseComponent {
   friend class ComponentCollisionManager;
   friend struct CollisionGrid;
 
-  typedef void (*CollisionCallback)();
-
  public:
+  typedef void (*CollisionCallback)(const TColPacket *);
   ComponentCollision(EID id, ComponentPosition *pos,
                      ComponentCollisionManager *manager);
   ~ComponentCollision();
@@ -122,7 +121,8 @@ class ComponentCollision : public BaseComponent {
 
   void SetShape(int boxid, const Shape *shape);
 
-  void CheckForLayer(const TiledTileLayer *layer, CollisionCallback callback);
+  void CheckForLayer(int boxid, const TiledTileLayer *layer,
+                     CollisionCallback callback);
 
   std::string name;
   std::string objType;
@@ -134,7 +134,10 @@ class ComponentCollision : public BaseComponent {
   auto GetItBeg() { return boxes.begin(); }
   auto GetItEnd() { return boxes.end(); }
 
-  std::unordered_map<const TiledTileLayer *, CollisionCallback> mLayersToCheck;
+  typedef std::pair<const TiledTileLayer *, CollisionCallback>
+      LayerCallbackPair;
+
+  std::unordered_map<int, std::vector<LayerCallbackPair>> mLayersToCheck;
 
  private:
   void OrderList();
@@ -171,10 +174,23 @@ class ComponentCollisionManager
   CollisionGrid grid;
   ComponentPositionManager *dependencyPosition;
 
+  /**
+   * Will return the first layer collided with in the vector
+   * \param x Tile Coordinate X
+   * \param y Tile Coordinate Y
+   */
+  static const TiledTileLayer *GetTileLayerCollision(
+      const std::vector<const TiledTileLayer *> *layers, unsigned int x,
+      unsigned int y);
+
  private:
   void SendCollisionEvent(const ComponentCollision &sender,
                           const ComponentCollision &reciever, int recieverBoxID,
                           Event::MSG mes);
+
+  void RegisterTileCollision(
+      const TColPacket *packet, EID id,
+      ComponentCollision::CollisionCallback callback = NULL);
 };
 
 #endif

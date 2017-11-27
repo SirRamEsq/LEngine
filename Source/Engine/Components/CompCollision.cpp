@@ -121,9 +121,17 @@ void ComponentCollision::OrderList() {
   */
 }
 
-void ComponentCollision::CheckForLayer(const TiledTileLayer *layer,
+void ComponentCollision::CheckForLayer(int boxid, const TiledTileLayer *layer,
                                        CollisionCallback callback) {
-  mLayersToCheck[layer] = callback;
+  auto boxVectorPairs = mLayersToCheck.find(boxid);
+  if (boxVectorPairs == mLayersToCheck.end()) {
+    // create new vector if doesn't already exist
+    mLayersToCheck[boxid] = std::vector<LayerCallbackPair>();
+    boxVectorPairs = mLayersToCheck.find(boxid);
+  }
+
+  auto newPair = LayerCallbackPair(layer, callback);
+  boxVectorPairs->second.push_back(newPair);
 }
 
 ///////////////////////////////
@@ -138,7 +146,7 @@ ComponentCollisionManager::ConstructComponent(EID id,
                                               ComponentCollision *parent) {
   auto comp = std::make_unique<ComponentCollision>(
       id, dependencyPosition->GetComponent(id), this);
-  return std::move(comp);
+  return comp;
 }
 
 void ComponentCollisionManager::SendCollisionEvent(
@@ -272,12 +280,13 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
   const Shape *shape;
   TColPacket packet;  // for messaging purposes
 
+  if (currentMap == NULL) {
+    return;
+  }  // No point in checking if there's no map to check against
+  auto layers = currentMap->GetSolidTileLayers();
+
   for (auto compIt1 = componentList.begin(); compIt1 != componentList.end();
        compIt1++) {
-    if (currentMap == NULL) {
-      continue;
-    }  // No point in checking if there's no map to check against
-
     // Start iterating through collision boxes
     // boxIt1 is a colbox iterator for each collision component
     // i iterates through all of the collision components
@@ -311,7 +320,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
       if ((txx1 == txx2) and
           (tyy1 == tyy2)) {  // if the top left is the same as the bottom right,
                              // then the whole box has fit inside a single tile
-        tLayer = currentMap->GetTileLayerCollision(txx1, tyy1, true);
+        tLayer = GetTileLayerCollision(&layers, txx1, tyy1);
 
         if (tLayer == NULL) {
           continue;
@@ -324,10 +333,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
         packet.posY = absoluteCoordinates->GetTop();
         packet.box = boxIt1->first;
 
-        TColPacket::ExtraDataDefinition extraData(&packet);
-        Event event(EID_SYSTEM, compIt1->first, Event::MSG::COLLISION_TILE,
-                    "TILE", &extraData);
-        eventDispatcher->DispatchEvent(event);
+        RegisterTileCollision(&packet, compIt1->first);
 
         continue;
       }
@@ -354,7 +360,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
       bool breakOut = false;
       for (int iter = 0; iter <= differenceX; iter++) {
         for (int iter2 = 0; iter2 <= differenceY; iter2++) {
-          tLayer = currentMap->GetTileLayerCollision(tx, ty, true);
+          tLayer = GetTileLayerCollision(&layers, tx, ty);
           if (tLayer != NULL) {
             packet.tileX = tx;
             packet.tileY = ty;
@@ -363,10 +369,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
             packet.box = boxIt1->first;
             packet.tl = tLayer;
 
-            TColPacket::ExtraDataDefinition extraData(&packet);
-            Event event(EID_SYSTEM, compIt1->first, Event::MSG::COLLISION_TILE,
-                        "TILE", &extraData);
-            eventDispatcher->DispatchEvent(event);
+            RegisterTileCollision(&packet, compIt1->first);
 
             breakOut = true;
           }
@@ -394,6 +397,18 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
         }
       }
     }
+  }
+}
+
+void ComponentCollisionManager::RegisterTileCollision(
+    const TColPacket *packet, EID id,
+    ComponentCollision::CollisionCallback callback) {
+  TColPacket::ExtraDataDefinition extraData(packet);
+  Event event(EID_SYSTEM, id, Event::MSG::COLLISION_TILE, "TILE", &extraData);
+  eventDispatcher->DispatchEvent(event);
+
+  if (callback != NULL) {
+    callback(packet);
   }
 }
 
@@ -457,6 +472,17 @@ void ComponentCollisionManager::Update() {
   UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
 }
 
+const TiledTileLayer *ComponentCollisionManager::GetTileLayerCollision(
+    const std::vector<const TiledTileLayer *> *layers, unsigned int x,
+    unsigned int y) {
+  for (auto i = layers->begin(); i != layers->end(); i++) {
+    auto id = (*i)->HasTile(x, y);
+    if (id != 0) {
+      return *i;
+    }
+  }
+  return NULL;
+}
 //////////////
 // EColPcaket//
 //////////////
