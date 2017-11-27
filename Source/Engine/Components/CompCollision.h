@@ -27,10 +27,17 @@ Thus, every entity that wants collision must have at least a primary cbox
 class ComponentCollisionManager;
 
 struct TColPacket {
-  int x, y;  // tile coords, not screen position
-  int box;   // box id
-  int GetX() { return x; }
-  int GetY() { return y; }
+  int tileX, tileY;  // tile coords
+  int posX, posY;    // actual position
+  int box;           // box id
+  float xspd, yspd;  // speed of entity
+
+  int GetTileX() { return tileX; }
+  int GetTileY() { return tileY; }
+
+  int GetX() { return posX; }
+  int GetY() { return posY; }
+
   int GetID() { return box; }
   RSC_Heightmap GetHmap();
   const TiledTileLayer *GetLayer();
@@ -77,6 +84,8 @@ class ComponentCollision : public BaseComponent {
   friend class ComponentCollisionManager;
   friend struct CollisionGrid;
 
+  typedef void (*CollisionCallback)();
+
  public:
   ComponentCollision(EID id, ComponentPosition *pos,
                      ComponentCollisionManager *manager);
@@ -113,6 +122,8 @@ class ComponentCollision : public BaseComponent {
 
   void SetShape(int boxid, const Shape *shape);
 
+  void CheckForLayer(const TiledTileLayer *layer, CollisionCallback callback);
+
   std::string name;
   std::string objType;
   void *extraData;
@@ -122,6 +133,8 @@ class ComponentCollision : public BaseComponent {
 
   auto GetItBeg() { return boxes.begin(); }
   auto GetItEnd() { return boxes.end(); }
+
+  std::unordered_map<const TiledTileLayer *, CollisionCallback> mLayersToCheck;
 
  private:
   void OrderList();

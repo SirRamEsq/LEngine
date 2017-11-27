@@ -1151,6 +1151,8 @@ void LuaInterface::ExposeCPP() {
       .addConstructor<void (*)(void)>()
       .addFunction("GetX", &TColPacket::GetX)
       .addFunction("GetY", &TColPacket::GetY)
+      .addFunction("GetTileX", &TColPacket::GetTileX)
+      .addFunction("GetTileY", &TColPacket::GetTileY)
       .addFunction("GetID", &TColPacket::GetID)
       .addFunction("GetLayer", &TColPacket::GetLayer)
       .addFunction("GetHmap", &TColPacket::GetHmap)

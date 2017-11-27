@@ -27,6 +27,15 @@ class RSC_MapMock : public RSC_Map {
   const TiledTileLayer *GetTileLayerCollision(unsigned int x, unsigned int y,
                                               bool areTheseTileCoords) const;
 
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, const std::string &value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, float value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, int value);
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
+      const std::string &name, bool value);
+
   TiledData *GetTiledData();
 
   const std::string mapName;

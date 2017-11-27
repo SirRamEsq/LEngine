@@ -279,23 +279,31 @@ function collision.Update(xspd, yspd)
 	collision.leftWall=false;
 	collision.ceilingTouch=false;
 	collision.frameProperties.firstCollision=false;
+	collision.xspd = xspd
+	collision.yspd = yspd
 end
 
-function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
+function collision.OnTileCollision(packet)
 	--[[
 	CPP engine has decided a collision exists here
 	]]--
 
 	--Easy access to context data
-	local boxid=packet:GetID();
-	local tx=packet:GetX();
-	local ty=packet:GetY();
+	local boxid=packet:GetID()
+
+	local tx=packet:GetTileX()
+	local ty=packet:GetTileY()
+	local xval = packet:GetX()
+	local yval = packet:GetY()
+
 	local layer=packet:GetLayer();
-	local hmap=packet:GetHmap();
 	local usesHMaps=layer:UsesHMaps();
+	local hmap=packet:GetHmap();
+	
+	local hspd = collision.xspd
+	local vspd = collision.yspd
+
 	local newPosition;
-	local xval=exactX;
-	local yval=exactY;
 
 	--Commonly used variables
 	local HMAPheight=0;
@@ -316,8 +324,8 @@ function collision.OnTileCollision(packet, hspd, vspd, exactX, exactY)
 
 		local thisAngle=hmap.angleH;
 		local thisAngleSigned= collision.AngleToSignedAngle(thisAngle);
-		local maximumFootY=collision.footHeightValue + exactY + collision.coordinates.GROUND_Y_OFFSET;
-		local HMAPheight= collision.GetHeightMapValue(exactX, packet);
+		local maximumFootY=collision.footHeightValue + yval + collision.coordinates.GROUND_Y_OFFSET;
+		local HMAPheight= collision.GetHeightMapValue(xval, packet);
 
 		--Don't register a collision if there isn't any height value
 		if (HMAPheight==0 or HMAPheight==nil) then return; end
