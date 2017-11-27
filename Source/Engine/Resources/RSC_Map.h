@@ -92,7 +92,7 @@ class TiledData {
   TiledImageLayer *GetImageLayer(const std::string &name);
   TiledObjectLayer *GetObjectLayer(const std::string &name);
 
-  std::vector<const TiledTileLayer *> GetSolidTileLayers() const;
+  std::vector<TiledTileLayer *> GetSolidTileLayers();
 
  protected:
   // These variable names are brought to you by the redundancy department of
@@ -140,7 +140,7 @@ class RSC_Map {
   virtual unsigned int GetWidthPixels() const = 0;
   virtual unsigned int GetHeightPixels() const = 0;
 
-  virtual std::vector<const TiledTileLayer *> GetSolidTileLayers() const = 0;
+  virtual std::vector<TiledTileLayer *> GetSolidTileLayers() = 0;
 
   virtual std::string GetProperty(const std::string &property) const = 0;
   virtual std::string GetMapName() const = 0;
@@ -180,7 +180,7 @@ class RSC_MapImpl : public RSC_Map {
   unsigned int GetWidthPixels() const;
   unsigned int GetHeightPixels() const;
 
-  std::vector<const TiledTileLayer *> GetSolidTileLayers() const;
+  std::vector<TiledTileLayer *> GetSolidTileLayers();
 
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value);
