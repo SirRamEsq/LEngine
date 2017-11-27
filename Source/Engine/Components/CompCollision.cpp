@@ -123,15 +123,14 @@ void ComponentCollision::OrderList() {
 
 void ComponentCollision::CheckForLayer(int boxid, const TiledTileLayer *layer,
                                        CollisionCallback callback) {
-  auto boxVectorPairs = mLayersToCheck.find(boxid);
-  if (boxVectorPairs == mLayersToCheck.end()) {
-    // create new vector if doesn't already exist
-    mLayersToCheck[boxid] = std::vector<LayerCallbackPair>();
-    boxVectorPairs = mLayersToCheck.find(boxid);
+  auto boxCallbacks = mLayersToCheck.find(boxid);
+  if (boxCallbacks == mLayersToCheck.end()) {
+    // create new map if doesn't already exist
+    mLayersToCheck[boxid] = LayerCallbacks();
+    boxCallbacks = mLayersToCheck.find(boxid);
   }
 
-  auto newPair = LayerCallbackPair(layer, callback);
-  boxVectorPairs->second.push_back(newPair);
+  boxCallbacks->second[layer] = callback;
 }
 
 ///////////////////////////////
@@ -283,7 +282,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
   if (currentMap == NULL) {
     return;
   }  // No point in checking if there's no map to check against
-  auto layers = currentMap->GetSolidTileLayers();
+  auto solidLayers = currentMap->GetSolidTileLayers();
 
   for (auto compIt1 = componentList.begin(); compIt1 != componentList.end();
        compIt1++) {
@@ -297,6 +296,17 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
       }
       if (not boxIt1->second.IsActive()) {
         continue;
+      }
+
+      // Add layers for each box to check for
+      std::vector<const TiledTileLayer *> layers = solidLayers;
+      auto layersToCheck = compIt1->second->mLayersToCheck;
+      auto boxCallbacks = layersToCheck.find(boxIt1->first);
+      if (boxCallbacks != layersToCheck.end()) {
+        for (auto i = boxCallbacks->second.begin();
+             i != boxCallbacks->second.end(); i++) {
+          layers.push_back(i->first);
+        }
       }
 
       // Adds box coordinates to entity's coordinates
@@ -333,7 +343,14 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
         packet.posY = absoluteCoordinates->GetTop();
         packet.box = boxIt1->first;
 
-        RegisterTileCollision(&packet, compIt1->first);
+        ComponentCollision::CollisionCallback callback = NULL;
+        if (boxCallbacks != layersToCheck.end()) {
+          auto callbackIterator = boxCallbacks->second.find(tLayer);
+          if (callbackIterator != boxCallbacks->second.end()) {
+            callback = callbackIterator->second;
+          }
+        }
+        RegisterTileCollision(&packet, compIt1->first, callback);
 
         continue;
       }
@@ -369,7 +386,15 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
             packet.box = boxIt1->first;
             packet.tl = tLayer;
 
-            RegisterTileCollision(&packet, compIt1->first);
+            ComponentCollision::CollisionCallback callback = NULL;
+            if (boxCallbacks != layersToCheck.end()) {
+              auto callbackIterator = boxCallbacks->second.find(tLayer);
+              if (callbackIterator != boxCallbacks->second.end()) {
+                callback = callbackIterator->second;
+              }
+            }
+
+            RegisterTileCollision(&packet, compIt1->first, callback);
 
             breakOut = true;
           }

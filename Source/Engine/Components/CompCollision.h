@@ -134,10 +134,10 @@ class ComponentCollision : public BaseComponent {
   auto GetItBeg() { return boxes.begin(); }
   auto GetItEnd() { return boxes.end(); }
 
-  typedef std::pair<const TiledTileLayer *, CollisionCallback>
-      LayerCallbackPair;
+  typedef std::unordered_map<const TiledTileLayer *, CollisionCallback>
+      LayerCallbacks;
 
-  std::unordered_map<int, std::vector<LayerCallbackPair>> mLayersToCheck;
+  std::unordered_map<int, LayerCallbacks> mLayersToCheck;
 
  private:
   void OrderList();
