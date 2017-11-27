@@ -19,6 +19,8 @@ class RSC_MapMock : public RSC_Map {
   unsigned int GetWidthPixels() const;
   unsigned int GetHeightPixels() const;
 
+  std::vector<const TiledTileLayer *> GetSolidTileLayers() const;
+
   std::string GetProperty(const std::string &property) const;
   std::string GetMapName() const;
   TiledTileLayer *GetTileLayer(const std::string &name);

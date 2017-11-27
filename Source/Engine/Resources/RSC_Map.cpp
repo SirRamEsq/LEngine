@@ -62,12 +62,24 @@ bool TiledData::AddTileSet(std::unique_ptr<TiledSet> tileSet) {
   return true;
 }
 
+template <class T>
+bool SortLayersByDepth(T& l1, T& l2) {
+  // Lowest First, Highest Last
+  return (l1->GetDepth() < l2->GetDepth());
+}
+
 bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
   MAP_DEPTH depth = layer->GetDepth();
   auto layerType = layer->layerType;
 
+  tiledLayers[layer->layerName] = layer.get();
   // Make sure depth isn't already taken if the layer is supposed to be rendered
   if ((layerType == LAYER_IMAGE) or (layerType == LAYER_TILE)) {
+    // Ignore layer if ignore flag is set
+    if (layer->Ignore() == true) {
+      return true;
+    }
+
     if (tiledRenderableLayers.find(depth) != tiledRenderableLayers.end()) {
       // if depth already exists, return 0 and implicitly delete layer via smart
       // pointer
@@ -78,26 +90,28 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
       return false;
     }
 
-    // Ignore layer if ignore flag is set
-    if (layer->Ignore() == true) {
-      return true;
-    }
-
     // Add layer to map if depth isn't already taken
-    tiledLayers[layer->layerName] = layer.get();
     tiledRenderableLayers[depth] = layer.get();
 
     if (layerType == LAYER_IMAGE) {
       tiledImageLayers.push_back(
           std::unique_ptr<TiledImageLayer>((TiledImageLayer *)layer.release()));
+      // Sort Layers by Depth
+      std::sort(tiledImageLayers.begin(), tiledImageLayers.end(),
+                SortLayersByDepth<std::unique_ptr<TiledImageLayer > >);
     } else if (layerType == LAYER_TILE) {
       tiledTileLayers.push_back(
           std::unique_ptr<TiledTileLayer>((TiledTileLayer *)layer.release()));
+      // Sort Layers by Depth
+      std::sort(tiledTileLayers.begin(), tiledTileLayers.end(),
+                SortLayersByDepth<std::unique_ptr<TiledTileLayer > >);
     }
   } else if (layerType == LAYER_OBJECT) {
-    tiledLayers[layer->layerName] = layer.get();
     tiledObjectLayers.push_back(
         std::unique_ptr<TiledObjectLayer>((TiledObjectLayer *)layer.release()));
+    // Sort Layers by Depth
+    std::sort(tiledObjectLayers.begin(), tiledObjectLayers.end(),
+              SortLayersByDepth<std::unique_ptr<TiledObjectLayer > >);
   }
 
   return true;
@@ -167,39 +181,6 @@ unsigned int RSC_MapImpl::GetHeightTiles() const {
 unsigned int RSC_MapImpl::GetWidthPixels() const { return tiledData->width; }
 unsigned int RSC_MapImpl::GetHeightPixels() const { return tiledData->height; }
 
-const TiledTileLayer *RSC_MapImpl::GetTileLayerCollision(
-    unsigned int x, unsigned int y, bool areTheseTileCoords) const {
-  // Return first tile layer collided with
-  if (tiledData.get()->tiledTileLayers.empty()) {
-    return NULL;
-  }
-
-  unsigned int xt = x;
-  unsigned int yt = y;
-  if (!areTheseTileCoords) {
-    CoordToGrid(xt, yt);
-  }
-
-  auto i = tiledData.get()->tiledTileLayers.begin();
-  if (x >= i->get()->data2D.size()) {
-    return NULL;
-  }
-  if (y >= i->get()->data2D[xt].size()) {
-    return NULL;
-  }
-
-  GID id = 0;
-  for (; i != tiledData.get()->tiledTileLayers.end(); i++) {
-    if ((i->get()->layerFlags & TF_solid) == TF_solid) {
-      id = i->get()->data2D[xt][yt];
-      if (id != 0) {
-        return i->get();
-      }
-    }
-  }
-  return NULL;
-}
-
 std::string RSC_MapImpl::GetProperty(const std::string &property) const {
   return tiledData->GetProperty(property);
 }
@@ -231,6 +212,24 @@ std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
 std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
     const std::string &name, bool value) {
   return tiledData->GetLayersWithProperty(name, value);
+}
+
+std::vector<const TiledTileLayer *> RSC_MapImpl::GetSolidTileLayers() const {
+  return tiledData->GetSolidTileLayers();
+}
+
+std::vector<const TiledTileLayer *> TiledData::GetSolidTileLayers() const {
+  std::vector<const TiledTileLayer *> layers;
+
+  for (auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++) {
+    if (i->get()->IsSolid()) {
+      layers.push_back(i->get());
+    }
+  }
+
+  // SORT BY DEPTH
+
+  return layers;
 }
 
 TiledTileLayer *TiledData::GetTileLayer(const std::string &name) {

@@ -32,6 +32,12 @@ TiledTileLayer *RSC_MapMock::GetTileLayer(const std::string &name) {
   return NULL;
 }
 
+std::vector<const TiledTileLayer *> RSC_MapMock::GetSolidTileLayers() const {
+  std::vector<const TiledTileLayer *> layers;
+  layers.push_back(&layer);
+  return layers;
+}
+
 const TiledTileLayer *RSC_MapMock::GetTileLayerCollision(
     unsigned int x, unsigned int y, bool areTheseTileCoords) const {
   // Return first tile layer collided with

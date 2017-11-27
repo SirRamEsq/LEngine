@@ -79,7 +79,7 @@ class TiledData {
   // this data structure enables sets to be looked up by their name, this
   // structure does not assume ownership of the sets
   std::map<std::string, TiledSet *> tiledSets;
-  // contains tile layers and image layers sorted by map depth, this structure
+  // Can lookup via map depth
   // does not assume ownership of the layers
   std::map<MAP_DEPTH, TiledLayerGeneric *> tiledRenderableLayers;
 
@@ -92,9 +92,12 @@ class TiledData {
   TiledImageLayer *GetImageLayer(const std::string &name);
   TiledObjectLayer *GetObjectLayer(const std::string &name);
 
+  std::vector<const TiledTileLayer *> GetSolidTileLayers() const;
+
  protected:
   // These variable names are brought to you by the redundancy department of
   // redundancy
+  // All sorted by depth
   std::vector<std::unique_ptr<TiledSet>> tiledTileSets;
   std::vector<std::unique_ptr<TiledObjectLayer>> tiledObjectLayers;
   std::vector<std::unique_ptr<TiledImageLayer>> tiledImageLayers;
@@ -137,6 +140,8 @@ class RSC_Map {
   virtual unsigned int GetWidthPixels() const = 0;
   virtual unsigned int GetHeightPixels() const = 0;
 
+  virtual std::vector<const TiledTileLayer *> GetSolidTileLayers() const = 0;
+
   virtual std::string GetProperty(const std::string &property) const = 0;
   virtual std::string GetMapName() const = 0;
   virtual TiledTileLayer *GetTileLayer(const std::string &name) = 0;
@@ -151,9 +156,6 @@ class RSC_Map {
       const std::string &name, bool value) = 0;
   // returns 0 if name doesn't exist
   virtual EID GetEIDFromName(const std::string &name) const = 0;
-
-  virtual const TiledTileLayer *GetTileLayerCollision(
-      unsigned int x, unsigned int y, bool areTheseTileCoords) const = 0;
 
   /// \TODO remove 'GetTiledData' from RSC_MAP Interface, the user of this class
   /// should not need to access the Tiled Data
@@ -178,6 +180,8 @@ class RSC_MapImpl : public RSC_Map {
   unsigned int GetWidthPixels() const;
   unsigned int GetHeightPixels() const;
 
+  std::vector<const TiledTileLayer *> GetSolidTileLayers() const;
+
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
@@ -191,9 +195,6 @@ class RSC_MapImpl : public RSC_Map {
   std::string GetMapName() const;
   TiledTileLayer *GetTileLayer(const std::string &name);
   EID GetEIDFromName(const std::string &name) const;
-
-  const TiledTileLayer *GetTileLayerCollision(unsigned int x, unsigned int y,
-                                              bool areTheseTileCoords) const;
 
   TiledData *GetTiledData();
 
