@@ -3,6 +3,7 @@
 local fade = {}
 
 fade.FadeOut = function(layer, alphaDecrement)
+	if (layer:GetAlpha() <= 0)then return nil end
 	local fadeOut = {}
 	fadeOut.decrement = alphaDecrement or 0.01
 	fadeOut.layer = layer
@@ -22,7 +23,7 @@ fade.FadeOut = function(layer, alphaDecrement)
 	--]]
 	fadeOut.Update = function()
 		if(fadeOut.alpha == 0) then
-			CPP.interface:DeleteLayer(fadeOut.layer)
+			--CPP.interface:DeleteLayer(fadeOut.layer)
 			return nil
 		end
 

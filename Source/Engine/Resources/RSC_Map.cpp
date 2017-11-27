@@ -63,7 +63,7 @@ bool TiledData::AddTileSet(std::unique_ptr<TiledSet> tileSet) {
 }
 
 template <class T>
-bool SortLayersByDepth(T& l1, T& l2) {
+bool SortLayersByDepth(T &l1, T &l2) {
   // Lowest First, Highest Last
   return (l1->GetDepth() < l2->GetDepth());
 }
@@ -98,20 +98,20 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
           std::unique_ptr<TiledImageLayer>((TiledImageLayer *)layer.release()));
       // Sort Layers by Depth
       std::sort(tiledImageLayers.begin(), tiledImageLayers.end(),
-                SortLayersByDepth<std::unique_ptr<TiledImageLayer > >);
+                SortLayersByDepth<std::unique_ptr<TiledImageLayer> >);
     } else if (layerType == LAYER_TILE) {
       tiledTileLayers.push_back(
           std::unique_ptr<TiledTileLayer>((TiledTileLayer *)layer.release()));
       // Sort Layers by Depth
       std::sort(tiledTileLayers.begin(), tiledTileLayers.end(),
-                SortLayersByDepth<std::unique_ptr<TiledTileLayer > >);
+                SortLayersByDepth<std::unique_ptr<TiledTileLayer> >);
     }
   } else if (layerType == LAYER_OBJECT) {
     tiledObjectLayers.push_back(
         std::unique_ptr<TiledObjectLayer>((TiledObjectLayer *)layer.release()));
     // Sort Layers by Depth
     std::sort(tiledObjectLayers.begin(), tiledObjectLayers.end(),
-              SortLayersByDepth<std::unique_ptr<TiledObjectLayer > >);
+              SortLayersByDepth<std::unique_ptr<TiledObjectLayer> >);
   }
 
   return true;
@@ -214,20 +214,18 @@ std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
   return tiledData->GetLayersWithProperty(name, value);
 }
 
-std::vector<const TiledTileLayer *> RSC_MapImpl::GetSolidTileLayers() const {
+std::vector<TiledTileLayer *> RSC_MapImpl::GetSolidTileLayers() {
   return tiledData->GetSolidTileLayers();
 }
 
-std::vector<const TiledTileLayer *> TiledData::GetSolidTileLayers() const {
-  std::vector<const TiledTileLayer *> layers;
+std::vector<TiledTileLayer *> TiledData::GetSolidTileLayers() {
+  std::vector<TiledTileLayer *> layers;
 
   for (auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++) {
     if (i->get()->IsSolid()) {
       layers.push_back(i->get());
     }
   }
-
-  // SORT BY DEPTH
 
   return layers;
 }

@@ -2,7 +2,7 @@
 #include "../Kernel.h"
 #include "math.h"
 
-const TiledTileLayer *TColPacket::GetLayer() { return tl; }
+TiledTileLayer *TColPacket::GetLayer() { return tl; }
 
 RSC_Heightmap TColPacket::GetHmap() {
   if (tl->UsesHMaps() == false) {
@@ -121,7 +121,7 @@ void ComponentCollision::OrderList() {
   */
 }
 
-void ComponentCollision::CheckForLayer(int boxid, const TiledTileLayer *layer,
+void ComponentCollision::CheckForLayer(int boxid, TiledTileLayer *layer,
                                        CollisionCallback callback) {
   auto boxCallbacks = mLayersToCheck.find(boxid);
   if (boxCallbacks == mLayersToCheck.end()) {
@@ -268,14 +268,35 @@ void ComponentCollisionManager::UpdateCheckEntityCollision() {
   }
 }
 
+void ComponentCollision::CheckForLayerLuaInterface(int boxid,
+                                                   TiledLayerGeneric *layer,
+                                                   luabridge::LuaRef func) {
+  if (layer == NULL) {
+    LOG_ERROR("Layer is NULL");
+    return;
+  }
+  if (func.isNil()) {
+    LOG_ERROR("Func is Nil");
+    return;
+  }
+
+  if (layer->layerType != LAYER_TILE) {
+    LOG_ERROR("Layer passed was not a TILE layer");
+    return;
+  }
+  auto tileLayer = (TiledTileLayer *)layer;
+  auto funcWrapper = [func](TColPacket *packet) { func(packet); };
+  CheckForLayer(boxid, tileLayer, funcWrapper);
+}
+
 void ComponentCollisionManager::UpdateCheckTileCollision(
-    const RSC_Map *currentMap) {
+    RSC_Map *currentMap) {
   // Put event into smart pointer so that the same event can be reused (not
   // multiple events allocated and deallocated on the stack)
   // May want to change this behaviour at some point, as recievers of the event
   // may expect that they can hold on to it
   Coord2df ul(0, 0), dr(0, 0);
-  const TiledTileLayer *tLayer = NULL;
+  TiledTileLayer *tLayer = NULL;
   const Shape *shape;
   TColPacket packet;  // for messaging purposes
 
@@ -299,7 +320,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
       }
 
       // Add layers for each box to check for
-      std::vector<const TiledTileLayer *> layers = solidLayers;
+      std::vector<TiledTileLayer *> layers = solidLayers;
       auto layersToCheck = compIt1->second->mLayersToCheck;
       auto boxCallbacks = layersToCheck.find(boxIt1->first);
       if (boxCallbacks != layersToCheck.end()) {
@@ -426,7 +447,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
 }
 
 void ComponentCollisionManager::RegisterTileCollision(
-    const TColPacket *packet, EID id,
+    TColPacket *packet, EID id,
     ComponentCollision::CollisionCallback callback) {
   TColPacket::ExtraDataDefinition extraData(packet);
   Event event(EID_SYSTEM, id, Event::MSG::COLLISION_TILE, "TILE", &extraData);
@@ -497,8 +518,8 @@ void ComponentCollisionManager::Update() {
   UpdateCheckTileCollision(K_StateMan.GetCurrentState()->GetCurrentMap());
 }
 
-const TiledTileLayer *ComponentCollisionManager::GetTileLayerCollision(
-    const std::vector<const TiledTileLayer *> *layers, unsigned int x,
+TiledTileLayer *ComponentCollisionManager::GetTileLayerCollision(
+    const std::vector<TiledTileLayer *> *layers, unsigned int x,
     unsigned int y) {
   for (auto i = layers->begin(); i != layers->end(); i++) {
     auto id = (*i)->HasTile(x, y);

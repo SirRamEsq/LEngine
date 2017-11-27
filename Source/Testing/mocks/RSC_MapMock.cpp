@@ -32,8 +32,8 @@ TiledTileLayer *RSC_MapMock::GetTileLayer(const std::string &name) {
   return NULL;
 }
 
-std::vector<const TiledTileLayer *> RSC_MapMock::GetSolidTileLayers() const {
-  std::vector<const TiledTileLayer *> layers;
+std::vector<TiledTileLayer *> RSC_MapMock::GetSolidTileLayers() {
+  std::vector<TiledTileLayer *> layers;
   layers.push_back(&layer);
   return layers;
 }

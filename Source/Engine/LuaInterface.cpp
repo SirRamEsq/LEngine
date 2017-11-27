@@ -1116,7 +1116,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
 
-      .addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
+      //.addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
 
       .addFunction("GetCurrentGameState", &LuaInterface::GetCurrentGameState)
       .addFunction("GetLayersWithProperty",
@@ -1230,6 +1230,8 @@ void LuaInterface::ExposeCPP() {
       .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
       .addFunction("SetName", &ComponentCollision::SetName)
       .addFunction("SetType", &ComponentCollision::SetType)
+      .addFunction("SetType", &ComponentCollision::SetType)
+      .addFunction("CheckForLayer", &ComponentCollision::CheckForLayerLuaInterface)
       .endClass()
 
       .beginClass<ComponentParticle>("ComponentParticle")

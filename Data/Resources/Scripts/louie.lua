@@ -247,6 +247,10 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileHorizontal;
 		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileHorizontal
 
+		louie.secretCBox = CPP.Rect(8,8,1,1)
+		louie.secretCBoxID = 30
+		louie.CompCollision:AddCollisionBox(louie.secretCBox, louie.secretCBoxID, 0);
+		louie.CompCollision:CheckForTiles(louie.secretCBoxID);
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
 		louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, louie.entityCollision.primaryCollision.ID, 30)
@@ -266,10 +270,16 @@ function container.NewLouie(baseclass)
 			if(secretLayers:empty() == false)then
 				local secretLayer = secretLayers:at(0)
 				if(secretLayer ~= nil)then
-					louie.secretLayer = fadeOut.FadeOut(secretLayer)
+					local boxID = louie.secretCBoxID
+					louie.CompCollision:CheckForLayer(boxID,secretLayer,louie.OnSecretLayerTouch)
 				end
 			end
 		end
+	end
+
+	function louie.OnSecretLayerTouch(packet)
+		local layer = packet:GetLayer()
+		louie.secretLayer = fadeOut.FadeOut(layer)
 	end
 
 	function louie.OnKeyDown(keyname)

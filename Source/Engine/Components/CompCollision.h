@@ -9,6 +9,7 @@
 #include "../Resources/RSC_Map.h"
 #include "CollisionBox.h"
 #include <list>
+#include <functional>
 
 // Lua Includes
 extern "C" {
@@ -40,8 +41,8 @@ struct TColPacket {
 
   int GetID() { return box; }
   RSC_Heightmap GetHmap();
-  const TiledTileLayer *GetLayer();
-  const TiledTileLayer *tl;
+  TiledTileLayer *GetLayer();
+  TiledTileLayer *tl;
 
   /**
    * Handles setting a TColPacket and from event->extradata
@@ -85,7 +86,8 @@ class ComponentCollision : public BaseComponent {
   friend struct CollisionGrid;
 
  public:
-  typedef void (*CollisionCallback)(const TColPacket *);
+  // typedef void (*CollisionCallback)(const TColPacket *);
+  typedef std::function<void(TColPacket *)> CollisionCallback;
   ComponentCollision(EID id, ComponentPosition *pos,
                      ComponentCollisionManager *manager);
   ~ComponentCollision();
@@ -121,8 +123,11 @@ class ComponentCollision : public BaseComponent {
 
   void SetShape(int boxid, const Shape *shape);
 
-  void CheckForLayer(int boxid, const TiledTileLayer *layer,
+  void CheckForLayer(int boxid, TiledTileLayer *layer,
                      CollisionCallback callback);
+
+  void CheckForLayerLuaInterface(int boxid, TiledLayerGeneric *layer,
+                                 luabridge::LuaRef func);
 
   std::string name;
   std::string objType;
@@ -134,9 +139,8 @@ class ComponentCollision : public BaseComponent {
   auto GetItBeg() { return boxes.begin(); }
   auto GetItEnd() { return boxes.end(); }
 
-  typedef std::unordered_map<const TiledTileLayer *, CollisionCallback>
+  typedef std::unordered_map<TiledTileLayer *, CollisionCallback>
       LayerCallbacks;
-
   std::unordered_map<int, LayerCallbacks> mLayersToCheck;
 
  private:
@@ -168,7 +172,7 @@ class ComponentCollisionManager
       EID id, ComponentCollision *parent);
   void UpdateBuckets(int widthPixels);
   void UpdateCheckEntityCollision();
-  void UpdateCheckTileCollision(const RSC_Map *currentMap);
+  void UpdateCheckTileCollision(RSC_Map *currentMap);
   void SetDependencies(ComponentPositionManager *pos);
 
   CollisionGrid grid;
@@ -179,8 +183,8 @@ class ComponentCollisionManager
    * \param x Tile Coordinate X
    * \param y Tile Coordinate Y
    */
-  static const TiledTileLayer *GetTileLayerCollision(
-      const std::vector<const TiledTileLayer *> *layers, unsigned int x,
+  static TiledTileLayer *GetTileLayerCollision(
+      const std::vector<TiledTileLayer *> *layers, unsigned int x,
       unsigned int y);
 
  private:
@@ -189,7 +193,7 @@ class ComponentCollisionManager
                           Event::MSG mes);
 
   void RegisterTileCollision(
-      const TColPacket *packet, EID id,
+      TColPacket *packet, EID id,
       ComponentCollision::CollisionCallback callback = NULL);
 };
 
