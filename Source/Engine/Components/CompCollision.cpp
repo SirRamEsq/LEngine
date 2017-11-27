@@ -9,7 +9,7 @@ RSC_Heightmap TColPacket::GetHmap() {
     RSC_Heightmap l;
     return l;
   }
-  GID id = tl->GetGID(x, y);
+  GID id = tl->GetGID(tileX, tileY);
   TiledSet *ts = (TiledSet *)K_StateMan.GetCurrentState()
                      ->GetCurrentMap()
                      ->GetTiledData()
@@ -111,7 +111,7 @@ CollisionBox *ComponentCollision::GetPrimary() {
 }
 
 void ComponentCollision::OrderList() {
-	/*
+  /*
   auto cmp = [](std::pair<int, CollisionBox> const &a,
                 std::pair<int, CollisionBox> const &b) {
     return a.second < b.second;
@@ -119,6 +119,11 @@ void ComponentCollision::OrderList() {
   // primary comes first,
   std::sort(boxes.begin(), boxes.end(), cmp);
   */
+}
+
+void ComponentCollision::CheckForLayer(const TiledTileLayer *layer,
+                                       CollisionCallback callback) {
+  mLayersToCheck[layer] = callback;
 }
 
 ///////////////////////////////
@@ -289,6 +294,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
       boxIt1->second.UpdateWorldCoord();
       shape = boxIt1->second.GetWorldCoord();
       // only rects for now
+      const Rect *absoluteCoordinates = (static_cast<const Rect *>(shape));
       Rect r = (static_cast<const Rect *>(shape))->Round();
 
       ul.x = r.GetLeft();
@@ -312,8 +318,10 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
         }
 
         packet.tl = tLayer;
-        packet.x = txx1;
-        packet.y = tyy2;
+        packet.tileX = txx1;
+        packet.tileY = tyy2;
+        packet.posX = absoluteCoordinates->GetLeft();
+        packet.posY = absoluteCoordinates->GetTop();
         packet.box = boxIt1->first;
 
         TColPacket::ExtraDataDefinition extraData(&packet);
@@ -348,8 +356,10 @@ void ComponentCollisionManager::UpdateCheckTileCollision(
         for (int iter2 = 0; iter2 <= differenceY; iter2++) {
           tLayer = currentMap->GetTileLayerCollision(tx, ty, true);
           if (tLayer != NULL) {
-            packet.x = tx;
-            packet.y = ty;
+            packet.tileX = tx;
+            packet.tileY = ty;
+            packet.posX = absoluteCoordinates->GetLeft();
+            packet.posY = absoluteCoordinates->GetTop();
             packet.box = boxIt1->first;
             packet.tl = tLayer;
 
@@ -412,10 +422,10 @@ void CollisionGrid::UpdateBuckets(
     shape = primaryBox->GetWorldCoord();
     Rect r = (static_cast<const Rect *>(shape))->Round();
 
-	int left = r.GetLeft();
-	int right = r.GetRight();
-	int bottom = r.GetBottom();
-	int top = r.GetTop();
+    int left = r.GetLeft();
+    int right = r.GetRight();
+    int bottom = r.GetBottom();
+    int top = r.GetTop();
 
     hashes.insert((left / COLLISION_GRID_SIZE) +
                   ((top / COLLISION_GRID_SIZE) * mapWidthPixels));
