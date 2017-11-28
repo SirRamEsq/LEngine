@@ -91,6 +91,7 @@ class ComponentScript : public BaseComponent {
   void RenderObjectDelete(RenderableObject *obj);
 
   std::string scriptName;
+  std::string GetScriptName() const;
   static const std::string entityDeletedDescription;
 
   // Throws if script is already assigned

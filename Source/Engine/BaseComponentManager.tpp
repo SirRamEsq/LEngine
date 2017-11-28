@@ -125,6 +125,15 @@ T* BaseComponentManager_Impl<T>::GetComponent(EID id){
 }
 
 template <class T>
+const T* BaseComponentManager_Impl<T>::GetConstComponent(EID id) const{
+    auto i=componentList.find(id);
+    if(i!=componentList.end()){
+        return i->second.get();
+    }
+    return NULL;
+}
+
+template <class T>
 void BaseComponentManager_Impl<T>::AddComponent(std::unique_ptr<T> comp){
 	if(comp.get() == NULL){
 		return;	
