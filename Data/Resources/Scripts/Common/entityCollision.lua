@@ -1,22 +1,22 @@
 --[[
 --TO USE:
---Make sure type.C.WIDTH and HEIGHT are set before calling Init
+--Make sure class.C.WIDTH and HEIGHT are set before calling Init
 --
 --Can override the following functions before Init is called
---	type.OnEntityCollision
+--	class.OnEntityCollision
 --]]
 local container = {}
 
 function container.new(base)
-	local type = base or {}
+	local class = base or {}
 	local result
-	type.entityCollision = {}
-	type.entityCollision.primary = {}
-	type.entityCollision.primary.box = nil
-	type.entityCollision.primary.ID = 200
-	type.entityCollision.primary.order = 200
+	class.entityCollision = {}
+	class.entityCollision.primary = {}
+	class.entityCollision.primary.box = nil
+	class.entityCollision.primary.ID = 200
+	class.entityCollision.primary.order = 200
 
-	type.InitFunctions = type.InitFunctions or {}
+	class.InitFunctions = class.InitFunctions or {}
 
 	function printTable(t)
 		local retString = ""
@@ -26,42 +26,43 @@ function container.new(base)
 		return retString
 	end
 
+
 	function tileInit()
-		local eid = type.LEngineData.entityID
+		local eid = class.LEngineData.entityID
 		local collision = CPP.interface:GetCollisionComponent(eid)
 
-		CPP.interface:LogWarn(eid, tostring(eid) .. " EID")
-		CPP.interface:LogWarn(eid, "Type: " .. printTable(type) )
-		CPP.interface:LogWarn(eid, "Type.entityCollision: " .. printTable(type.entityCollision) )
-		CPP.interface:LogWarn(eid, "Type.UpdateFunctions: " .. printTable(type.UpdateFunctions) )
-		CPP.interface:LogWarn(eid, "Type.InitFunctions: " .. printTable(type.InitFunctions) )
+		--CPP.interface:LogWarn(eid, tostring(eid) .. " EID")
+		--CPP.interface:LogWarn(eid, "Type: " .. printTable(class) )
+		--CPP.interface:LogWarn(eid, "Type.entityCollision: " .. printTable(class.entityCollision) )
+		--CPP.interface:LogWarn(eid, "Type.UpdateFunctions: " .. printTable(class.UpdateFunctions) )
+		--CPP.interface:LogWarn(eid, "Type.InitFunctions: " .. printTable(class.InitFunctions) )
 		--Primary collision
-		type.entityCollision.primary.box = CPP.Rect(0, 0, type.C.WIDTH, type.C.HEIGHT)
-		local primaryBox = type.entityCollision.primary.box
-		local primaryID = type.entityCollision.primary.ID
-		local primaryOrder = type.entityCollision.primary.order
+		class.entityCollision.primary.box = CPP.Rect(0, 0, class.C.WIDTH, class.C.HEIGHT)
+		local primaryBox = class.entityCollision.primary.box
+		local primaryID = class.entityCollision.primary.ID
+		local primaryOrder = class.entityCollision.primary.order
 
 		collision:AddCollisionBox(primaryBox, primaryID, primaryOrder)
 		collision:CheckForEntities(primaryID)
 		collision:SetPrimaryCollisionBox(primaryID)
 	end
 
-	function type.OnTileCollision(packet)
+	function class.OnTileCollision(packet)
 		local position = CPP.interface:GetPositionComponent(eid)
 		local absolutePos = position:GetPositionWorld():Round()
 		local speed = position:GetMovement():Round()
-		type.tileCollision.OnTileCollision(packet, speed.x, speed.y, absolutePos.x, absolutePos.y)
+		class.tileCollision.OnTileCollision(packet, speed.x, speed.y, absolutePos.x, absolutePos.y)
 	end
 
-	function type.OnEntityCollision(entityID, packet)
-		local eid = type.LEngineData.entityID
-		CPP.interface:LogWarn(eid, tostring(eid) .. " Needs to have OnEntityCollision defined")
+	function class.OnEntityCollision(entityID, packet)
+		local eid = class.LEngineData.entityID
+		--CPP.interface:LogWarn(eid, tostring(eid) .. " Needs to have OnEntityCollision defined")
 	end
 
 	--Add to sequence of init functions to call
-	table.insert(type.InitFunctions, tileInit)
+	table.insert(class.InitFunctions, tileInit)
 
-	return type;
+	return class;
 end
 
 return container.new

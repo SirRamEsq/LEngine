@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<prefab>
+	<scripts>
+		<script name = "Common/fadeSecretLayers.lua"/>
+		<script name = "louie.lua"/>
+	</scripts>
+</prefab>

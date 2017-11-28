@@ -32,7 +32,7 @@ function NewYellowGrunt(baseclass)
 	yellowGrunt.cboxPrimary=nil;
 	local result=0;
 	--security hole here, user can just use '..' to go wherever they want
-	result, yellowGrunt.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
+	--result, yellowGrunt.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
 	result, yellowGrunt.timing    = pcall(loadfile(utilityPath .. "/timing.lua", _ENV))
 
 
@@ -85,12 +85,6 @@ function NewYellowGrunt(baseclass)
 		yellowGrunt.myColComp:SetName(yellowGrunt.LEngineData.name)
 		yellowGrunt.myColComp:SetType(yellowGrunt.LEngineData.objType);
 
-		yellowGrunt.collision.Init(yellowGrunt.WIDTH, yellowGrunt.HEIGHT, yellowGrunt.CPPInterface, yellowGrunt.myColComp);
-		yellowGrunt.collision.callbackFunctions.TileUp    = yellowGrunt.OnTileUp;
-		yellowGrunt.collision.callbackFunctions.TileDown  = yellowGrunt.OnTileDown;
-		yellowGrunt.collision.callbackFunctions.TileLeft  = yellowGrunt.OnTileLeft;
-		yellowGrunt.collision.callbackFunctions.TileRight = yellowGrunt.OnTileRight;
-
 		yellowGrunt.dir=yellowGrunt.LEngineData.InitializationTable.direction or "right"
 		if yellowGrunt.dir == "left" then yellowGrunt.DIRECTION=yellowGrunt.DIRECTION_LEFT else yellowGrunt.DIRECTION=yellowGrunt.DIRECTION_RIGHT end
 
@@ -140,7 +134,6 @@ function NewYellowGrunt(baseclass)
 
 		yellowGrunt.updateVec= CPP.Coord2df(xspd,yspd)
 		yellowGrunt.myPositionComp:SetMovement(yellowGrunt.updateVec);
-		yellowGrunt.collision.Update(xspd,yspd);
 		yellowGrunt.timing:Update();
 	end
 
@@ -148,6 +141,7 @@ function NewYellowGrunt(baseclass)
 		--CPPInterface:DeleteEntity(EID);
 	end
 
+	--[[
 	function yellowGrunt.OnTileCollision(packet)
 		local absoluteCoords=yellowGrunt.myPositionComp:GetPositionWorld();
 		yellowGrunt.collision.OnTileCollision(packet, yellowGrunt.xSpeed, yellowGrunt.ySpeed, absoluteCoords.x, absoluteCoords.y);
@@ -176,6 +170,7 @@ function NewYellowGrunt(baseclass)
 			yellowGrunt.ySpeed=0;
 		end
 	end
+	--]]
 
 	function yellowGrunt.OnLuaEvent(senderEID, eventString)
 	end

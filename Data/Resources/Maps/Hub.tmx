@@ -19238,10 +19238,7 @@
   <properties>
    <property name="_DEPTH" type="int" value="-10"/>
   </properties>
-  <object id="3" name="Player" x="82.3333" y="773.333" width="88.6667" height="57.6667">
-   <properties>
-    <property name="_SCRIPT" value="louie.lua"/>
-   </properties>
+  <object id="3" name="Player" type="louie.xml" x="82.3333" y="773.333" width="88.6667" height="57.6667">
   </object>
   <object id="4" name="CAMERA" x="99.3333" y="697.333" width="68.6667" height="41">
    <properties>

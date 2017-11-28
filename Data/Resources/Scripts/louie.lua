@@ -47,6 +47,9 @@ function container.NewLouie(baseclass)
 		louie.c.HEIGHT=32; --HEIGHT of object sprite
 		louie.c.SIDEJUMP_XSPD = 0.1
 
+		louie.C.WIDTH = louie.c.COL_WIDTH
+		louie.C.HEIGHT = louie.c.COL_HEIGHT
+
 		louie.c.GRAVITY=0.21875;
 		louie.c.SLOPE_GRAVITY=0.15
 		louie.c.JUMPHEIGHT=-6;
@@ -174,7 +177,7 @@ function container.NewLouie(baseclass)
 		louie.SoundCoin = "smw_coin.wav";
 	end
 
-	function louie.Initialize()
+	function louie.MainInitialize()
 		louie.InitVariables()
 
 		-----------------------
@@ -247,10 +250,6 @@ function container.NewLouie(baseclass)
 		louie.tileCollision.callbackFunctions.TileLeft  = louie.OnTileHorizontal;
 		louie.tileCollision.callbackFunctions.TileRight = louie.OnTileHorizontal
 
-		louie.secretCBox = CPP.Rect(8,8,1,1)
-		louie.secretCBoxID = 30
-		louie.CompCollision:AddCollisionBox(louie.secretCBox, louie.secretCBoxID, 0);
-		louie.CompCollision:CheckForTiles(louie.secretCBoxID);
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
 		louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, louie.entityCollision.primaryCollision.ID, 30)
@@ -265,22 +264,8 @@ function container.NewLouie(baseclass)
 
 		louie.currentMap = CPP.interface:GetMap()
 		louie.climb.LAYER = louie.currentMap:GetTileLayer(louie.climb.LAYER_NAME)
-		local secretLayers = CPP.interface:GetLayersWithProperty("isSecret", true)
-		if(secretLayers ~= nil) then
-			if(secretLayers:empty() == false)then
-				local secretLayer = secretLayers:at(0)
-				if(secretLayer ~= nil)then
-					local boxID = louie.secretCBoxID
-					louie.CompCollision:CheckForLayer(boxID,secretLayer,louie.OnSecretLayerTouch)
-				end
-			end
-		end
 	end
 
-	function louie.OnSecretLayerTouch(packet)
-		local layer = packet:GetLayer()
-		louie.secretLayer = fadeOut.FadeOut(layer)
-	end
 
 	function louie.OnKeyDown(keyname)
 		if(keyname == "cheat") then louie.InputJump() end
@@ -299,10 +284,7 @@ function container.NewLouie(baseclass)
 		end
 	end
 
-	function louie.Update()
-		if(louie.secretLayer ~= nil)then
-			louie.secretLayer = louie.secretLayer()
-		end
+	function louie.MainUpdate()
 		louie.SetCollisionBoxes()
 		louie.Climb()
 		louie.WallSlide()
@@ -1126,15 +1108,20 @@ function container.NewLouie(baseclass)
 		return false; --not hit
 	end
 
+	--[[
 	function louie.OnLuaEvent(senderEID, eventString)
 
 	end
+	]]--
 
 	louie.EntityInterface = {
 		IsSolid		= function ()		return true; end,
 		GetHealth = function ()			return louie.health; end,
 		Attack		= function (damage) return louie.Attacked(damage); end
 	}
+
+	table.insert(louie.InitFunctions, louie.MainInitialize)
+	table.insert(louie.UpdateFunctions, louie.MainUpdate)
 
 	return louie
 end

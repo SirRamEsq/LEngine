@@ -25072,10 +25072,7 @@
     <property name="tilesY" type="int" value="22"/>
    </properties>
   </object>
-  <object id="25" name="Player" gid="513" x="240" y="464" width="18" height="32">
-   <properties>
-    <property name="_SCRIPT" value="louie.lua"/>
-   </properties>
+  <object id="25" name="Player" type="louie.xml" gid="513" x="240" y="464" width="18" height="32">
   </object>
   <object id="26" gid="515" x="656" y="304" width="16" height="16">
    <properties>
