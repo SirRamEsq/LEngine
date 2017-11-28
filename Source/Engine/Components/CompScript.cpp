@@ -237,7 +237,15 @@ LuaRef ComponentScript::GetFunction(const std::string &fname) {
 void ComponentScript::RunFunction(const std::string &fname) {
   auto func = GetFunction(fname);
   if (!func.isNil()) {
+	  try{
     func();
+	  }catch(LuaException const &e){
+		std::stringstream ss;
+		ss << "Error Running function '" << fname << "'"
+		 << "\nIn script with name '" << scriptName << "'"
+		 << "\nwhat()" << e.what();
+		LOG_ERROR(ss.str());
+	  }
   }
 }
 
