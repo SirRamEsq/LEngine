@@ -202,7 +202,7 @@ function collision.GetHeightMapValue(absoluteX, tileCollisionPacket)
 	local boxid=tileCollisionPacket:GetID();
 	local hmap=tileCollisionPacket:GetHmap();
 	local HMAP_index_value= 0;
-	local tx=tileCollisionPacket:GetX();
+	local tx=tileCollisionPacket:GetTileX();
 
 	--First, figure out the x-coordinate of the heightmap value (height map index value)
 	if(boxid==collision.boxID.TILE_DOWN_R) then
