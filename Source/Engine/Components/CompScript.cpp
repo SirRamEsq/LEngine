@@ -30,7 +30,9 @@ ComponentScript::~ComponentScript() {
 
 bool ComponentScript::UsesScript(const std::string &scriptName) {
   auto script = K_ScriptMan.GetItem(scriptName);
-  if(script == NULL){return false;}
+  if (script == NULL) {
+    return false;
+  }
   return UsesScript(script);
 }
 bool ComponentScript::UsesScript(const RSC_Script *script) {
@@ -237,17 +239,19 @@ LuaRef ComponentScript::GetFunction(const std::string &fname) {
 void ComponentScript::RunFunction(const std::string &fname) {
   auto func = GetFunction(fname);
   if (!func.isNil()) {
-	  try{
-    func();
-	  }catch(LuaException const &e){
-		std::stringstream ss;
-		ss << "Error Running function '" << fname << "'"
-		 << "\nIn script with name '" << scriptName << "'"
-		 << "\nwhat()" << e.what();
-		LOG_ERROR(ss.str());
-	  }
+    try {
+      func();
+    } catch (LuaException const &e) {
+      std::stringstream ss;
+      ss << "Error Running function '" << fname << "'"
+         << "\nIn script with name '" << scriptName << "'"
+         << "\nwhat()" << e.what();
+      LOG_ERROR(ss.str());
+    }
   }
 }
+
+std::string ComponentScript::GetScriptName() const { return scriptName; }
 
 //////////////////////////
 // ComponentScriptManager//

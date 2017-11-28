@@ -85,6 +85,10 @@ function NewCamera(baseclass)
 		end
 	end
 
+	function camera.OnLuaEvent()
+
+	end
+
 	return camera;
 end
 

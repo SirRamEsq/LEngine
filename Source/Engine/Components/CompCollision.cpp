@@ -56,9 +56,6 @@ void ComponentCollision::SetPrimaryCollisionBox(int boxid) {
   if (cb != NULL) {
     cb->SetFlags((cb->Flags() | PRIMARY));
   } else {
-    std::stringstream ss;
-    ss << "Couldn't find box id: " << boxid;
-    LOG_INFO(ss.str());
     return;
   }
   OrderList();
@@ -68,11 +65,7 @@ void ComponentCollision::CheckForEntities(int boxid) {
   CollisionBox *cb = GetColBox(boxid);
   if (cb != NULL) {
     cb->SetFlags((cb->Flags() | ENT_CHECK));
-  } else {
-    std::stringstream ss;
-    ss << "Couldn't find box id: " << boxid;
-    LOG_INFO(ss.str());
-  }
+  } 
 }
 
 void ComponentCollision::CheckForTiles(int boxid) {
@@ -98,6 +91,10 @@ void ComponentCollision::Deactivate(int boxid) {
 CollisionBox *ComponentCollision::GetColBox(int boxid) {
   auto it = boxes.find(boxid);
   if (it == boxes.end()) {
+	std::stringstream ss;
+	ss << "Couldn't find boxid " << boxid;
+	
+	LOG_WARN(ss.str());
     return NULL;
   }
 

@@ -13,7 +13,7 @@ function container.new(base)
 	class.entityCollision = {}
 	class.entityCollision.primary = {}
 	class.entityCollision.primary.box = nil
-	class.entityCollision.primary.ID = 200
+	class.entityCollision.primary.ID = 0
 	class.entityCollision.primary.order = 200
 
 	class.InitFunctions = class.InitFunctions or {}
@@ -39,10 +39,11 @@ function container.new(base)
 		--Primary collision
 		class.entityCollision.primary.box = CPP.Rect(0, 0, class.C.WIDTH, class.C.HEIGHT)
 		local primaryBox = class.entityCollision.primary.box
-		local primaryID = class.entityCollision.primary.ID
 		local primaryOrder = class.entityCollision.primary.order
 
-		collision:AddCollisionBox(primaryBox, primaryID, primaryOrder)
+		class.entityCollision.primary.ID = collision:AddCollisionBox(primaryBox, primaryOrder)
+
+		local primaryID = class.entityCollision.primary.ID
 		collision:CheckForEntities(primaryID)
 		collision:SetPrimaryCollisionBox(primaryID)
 	end

@@ -41,7 +41,7 @@ function collision.Init(self, w, h, component, eid)
 	self.boxEntUp=nil;
 	self.boxEntDown=CPP.Rect(0, (h/2)+2, w,	h/2);
 
-	self.cComp:AddCollisionBox(boxPrimary, self.boxID.BOX_PRIME, 0);
+	self.boxID.BOX_PRIME = self.cComp:AddCollisionBox(boxPrimary, 0);
 	self.cComp:CheckForEntities(self.boxID.BOX_PRIME);
 	self.cComp:SetPrimaryCollisionBox(self.boxID.BOX_PRIME, false);
 

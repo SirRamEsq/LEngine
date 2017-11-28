@@ -65,6 +65,7 @@ class BaseComponentManager_Impl : public BaseComponentManager {
 
   bool HasComponent(EID id) final;
   virtual T *GetComponent(EID id);
+  virtual const T *GetConstComponent(EID id) const;
   bool IsActive(EID id) final;
   int GetComponentCount() final;
   int GetActiveComponentCount() final;

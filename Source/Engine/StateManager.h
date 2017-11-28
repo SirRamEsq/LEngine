@@ -79,6 +79,7 @@ class GameState {
 
   /// Get eid from data structure nameLookupEID
   const std::vector<EID> *GetEIDFromName(const std::string &name) const;
+  std::string GetScriptName(EID id) const;
 
   LuaInterface luaInterface;
   EventDispatcher eventDispatcher;

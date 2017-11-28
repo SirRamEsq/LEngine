@@ -78,11 +78,11 @@ local entity = baseclass or {}
 		entity.map = entity.CPPInterface:GetMap()
 		entity.tileLayer = entity.map:GetTileLayer(entity.tileLayerName)
 
-		entity.CompCollision:SetName(entity.LEngineData.name)
-		entity.CompCollision:SetType("")
-		entity.CompCollision:AddCollisionBox(CPP.Rect(0,0,entity.WIDTH, entity.HEIGHT), entity.cBoxID, 0)
-		entity.CompCollision:CheckForEntities(entity.cBoxID)
-		entity.CompCollision:SetPrimaryCollisionBox(entity.cBoxID)
+		local collision = entity.CompCollision
+		local box = CPP.Rect(0,0,entity.WIDTH, entity.HEIGHT)
+		entity.cBoxID = collision:AddCollisionBox(box, 0)
+		collision:CheckForEntities(entity.cBoxID)
+		collision:SetPrimaryCollisionBox(entity.cBoxID)
 
 		entity.SetSprite()
 	end

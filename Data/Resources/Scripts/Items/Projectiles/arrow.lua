@@ -79,7 +79,7 @@ function arrow.Initialize()
 	arrow.mySpriteComp:SetRotation(arrow.mySpriteID, 0);
 
 	arrow.cboxPrimary = CPP.Rect(arrow.CBOX_X, arrow.CBOX_Y, arrow.CBOX_W,	arrow.CBOX_H);
-	arrow.myColComp:AddCollisionBox(arrow.cboxPrimary, arrow.CBOX_PRIME_ID, 0);
+	arrow.CBOX_PRIME_ID = arrow.myColComp:AddCollisionBox(arrow.cboxPrimary, 0);
 	arrow.myColComp:CheckForEntities(arrow.CBOX_PRIME_ID);
 
 	arrow.T_CBOX_LEFT  = CPP.Rect(0,7,3,3);
@@ -92,8 +92,6 @@ function arrow.Initialize()
 	arrow.myColComp:CheckForEntities(arrow.T_CBOX_ID);
 
 	arrow.myColComp:SetPrimaryCollisionBox(arrow.CBOX_PRIME_ID, false);
-	arrow.myColComp:SetName(arrow.LEngineData.name)
-	arrow.myColComp:SetType(arrow.LEngineData.objType);
 
 	arrow.totalDistance=0;
 	--Allow tiled to overwrite;

@@ -166,7 +166,6 @@ function container.NewLouie(baseclass)
 		louie.entityCollision.grabCollision.timer.max=30
 		louie.entityCollision.grabCollision.timer.current=0
 
-
 		--Collision
 		--security hole here? user can just use '..' to go wherever they want
 		result, louie.tileCollision = pcall(loadfile(utilityPath .. "/tileCollisionSystemNew.lua", _ENV))

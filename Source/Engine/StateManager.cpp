@@ -582,6 +582,15 @@ void GameState::CreateNewEntities() {
   mEntitiesToCreate.clear();
 }
 
+std::string GameState::GetScriptName(EID id) const {
+  auto scriptComponent = comScriptMan.GetConstComponent(id);
+  if (scriptComponent == NULL) {
+    return "";
+  }
+
+  return scriptComponent->GetScriptName();
+}
+
 void GameState::DeleteMapLayer(TiledLayerGeneric *layer) {
   if (mCurrentMap.get() != NULL) {
     mCurrentMapRenderableLayers.erase(layer);

@@ -44,8 +44,7 @@ function NewChangeMap(baseclass)
 		--Collision setup--
 		-------------------
 		cMap.colbox = CPP.Rect(0, 0, cMap.sprWidth, cMap.sprHeight)
-		cMap.colboxID = 1
-		cMap.colComp:AddCollisionBox(cMap.colbox, cMap.colboxID, 0)
+		cMap.colboxID = cMap.colComp:AddCollisionBox(cMap.colbox, 0)
 		cMap.colComp:SetPrimaryCollisionBox(cMap.colboxID)
 		cMap.colComp:CheckForEntities(cMap.colboxID)
 	end

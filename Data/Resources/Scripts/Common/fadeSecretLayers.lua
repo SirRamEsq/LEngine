@@ -4,8 +4,6 @@
 --Can specify a property 'fadeOutProperty' to use as the property to search for
 --to find secret layers
 --
---uses collision box with id of 30
---
 --]]
 local result=0;
 local fadeOut = {}
@@ -16,7 +14,6 @@ result, functions = pcall(loadfile(utilityPath .. "/commonFunctions.lua", _ENV))
 local container = {}
 function container.NewFadeOut(baseclass)
 	local class = baseclass or {}
-	local boxID = 30
 
 	class.fadeSecretLayers = {}
 	class.fadeSecretLayers.fadingLayers = {}
@@ -47,14 +44,14 @@ function container.NewFadeOut(baseclass)
 			if(secretLayers:empty() == false)then
 				local box = CPP.Rect(x,y,1,1)
 				--Create collision box only when secret layers exist
-				collision:AddCollisionBox(box, boxID, 240);
-				collision:CheckForTiles(boxID);
+				t.boxID = collision:AddCollisionBox(box, 240);
+				collision:CheckForTiles(t.boxID);
 
 				local layerCount = secretLayers:size()
 				for i=0, layerCount-1 do
 					local secretLayer = secretLayers:at(i)
 					if(secretLayer ~= nil)then
-						collision:CheckForLayer(boxID, secretLayer, t.OnSecretLayerTouch)
+						collision:CheckForLayer(t.boxID, secretLayer, t.OnSecretLayerTouch)
 					end
 				end
 			end

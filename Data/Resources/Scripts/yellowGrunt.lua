@@ -82,9 +82,6 @@ function NewYellowGrunt(baseclass)
 		yellowGrunt.mySpriteComp:SetAnimation(yellowGrunt.mySpriteID, "Stand");
 		yellowGrunt.mySpriteComp:SetRotation(yellowGrunt.mySpriteID, 0);
 
-		yellowGrunt.myColComp:SetName(yellowGrunt.LEngineData.name)
-		yellowGrunt.myColComp:SetType(yellowGrunt.LEngineData.objType);
-
 		yellowGrunt.dir=yellowGrunt.LEngineData.InitializationTable.direction or "right"
 		if yellowGrunt.dir == "left" then yellowGrunt.DIRECTION=yellowGrunt.DIRECTION_LEFT else yellowGrunt.DIRECTION=yellowGrunt.DIRECTION_RIGHT end
 
