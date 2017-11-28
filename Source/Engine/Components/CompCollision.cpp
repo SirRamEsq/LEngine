@@ -19,7 +19,7 @@ RSC_Heightmap TColPacket::GetHmap() {
 
 ComponentCollision::ComponentCollision(EID id, ComponentPosition *pos,
                                        ComponentCollisionManager *manager)
-    : BaseComponent(id, manager), myPos(pos) {}
+    : mNextBoxID(0), BaseComponent(id, manager), myPos(pos) {}
 
 ComponentCollision::~ComponentCollision() { myPos = NULL; }
 
@@ -29,11 +29,15 @@ void ComponentCollisionManager::SetDependencies(ComponentPositionManager *pos) {
   dependencyPosition = pos;
 }
 
-void ComponentCollision::AddCollisionBox(const Shape *shape, int boxid,
-                                         int orderNum) {
+int ComponentCollision::AddCollisionBox(const Shape *shape, int orderNum) {
+  auto thisBoxID = mNextBoxID;
+  mNextBoxID++;
+
   boxes.insert(std::pair<int, CollisionBox>(
-      boxid, CollisionBox(orderNum, 0, shape, myPos)));
+      thisBoxID, CollisionBox(orderNum, 0, shape, myPos)));
   OrderList();
+
+  return thisBoxID;
 }
 
 void ComponentCollision::SetShape(int boxid, const Shape *shape) {
@@ -42,7 +46,7 @@ void ComponentCollision::SetShape(int boxid, const Shape *shape) {
     if (shape != NULL) {
       box->SetShape(shape);
     } else {
-      LOG_ERROR("ComponentCollision::SetShape passed null shape");
+      LOG_ERROR("ComponentCollision::SetShape passed NULL shape");
     }
   }
 }
@@ -152,8 +156,8 @@ void ComponentCollisionManager::SendCollisionEvent(
     const ComponentCollision &sender, const ComponentCollision &reciever,
     int recieverBoxID, Event::MSG mes) {
   EColPacket ePacket;
-  ePacket.name = sender.name;
-  ePacket.objType = sender.objType;
+  ePacket.name = "";//sender.name;
+  ePacket.objType = "";//sender.objType;
   ePacket.box = recieverBoxID;
 
   EColPacket::ExtraDataDefinition extraData(&ePacket);
@@ -289,8 +293,7 @@ void ComponentCollision::CheckForLayerLuaInterface(int boxid,
   CheckForLayer(boxid, tileLayer, funcWrapper);
 }
 
-void ComponentCollisionManager::UpdateCheckTileCollision(
-    RSC_Map *currentMap) {
+void ComponentCollisionManager::UpdateCheckTileCollision(RSC_Map *currentMap) {
   // Put event into smart pointer so that the same event can be reused (not
   // multiple events allocated and deallocated on the stack)
   // May want to change this behaviour at some point, as recievers of the event

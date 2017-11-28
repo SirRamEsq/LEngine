@@ -7,10 +7,12 @@ CollisionBox::CollisionBox(int order, uint8_t flags, const Shape *shape,
   mActive = true;
 
   SetShape(shape);
-  ASSERT(mShape.get() != NULL);
 }
 
 void CollisionBox::SetShape(const Shape *shape) {
+  if (shape == NULL) {
+    return;
+  }
   mShape.reset(shape->MakeCopy().release());
   mShapeToWorldCoords.reset(shape->MakeCopy().release());
 }
@@ -42,12 +44,18 @@ bool CollisionBox::operator<(const CollisionBox &rhs) const {
 const Shape *CollisionBox::GetWorldCoord() { return mShapeToWorldCoords.get(); }
 
 void CollisionBox::UpdateWorldCoord() {
+  if ((mShapeToWorldCoords.get() == NULL) or (mShape.get() == NULL)) {
+    return;
+  }
   auto wPos = mPos->GetPositionWorld();
   mShapeToWorldCoords->x = mShape->x + wPos.x;
   mShapeToWorldCoords->y = mShape->y + wPos.y;
 }
 
 CollisionResponse CollisionBox::Collides(const CollisionBox *box) {
+  if (mShapeToWorldCoords.get() == NULL) {
+    return CollisionResponse(0, 0, false);
+  }
   auto result = mShapeToWorldCoords->Contains(box->mShapeToWorldCoords.get());
   return result;
 }

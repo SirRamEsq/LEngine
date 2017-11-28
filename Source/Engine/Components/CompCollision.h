@@ -94,9 +94,10 @@ class ComponentCollision : public BaseComponent {
 
   void Update();
 
-  /// Add specified shape and id as a CollisionBox (should generate boxid
-  /// instead of passing?)
-  void AddCollisionBox(const Shape *shape, int boxid, int orderNum = 0);
+  /// Will create a collision box from a shape and return its id
+  /// \param shape The shape that acts as the collidable area (can be NULL)
+  /// \param orderNum The order in which the box is checked for collisions
+  int AddCollisionBox(const Shape *shape, int orderNum = 0);
   /**
    * Sets the primary CollisionBox
    * If the primary box fails, the rest will not be checked for a given entity
@@ -118,9 +119,6 @@ class ComponentCollision : public BaseComponent {
   void Activate(int boxid);
   void Deactivate(int boxid);
 
-  void SetName(std::string n) { name = n; }
-  void SetType(std::string t) { objType = t; }
-
   void SetShape(int boxid, const Shape *shape);
 
   void CheckForLayer(int boxid, TiledTileLayer *layer,
@@ -129,8 +127,6 @@ class ComponentCollision : public BaseComponent {
   void CheckForLayerLuaInterface(int boxid, TiledLayerGeneric *layer,
                                  luabridge::LuaRef func);
 
-  std::string name;
-  std::string objType;
   void *extraData;
 
  protected:
@@ -152,6 +148,8 @@ class ComponentCollision : public BaseComponent {
 
   /// dependency
   ComponentPosition *myPos;
+
+  int mNextBoxID;
 };
 
 // used to structure entity collisions

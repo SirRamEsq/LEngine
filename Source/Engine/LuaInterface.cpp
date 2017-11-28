@@ -1228,9 +1228,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("CheckForTiles", &ComponentCollision::CheckForTiles)
       .addFunction("SetShape", &ComponentCollision::SetShape)
       .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
-      .addFunction("SetName", &ComponentCollision::SetName)
-      .addFunction("SetType", &ComponentCollision::SetType)
-      .addFunction("SetType", &ComponentCollision::SetType)
       .addFunction("CheckForLayer", &ComponentCollision::CheckForLayerLuaInterface)
       .endClass()
 

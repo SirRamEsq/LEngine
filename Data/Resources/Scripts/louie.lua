@@ -206,9 +206,6 @@ function container.NewLouie(baseclass)
 		louie.CompSprite	= CPP.interface:GetSpriteComponent(EID);
 		louie.CompPosition  = CPP.interface:GetPositionComponent(EID);
 
-		louie.CompCollision:SetName(louie.name)
-		louie.CompCollision:SetType(louie.objType);
-
 		----------------
 		--Sprite setup--
 		----------------
@@ -252,7 +249,7 @@ function container.NewLouie(baseclass)
 
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
-		louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, louie.entityCollision.primaryCollision.ID, 30)
+		louie.entityCollision.primaryCollision.ID = louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, 30)
 		louie.CompCollision:CheckForEntities(louie.entityCollision.primaryCollision.ID)
 		louie.CompCollision:SetPrimaryCollisionBox(louie.entityCollision.primaryCollision.ID)
 
