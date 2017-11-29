@@ -106,15 +106,23 @@ function collision.Init(w, h, iface, component, eid)
 	local comp = collision.cComp
 
 	--Add boxes to Component and get IDs
-	boxID.TILE_DOWN_R = comp:AddCollisionBox(nil, coords.GROUND_ORDER)
-	boxID.TILE_DOWN_L = comp:AddCollisionBox(nil, coords.GROUND_ORDER)
+	boxID.TILE_DOWN_R = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_DOWN_R, coords.GROUND_ORDER)
 
-	boxID.TILE_LEFT_SHORT = comp:AddCollisionBox(nil, coords.LEFT_ORDER)
-	boxID.TILE_RIGHT_SHORT = comp:AddCollisionBox(nil, coords.RIGHT_ORDER)
+	boxID.TILE_DOWN_L = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_DOWN_L, coords.GROUND_ORDER)
 
-	boxID.TILE_LEFT = comp:AddCollisionBox(nil, coords.LEFT_ORDER)
-	boxID.TILE_RIGHT = comp:AddCollisionBox(nil, coords.RIGHT_ORDER)
-	boxID.TILE_UP = comp:AddCollisionBox(nil, coords.UP_ORDER)
+	boxID.TILE_LEFT_SHORT = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_LEFT_SHORT, coords.LEFT_ORDER)
+	boxID.TILE_RIGHT_SHORT = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_RIGHT_SHORT, coords.GROUND_ORDER)
+
+	boxID.TILE_LEFT = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_LEFT, coords.GROUND_ORDER)
+	boxID.TILE_RIGHT = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_RIGHT, coords.GROUND_ORDER)
+	boxID.TILE_UP = comp:AddCollisionBox(nil)
+	comp:SetOrder(boxID.TILE_UP, coords.GROUND_ORDER)
 
 	--Boxes are to the 'right', 'left', 'up', and 'down' in the absolute sense, not relative to rotation mode or motion
 	--Create Box Shapes

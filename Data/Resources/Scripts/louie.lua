@@ -248,7 +248,8 @@ function container.NewLouie(baseclass)
 
 		--Primary collision
 		louie.entityCollision.primaryCollision.box = CPP.Rect(0, 0, louie.c.COL_WIDTH, louie.c.COL_HEIGHT)
-		louie.entityCollision.primaryCollision.ID = louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box, 30)
+		louie.entityCollision.primaryCollision.ID = louie.CompCollision:AddCollisionBox(louie.entityCollision.primaryCollision.box)
+		louie.CompCollision:SetOrder(louie.entityCollision.primaryCollision.ID, 30)
 		louie.CompCollision:CheckForEntities(louie.entityCollision.primaryCollision.ID)
 		louie.CompCollision:SetPrimaryCollisionBox(louie.entityCollision.primaryCollision.ID)
 

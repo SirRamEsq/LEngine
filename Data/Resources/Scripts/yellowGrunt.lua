@@ -31,8 +31,6 @@ function NewYellowGrunt(baseclass)
 
 	yellowGrunt.cboxPrimary=nil;
 	local result=0;
-	--security hole here, user can just use '..' to go wherever they want
-	--result, yellowGrunt.collision = pcall(loadfile(utilityPath .. "/collisionSystem.lua", _ENV))
 	result, yellowGrunt.timing    = pcall(loadfile(utilityPath .. "/timing.lua", _ENV))
 
 
@@ -126,48 +124,8 @@ function NewYellowGrunt(baseclass)
 	end
 
 	function yellowGrunt.Update()
-		local xspd=0;
-		local yspd=1;
-
-		yellowGrunt.updateVec= CPP.Coord2df(xspd,yspd)
-		yellowGrunt.myPositionComp:SetMovement(yellowGrunt.updateVec);
 		yellowGrunt.timing:Update();
 	end
-
-	function yellowGrunt.OnEntityCollision(entityID, packet)
-		--CPPInterface:DeleteEntity(EID);
-	end
-
-	--[[
-	function yellowGrunt.OnTileCollision(packet)
-		local absoluteCoords=yellowGrunt.myPositionComp:GetPositionWorld();
-		yellowGrunt.collision.OnTileCollision(packet, yellowGrunt.xSpeed, yellowGrunt.ySpeed, absoluteCoords.x, absoluteCoords.y);
-	end
-
-	function yellowGrunt.OnTileDown(newPosition, newAngle)
-		--Update position
-		newPosition= yellowGrunt.myPositionComp:TranslateWorldToLocal(newPosition);
-		yellowGrunt.myPositionComp:SetPositionLocalY(newPosition.y);
-	end
-
-	function yellowGrunt.OnTileRight(newPosition)
-		newPosition= yellowGrunt.myPositionComp:TranslateWorldToLocal(newPosition);
-		yellowGrunt.myPositionComp:SetPositionLocalX(newPosition.x);
-	end
-
-	function yellowGrunt.OnTileLeft(newPosition)
-		newPosition= yellowGrunt.myPositionComp:TranslateWorldToLocal(newPosition);
-		yellowGrunt.myPositionComp:SetPositionLocalX(newPosition.x);
-	end
-
-	function yellowGrunt.OnTileUp(newPosition)
-		yellowGrunt.myPositionComp:TranslateWorldToLocal(newPosition);
-		yellowGrunt.myPositionComp:SetPositionLocalY(newPosition.y);
-		if (yellowGrunt.ySpeed<0) then
-			yellowGrunt.ySpeed=0;
-		end
-	end
-	--]]
 
 	function yellowGrunt.OnLuaEvent(senderEID, eventString)
 	end
