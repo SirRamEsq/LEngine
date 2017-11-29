@@ -39,7 +39,6 @@ function NewCamera(baseclass)
 		--local resolution = CPP.interface:GetResolution()
 		--camera.myCameraComp:SetViewport(CPP.Rect(0,0,resolution.x,resolution.y))
 
-		--Set parent for All Component Managers (That have been added thus far: position and script)
 		--This will ensure that the parent script will be updated before this script
 		--Therefore, the entity the camera is following will move before the camera does
 		--This will ensure that the camera will always follow an up-to-date position and not lag behind
@@ -53,7 +52,7 @@ function NewCamera(baseclass)
 		CPP.interface:EventLuaObserveEntity(camera.EID, camera.parentEID);
 
 		local map = CPP.interface:GetMap()
-		if(map == nil)then 
+		if(map == nil)then
 			CPP.interface:LogError(camera.EID, "Tried to get map from CPP.interface, map is nil");
 		end
 		camera.mapWidth = map:GetWidthPixels()
@@ -63,7 +62,7 @@ function NewCamera(baseclass)
 	function camera.Update()
 		if(camera.blockFollow) then
 			local parentPos = CPP.interface:EntityGetPositionWorld(camera.parentEID):Round()
-			local newPos = CPP.Coord2df(0,0);	
+			local newPos = CPP.Coord2df(0,0);
 
 			newPos.x = (math.floor(parentPos.x/camera.w) * camera.w)
 			newPos.y = (math.floor(parentPos.y/camera.h) * camera.h)
@@ -71,7 +70,7 @@ function NewCamera(baseclass)
 			camera.myPositionComp:SetPositionLocal(newPos)
 		else
 			local parentPos = CPP.interface:EntityGetPositionWorld(camera.parentEID):Round()
-			local newPos = CPP.Coord2df(0,0);	
+			local newPos = CPP.Coord2df(0,0);
 			--center camera on parent
 			newPos.x = parentPos.x + camera.localDefault.x
 			newPos.y = parentPos.y + camera.localDefault.y
@@ -80,7 +79,7 @@ function NewCamera(baseclass)
 			if(newPos.x < 0)then newPos.x = 0 end
 			if( (newPos.x + camera.w) > camera.mapWidth)then newPos.x = camera.mapWidth - camera.w end
 			if(newPos.y < 0)then newPos.y = 0 end
-			if( (newPos.y + camera.h) > camera.mapWidth)then newPos.y = camera.mapHeight - camera.h end
+			if( (newPos.y + camera.h) > camera.mapHeight)then newPos.y = camera.mapHeight - camera.h end
 
 
 			camera.myPositionComp:SetPositionWorld(newPos)
