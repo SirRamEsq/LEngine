@@ -1,8 +1,10 @@
+local result=0
+local functions = nil
+result, functions = pcall(loadfile(utilityPath .. "/commonFunctions.lua", _ENV))
+
 function NewCamera(baseclass)
 	local camera = baseclass or {}
 
-	--Ignore baseclass
-	camera= {};
 	camera.x= {};
 	camera.y= {};
 	camera.w=480;
@@ -83,10 +85,6 @@ function NewCamera(baseclass)
 
 			camera.myPositionComp:SetPositionWorld(newPos)
 		end
-	end
-
-	function camera.OnLuaEvent()
-
 	end
 
 	return camera;

@@ -24,7 +24,7 @@ function f.TableEmpty(t)
 end
 
 function f.PrintTableRecursive(t, recurseLevel)
-	local retString = ""
+	local retString = "    "
 	local recurse = recurseLevel or 0
 
 	if f.TableEmpty(t) then
@@ -46,7 +46,7 @@ function f.PrintTableRecursive(t, recurseLevel)
 		end
 		retString = retString .. "["..tostring(k).."] = "..tostring(v)
 		if(type(v) == "table")then
-			retString = retString .. PrintTableRecursive(v, recurse + 1)
+			retString = retString .. f.PrintTableRecursive(v, recurse + 1)
 		end
 	end
 	return retString
