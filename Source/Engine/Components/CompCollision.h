@@ -96,8 +96,8 @@ class ComponentCollision : public BaseComponent {
 
   /// Will create a collision box from a shape and return its id
   /// \param shape The shape that acts as the collidable area (can be NULL)
-  /// \param orderNum The order in which the box is checked for collisions
-  int AddCollisionBox(const Shape *shape, int orderNum = 0);
+  int AddCollisionBox(const Shape *shape);
+  void SetOrder(int boxid, int orderNum);
   /**
    * Sets the primary CollisionBox
    * If the primary box fails, the rest will not be checked for a given entity

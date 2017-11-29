@@ -69,3 +69,7 @@ bool CollisionBox::IsActive() const { return mActive; }
 void CollisionBox::SetFlags(uint8_t flags) { mFlags = flags; }
 
 uint8_t CollisionBox::Flags() { return mFlags; }
+
+void CollisionBox::SetOrder(int order){
+	mOrder = order;
+}

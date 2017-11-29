@@ -26,6 +26,8 @@ class CollisionBox {
   void SetFlags(uint8_t flags);
   uint8_t Flags();
 
+  void SetOrder(int order);
+
  private:
   uint8_t mFlags;
 

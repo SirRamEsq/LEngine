@@ -29,15 +29,23 @@ void ComponentCollisionManager::SetDependencies(ComponentPositionManager *pos) {
   dependencyPosition = pos;
 }
 
-int ComponentCollision::AddCollisionBox(const Shape *shape, int orderNum) {
+int ComponentCollision::AddCollisionBox(const Shape *shape) {
   auto thisBoxID = mNextBoxID;
   mNextBoxID++;
+  int defualtOrder = 0;
 
   boxes.insert(std::pair<int, CollisionBox>(
-      thisBoxID, CollisionBox(orderNum, 0, shape, myPos)));
+      thisBoxID, CollisionBox(defualtOrder, 0, shape, myPos)));
   OrderList();
 
   return thisBoxID;
+}
+
+void ComponentCollision::SetOrder(int boxid, int orderNum) {
+  auto box = GetColBox(boxid);
+  if (box != NULL) {
+    box->SetOrder(orderNum);
+  }
 }
 
 void ComponentCollision::SetShape(int boxid, const Shape *shape) {
@@ -65,7 +73,7 @@ void ComponentCollision::CheckForEntities(int boxid) {
   CollisionBox *cb = GetColBox(boxid);
   if (cb != NULL) {
     cb->SetFlags((cb->Flags() | ENT_CHECK));
-  } 
+  }
 }
 
 void ComponentCollision::CheckForTiles(int boxid) {
@@ -91,10 +99,10 @@ void ComponentCollision::Deactivate(int boxid) {
 CollisionBox *ComponentCollision::GetColBox(int boxid) {
   auto it = boxes.find(boxid);
   if (it == boxes.end()) {
-	std::stringstream ss;
-	ss << "Couldn't find boxid " << boxid;
-	
-	LOG_WARN(ss.str());
+    std::stringstream ss;
+    ss << "Couldn't find boxid " << boxid;
+
+    LOG_WARN(ss.str());
     return NULL;
   }
 
@@ -153,8 +161,8 @@ void ComponentCollisionManager::SendCollisionEvent(
     const ComponentCollision &sender, const ComponentCollision &reciever,
     int recieverBoxID, Event::MSG mes) {
   EColPacket ePacket;
-  ePacket.name = "";//sender.name;
-  ePacket.objType = "";//sender.objType;
+  ePacket.name = "";     // sender.name;
+  ePacket.objType = "";  // sender.objType;
   ePacket.box = recieverBoxID;
 
   EColPacket::ExtraDataDefinition extraData(&ePacket);
