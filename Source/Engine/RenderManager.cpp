@@ -138,7 +138,7 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   // Clear Background
   glClearColor(0.0, 0.0, 0.0, 1.0);
 
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Atatch buffer texture
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
@@ -253,7 +253,7 @@ void RenderManager::Render() {
   auto resolution = Resolution::GetResolution();
   glViewport(0, 0, resolution.x, resolution.y);
   glClearColor(0, 0, 0, 1);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   timeElapsed += 1;
 
   glBindBuffer(GL_UNIFORM_BUFFER, GlobalProgramUBO);
