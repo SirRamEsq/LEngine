@@ -20,9 +20,11 @@ layout(std140) uniform CameraData
 
 const float ONE_DEG_IN_RAD = ((2.0 * 3.14) / 360.0);   // 0.017444444
 
+uniform float depth;
+
 void main() {
 	//Fragment shader variables
-	texture_coordinates 	= texture;
+	texture_coordinates	= texture;
 	colorValue 		= color;
 	
 	//Calculate position
@@ -51,7 +53,7 @@ void main() {
 	  	vec4(0.0, 	0.0, 	  0.0, 	1.0)            //fourth column
 	);	
 
-	vec4 temp = vec4(position.x, position.y, 1.0, 1.0);
+	vec4 temp = vec4(position.x, position.y, depth, 1.0);
 	vec4 finalPosition =  (translate * rotationZ * scaling) * temp;
 
 	//Camera translation

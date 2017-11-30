@@ -81,7 +81,6 @@ function NewCamera(baseclass)
 			if(newPos.y < 0)then newPos.y = 0 end
 			if( (newPos.y + camera.h) > camera.mapHeight)then newPos.y = camera.mapHeight - camera.h end
 
-
 			camera.myPositionComp:SetPositionWorld(newPos)
 		end
 	end

@@ -22,6 +22,7 @@ layout(std140) uniform ProgramData
 };
 
 uniform vec4 layerColor;
+uniform float depth;
 
 void main() {
 	highp int timeValue = int(animation.x * time.x);
@@ -31,19 +32,14 @@ void main() {
 	vec2 texTemp;
 	texTemp.x = texture.x +  ( float(timeValue % maxFrame) * (16.0 / texture.z) );
 	texTemp.y = texture.y;
-	texture_coordinates 	= texTemp;
-	/*
-	vec4 layerColor;
-	layerColor.x = 1.0;
-	layerColor.y = 1.0;
-	layerColor.z = 1.0;
-	layerColor.w = 1.0;
-	*/
+
+	texture_coordinates= texTemp;
+
 	colorValue 		= layerColor;
 	
 	vec2 temp;
 	temp.x = position.x - cameraTranslation.x;
 	temp.y = position.y - cameraTranslation.y;
 
-	gl_Position = projMatrix * (vec4(temp, 1.0, 1.0));
+	gl_Position = projMatrix * (vec4(temp, depth, 1.0));
 }

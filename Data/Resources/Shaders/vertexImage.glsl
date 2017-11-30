@@ -15,17 +15,16 @@ layout(std140) uniform CameraData
     mat4 projMatrix;
 };
 
+uniform float depth;
+
 void main() {
 	//Fragment shader variables
-	texture_coordinates 	= texture;
+	texture_coordinates= texture;
 	colorValue 		= color;
 	
 	vec2 temp;
 	temp.x = position.x - cameraTranslation.x;
 	temp.y = position.y - cameraTranslation.y;
 
-	//temp.x = 0;
-	//temp.y = 823;
-
-	gl_Position = projMatrix * (vec4(temp, 1.0, 1.0));
+	gl_Position = projMatrix * (vec4(temp, depth, 1.0));
 }

@@ -86,10 +86,6 @@ function NewYellowGrunt(baseclass)
 		yellowGrunt.timing:SetAlarm(yellowGrunt.ALARM_NAME1, yellowGrunt.SHOOT_TIME, yellowGrunt.OnShoot, false) --don't repeat alarms
 		yellowGrunt.timing:SetAlarm(yellowGrunt.ALARM_NAME2, yellowGrunt.RELOAD_TIME, yellowGrunt.OnReload, false) --don't repeat alarms
 		yellowGrunt.timing:GetAlarm(yellowGrunt.ALARM_NAME2):Disable();
-
-		--Allow tiled to overwrite;
-		--if LEngine.InitializationTable.Solid== nil then LEngine.InitializationTable.Solid=true; end
-
 	end
 
 	function yellowGrunt.OnShoot()

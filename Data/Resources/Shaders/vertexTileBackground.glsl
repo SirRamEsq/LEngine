@@ -12,6 +12,8 @@ layout(std140) uniform CameraData{
     mat4 projMatrix;
 };
 
+uniform float depth;
+
 void main() {
 	//Fragment shader variables
 	texture_coordinates 	= texture;
@@ -21,5 +23,5 @@ void main() {
 	temp.x = position.x - cameraTranslation.x;
 	temp.y = position.y - cameraTranslation.y;
 
-	gl_Position = projMatrix * (vec4(temp, 1.0, 1.0));
+	gl_Position = projMatrix * (vec4(temp, depth, 1.0));
 }

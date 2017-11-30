@@ -81,7 +81,7 @@ class RenderCamera {
 
   /// frame buffer object id
   GLuint FBO;
-  /// Frame buffer Depth Buffer ID
+  /// Render buffer Depth Buffer ID
   GLuint mDepthRBO;
 
   bool mActive;
@@ -103,6 +103,8 @@ class RenderManager {
   void Render();
 
   void OrderOBJs();
+
+  std::string GL_GetError();
 
   void AssignCameraUBO(RSC_GLProgram *program);
 
@@ -144,7 +146,6 @@ class RenderManager {
   void RemoveObjectWorld(RenderableObjectWorld *obj);
 
  private:
-
   /**
    * Will Load default shaders for Tile, Light Sprite, Image if not already
    * loaded

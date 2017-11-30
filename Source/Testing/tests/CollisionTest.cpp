@@ -67,8 +67,7 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
   int boxw = 1;
   int boxh = 1;
   Rect box(0, 0, boxw, boxh);
-  int boxID = 0;
-  compCol->AddCollisionBox(&box, boxID);
+  int boxID = compCol->AddCollisionBox(&box);
   compCol->CheckForTiles(boxID);
   positionManager.Update();
 
@@ -206,8 +205,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
     compCol->SetEventCallbackFunction(CallbackFunction);
 
     Rect box(0, 0, 8, 8);
-    int boxID = 0;
-    compCol->AddCollisionBox(&box, boxID);
+    int boxID = compCol->AddCollisionBox(&box);
     compCol->CheckForEntities(boxID);
     compCol->SetPrimaryCollisionBox(boxID);
 
@@ -255,8 +253,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
       compCol->SetEventCallbackFunction(CallbackFunction);
 
       Rect box(0, 0, COLLISION_GRID_SIZE * 2, COLLISION_GRID_SIZE * 2);
-      int boxID = 0;
-      compCol->AddCollisionBox(&box, boxID);
+      int boxID = compCol->AddCollisionBox(&box);
       compCol->CheckForEntities(boxID);
       compCol->SetPrimaryCollisionBox(boxID);
 

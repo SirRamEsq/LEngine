@@ -5,8 +5,7 @@
 // RenderableSprite//
 ////////////////////
 
-RenderSpriteBatch::Sprite::Sprite(RenderManager *rm,
-                                  const std::string &texture,
+RenderSpriteBatch::Sprite::Sprite(RenderManager *rm, const std::string &texture,
                                   const unsigned int &w, const unsigned int &h,
                                   const MAP_DEPTH &d, const Vec2 &off)
     : textureName(texture),
@@ -85,6 +84,8 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   unsigned int vertexIndex = 0;
   RenderSpriteBatch::Sprite *sprite;
   program->Bind();
+  float depth = GetDepth();
+  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
   for (auto i = sprites.begin(); i != sprites.end(); i++) {
     // Create array of correct values
     // if sprite isn't active, do not add one from 'numberOfSprites' or add its
