@@ -6,6 +6,7 @@
 #include "../Resources/RSC_GLShader.h"
 
 #include <string>
+#include <map>
 
 class RenderCamera;
 class RenderManager;
@@ -73,6 +74,7 @@ class RenderableObject {
   Color4f color;
 
   TYPE type;
+  std::string GetTypeString();
 
  protected:
   virtual void AddToRenderManager() = 0;
@@ -84,6 +86,7 @@ class RenderableObject {
   Coord2df position;
 
   const RSC_GLProgram *shaderProgram;
+  static std::map<TYPE, std::string> TYPE_STR;
 };
 
 class RenderableObjectScreen : public RenderableObject {

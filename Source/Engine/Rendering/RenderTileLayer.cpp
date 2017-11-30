@@ -124,12 +124,6 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   float textureHeight = tiledSet->GetTexture()->GetHeight();
   GID gid;
 
-  Vec4 color;
-  color.x = 1.0f;
-  color.y = 1.0f;
-  color.z = 1.0f;
-  color.w = layer->GetAlpha();
-
   translate.x = x * 16;
   translate.y = y * 16;
 
@@ -203,7 +197,9 @@ void RenderTileLayer::Render(const RenderCamera *camera,
   colors[1] = 1.0;
   colors[2] = 1.0;
   colors[3] = layer->GetAlpha();
+  float depth = GetDepth();
     glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
+    glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
 
   glBindVertexArray(vao.GetVAOID());
   tiledSet->GetTexture()->Bind();

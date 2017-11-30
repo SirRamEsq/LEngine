@@ -22,6 +22,8 @@ class VAOWrapper {
 
   unsigned int GetMaxSize();
 
+  const unsigned int vboMaxSize;
+
  private:
   GLuint vboVertex;
   GLuint vboTexture;
@@ -35,8 +37,6 @@ class VAOWrapper {
   unsigned int vboVertexSize;
   unsigned int vboTextureSize;
   unsigned int vboColorSize;
-
-  const unsigned int vboMaxSize;
 
   // Each vertex point consists of 2 floats                                [X,Y]
   // (vec2)

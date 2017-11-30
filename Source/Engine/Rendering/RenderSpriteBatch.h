@@ -25,6 +25,8 @@ class VAOWrapperSprite {
 
   GLuint GetVAOID() { return vao; }
 
+  const unsigned int vboMaxSize;
+
  private:
   GLuint vboVertex;
   GLuint vboTranslate;
@@ -44,8 +46,6 @@ class VAOWrapperSprite {
   unsigned int vboColorSize;
   unsigned int vboTranslateSize;
   unsigned int vboScalingRotationSize;
-
-  const unsigned int vboMaxSize;
 
   // Each vertex point consists of 2 floats                                [X,Y]
   // (vec2)
@@ -101,8 +101,8 @@ class RenderSpriteBatch : public RenderableObjectWorld {
       Vec2 translate;
     };
 
-    Sprite(RenderManager *rm, const std::string &texture,
-           const unsigned int &w, const unsigned int &h, const MAP_DEPTH &d,
+    Sprite(RenderManager *rm, const std::string &texture, const unsigned int &w,
+           const unsigned int &h, const MAP_DEPTH &d,
            const Vec2 &off = Vec2(
                0.0f, 0.0f));  // Have class auto register with a sprite batch;
     ~Sprite();

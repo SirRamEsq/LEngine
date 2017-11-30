@@ -22,6 +22,8 @@ class VAOWrapperTile {
 
   GLuint GetVAOID() { return vao; }
 
+  const unsigned int vboMaxSize;
+
  private:
   GLuint vboVertex;
   GLuint vboTexture;
@@ -36,7 +38,6 @@ class VAOWrapperTile {
   unsigned int vboTextureSize;
   unsigned int vboAnimationSize;
 
-  const unsigned int vboMaxSize;
 
   // Each vertex point consists of 2 floats                                [X,Y]
   // (vec2)
