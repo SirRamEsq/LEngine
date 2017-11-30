@@ -63,7 +63,12 @@ inline void GridToCoord(int &x, int &y) {
 struct CollisionResponse {
   CollisionResponse(const Coord2df &vec, bool collided);
   CollisionResponse(float x, float y, bool collided);
-  Coord2df mVector;
+
+  /// The Surface normal of the collisoin
+  /// See
+  /// https://gamedev.stackexchange.com/questions/136073/how-does-one-calculate-the-surface-normal-in-2d-collisions?s=1|200.4160
+  Coord2df mVectorNormal;
+  /// Whether a collision exists
   bool mCollided;
 };
 

@@ -1,6 +1,13 @@
 #include "RenderableObject.h"
 #include "../RenderManager.h"
 
+std::map<RenderableObject::TYPE, std::string> RenderableObject::TYPE_STR = {
+    {RenderableObject::TYPE::Generic, "Generic"},
+    {RenderableObject::TYPE::Screen, "Screen"},
+    {RenderableObject::TYPE::World, "World"},
+    {RenderableObject::TYPE::SpriteBatch, "SpriteBatch"},
+    {RenderableObject::TYPE::TileLayer, "TileLayer"},
+    {RenderableObject::TYPE::Image, "Image"}};
 ////////////////////
 // RenderableObject//
 ////////////////////
@@ -26,6 +33,10 @@ void RenderableObject::Render(const RenderCamera *camera) {
 }
 
 void RenderableObject::Render() { Render(NULL, shaderProgram); }
+
+std::string RenderableObject::GetTypeString() {
+	return TYPE_STR[type];
+}
 
 //////////////////////////
 // RenderableObjectScreen//

@@ -2,10 +2,10 @@
 #include <memory>
 
 CollisionResponse::CollisionResponse(const Coord2df &vec, bool collided)
-    : mVector(vec), mCollided(collided) {}
+    : mVectorNormal(vec), mCollided(collided) {}
 
 CollisionResponse::CollisionResponse(float x, float y, bool collided)
-    : mVector(x, y), mCollided(collided) {}
+    : mVectorNormal(x, y), mCollided(collided) {}
 /////////
 // Shape//
 /////////
