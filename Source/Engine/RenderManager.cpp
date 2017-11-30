@@ -8,6 +8,8 @@
 
 #include "Resources/RSC_Map.h"
 
+#include <sstream>
+
 /*
  * Lighting Plan
  * Render opague geometry to Diffuse with depth buffer
@@ -107,8 +109,9 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
 
   // Will render texture upside down
   // NEED TO USE near and far CLIIPING SPACE!!!
-  Matrix4 projectionMat =
-      Matrix4::OrthoGraphicProjectionMatrix(Coord2df(view.w, view.h));
+  Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
+      //Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
+      Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
 
   float position[4];
   // Render Using only full integers for translation to get that pixel-perfect
