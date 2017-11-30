@@ -212,6 +212,16 @@ Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Coord2df &displaySize) {
                  2.0f / -displaySize.y, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
                  -1.0f, 1.0f, 0.0f, 1.0f);
 }
+Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Coord2df &displaySize,
+                                              int near, int far) {
+  auto n1 = -1.0f * (far / float(far - near));
+  auto n2 = -1.0f * ((far * near) / float(far - near));
+  auto fnDiff = (float(far - near));
+  auto n3 = -2.0f / (fnDiff);
+  return Matrix4(2.0f / displaySize.x, 0.0f, 0.0f, 0.0f, 0.0f,
+                 2.0f / -displaySize.y, 0.0f, 0.0f, 0.0f, 0.0f, n3, 0.0f, -1.0f,
+                 1.0f, 0.0f, 1.0f);
+}
 
 Matrix4 Matrix4::OrthoGraphicProjectionMatrix(const Rect &displayArea) {
   float rightSide = displayArea.GetRight();
