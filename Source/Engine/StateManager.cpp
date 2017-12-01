@@ -257,7 +257,7 @@ void GameState::SetMapHandleRenderableLayers(
             (i->second->mShaderGeo != "")) {
           auto shaderProgram = renderMan.LoadShaderProgram(
               i->second->mShaderVert, i->second->mShaderFrag);
-          renderMan.LinkShaderProgram(shaderProgram.get());
+          renderMan.SetupUniformBuffers(shaderProgram.get());
           std::stringstream programName;
           programName << i->second->mShaderFrag << i->second->mShaderVert;
 

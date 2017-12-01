@@ -49,7 +49,9 @@ class RSC_GLShader {
   GLuint GetShaderID() const { return mHandleID; }
 
   static std::string LoadShaderFromFile(const std::string &filepath);
-  static std::unique_ptr<RSC_GLShader> LoadResource(
+  static std::unique_ptr<RSC_GLShader> LoadResourceVertex(
+      const std::string &filePath);
+  static std::unique_ptr<RSC_GLShader> LoadResourceFragment(
       const std::string &filePath);
 
   bool IsUsable();
@@ -79,6 +81,7 @@ class RSC_GLProgram {
   ~RSC_GLProgram();
 
   bool AddShader(const RSC_GLShader *shader);
+  bool CopyShadersFromProgram(const RSC_GLProgram *shader);
   bool LinkProgram();
 
   GLuint GetHandle() const { return mHandleID; }
@@ -89,7 +92,7 @@ class RSC_GLProgram {
   // throws LEngineProgramException if name doesn't exist
   GLint GetUniformLocation(const std::string &name) const;
 
-  void DeleteShaders();
+  void DetatchShaders();
 
   void Bind() const;
 
@@ -108,6 +111,9 @@ class RSC_GLProgram {
 
   GLuint mHandleID;
   static GLuint currentlyBoundProgram;
+
+  /// true if program is linked
+  bool mLinked;
 };
 
 #endif  // L_ENGINE_GL_SHADER

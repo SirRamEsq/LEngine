@@ -61,9 +61,7 @@ VAOWrapper::VAOWrapper(const unsigned int &maxSize)
   glEnableVertexAttribArray(2);
 }
 
-unsigned int VAOWrapper::GetMaxSize(){
-	return vboMaxSize;
-}
+unsigned int VAOWrapper::GetMaxSize() { return vboMaxSize; }
 void VAOWrapper::UpdateGPU() {
   // upload vertexTexture array along with any changed data
   glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
@@ -202,7 +200,7 @@ void RenderImageLayer::Render(const RenderCamera *camera,
   glBindVertexArray(vao.GetVAOID());
   layer->GetTexture()->Bind();
   float depth = GetDepth();
-    glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
+  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
   glDrawArrays(GL_QUADS, 0, 4);
 
   // Restore old texture Wrap Settings

@@ -103,7 +103,6 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   Matrix4 modelViewMat = T * R * S;
 
   // Will render texture upside down
-  // NEED TO USE near and far CLIIPING SPACE!!!
   Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
       //Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
       Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
@@ -202,39 +201,19 @@ GLuint RenderManager::GlobalProgramUBO = 0;
 
 const GLuint RenderManager::CameraDataBindingIndex = 1;
 const GLuint RenderManager::ProgramDataBindingIndex = 2;
-const std::string RenderManager::defaultProgramTileName = "defaultProgramTile";
+const std::string RenderManager::defaultProgramTileName = "TileLayer.xml";
 const std::string RenderManager::defaultProgramSpriteName =
-    "defaultProgramSprite";
+    "SpriteBatch.xml";
 const std::string RenderManager::defaultProgramLightName =
-    "defaultProgramLight";
+    "Light.xml";
 const std::string RenderManager::defaultProgramImageName =
-    "defaultProgramImage";
+    "ImageLayer.xml";
 
 RenderManager::RenderManager() : timeElapsed(0) {
   LoadDefaultShaders();
 
   listChange = false;
   nextTextID = 0;
-
-  if ((defaultProgramTile == NULL) or (defaultProgramImage == NULL) or
-      (defaultProgramLight == NULL) or (defaultProgramSprite == NULL)) {
-    std::stringstream ss;
-    ss << "RenderManager Couldn't load all default shaders";
-    if (defaultProgramTile == NULL) {
-      ss << "\n -Tile shader program could not be loaded";
-    }
-    if (defaultProgramSprite == NULL) {
-      ss << "\n -Sprite shader program could not be loaded";
-    }
-    if (defaultProgramLight == NULL) {
-      ss << "\n -Light shader program could not be loaded";
-    }
-    if (defaultProgramImage == NULL) {
-      ss << "\n -Image shader program could not be loaded";
-    }
-    LOG_FATAL(ss.str());
-    throw LEngineException(ss.str());
-  }
 }
 
 void RenderManager::OrderOBJs() {
@@ -422,13 +401,13 @@ void RenderManager::AddObjectWorld(RenderableObjectWorld *obj) {
   // Set Correct Shader
   if (obj->GetShaderProgram() == NULL) {
     if (obj->type == RenderableObject::TYPE::SpriteBatch) {
-      obj->SetShaderProgram(defaultProgramSprite);
+      obj->SetShaderProgram(&defaultProgramSprite);
     }
     if (obj->type == RenderableObject::TYPE::TileLayer) {
-      obj->SetShaderProgram(defaultProgramTile);
+      obj->SetShaderProgram(&defaultProgramTile);
     }
     if (obj->type == RenderableObject::TYPE::Image) {
-      obj->SetShaderProgram(defaultProgramImage);
+      obj->SetShaderProgram(&defaultProgramImage);
     }
   }
 }
@@ -595,7 +574,7 @@ std::unique_ptr<RSC_GLProgram> RenderManager::LoadShaderProgram(
   return program;
 }
 
-void RenderManager::LinkShaderProgram(RSC_GLProgram *program) {
+void RenderManager::SetupUniformBuffers(RSC_GLProgram *program) {
   try {
     GLuint programHandle = program->GetHandle();
     GLuint programUniformBlockHandle =
@@ -660,6 +639,39 @@ void RenderManager::LoadDefaultShaders() {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
   }
 
+  auto name = defaultProgramTileName;
+  auto shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
+  if(shaderProgram != NULL){
+	defaultProgramTile.CopyShadersFromProgram(shaderProgram);
+	SetupUniformBuffers(&defaultProgramTile);
+  }
+
+  name = defaultProgramImageName;
+  shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
+  if(shaderProgram != NULL){
+	defaultProgramImage.CopyShadersFromProgram(shaderProgram);
+	SetupUniformBuffers(&defaultProgramImage);
+  }
+
+  name = defaultProgramSpriteName;
+  shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
+  if(shaderProgram != NULL){
+	defaultProgramSprite.CopyShadersFromProgram(shaderProgram);
+	SetupUniformBuffers(&defaultProgramSprite);
+  }
+
+  /*
+  name = defaultProgramLightName;
+  shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
+  if(shaderProgram != NULL){
+	defaultProgramLight.CopyShadersFromProgram(shaderProgram);
+	SetupUniformBuffers(&defaultProgramLight);
+  }
+
+  */
+
+  /*
+  /// \TODO implment shader program re use here 
   defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
   defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
   defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
@@ -729,4 +741,5 @@ void RenderManager::LoadDefaultShaders() {
 
     defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
   }
+  */
 }

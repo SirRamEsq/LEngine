@@ -117,7 +117,7 @@ class RenderManager {
 
   std::unique_ptr<RSC_GLProgram> LoadShaderProgram(
       const std::string &vertexName, const std::string &fragName);
-  void LinkShaderProgram(RSC_GLProgram *program);
+  void SetupUniformBuffers(RSC_GLProgram *program);
 
  protected:
   /**
@@ -166,10 +166,10 @@ class RenderManager {
   static const std::string defaultProgramLightName;
   static const std::string defaultProgramImageName;
 
-  const RSC_GLProgram *defaultProgramTile;
-  const RSC_GLProgram *defaultProgramSprite;
-  const RSC_GLProgram *defaultProgramLight;
-  const RSC_GLProgram *defaultProgramImage;
+  RSC_GLProgram defaultProgramTile;
+  RSC_GLProgram defaultProgramSprite;
+  RSC_GLProgram defaultProgramLight;
+  RSC_GLProgram defaultProgramImage;
 
   static GLuint GlobalCameraUBO;
   static const GLuint CameraDataBindingIndex;
