@@ -148,6 +148,8 @@ void Kernel::Inst(int argc, char *argv[]) {
   rscMapMan.SetLoadFunction(&RSC_MapImpl::LoadResource);
   rscFontMan.SetLoadFunction(&RSC_Font::LoadResource);
   rscPrefabMan.SetLoadFunction(&RSC_Prefab::LoadResource);
+  rscShaderMan.SetLoadFunction(&RSC_GLShader::LoadResource);
+  rscShaderProgramMan.SetLoadFunction(&RSC_GLProgram::LoadResource);
 
   rscTexMan.SetLog(log);
   rscSpriteMan.SetLog(log);

@@ -27,7 +27,10 @@ std::string RSC_GLShader::LoadShaderFromFile(const std::string &filepath) {
   }
 }
 
-RSC_GLShader::RSC_GLShader(std::string glslCode, L_GL_SHADER_TYPE type) {
+std::unique_ptr<RSC_GLShader> RSC_GLShader::LoadResource(
+    const std::string &filePath) {}
+
+RSC_GLShader::RSC_GLShader(const std::string &glslCode, L_GL_SHADER_TYPE type) {
   mUsable = false;
 
   // New shader ID
@@ -110,6 +113,16 @@ RSC_GLProgram::RSC_GLProgram() {
   mShaderFragment = NULL;
   mShaderGeometry = NULL;
   mShaderVertex = NULL;
+}
+RSC_GLProgram::RSC_GLProgram(const RSC_GLProgram *r) {
+  mHandleID = glCreateProgram();
+  mShaderVertex = r->mShaderVertex;
+  mShaderFragment = r->mShaderFragment;
+  mShaderGeometry = r->mShaderGeometry;
+
+  AddShader(mShaderVertex);
+  AddShader(mShaderFragment);
+  LinkProgram();
 }
 RSC_GLProgram::~RSC_GLProgram() {
   glDeleteProgram(mHandleID);
@@ -211,7 +224,7 @@ void RSC_GLProgram::Bind() const {
   }
 }
 
-GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string &name) const {
+GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string &name) {
   GLuint returnVal = glGetUniformBlockIndex(mHandleID, name.c_str());
   if (returnVal == GL_INVALID_INDEX) {
     std::stringstream ss;
@@ -241,3 +254,62 @@ void RSC_GLProgram::BindNULL() {
   currentlyBoundProgram = 0;
 }
 GLuint RSC_GLProgram::GetBoundProgram() { return currentlyBoundProgram; }
+
+std::unique_ptr<RSC_GLProgram> RSC_GLProgram::LoadResourceFromXML(
+    const std::string &xml) {
+  const RSC_GLShader *shaders[2];
+  try {
+    using namespace rapidxml;
+    xml_document<> doc;  // character type defaults to char
+    doc.parse<0>((char *)(xml.c_str()));
+
+    // Find Specific Node
+    xml_node<> *node = doc.first_node("prefab");
+    xml_node<> *nodeVertex = node->first_node("vertex");
+    // xml_node<> *nodeGeometry = node->first_node("geometry");
+    xml_node<> *nodeFragment = node->first_node("fragment");
+
+    if (nodeVertex != NULL) {
+      std::string shaderName = nodeVertex->first_attribute("path")->value();
+      auto shader = K_ShaderMan.GetLoadItem(shaderName, shaderName);
+      shaders[0] = shader;
+    }
+    if (nodeFragment != NULL) {
+      std::string shaderName = nodeFragment->first_attribute("path")->value();
+      auto shader = K_ShaderMan.GetLoadItem(shaderName, shaderName);
+      shaders[1] = shader;
+    }
+
+  } catch (rapidxml::parse_error &e) {
+    LOG_ERROR(e.what());
+  }
+  auto program = std::make_unique<RSC_GLProgram>();
+
+  program->AddShader(shaders[0]);
+  program->AddShader(shaders[1]);
+  program->LinkProgram();
+
+  return program;
+}
+
+std::unique_ptr<RSC_GLProgram> RSC_GLProgram::LoadResource(
+    const std::string &filePath) {
+  std::unique_ptr<RSC_GLProgram> program = NULL;
+  try {
+    std::string fullPath = "Resources/ShaderPrograms/" + filePath;
+    auto data = LoadGenericFile(fullPath);
+    if (data.get()->GetData() == NULL) {
+      std::stringstream ss;
+      ss << "GLProgram " << fullPath << " couldn't be found.";
+      LOG_ERROR(ss.str());
+      return NULL;
+    }
+    std::string xml(data->GetData(), data->length);
+    program = RSC_GLProgram::LoadResourceFromXML(xml);
+  } catch (LEngineFileException e) {
+    LOG_INFO(e.what());
+    throw e;
+  }
+
+  return program;
+}

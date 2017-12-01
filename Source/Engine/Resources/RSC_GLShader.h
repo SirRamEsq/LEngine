@@ -42,13 +42,15 @@ enum L_GL_SHADER_TYPE {
 // Will automatically allocate, compile, and free opengl Shader memory
 class RSC_GLShader {
  public:
-  RSC_GLShader(std::string filepath, L_GL_SHADER_TYPE type);
+  RSC_GLShader(const std::string &glslCode, L_GL_SHADER_TYPE type);
   ~RSC_GLShader();
 
   L_GL_SHADER_TYPE GetShaderType() const { return mShaderType; }
   GLuint GetShaderID() const { return mHandleID; }
 
   static std::string LoadShaderFromFile(const std::string &filepath);
+  static std::unique_ptr<RSC_GLShader> LoadResource(
+      const std::string &filePath);
 
   bool IsUsable();
 
@@ -59,10 +61,21 @@ class RSC_GLShader {
   bool mUsable;
 };
 
-// This class owns nothing
+/**
+ * This class owns nothing
+ * Class can be used with GenericContainer like other resources
+ * Uniform locations are not const functions, however, so grabbing
+ * a program from the Kernel GenericContainer will not allow you to set uniforms
+ * instead, copy the program given to you from the kernel and set up uniforms on
+ * that
+ *
+ * Long story short: If you're using uniforms, COPY the shared
+ * (GenericContainer) program
+ */
 class RSC_GLProgram {
  public:
   RSC_GLProgram();
+  RSC_GLProgram(const RSC_GLProgram *r);
   ~RSC_GLProgram();
 
   bool AddShader(const RSC_GLShader *shader);
@@ -71,7 +84,7 @@ class RSC_GLProgram {
   GLuint GetHandle() const { return mHandleID; }
 
   // throws LEngineProgramException if name doesn't exist
-  GLuint GetUniformBlockHandle(const std::string &name) const;
+  GLuint GetUniformBlockHandle(const std::string &name);
 
   // throws LEngineProgramException if name doesn't exist
   GLint GetUniformLocation(const std::string &name) const;
@@ -82,6 +95,11 @@ class RSC_GLProgram {
 
   static void BindNULL();
   static GLuint GetBoundProgram();
+
+  static std::unique_ptr<RSC_GLProgram> LoadResource(
+      const std::string &filePath);
+  static std::unique_ptr<RSC_GLProgram> LoadResourceFromXML(
+      const std::string &xml);
 
  private:
   const RSC_GLShader *mShaderFragment;
