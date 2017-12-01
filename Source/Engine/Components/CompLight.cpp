@@ -1,21 +1,6 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
-///////////////
-// LightSource//
-///////////////
-
-LightSource::LightSource(const float &iStart, const float &iEnd,
-                         const float &rad, const float &n, const Vec2 &off)
-    : intensityStart(iStart),
-      intensityEnd(iEnd),
-      radius(rad),
-      noise(n),
-      offset(off) {
-  render = true;
-  radius = 150;
-}
-
 //////////////////
 // ComponentLight//
 //////////////////
@@ -24,66 +9,16 @@ ComponentLight::ComponentLight(EID id, ComponentPosition *pos,
                                ComponentLightManager *manager)
     : BaseComponent(id, manager) {
   myPos = pos;
-  numberOfLoadedLights = 0;
-
-  // just for testing sake;
-  NewLightSource(1.0f, 0.1f, 5.0f);
+  mLastLightID = 0;
 }
 ComponentLight::~ComponentLight() {}
 
-bool ComponentLight::LightExists(const int &id) {
-  return id < numberOfLoadedLights;
+bool ComponentLight::LightExists(int id) {
+  auto light = mLights.find(id);
+  return (light != mLights.end());
 }
 
 void ComponentLight::Update() {}
-/*
-void ComponentLight::Render(const Rect& drawArea){
-    RSC_Texture* texture=K_TextureMan.GetItem("SpotLight.png");
-    if(texture==NULL){K_Log.Write("CARP"); return;}
-    //texture->BlitArea(Rect(32,0,texture->GetWidth(),texture->GetHeight()),
-L_ORIGIN_CENTER);
-    texture->Bind();
-
-    float radius=128;
-    Coord2d pos=myPos->GetPositionWorldInt();
-    pos.x -= drawArea.x;
-    pos.y -= drawArea.y;
-    if( (pos.x<0) or (pos.y<0) or (pos.x>drawArea.GetRight()) or
-(pos.y>drawArea.GetBottom()) ){
-        return;
-    }
-    //Use shader here! :D
-
-    Rect area(0,0,texture->GetWidth(),texture->GetHeight());
-    area.heightTruncation=false;
-    float Left=     (float)area.GetLeft()   / (float)texture->GetWidth();
-    float Right=    (float)area.GetRight()  / (float)texture->GetWidth();
-    float Top=      (float)area.GetTop()    / (float)texture->GetHeight();
-    float Bottom=   (float)area.GetBottom() / (float)texture->GetHeight();
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(Left,  Top);		glVertex3i(-radius + pos.x,
--radius + pos.y,      0);
-        glTexCoord2f(Right, Top);	    glVertex3i( radius + pos.x,
--radius + pos.y,      0);
-        glTexCoord2f(Right, Bottom);	glVertex3i( radius + pos.x,   radius
-+ pos.y,      0);
-        glTexCoord2f(Left,  Bottom);	glVertex3i(-radius + pos.x,   radius
-+ pos.y,      0);
-    glEnd();
-}*/
-
-int ComponentLight::NewLightSource(const float &intensityStart,
-                                   const float &intensityEnd, const float &rad,
-                                   const float &noise, const Vec2 &offset) {
-  LightSource light(intensityStart, intensityEnd, rad, noise, offset);
-  lightSources.push_back(light);
-
-  int returnValue = numberOfLoadedLights;
-  numberOfLoadedLights++;
-
-  return returnValue;
-}
 
 //////////////////////////
 // ComponentLightManager//
@@ -92,7 +27,6 @@ int ComponentLight::NewLightSource(const float &intensityStart,
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
     : BaseComponentManager_Impl(e), vao(MAX_LIGHTS) {
   glGenFramebuffers(1, &FBO);
-  BuildVAOFirst();
 }
 
 void ComponentLightManager::Update() {
@@ -112,8 +46,10 @@ void ComponentLightManager::Update() {
 void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
                                    RSC_Texture *textureDestination,
                                    const RSC_GLProgram *shaderProgram) {
+
   // Set framebuffer to clear destination Texture
   return;
+  /*
   RSC_GLProgram::BindNULL();
   RSC_Texture::BindNull();
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -166,6 +102,7 @@ void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
   GLuint attachments[1] = {GL_COLOR_ATTACHMENT0};
   glDrawBuffers(1, attachments);*/
 
+  /*
   glBindVertexArray(vao.GetVAOID());
   glDrawArrays(GL_QUADS, 0, numberOfLights * 4);
 
@@ -184,57 +121,11 @@ void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
   RSC_Texture::BindNull();
   glActiveTexture(GL_TEXTURE0);
   RSC_Texture::BindNull();
+  */
 }
 
-void ComponentLightManager::BuildVAOFirst() {
-  // Sets up texture coordinates (and currently color)
-  unsigned int vertex = 0;
-  for (int i = 0; i < MAX_LIGHTS; i++) {
-    // TopLeft
-    vao.GetTextureArray()[vertex].x = 0.0f;
-    vao.GetTextureArray()[vertex].y = 0.0f;
-
-    // TopRight
-    vao.GetTextureArray()[vertex + 1].x = 1.0f;
-    vao.GetTextureArray()[vertex + 1].y = 0.0f;
-
-    // BottomRight
-    vao.GetTextureArray()[vertex + 2].x = 1.0f;
-    vao.GetTextureArray()[vertex + 2].y = 1.0f;
-
-    // BottomLeft
-    vao.GetTextureArray()[vertex + 3].x = 0.0f;
-    vao.GetTextureArray()[vertex + 3].y = 1.0f;
-
-    float colorR = 1.0f;
-    float colorG = 1.0f;
-    float colorB = 1.0f;
-    float colorA = 1.0f;
-    // Color
-    vao.GetColorArray()[vertex].x = colorR;
-    vao.GetColorArray()[vertex].y = colorG;
-    vao.GetColorArray()[vertex].z = colorB;
-    vao.GetColorArray()[vertex].w = colorA;
-
-    vao.GetColorArray()[vertex + 1].x = colorR;
-    vao.GetColorArray()[vertex + 1].y = colorG;
-    vao.GetColorArray()[vertex + 1].z = colorB;
-    vao.GetColorArray()[vertex + 1].w = colorA;
-
-    vao.GetColorArray()[vertex + 2].x = colorR;
-    vao.GetColorArray()[vertex + 2].y = colorG;
-    vao.GetColorArray()[vertex + 2].z = colorB;
-    vao.GetColorArray()[vertex + 2].w = colorA;
-
-    vao.GetColorArray()[vertex + 3].x = colorR;
-    vao.GetColorArray()[vertex + 3].y = colorG;
-    vao.GetColorArray()[vertex + 3].z = colorB;
-    vao.GetColorArray()[vertex + 3].w = colorA;
-
-    vertex += 4;
-  }
-}
 void ComponentLightManager::BuildVAO() {
+	/*
   unsigned int vertex = 0;
   unsigned int lightCount = 0;
 
@@ -266,6 +157,7 @@ void ComponentLightManager::BuildVAO() {
 
   numberOfLights = lightCount;
   vao.UpdateGPU();
+  */
 }
 
 std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(

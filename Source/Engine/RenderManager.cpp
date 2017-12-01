@@ -15,7 +15,7 @@
  * Render opague geometry to Diffuse with depth buffer
  * Render Lights on diffuse to final texture
  * 	Lights the are behind a fragment do not affect the fragment
- * 	Lights that have the same depth as a fragment are blocked by the fragment
+ * 	Lights that strike a fragment in the 'block range' will be blocked
  * 	Lights that are in front of a fragment affect the fragment
  *
  * Render transparent geometry to final texture
@@ -40,11 +40,6 @@ RenderCamera::RenderCamera(RenderManager *rm, Rect viewPort)
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-  // render buffers are a good choice when not intending on sampling from the
-  // data
-  // the depth buffer is only for the framebuffer, it won't be sampled
-  // externally (From the cpu)
-  // only the color will be sampled externally
   glGenRenderbuffers(1, &mDepthRBO);
   glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w,

@@ -9,33 +9,14 @@
 #include "../Resources/RSC_GLShader.h"
 #include "../Resources/RSC_Texture.h"
 #include "../glslHelper.h"
+
+#include "lights/Light.h"
 #include "CompPosition.h"
 
-#define MAX_LIGHTS 256
+#define MAX_LIGHTS 64
 
 // forward declare
 class ComponentLightManager;
-
-class LightSource {
- public:
-  LightSource(const float &iStart, const float &iEnd, const float &rad,
-              const float &n, const Vec2 &off);
-  // How far the light reaches
-  float radius;
-
-  // Value between 0.0f and 1.0f
-  float intensityStart;
-  float intensityEnd;
-
-  // Light flickering value
-  float noise;
-
-  // Whether or not light is rendered
-  bool render;
-
-  // Offset from center position of entity
-  Vec2 offset;
-};
 
 class ComponentLight : public BaseComponent {
   friend class ComponentLightManager;
@@ -45,18 +26,19 @@ class ComponentLight : public BaseComponent {
                  ComponentLightManager *manager);
   ~ComponentLight();
 
-  bool LightExists(const int &id);
+  /// Returns true if light with id exists
+  bool LightExists(int id);
+
+  /// Adds a light, takes ownership of the light, returns an index referring to
+  /// the light
+  int AddLight(std::unique_ptr<Light> light);
 
   void Update();
 
-  int NewLightSource(const float &intensityStart, const float &intensityEnd,
-                     const float &rad, const float &noise = 0.5,
-                     const Vec2 &offset = Vec2(0, 0));
-
  protected:
   ComponentPosition *myPos;
-  int numberOfLoadedLights;
-  std::vector<LightSource> lightSources;
+  int mLastLightID;
+  std::map<int, std::unique_ptr<Light>> mLights;
 };
 
 class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
@@ -71,10 +53,6 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
               const RSC_GLProgram *shaderProgram);
 
   void BuildVAO();
-
-  // Is only called once, used to set data that won't change (in this case,
-  // texture coordinates)
-  void BuildVAOFirst();
 
  private:
   GLuint FBO;  // frame buffer object id
