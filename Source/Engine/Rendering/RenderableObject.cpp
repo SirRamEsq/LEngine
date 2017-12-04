@@ -28,7 +28,6 @@ bool RenderableObject::isTransparent(){
 
 void RenderableObject::SetDepth(const int &i) {
   depth = i;
-  renderManager->OrderOBJs();
 }
 
 int RenderableObject::GetDepth() { return depth; }

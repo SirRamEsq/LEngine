@@ -219,11 +219,18 @@ RenderManager::RenderManager() : timeElapsed(0) {
   nextTextID = 0;
 }
 
-void RenderManager::OrderOBJs() {
-  // Negative Depth is closer to the screen
-  objectsScreen.sort(&OrderBackToFront);
-  objectsWorld.sort(&OrderFrontToBack);
-  listChange = false;
+void RenderManager::ProcessDrawCall(RenderableObject *obj,
+                                    RenderCamera *camera) {
+  obj->Render(camera);
+#ifdef DEBUG_MODE
+  auto GLerror = GL_GetError();
+  if (GLerror != "") {
+    std::stringstream ss;
+    ss << "GL Error '" << GLerror << "' Occured when rendering a "
+       << obj->GetTypeString();
+    LOG_ERROR(ss.str());
+  }
+#endif
 }
 
 void RenderManager::Render() {
@@ -242,12 +249,6 @@ void RenderManager::Render() {
   glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float) * 4), &values);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-  /*
-  if (listChange) {
-    OrderOBJs();  // Sort by Depth
-  }
-  */
-
   std::vector<RenderableObjectWorld *> worldOpaque;
   std::vector<RenderableObjectWorld *> worldTransparent;
   for (auto i = objectsWorld.begin(); i != objectsWorld.end(); i++) {
@@ -260,13 +261,9 @@ void RenderManager::Render() {
     }
   }
 
+  std::sort(worldOpaque.begin(), worldOpaque.end(), &OrderFrontToBack);
   std::sort(worldTransparent.begin(), worldTransparent.end(),
             &OrderBackToFront);
-  std::sort(worldOpaque.begin(), worldOpaque.end(), &OrderFrontToBack);
-
-  std::stringstream ss;
-  ss << "Size of Opaque: " << worldOpaque.size();
-  LOG_DEBUG(ss.str());
 
   if (!(mCameras).empty()) {
     for (auto camera = mCameras.begin(); camera != mCameras.end(); camera++) {
@@ -275,7 +272,7 @@ void RenderManager::Render() {
       // Write to depth
       glDepthMask(GL_TRUE);
       for (auto i = worldOpaque.begin(); i != worldOpaque.end(); i++) {
-        (*i)->Render(*camera);
+		ProcessDrawCall(*i, *camera);
       }
 
       // Render transparent objects
@@ -283,21 +280,13 @@ void RenderManager::Render() {
       glDepthMask(GL_FALSE);
       for (auto i = worldTransparent.begin(); i != worldTransparent.end();
            i++) {
-        (*i)->Render(*camera);
+		ProcessDrawCall(*i, *camera);
       }
       glDepthMask(GL_TRUE);
 
-	  /*
-    #ifdef DEBUG_MODE
-            auto GLerror = GL_GetError();
-            if (GLerror != "") {
-              std::stringstream ss;
-              ss << "GL Error '" << GLerror << "' Occured when rendering a "
-                 << (*i)->GetTypeString();
-              LOG_ERROR(ss.str());
-            }
-    #endif
-      */
+      // Maybe have per camera objects as well?
+	  // Per viewport objects?
+	  // used, for example, multiple HUDs in scplit-screen
 
       // Need better way to handle light
       // Kernel::stateMan.GetCurrentState()->comLightMan.Render(
@@ -666,87 +655,4 @@ void RenderManager::LoadDefaultShaders() {
     defaultProgramSprite.CopyShadersFromProgram(shaderProgram);
     SetupUniformBuffers(&defaultProgramSprite);
   }
-
-  /*
-  name = defaultProgramLightName;
-  shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
-  if(shaderProgram != NULL){
-  defaultProgramLight.CopyShadersFromProgram(shaderProgram);
-  SetupUniformBuffers(&defaultProgramLight);
-  }
-
-  */
-
-  /*
-  /// \TODO implment shader program re use here
-  defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
-  defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
-  defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
-  defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
-
-  if (defaultProgramSprite == NULL) {
-#ifdef DEBUG_MODE
-    std::string shaderFrag = "fragmentSpriteDebug.glsl";
-#else
-    std::string shaderFrag = "fragmentSpriteMain.glsl";
-#endif
-    std::string shaderVert = "vertexSpriteMain.glsl";
-    auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
-    LinkShaderProgram(shaderProgram.get());
-
-    std::unique_ptr<const RSC_GLProgram> constProgramSprite =
-        std::move(shaderProgram);
-    K_ShaderProgramMan.LoadItem(defaultProgramSpriteName, constProgramSprite);
-
-    defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
-  }
-
-  if (defaultProgramTile == NULL) {
-    std::string shaderVert = "vertexTileMain.glsl";
-#ifdef DEBUG_MODE
-    std::string shaderFrag = "fragmentTileDebug.glsl";
-#else
-    std::string shaderFrag = "fragmentTileMain.glsl";
-#endif
-    auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
-    LinkShaderProgram(shaderProgram.get());
-
-    std::unique_ptr<const RSC_GLProgram> constProgramSprite =
-        std::move(shaderProgram);
-    K_ShaderProgramMan.LoadItem(defaultProgramTileName, constProgramSprite);
-
-    defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
-  }
-
-  if (defaultProgramImage == NULL) {
-    std::string shaderVert = "vertexImage.glsl";
-#ifdef DEBUG_MODE
-    std::string shaderFrag = "fragmentImageDebug.glsl";
-#else
-    std::string shaderFrag = "fragmentImage.glsl";
-#endif
-
-    auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
-    LinkShaderProgram(shaderProgram.get());
-
-    std::unique_ptr<const RSC_GLProgram> constProgramSprite =
-        std::move(shaderProgram);
-    K_ShaderProgramMan.LoadItem(defaultProgramImageName, constProgramSprite);
-
-    defaultProgramImage = K_ShaderProgramMan.GetItem(defaultProgramImageName);
-  }
-
-  if (defaultProgramLight == NULL) {
-    std::string shaderFrag = "fragmentLightMain.glsl";
-    std::string shaderVert = "vertexLightMain.glsl";
-    auto shaderProgram = LoadShaderProgram(shaderVert, shaderFrag);
-    LinkShaderProgram(shaderProgram.get());
-
-    std::unique_ptr<const RSC_GLProgram> constProgramSprite =
-        std::move(shaderProgram);
-    K_ShaderProgramMan.LoadItem(defaultProgramLightName, constProgramSprite);
-
-    defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);
-  }
-  */
 }

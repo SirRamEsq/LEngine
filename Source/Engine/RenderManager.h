@@ -102,8 +102,6 @@ class RenderManager {
 
   void Render();
 
-  void OrderOBJs();
-
   void AssignCameraUBO(RSC_GLProgram *program);
 
   // returns sprite batch that supports 'textureName' and has room for at least
@@ -150,6 +148,8 @@ class RenderManager {
    * will assign default shaders to member data
    */
   void LoadDefaultShaders();
+
+  void ProcessDrawCall(RenderableObject *obj, RenderCamera *camera);
 
   void ImGuiRender(ImDrawData *drawData);
 
