@@ -106,7 +106,6 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
 
 RenderTileLayer::~RenderTileLayer() {}
 
-/// \TODO have ONE COLOR for the whole map, not per tile
 void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   unsigned int vertexIndex = ((y * layer->tileWidth) + x) * 4;
   Vec2 translate;

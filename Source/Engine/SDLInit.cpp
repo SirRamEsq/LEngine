@@ -18,7 +18,7 @@ SDL_Window *SDLInit::GetWindow() { return mMainWindow; }
 void SDLInit::CloseSDL() {
   if (defaultFont != NULL) {
     TTF_CloseFont(defaultFont);
-	defaultFont = NULL;
+    defaultFont = NULL;
   }
   TTF_Quit();
   Mix_CloseAudio();
@@ -74,7 +74,6 @@ bool SDLInit::InitOpenGL() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glEnable(GL_TEXTURE_2D);  // Enable Texture Mapping
-  glClearColor(0, 0, 0, 0);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
@@ -82,7 +81,7 @@ bool SDLInit::InitOpenGL() {
   glOrtho(0.0f, 1024, 768, 0, 0, 1);  // 2D
   // gluPerspective(45.0,(GLfloat)SCREEN_W/(GLfloat)SCREEN_H,0.1,100.0); //3D
 
-  glClearColor(1.0, 0.0, 1.0, 1.0);
+  glClearColor(0, 0, 0, 1);
 
   // Initialize modelview matrix
   glMatrixMode(GL_MODELVIEW);
@@ -90,10 +89,15 @@ bool SDLInit::InitOpenGL() {
 
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  //glDepthFunc(GL_ALWAYS);
+  // negative values nearer to camera
   glDepthFunc(GL_GEQUAL);
-  // glDepthFunc(GL_GREATER);
+  // write to depth
+  glDepthMask(GL_TRUE);
   glClearDepth(0.0f);
+
+  // Do not render any fragments with an alpha of 0.0
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0.0f);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);

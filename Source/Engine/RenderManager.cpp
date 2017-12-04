@@ -130,8 +130,6 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
              frameBufferTextureDiffuse->GetHeight());
 
   // Clear Background
-  glClearColor(0.0, 0.0, 0.0, 1.0);
-
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Atatch buffer texture
@@ -160,10 +158,12 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+  /*
   auto vres = Resolution::GetVirtualResolution();
   auto res = Resolution::GetResolution();
   auto ratioX = vres.x / res.x;
   auto ratioY = vres.y / res.y;
+  */
   tex->Bind();
   float Left = 0;
   float Right = 1;  // * ratioX;
@@ -191,9 +191,9 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
 /////////////////
 bool LOrderOBJs(RenderableObject *r1, RenderableObject *r2) {
   if (r1->GetDepth() <= r2->GetDepth()) {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 }
 
 GLuint RenderManager::GlobalCameraUBO = 0;
@@ -223,7 +223,6 @@ void RenderManager::OrderOBJs() {
 void RenderManager::Render() {
   auto resolution = Resolution::GetResolution();
   glViewport(0, 0, resolution.x, resolution.y);
-  glClearColor(0, 0, 0, 1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   timeElapsed += 1;
 
@@ -240,8 +239,6 @@ void RenderManager::Render() {
   if (listChange) {
     OrderOBJs();  // Sort by Depth
   }
-
-  // glLoadIdentity();
 
   if (!(mCameras).empty()) {
     // World objects are rendered after the camera sets its matrix
