@@ -90,9 +90,10 @@ bool SDLInit::InitOpenGL() {
 
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_ALWAYS);
-  //glDepthFunc(GL_LEQUAL);
+  //glDepthFunc(GL_ALWAYS);
+  glDepthFunc(GL_GEQUAL);
   // glDepthFunc(GL_GREATER);
+  glClearDepth(0.0f);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
