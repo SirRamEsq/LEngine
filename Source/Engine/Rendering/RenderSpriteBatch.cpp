@@ -83,9 +83,6 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   unsigned int numberOfSprites = 0;
   unsigned int vertexIndex = 0;
   RenderSpriteBatch::Sprite *sprite;
-  program->Bind();
-  float depth = GetDepth();
-  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
   for (auto i = sprites.begin(); i != sprites.end(); i++) {
     // Create array of correct values
     // if sprite isn't active, do not add one from 'numberOfSprites' or add its
@@ -130,6 +127,9 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
 
   vao.UpdateGPU();
 
+  program->Bind();
+  float depth = GetDepth();
+  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
   glBindVertexArray(vao.GetVAOID());
   if (texture != NULL) {
     texture->Bind();

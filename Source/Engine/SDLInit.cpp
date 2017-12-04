@@ -16,7 +16,10 @@ SDLInit *SDLInit::Inst() {
 SDL_Window *SDLInit::GetWindow() { return mMainWindow; }
 
 void SDLInit::CloseSDL() {
-  TTF_CloseFont(defaultFont);
+  if (defaultFont != NULL) {
+    TTF_CloseFont(defaultFont);
+	defaultFont = NULL;
+  }
   TTF_Quit();
   Mix_CloseAudio();
   Mix_Quit();
@@ -87,9 +90,9 @@ bool SDLInit::InitOpenGL() {
 
   glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
-  //glDepthFunc(GL_ALWAYS);
+  // glDepthFunc(GL_ALWAYS);
   glDepthFunc(GL_LEQUAL);
-  //glDepthFunc(GL_GREATER);
+  // glDepthFunc(GL_GREATER);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);

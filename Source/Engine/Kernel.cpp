@@ -63,7 +63,6 @@ void ImGuiState::Reset() {
 void Kernel::Close() {
   log->Write("Closing");
   stateMan.Close();
-  SDLMan->CloseSDL();
 
   rscTexMan.Clear();
   rscSpriteMan.Clear();
@@ -71,12 +70,13 @@ void Kernel::Close() {
   rscSoundMan.Clear();
   rscScriptMan.Clear();
   rscMapMan.Clear();
-  rscShaderMan.Clear();
   rscShaderProgramMan.Clear();
+  rscShaderMan.Clear();
   rscFontMan.Clear();
   rscPrefabMan.Clear();
 
   guiState.Reset();
+  SDLMan->CloseSDL();
 
   ImGui::Shutdown();
   log->CloseFileHandle();
@@ -158,6 +158,8 @@ void Kernel::Inst(int argc, char *argv[]) {
   rscMapMan.SetLog(log);
   rscFontMan.SetLog(log);
   rscPrefabMan.SetLog(log);
+  rscShaderProgramMan.SetLog(log);
+  rscShaderMan.SetLog(log);
 
   gameLoops = 0;
   nextGameTick = SDL_GetTicks() - 1;
