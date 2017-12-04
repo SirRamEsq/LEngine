@@ -206,3 +206,10 @@ void RenderTileLayer::Render(const RenderCamera *camera,
   // render full number of tiles
   glDrawArrays(GL_QUADS, 0, layer->tileWidth * layer->tileHeight * 4);
 }
+
+bool RenderTileLayer::isTransparent(){
+	if(layer->GetAlpha() == 1.0f){
+		return false;
+	}
+	return true;
+}

@@ -142,6 +142,8 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   glDrawArrays(GL_QUADS, 0, numberOfSprites * 4);
 }
 
+bool RenderSpriteBatch::isTransparent() { return true; }
+
 ////////////////////
 // VAOWrapperSprite//
 ////////////////////

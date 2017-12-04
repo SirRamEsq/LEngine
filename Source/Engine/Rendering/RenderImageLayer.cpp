@@ -180,6 +180,13 @@ void RenderImageLayer::BuildVAO(Rect camera) {
 
 RenderImageLayer::~RenderImageLayer() {}
 
+bool RenderImageLayer::isTransparent(){
+	if(color.a == 1.0){
+		return false;
+	}
+	return true;
+}
+
 void RenderImageLayer::Render(const RenderCamera *camera,
                               const RSC_GLProgram *program) {
   // Store old texture wrap settings

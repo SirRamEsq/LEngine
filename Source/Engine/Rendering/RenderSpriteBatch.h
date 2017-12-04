@@ -122,6 +122,7 @@ class RenderSpriteBatch : public RenderableObjectWorld {
     RenderSpriteBatch *spriteBatch;
   };
 
+  bool isTransparent();
   void Render(const RenderCamera *camera, const RSC_GLProgram *program);
 
   void AddSprite(Sprite *sprite);

@@ -38,6 +38,8 @@ class RenderableObject {
   // not passed to them
   virtual void Render(const RenderCamera *camera,
                       const RSC_GLProgram *program) = 0;
+
+  virtual bool isTransparent();
   void Render(const RenderCamera *camera);
   void Render();
 

@@ -81,6 +81,8 @@ class RenderImageLayer : public RenderableObjectWorld {
 
   void Render(const RenderCamera *camera, const RSC_GLProgram *program);
 
+  bool isTransparent();
+
   const TiledImageLayer *layer;
 
  private:

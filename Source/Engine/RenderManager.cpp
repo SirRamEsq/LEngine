@@ -189,11 +189,17 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
 /////////////////
 // RenderManager//
 /////////////////
-bool LOrderOBJs(RenderableObject *r1, RenderableObject *r2) {
+bool OrderFrontToBack(RenderableObject *r1, RenderableObject *r2) {
   if (r1->GetDepth() <= r2->GetDepth()) {
     return true;
   }
   return false;
+}
+bool OrderBackToFront(RenderableObject *r1, RenderableObject *r2) {
+  if (r1->GetDepth() <= r2->GetDepth()) {
+    return false;
+  }
+  return true;
 }
 
 GLuint RenderManager::GlobalCameraUBO = 0;
@@ -215,8 +221,8 @@ RenderManager::RenderManager() : timeElapsed(0) {
 
 void RenderManager::OrderOBJs() {
   // Negative Depth is closer to the screen
-  objectsScreen.sort(&LOrderOBJs);
-  objectsWorld.sort(&LOrderOBJs);
+  objectsScreen.sort(&OrderBackToFront);
+  objectsWorld.sort(&OrderFrontToBack);
   listChange = false;
 }
 
@@ -236,35 +242,71 @@ void RenderManager::Render() {
   glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float) * 4), &values);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+  /*
   if (listChange) {
     OrderOBJs();  // Sort by Depth
   }
+  */
 
-  if (!(mCameras).empty()) {
-    // World objects are rendered after the camera sets its matrix
-    auto currentCamera = mCameras.begin();
-    (*currentCamera)->Bind(GlobalCameraUBO);
-    for (auto i = objectsWorld.begin(); i != objectsWorld.end(); i++) {
-      if ((*i)->render) {
-        (*i)->Render(*currentCamera);
-#ifdef DEBUG_MODE
-        auto GLerror = GL_GetError();
-        if (GLerror != "") {
-          std::stringstream ss;
-          ss << "GL Error '" << GLerror << "' Occured when rendering a "
-             << (*i)->GetTypeString();
-          LOG_ERROR(ss.str());
-        }
-#endif
+  std::vector<RenderableObjectWorld *> worldOpaque;
+  std::vector<RenderableObjectWorld *> worldTransparent;
+  for (auto i = objectsWorld.begin(); i != objectsWorld.end(); i++) {
+    if ((*i)->render) {
+      if ((*i)->isTransparent()) {
+        worldTransparent.push_back((*i));
+      } else {
+        worldOpaque.push_back((*i));
       }
     }
+  }
 
-    // Need better way to handle light
-    // Kernel::stateMan.GetCurrentState()->comLightMan.Render((*currentCamera)->GetFrameBufferTextureDiffuse(),
-    // (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
+  std::sort(worldTransparent.begin(), worldTransparent.end(),
+            &OrderBackToFront);
+  std::sort(worldOpaque.begin(), worldOpaque.end(), &OrderFrontToBack);
 
-    //(*currentCamera)->RenderFrameBufferTextureFinal();
-    (*currentCamera)->RenderFrameBufferTextureDiffuse();
+  std::stringstream ss;
+  ss << "Size of Opaque: " << worldOpaque.size();
+  LOG_DEBUG(ss.str());
+
+  if (!(mCameras).empty()) {
+    for (auto camera = mCameras.begin(); camera != mCameras.end(); camera++) {
+      (*camera)->Bind(GlobalCameraUBO);
+      // Render opague objects
+      // Write to depth
+      glDepthMask(GL_TRUE);
+      for (auto i = worldOpaque.begin(); i != worldOpaque.end(); i++) {
+        (*i)->Render(*camera);
+      }
+
+      // Render transparent objects
+      // Do not write to depth
+      glDepthMask(GL_FALSE);
+      for (auto i = worldTransparent.begin(); i != worldTransparent.end();
+           i++) {
+        (*i)->Render(*camera);
+      }
+      glDepthMask(GL_TRUE);
+
+	  /*
+    #ifdef DEBUG_MODE
+            auto GLerror = GL_GetError();
+            if (GLerror != "") {
+              std::stringstream ss;
+              ss << "GL Error '" << GLerror << "' Occured when rendering a "
+                 << (*i)->GetTypeString();
+              LOG_ERROR(ss.str());
+            }
+    #endif
+      */
+
+      // Need better way to handle light
+      // Kernel::stateMan.GetCurrentState()->comLightMan.Render(
+      // (*currentCamera)->GetFrameBufferTextureDiffuse(),
+      // (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
+
+      //(*currentCamera)->RenderFrameBufferTextureFinal();
+      (*camera)->RenderFrameBufferTextureDiffuse();
+    }
   }
 
   // Screen objects are rendered after others, but do not use the camera's
@@ -552,7 +594,7 @@ void RenderManager::SetupUniformBuffers(RSC_GLProgram *program) {
     // if the program doesn't use the program data block, the compiled code
     // won't have one
     // which will throw an error
-    //LOG_WARN(e.what());
+    // LOG_WARN(e.what());
   }
   try {
     GLuint programHandle = program->GetHandle();
@@ -565,7 +607,7 @@ void RenderManager::SetupUniformBuffers(RSC_GLProgram *program) {
     // if the program doesn't use the program data block, the compiled code
     // won't have one
     // which will throw an error
-    //LOG_WARN(e.what());
+    // LOG_WARN(e.what());
   }
 }
 

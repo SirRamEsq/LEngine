@@ -66,6 +66,8 @@ class RenderTileLayer : public RenderableObjectWorld {
   void Render(const RenderCamera *camera, const RSC_GLProgram *program);
   const TiledTileLayer *layer;
 
+  bool isTransparent();
+
  private:
   void BuildVAOTile(unsigned int x, unsigned int y);
 

@@ -21,6 +21,11 @@ RenderableObject::RenderableObject(RenderManager *rm, TYPE t) : type(t) {
   renderManager = rm;
 }
 
+bool RenderableObject::isTransparent(){
+	//assume it is transparent
+	return true;
+}
+
 void RenderableObject::SetDepth(const int &i) {
   depth = i;
   renderManager->OrderOBJs();
