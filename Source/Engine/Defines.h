@@ -174,6 +174,8 @@ bool IteratorIsRLast(Iter iter, const Data &data) {
   return (iter != data.rend()) && (IteratorNext(iter) == data.rend());
 }
 
+std::string GL_GetError();
+
 std::vector<std::string> StringSplit(const char *str, char c);
 
 // Herb sutters std::make_unique function

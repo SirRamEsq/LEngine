@@ -302,10 +302,11 @@ void RSC_GLProgram::Bind() const {
 GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string &name) {
   GLuint returnVal = glGetUniformBlockIndex(mHandleID, name.c_str());
   if (returnVal == GL_INVALID_INDEX) {
+    // not really an error, may have been compiled out
     std::stringstream ss;
     ss << "RSC_GLProgram::GetUniformBlockHandle; shader program with ID "
        << mHandleID << " doesn't have an active Uniform Block named " << name;
-    LOG_INFO(ss.str());
+    LOG_TRACE(ss.str());
     throw LEngineShaderProgramException(ss.str(), this);
   }
   return returnVal;
@@ -314,11 +315,12 @@ GLuint RSC_GLProgram::GetUniformBlockHandle(const std::string &name) {
 GLint RSC_GLProgram::GetUniformLocation(const std::string &name) const {
   GLint returnVal = glGetUniformLocation(mHandleID, name.c_str());
   if (returnVal == -1) {
+    // not really an error, may have been compiled out
     std::stringstream ss;
     ss << "RSC_GLProgram::GetUniformLocation; shader program with ID "
        << mHandleID << " doesn't have an active Uniform Location named '"
        << name << "'";
-    LOG_INFO(ss.str());
+    LOG_TRACE(ss.str());
     throw LEngineShaderProgramException(ss.str(), this);
   }
   return returnVal;

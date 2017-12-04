@@ -104,8 +104,6 @@ class RenderManager {
 
   void OrderOBJs();
 
-  std::string GL_GetError();
-
   void AssignCameraUBO(RSC_GLProgram *program);
 
   // returns sprite batch that supports 'textureName' and has room for at least

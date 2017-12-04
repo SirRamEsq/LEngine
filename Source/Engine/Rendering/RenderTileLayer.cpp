@@ -199,7 +199,7 @@ void RenderTileLayer::Render(const RenderCamera *camera,
   colors[3] = layer->GetAlpha();
   float depth = GetDepth();
     glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
-    glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
+    glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
 
   glBindVertexArray(vao.GetVAOID());
   tiledSet->GetTexture()->Bind();

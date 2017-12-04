@@ -104,7 +104,7 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
 
   // Will render texture upside down
   Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
-      //Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
+      // Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
       Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
 
   float position[4];
@@ -202,12 +202,9 @@ GLuint RenderManager::GlobalProgramUBO = 0;
 const GLuint RenderManager::CameraDataBindingIndex = 1;
 const GLuint RenderManager::ProgramDataBindingIndex = 2;
 const std::string RenderManager::defaultProgramTileName = "TileLayer.xml";
-const std::string RenderManager::defaultProgramSpriteName =
-    "SpriteBatch.xml";
-const std::string RenderManager::defaultProgramLightName =
-    "Light.xml";
-const std::string RenderManager::defaultProgramImageName =
-    "ImageLayer.xml";
+const std::string RenderManager::defaultProgramSpriteName = "SpriteBatch.xml";
+const std::string RenderManager::defaultProgramLightName = "Light.xml";
+const std::string RenderManager::defaultProgramImageName = "ImageLayer.xml";
 
 RenderManager::RenderManager() : timeElapsed(0) {
   LoadDefaultShaders();
@@ -287,35 +284,6 @@ void RenderManager::Render() {
 
   ImGui::Render();
   ImGuiRender(ImGui::GetDrawData());
-}
-
-std::string RenderManager::GL_GetError() {
-  GLenum err;
-  while ((err = glGetError()) != GL_NO_ERROR) {
-    std::stringstream ss;
-    std::string errorString;
-    switch (err) {
-      case GL_INVALID_OPERATION:
-        errorString = "GL_INVALID_OPERATION";
-        break;
-      case GL_INVALID_ENUM:
-        errorString = "GL_INVALID_ENUM";
-        break;
-      case GL_OUT_OF_MEMORY:
-        errorString = "GL_OUT_OF_MEMORY";
-        break;
-      case GL_INVALID_VALUE:
-        errorString = "GL_INVALID_VALUE";
-        break;
-      case GL_INVALID_FRAMEBUFFER_OPERATION:
-        errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
-        break;
-      default:
-        errorString = "?";
-    }
-    return errorString;
-  }
-  return "";
 }
 
 void RenderManager::AssignCameraUBO(RSC_GLProgram *program) {
@@ -587,7 +555,7 @@ void RenderManager::SetupUniformBuffers(RSC_GLProgram *program) {
     // if the program doesn't use the program data block, the compiled code
     // won't have one
     // which will throw an error
-    LOG_WARN(e.what());
+    //LOG_WARN(e.what());
   }
   try {
     GLuint programHandle = program->GetHandle();
@@ -600,7 +568,7 @@ void RenderManager::SetupUniformBuffers(RSC_GLProgram *program) {
     // if the program doesn't use the program data block, the compiled code
     // won't have one
     // which will throw an error
-    LOG_WARN(e.what());
+    //LOG_WARN(e.what());
   }
 }
 
@@ -641,37 +609,37 @@ void RenderManager::LoadDefaultShaders() {
 
   auto name = defaultProgramTileName;
   auto shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
-  if(shaderProgram != NULL){
-	defaultProgramTile.CopyShadersFromProgram(shaderProgram);
-	SetupUniformBuffers(&defaultProgramTile);
+  if (shaderProgram != NULL) {
+    defaultProgramTile.CopyShadersFromProgram(shaderProgram);
+    SetupUniformBuffers(&defaultProgramTile);
   }
 
   name = defaultProgramImageName;
   shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
-  if(shaderProgram != NULL){
-	defaultProgramImage.CopyShadersFromProgram(shaderProgram);
-	SetupUniformBuffers(&defaultProgramImage);
+  if (shaderProgram != NULL) {
+    defaultProgramImage.CopyShadersFromProgram(shaderProgram);
+    SetupUniformBuffers(&defaultProgramImage);
   }
 
   name = defaultProgramSpriteName;
   shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
-  if(shaderProgram != NULL){
-	defaultProgramSprite.CopyShadersFromProgram(shaderProgram);
-	SetupUniformBuffers(&defaultProgramSprite);
+  if (shaderProgram != NULL) {
+    defaultProgramSprite.CopyShadersFromProgram(shaderProgram);
+    SetupUniformBuffers(&defaultProgramSprite);
   }
 
   /*
   name = defaultProgramLightName;
   shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
   if(shaderProgram != NULL){
-	defaultProgramLight.CopyShadersFromProgram(shaderProgram);
-	SetupUniformBuffers(&defaultProgramLight);
+  defaultProgramLight.CopyShadersFromProgram(shaderProgram);
+  SetupUniformBuffers(&defaultProgramLight);
   }
 
   */
 
   /*
-  /// \TODO implment shader program re use here 
+  /// \TODO implment shader program re use here
   defaultProgramTile = K_ShaderProgramMan.GetItem(defaultProgramTileName);
   defaultProgramSprite = K_ShaderProgramMan.GetItem(defaultProgramSpriteName);
   defaultProgramLight = K_ShaderProgramMan.GetItem(defaultProgramLightName);

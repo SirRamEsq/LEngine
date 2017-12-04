@@ -128,9 +128,12 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   vao.UpdateGPU();
 
   program->Bind();
+
   float depth = GetDepth();
-  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
+  glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
+
   glBindVertexArray(vao.GetVAOID());
+
   if (texture != NULL) {
     texture->Bind();
   }

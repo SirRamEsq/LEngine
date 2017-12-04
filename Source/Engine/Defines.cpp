@@ -195,6 +195,36 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits) {
   return result;
 }
 
+std::string GL_GetError() {
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR) {
+    std::stringstream ss;
+    std::string errorString;
+    switch (err) {
+      case GL_INVALID_OPERATION:
+        errorString = "GL_INVALID_OPERATION";
+        break;
+      case GL_INVALID_ENUM:
+        errorString = "GL_INVALID_ENUM";
+        break;
+      case GL_OUT_OF_MEMORY:
+        errorString = "GL_OUT_OF_MEMORY";
+        break;
+      case GL_INVALID_VALUE:
+        errorString = "GL_INVALID_VALUE";
+        break;
+      case GL_INVALID_FRAMEBUFFER_OPERATION:
+        errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
+        break;
+      default:
+        errorString = "?";
+    }
+    return errorString;
+  }
+  return "";
+}
+
+
 std::string GetDate() {
   time_t rawTime;
   time(&rawTime);

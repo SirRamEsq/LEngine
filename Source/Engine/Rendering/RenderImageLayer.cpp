@@ -200,7 +200,7 @@ void RenderImageLayer::Render(const RenderCamera *camera,
   glBindVertexArray(vao.GetVAOID());
   layer->GetTexture()->Bind();
   float depth = GetDepth();
-  glUniform4fv(program->GetUniformLocation("depth"), 1, &depth);
+  glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
   glDrawArrays(GL_QUADS, 0, 4);
 
   // Restore old texture Wrap Settings
