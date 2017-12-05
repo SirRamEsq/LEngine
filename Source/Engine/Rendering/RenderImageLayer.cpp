@@ -1,94 +1,10 @@
 #include "RenderImageLayer.h"
 #include "../RenderManager.h"
 
-//////////////
-// VAOWrapper//
-//////////////
-VAOWrapper::VAOWrapper(const unsigned int &maxSize)
-    : vboMaxSize(maxSize),
-      vboVertexSize(maxSize * sizeof(Vec2) * 4),  // 4 verticies per object
-      vboTextureSize(maxSize * sizeof(Vec2) * 4),
-      vboColorSize(maxSize * sizeof(Vec4) * 4),
-      // vboTranslateSize      (maxSize * sizeof(Translate)         * 4),
-      // vboScalingRotationSize(maxSize * sizeof(ScalingRotation)   * 4),
-
-      vboVertexArray(new Vec2[maxSize * 4]),
-      vboTextureArray(new Vec2[maxSize * 4]),
-      vboColorArray(new Vec4[maxSize * 4]) {
-  // vboTranslateArray         ( new Translate        [maxSize * 4] ),
-  // vboScalingRotationArray   ( new ScalingRotation  [maxSize * 4] ){
-
-  // Vertex VBO
-  glGenBuffers(1, &vboVertex);
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  //     Size of Buffer                           Pointer to data
-  glBufferData(GL_ARRAY_BUFFER, vboVertexSize, vboVertexArray.get(),
-               GL_STATIC_DRAW);
-
-  // Texture VBO
-  glGenBuffers(1, &vboTexture);
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glBufferData(GL_ARRAY_BUFFER, vboTextureSize, vboTextureArray.get(),
-               GL_STATIC_DRAW);
-
-  // Color VBO
-  glGenBuffers(1, &vboColor);
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glBufferData(GL_ARRAY_BUFFER, vboColorSize, vboColorArray.get(),
-               GL_STATIC_DRAW);
-
-  // Generate VAO
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  // Bind Vertex to 0
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  glVertexAttribPointer(0, vertexAttributeSize, vertexAttributeType, GL_FALSE,
-                        0, NULL);
-
-  // Bind Texture to 1
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glVertexAttribPointer(1, textureAttributeSize, textureAttributeType, GL_FALSE,
-                        0, NULL);
-
-  // Bind Color to 2
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glVertexAttribPointer(2, colorAttributeSize, colorAttributeType, GL_FALSE, 0,
-                        NULL);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-}
-
-unsigned int VAOWrapper::GetMaxSize() { return vboMaxSize; }
-void VAOWrapper::UpdateGPU() {
-  // upload vertexTexture array along with any changed data
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboVertexSize, vboVertexArray.get());
-
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboTextureSize, vboTextureArray.get());
-
-  glBindBuffer(GL_ARRAY_BUFFER, vboColor);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboColorSize, vboColorArray.get());
-}
-
-VAOWrapper::~VAOWrapper() {
-  glDeleteBuffers(1, &vboVertex);
-  glDeleteBuffers(1, &vboColor);
-  glDeleteBuffers(1, &vboTexture);
-
-  glDeleteVertexArrays(1, &vao);
-}
-
-///////////////////
-// TiledImageLayer//
-///////////////////
 RenderImageLayer::RenderImageLayer(RenderManager *rm, TiledImageLayer *l)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::Image),
       layer(l),
-      vao(1) {
+      vao(VAO_TEXTURE | VAO_COLOR, 1) {
   SetDepth(l->GetDepth());
   render = true;
   AddToRenderManager();

@@ -62,7 +62,7 @@ std::map<int, std::unique_ptr<Light>> *ComponentLight::GetLights() {
 // ComponentLightManager//
 //////////////////////////
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
-    : BaseComponentManager_Impl(e), vao(MAX_LIGHTS) {
+    : BaseComponentManager_Impl(e), vao(0, MAX_LIGHTS) {
   glGenFramebuffers(1, &FBO);
   mAmbientLight.x = 1.0f;
   mAmbientLight.y = 1.0f;

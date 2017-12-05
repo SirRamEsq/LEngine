@@ -10,6 +10,8 @@
 #include "../Resources/RSC_Texture.h"
 #include "../glslHelper.h"
 
+#include "../Rendering/VAOWrapper.h"
+
 #include "lights/Light.h"
 #include "CompPosition.h"
 
@@ -63,7 +65,7 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   GLuint FBO;  // frame buffer object id
   Vec4 mAmbientLight;
   const RSC_Texture *lightTexture;
-  VAOWrapper vao;
+  VAOWrapper2D vao;
 
   unsigned int numberOfLights;
 };
