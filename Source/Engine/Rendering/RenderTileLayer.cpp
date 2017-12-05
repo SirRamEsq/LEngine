@@ -70,10 +70,10 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   vao.GetTextureArray()[vertexIndex + 2] = bottomLeftTex;
   vao.GetTextureArray()[vertexIndex + 3] = bottomRightTex;
 
-  //vao.GetAnimationArray()[vertexIndex] = animationVertex;
-  //vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
-  //vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
-  //vao.GetAnimationArray()[vertexIndex + 3] = animationVertex;
+  // vao.GetAnimationArray()[vertexIndex] = animationVertex;
+  // vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
+  // vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
+  // vao.GetAnimationArray()[vertexIndex + 3] = animationVertex;
 }
 
 void RenderTileLayer::BuildVAO() {
@@ -119,20 +119,21 @@ void RenderTileLayer::Render(const RenderCamera *camera,
   float textureDimensions[2];
   textureDimensions[0] = textureWidth;
   textureDimensions[1] = textureHeight;
-    glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
-    glUniform2fv(program->GetUniformLocation("textureDimensions"), 1, textureDimensions);
-    glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
+  glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
+  glUniform2fv(program->GetUniformLocation("textureDimensions"), 1,
+               textureDimensions);
+  glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
 
-  glBindVertexArray(vao.GetVAOID());
+  vao.Bind();
   tiledSet->GetTexture()->Bind();
   // draw points 0-4 from the currently bound VAO with current in-use shader
   // render full number of tiles
   glDrawArrays(GL_QUADS, 0, layer->tileWidth * layer->tileHeight * 4);
 }
 
-bool RenderTileLayer::isTransparent(){
-	if(layer->GetAlpha() == 1.0f){
-		return false;
-	}
-	return true;
+bool RenderTileLayer::isTransparent() {
+  if (layer->GetAlpha() == 1.0f) {
+    return false;
+  }
+  return true;
 }

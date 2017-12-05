@@ -8,7 +8,8 @@ enum VAO_ATTRIBUTE_ARRAY_FLAGS {
   VAO_TEXTURE = 2,
   VAO_NORMAL = 4,
   VAO_COLOR = 8,
-  VAO_SCALINGROTATION = 16
+  VAO_SCALINGROTATION = 16,
+  VAO_EXTRA = 32
 };
 
 class VAOWrapper2D {
@@ -30,6 +31,7 @@ class VAOWrapper2D {
   Vec2 *GetNormalArray() { return vboNormalArray.get(); }
   Vec4 *GetColorArray() { return vboColorArray.get(); }
   Vec3 *GetScalingRotationArray() { return vboScalingRotationArray.get(); }
+  Vec2 *GetExtraArray() { return vboExtraArray.get(); }
 
   GLuint GetVAOID() { return vao; }
 
@@ -38,6 +40,7 @@ class VAOWrapper2D {
   void SetDefaultNormal(Vec2 vec);
   void SetDefaultColor(Vec4 vec);
   void SetDefaultScalingRotation(Vec3 vec);
+  void SetDefaultExtra(Vec2 vec);
 
   // Total Number of Objects passed at Wrapper construction
   const unsigned int vboMaxSize;
@@ -50,11 +53,13 @@ class VAOWrapper2D {
   static const GLuint indexNormal;
   static const GLuint indexColor;
   static const GLuint indexScalingRotation;
+  static const GLuint indexExtra;
 
   bool UsingTexture() const { return usingTexture; }
   bool UsingNormal() const { return usingNormal; }
   bool UsingColor() const { return usingColor; }
   bool UsingScalingRotation() const { return usingScalingRotation; }
+  bool UsingExtra() const { return usingExtra; }
 
   /// Will bind Vertex Array and set default values
   void Bind();
@@ -68,6 +73,7 @@ class VAOWrapper2D {
   GLuint vboNormal;
   GLuint vboColor;
   GLuint vboScalingRotation;
+  GLuint vboExtra;
 
   // OpenGL generated VAO ID value
   GLuint vao;
@@ -78,12 +84,14 @@ class VAOWrapper2D {
   std::unique_ptr<Vec2[]> vboNormalArray;
   std::unique_ptr<Vec4[]> vboColorArray;
   std::unique_ptr<Vec3[]> vboScalingRotationArray;
+  std::unique_ptr<Vec2[]> vboExtraArray;
 
   // Default values for when an array is not in use
   Vec2 defaultTexture;
   Vec2 defaultNormal;
   Vec4 defaultColor;
   Vec3 defaultScalingRotation;
+  Vec2 defaultExtra;
 
   // Sizes of the various buffers in bytes
   unsigned int sizeVertex;
@@ -91,11 +99,13 @@ class VAOWrapper2D {
   unsigned int sizeNormal;
   unsigned int sizeColor;
   unsigned int sizeScalingRotation;
+  unsigned int sizeExtra;
 
   bool usingTexture;
   bool usingNormal;
   bool usingColor;
   bool usingScalingRotation;
+  bool usingExtra;
 };
 
 #endif

@@ -20,11 +20,16 @@ GLenum colorAttributeType = GL_FLOAT;
 GLint scalingRotationAttributeSize = 3;
 GLenum scalingRotationAttributeType = GL_FLOAT;
 
+// Extra data to be used based on rendering context
+GLint extraAttributeSize = 2;
+GLenum extraAttributeType = GL_FLOAT;
+
 const GLuint VAOWrapper2D::indexVertex = 0;
 const GLuint VAOWrapper2D::indexTexture = 1;
 const GLuint VAOWrapper2D::indexNormal = 2;
 const GLuint VAOWrapper2D::indexColor = 3;
 const GLuint VAOWrapper2D::indexScalingRotation = 4;
+const GLuint VAOWrapper2D::indexExtra = 5;
 
 VAOWrapper2D::VAOWrapper2D(unsigned int flags, unsigned int maxSize)
     : vboMaxSize(maxSize), attributeFlags(flags) {
@@ -35,18 +40,21 @@ VAOWrapper2D::VAOWrapper2D(unsigned int flags, unsigned int maxSize)
   defaultTexture = Vec2(0, 0);
   defaultNormal = Vec2(0, 0);
   defaultColor = Vec4(1, 1, 1, 1);
+  defaultExtra = Vec2(0,0);
 
   vboVertex = 0;
   vboTexture = 0;
   vboNormal = 0;
   vboColor = 0;
   vboScalingRotation = 0;
+  vboExtra = 0;
 
   usingTexture = ((attributeFlags & VAO_TEXTURE) == VAO_TEXTURE);
   usingNormal = ((attributeFlags & VAO_NORMAL) == VAO_NORMAL);
   usingColor = ((attributeFlags & VAO_COLOR) == VAO_COLOR);
   usingScalingRotation =
       ((attributeFlags & VAO_SCALINGROTATION) == VAO_SCALINGROTATION);
+  usingExtra = ((attributeFlags & VAO_EXTRA) == VAO_EXTRA);
 
   CreateVBOs();
 }
@@ -65,6 +73,9 @@ VAOWrapper2D::~VAOWrapper2D() {
   }
   if (usingScalingRotation) {
     glDeleteBuffers(1, &vboScalingRotation);
+  }
+  if (usingExtra) {
+    glDeleteBuffers(1, &vboExtra);
   }
 
   glDeleteVertexArrays(1, &vao);
@@ -151,6 +162,22 @@ void VAOWrapper2D::CreateVBOs() {
   } else {
     glDisableVertexAttribArray(indexScalingRotation);
   }
+
+  if (usingExtra) {
+    sizeExtra = (vboMaxSize * sizeof(Vec2) * 4);
+    vboExtraArray.reset(new Vec2[vboMaxSize * 4]);
+
+    glGenBuffers(1, &vboExtra);
+    glBindBuffer(GL_ARRAY_BUFFER, vboExtra);
+    glBufferData(GL_ARRAY_BUFFER, sizeExtra, vboExtraArray.get(),
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vboExtra);
+    glVertexAttribPointer(indexExtra, extraAttributeSize, extraAttributeType,
+                          GL_FALSE, 0, NULL);
+    glEnableVertexAttribArray(indexExtra);
+  } else {
+    glDisableVertexAttribArray(indexExtra);
+  }
 }
 
 void VAOWrapper2D::UpdateGPU() {
@@ -179,7 +206,20 @@ void VAOWrapper2D::UpdateGPU() {
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeScalingRotation,
                     vboScalingRotationArray.get());
   }
+
+  if (usingExtra) {
+    glBindBuffer(GL_ARRAY_BUFFER, vboExtra);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeExtra, vboExtraArray.get());
+  }
 }
+
+void VAOWrapper2D::SetDefaultTexture(Vec2 vec) { defaultTexture = vec; }
+void VAOWrapper2D::SetDefaultNormal(Vec2 vec) { defaultNormal = vec; }
+void VAOWrapper2D::SetDefaultColor(Vec4 vec) { defaultColor = vec; }
+void VAOWrapper2D::SetDefaultScalingRotation(Vec3 vec) {
+  defaultScalingRotation = vec;
+}
+void VAOWrapper2D::SetDefaultExtra(Vec2 vec) { defaultExtra = vec; }
 
 void VAOWrapper2D::Bind() {
   glBindVertexArray(vao);
@@ -197,5 +237,8 @@ void VAOWrapper2D::Bind() {
   if (!usingScalingRotation) {
     glVertexAttrib3f(indexScalingRotation, defaultScalingRotation.x,
                      defaultScalingRotation.y, defaultScalingRotation.z);
+  }
+  if (!usingExtra) {
+    glVertexAttrib2f(indexExtra, defaultExtra.x, defaultExtra.y);
   }
 }

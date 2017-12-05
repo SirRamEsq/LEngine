@@ -3,74 +3,11 @@
 
 #include "../glslHelper.h"
 #include "RenderableObject.h"
+#include "VAOWrapper.h"
 
 #include <set>
 
 class RSC_Texture;
-
-class VAOWrapperSprite {
- public:
-  // Max size is the number of objects, not the number of verticies.
-  // VAOWrapper will figure out the number of vertiices from the number of
-  // objects
-  VAOWrapperSprite(const unsigned int &maxSize);
-  ~VAOWrapperSprite();
-  void UpdateGPU();
-
-  Vec2 *GetVertexArray() { return vboVertexArray.get(); }
-  Vec2 *GetTranslateArray() { return vboTranslateArray.get(); }
-  Vec2 *GetTextureArray() { return vboTextureArray.get(); }
-  Vec4 *GetColorArray() { return vboColorArray.get(); }
-  Vec3 *GetScalingRotationArray() { return vboScalingRotationArray.get(); }
-
-  GLuint GetVAOID() { return vao; }
-
-  const unsigned int vboMaxSize;
-
- private:
-  GLuint vboVertex;
-  GLuint vboTranslate;
-  GLuint vboTexture;
-  GLuint vboColor;
-  GLuint vboScalingRotation;
-  GLuint vao;
-
-  std::unique_ptr<Vec2[]> vboVertexArray;
-  std::unique_ptr<Vec2[]> vboTranslateArray;
-  std::unique_ptr<Vec2[]> vboTextureArray;
-  std::unique_ptr<Vec4[]> vboColorArray;
-  std::unique_ptr<Vec3[]> vboScalingRotationArray;
-
-  unsigned int vboVertexSize;
-  unsigned int vboTextureSize;
-  unsigned int vboColorSize;
-  unsigned int vboTranslateSize;
-  unsigned int vboScalingRotationSize;
-
-  // Each vertex point consists of 2 floats                                [X,Y]
-  // (vec2)
-  const GLint vertexAttributeSize = 2;
-  const GLenum vertexAttributeType = GL_FLOAT;
-
-  // Each texture coordinate for each vertex point consists of 2 floats    [S,T]
-  // (vec2)
-  const GLint textureAttributeSize = 2;
-  const GLenum textureAttributeType = GL_FLOAT;
-
-  // Each Color for each vertex point consists of 4 floats [RGBA], (vec4)
-  const GLint colorAttributeSize = 4;
-  const GLenum colorAttributeType = GL_FLOAT;
-
-  // Each ScalingRotation for each vertex point consists of 3 floats       [Sx,
-  // Sy, rot], (vec3)
-  const GLint scalingRotationAttributeSize = 3;
-  const GLenum scalingRotationAttributeType = GL_FLOAT;
-
-  // Each ScalingRotation for each vertex point consists of 2 floats       [X,
-  // Y], (vec2)
-  const GLint translateAttributeSize = 2;
-  const GLenum translateAttributeType = GL_FLOAT;
-};
 
 class RenderSpriteBatch : public RenderableObjectWorld {
   // Class constructor is protected, only meant to be initialized by
@@ -134,7 +71,7 @@ class RenderSpriteBatch : public RenderableObjectWorld {
                     const unsigned int &maxSize);
 
  private:
-  VAOWrapperSprite vao;
+  VAOWrapper2D vao;
   const unsigned int maxSprites;
   unsigned int currentSize;
 

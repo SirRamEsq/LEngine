@@ -120,7 +120,7 @@ void RenderImageLayer::Render(const RenderCamera *camera,
 
   // Bind everything
   program->Bind();
-  glBindVertexArray(vao.GetVAOID());
+  vao.Bind();
   layer->GetTexture()->Bind();
   float depth = GetDepth();
   glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
