@@ -1,6 +1,16 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
+// Will sort lights based on shader program address
+// this will group lights that share a program together
+// Will this lead to weird and variable rendering orders? probably...
+bool SortLights(Light *l1, Light *l2) {
+  if (l1->shaderProgram > l2->shaderProgram) {
+    return true;
+  }
+  return false;
+}
+
 //////////////////
 // ComponentLight//
 //////////////////
@@ -20,13 +30,44 @@ bool ComponentLight::LightExists(int id) {
 
 void ComponentLight::Update() {}
 
+void ComponentLight::EnableLight(int index) {
+  auto light = GetLight(index);
+  if (light == NULL) {
+    return;
+  }
+  light->render = true;
+}
+
+void ComponentLight::DisableLight(int index) {
+  auto light = GetLight(index);
+  if (light == NULL) {
+    return;
+  }
+  light->render = false;
+}
+
+Light *ComponentLight::GetLight(int index) {
+  auto light = mLights.find(index);
+  if (light != mLights.end()) {
+    return light->second.get();
+  }
+  return NULL;
+}
+
+std::map<int, std::unique_ptr<Light>> *ComponentLight::GetLights() {
+  return &mLights;
+}
+
 //////////////////////////
 // ComponentLightManager//
 //////////////////////////
-
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
     : BaseComponentManager_Impl(e), vao(MAX_LIGHTS) {
   glGenFramebuffers(1, &FBO);
+  mAmbientLight.x = 1.0f;
+  mAmbientLight.y = 1.0f;
+  mAmbientLight.z = 1.0f;
+  mAmbientLight.w = 0.0f;
 }
 
 void ComponentLightManager::Update() {
@@ -40,13 +81,25 @@ void ComponentLightManager::Update() {
     i->second->updatedThisFrame = false;
   }
 
-  BuildVAO();
+  // BuildVAO();
 }
 
 void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
-                                   RSC_Texture *textureDestination,
-                                   const RSC_GLProgram *shaderProgram) {
+                                   RSC_Texture *textureDestination) {
+  std::vector<Light *> lights;
+  for (auto comp = activeComponents.begin(); comp != activeComponents.end();
+       comp++) {
+    auto compLights = comp->second->GetLights();
+    for (auto lightIt = compLights->begin(); lightIt != compLights->end();
+         lightIt++) {
+      auto light = lightIt->second.get();
+      if (light->render) {
+        lights.push_back(light);
+      }
+    }
+  }
 
+  std::sort(lights.begin(), lights.end(), &SortLights);
   // Set framebuffer to clear destination Texture
   return;
   /*
@@ -125,7 +178,7 @@ void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
 }
 
 void ComponentLightManager::BuildVAO() {
-	/*
+  /*
   unsigned int vertex = 0;
   unsigned int lightCount = 0;
 

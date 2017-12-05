@@ -1,90 +1,9 @@
 #include "RenderTileLayer.h"
 #include "../Kernel.h"
 
-//////////////
-// VAOWrapperTile//
-//////////////
-VAOWrapperTile::VAOWrapperTile(const unsigned int &maxSize)
-    : vboMaxSize(maxSize),
-      vboVertexSize(maxSize * sizeof(Vec2) * 4),  // 4 verticies per object
-      vboTextureSize(maxSize * sizeof(Vec4) * 4),
-      vboAnimationSize(maxSize * sizeof(Vec2) * 4),
-
-      vboVertexArray(new Vec2[maxSize * 4]),
-      vboTextureArray(new Vec4[maxSize * 4]),
-      vboAnimationArray(new Vec2[maxSize * 4]) {
-  // Vertex VBO
-  glGenBuffers(1, &vboVertex);
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  //     Size of Buffer                           Pointer to data
-  glBufferData(GL_ARRAY_BUFFER, vboVertexSize, vboVertexArray.get(),
-               GL_STATIC_DRAW);
-
-  // Texture VBO
-  glGenBuffers(1, &vboTexture);
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glBufferData(GL_ARRAY_BUFFER, vboTextureSize, vboTextureArray.get(),
-               GL_STATIC_DRAW);
-
-  // Animation VBO
-  glGenBuffers(1, &vboAnimation);
-  glBindBuffer(GL_ARRAY_BUFFER, vboAnimation);
-  glBufferData(GL_ARRAY_BUFFER, vboAnimationSize, vboAnimationArray.get(),
-               GL_STATIC_DRAW);
-
-  // Generate VAO
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  // Bind Vertex to 0
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  glVertexAttribPointer(0, vertexAttributeSize, vertexAttributeType, GL_FALSE,
-                        0, NULL);
-
-  // Bind Texture to 1
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glVertexAttribPointer(1, textureAttributeSize, textureAttributeType, GL_FALSE,
-                        0, NULL);
-
-  // Bind Animation to 2
-  glBindBuffer(GL_ARRAY_BUFFER, vboAnimation);
-  glVertexAttribPointer(2, animationAttributeSize, animationAttributeType,
-                        GL_FALSE, 0, NULL);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-}
-
-void VAOWrapperTile::UpdateGPU() {
-  // upload vertexTexture array along with any changed data
-
-  glBindBuffer(GL_ARRAY_BUFFER, vboTexture);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboTextureSize, vboTextureArray.get());
-
-  glBindBuffer(GL_ARRAY_BUFFER, vboVertex);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboVertexSize, vboVertexArray.get());
-
-  glBindBuffer(GL_ARRAY_BUFFER, vboAnimation);
-  glBufferSubData(GL_ARRAY_BUFFER, 0, vboAnimationSize,
-                  vboAnimationArray.get());
-}
-
-VAOWrapperTile::~VAOWrapperTile() {
-  glDeleteBuffers(1, &vboVertex);
-  glDeleteBuffers(1, &vboTexture);
-  glDeleteBuffers(1, &vboAnimation);
-
-  glDeleteVertexArrays(1, &vao);
-}
-
-////////////////////////
-// RenderTileLayer//
-////////////////////////
-
 RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::TileLayer),
-      vao(l->tileWidth * l->tileHeight) {
+      vao((VAO_TEXTURE), l->tileWidth * l->tileHeight) {
   SetDepth(l->GetDepth());
   layer = l;
 
@@ -99,6 +18,8 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
 
   // Get Texture and TiledSet to be used
   tiledSet = layer->GetTiledSet();
+  textureWidth = tiledSet->GetTexture()->GetWidth();
+  textureHeight = tiledSet->GetTexture()->GetHeight();
   BuildVAO();
 
   AddToRenderManager();
@@ -119,8 +40,6 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   Vec2 animationVertex(0, 1);
 
   float topTex, rightTex, leftTex, bottomTex;
-  float textureWidth = tiledSet->GetTexture()->GetWidth();
-  float textureHeight = tiledSet->GetTexture()->GetHeight();
   GID gid;
 
   translate.x = x * 16;
@@ -141,20 +60,20 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
 
   tiledSet->GetTextureCoordinatesFromGID(gid, leftTex, rightTex, topTex,
                                          bottomTex);
-  Vec4 topLeftTex(leftTex, topTex, textureWidth, textureHeight);
-  Vec4 topRightTex(rightTex, topTex, textureWidth, textureHeight);
-  Vec4 bottomLeftTex(rightTex, bottomTex, textureWidth, textureHeight);
-  Vec4 bottomRightTex(leftTex, bottomTex, textureWidth, textureHeight);
+  Vec2 topLeftTex(leftTex, topTex);
+  Vec2 topRightTex(rightTex, topTex);
+  Vec2 bottomLeftTex(rightTex, bottomTex);
+  Vec2 bottomRightTex(leftTex, bottomTex);
 
   vao.GetTextureArray()[vertexIndex] = topLeftTex;
   vao.GetTextureArray()[vertexIndex + 1] = topRightTex;
   vao.GetTextureArray()[vertexIndex + 2] = bottomLeftTex;
   vao.GetTextureArray()[vertexIndex + 3] = bottomRightTex;
 
-  vao.GetAnimationArray()[vertexIndex] = animationVertex;
-  vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
-  vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
-  vao.GetAnimationArray()[vertexIndex + 3] = animationVertex;
+  //vao.GetAnimationArray()[vertexIndex] = animationVertex;
+  //vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
+  //vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
+  //vao.GetAnimationArray()[vertexIndex + 3] = animationVertex;
 }
 
 void RenderTileLayer::BuildVAO() {
@@ -197,7 +116,11 @@ void RenderTileLayer::Render(const RenderCamera *camera,
   colors[2] = 1.0;
   colors[3] = layer->GetAlpha();
   float depth = GetDepth();
+  float textureDimensions[2];
+  textureDimensions[0] = textureWidth;
+  textureDimensions[1] = textureHeight;
     glUniform4fv(program->GetUniformLocation("layerColor"), 1, colors);
+    glUniform2fv(program->GetUniformLocation("textureDimensions"), 1, textureDimensions);
     glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
 
   glBindVertexArray(vao.GetVAOID());

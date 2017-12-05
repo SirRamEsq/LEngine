@@ -4,56 +4,7 @@
 #include "../Resources/RSC_Map.h"
 #include "../glslHelper.h"
 #include "RenderableObject.h"
-
-class VAOWrapperTile {
-  // make uniform for texture width and height
-
- public:
-  // Max size is the number of objects, not the number of verticies.
-  // VAOWrapper will figure out the number of vertiices from the number of
-  // objects
-  VAOWrapperTile(const unsigned int &maxSize);
-  ~VAOWrapperTile();
-  void UpdateGPU();
-
-  Vec2 *GetVertexArray() { return vboVertexArray.get(); }
-  Vec4 *GetTextureArray() { return vboTextureArray.get(); }
-  Vec2 *GetAnimationArray() { return vboAnimationArray.get(); }
-
-  GLuint GetVAOID() { return vao; }
-
-  const unsigned int vboMaxSize;
-
- private:
-  GLuint vboVertex;
-  GLuint vboTexture;
-  GLuint vboAnimation;
-  GLuint vao;
-
-  std::unique_ptr<Vec2[]> vboVertexArray;
-  std::unique_ptr<Vec4[]> vboTextureArray;
-  std::unique_ptr<Vec2[]> vboAnimationArray;
-
-  unsigned int vboVertexSize;
-  unsigned int vboTextureSize;
-  unsigned int vboAnimationSize;
-
-
-  // Each vertex point consists of 2 floats                                [X,Y]
-  // (vec2)
-  const GLint vertexAttributeSize = 2;
-  const GLenum vertexAttributeType = GL_FLOAT;
-
-  // Each texture coordinate for each vertex point consists of 4 floats    [S,T,
-  // texW,texH] (vec2)
-  const GLint textureAttributeSize = 4;
-  const GLenum textureAttributeType = GL_FLOAT;
-
-  // Each animation consists of animation speed and max frames
-  // [aniSpeed, aniFrames], (vec2)
-  const GLint animationAttributeSize = 2;
-  const GLenum animationAttributeType = GL_FLOAT;
-};
+#include "VAOWrapper.h"
 
 class RenderTileLayer : public RenderableObjectWorld {
  public:
@@ -75,7 +26,10 @@ class RenderTileLayer : public RenderableObjectWorld {
   bool animated;
 
   const TiledSet *tiledSet;
-  VAOWrapperTile vao;
+  VAOWrapper2D vao;
+
+  int textureWidth;
+  int textureHeight;
 };
 
 #endif  // LENGINE_RENDERABLE_OBJECT_TLAYER

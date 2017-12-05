@@ -321,7 +321,7 @@ GLint RSC_GLProgram::GetUniformLocation(const std::string &name) const {
        << mHandleID << " doesn't have an active Uniform Location named '"
        << name << "'";
     LOG_TRACE(ss.str());
-    throw LEngineShaderProgramException(ss.str(), this);
+    //throw LEngineShaderProgramException(ss.str(), this);
   }
   return returnVal;
 }

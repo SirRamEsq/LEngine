@@ -33,9 +33,14 @@ class ComponentLight : public BaseComponent {
   /// the light
   int AddLight(std::unique_ptr<Light> light);
 
+  void EnableLight(int index);
+  void DisableLight(int index);
+
   void Update();
 
  protected:
+  std::map<int, std::unique_ptr<Light>> *GetLights();
+  Light *GetLight(int index);
   ComponentPosition *myPos;
   int mLastLightID;
   std::map<int, std::unique_ptr<Light>> mLights;
@@ -48,14 +53,15 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   std::unique_ptr<ComponentLight> ConstructComponent(EID id,
                                                      ComponentLight *parent);
   void Update();
-
-  void Render(RSC_Texture *textureDiffuse, RSC_Texture *textureDestination,
-              const RSC_GLProgram *shaderProgram);
+  void Render(RSC_Texture *textureDiffuse, RSC_Texture *textureDestination);
 
   void BuildVAO();
 
+  void SetAmbientLight(Vec4 light);
+
  private:
   GLuint FBO;  // frame buffer object id
+  Vec4 mAmbientLight;
   const RSC_Texture *lightTexture;
   VAOWrapper vao;
 

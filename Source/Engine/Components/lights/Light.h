@@ -15,7 +15,7 @@ class Light {
 
   /// Whether or not light is rendered
   bool render;
-  
+
   RSC_GLProgram* shaderProgram;
 };
 
