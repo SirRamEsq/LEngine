@@ -107,6 +107,25 @@ bool RSC_Texture::ExportTexture(const char *path) const {
   }
   return true;
 }
+bool RSC_Texture::ExportTexture(GLuint id, unsigned int width,
+                                unsigned int height, unsigned int bpp, GLuint format, const char *path) {
+  TextureData texData;
+  Bind(id);
+  unsigned int texSize = width * height * bpp;
+  texData.data.reset(new unsigned char[texSize]);
+  glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE,
+                texData.data.get());
+
+  if (SOIL_save_image(path, SOIL_SAVE_TYPE_BMP, width, height, bpp,
+                      texData.data.get()) == 0) {
+    std::string pathString(path);
+    std::string errorString =
+        "Texture Write to Disk Failed @ Path: " + pathString;
+    LOG_INFO(errorString);
+    throw Exception(errorString);
+  }
+  return true;
+}
 
 RSC_Texture::~RSC_Texture() { DeleteGRSC_Texture(); }
 
@@ -114,8 +133,9 @@ void RSC_Texture::LoadFile(const std::string &fName) {
   // Generate a new image Id and bind it with the
   // current image.
 
-  int *channels = NULL;  // stores the original image's number channels (ex. RGBA, RGB,
-                  // Greyscale, etc...)
+  int *channels =
+      NULL;  // stores the original image's number channels (ex. RGBA, RGB,
+             // Greyscale, etc...)
   mTexData.data.reset(SOIL_load_image(
       fName.c_str(), (int *)&mTexData.width, (int *)&mTexData.height,
       channels,        // Data is sent into these
@@ -165,15 +185,18 @@ void RSC_Texture::Bind() const {
     // Once the data is passed off to opengl, the current mTexData.data is just
     // a copy
   }
-  if (mGLID != RSC_Texture::GLBoundTexture) {
-    glBindTexture(GL_TEXTURE_2D, mGLID);
-    RSC_Texture::GLBoundTexture = mGLID;
-  }
+  Bind(mGLID);
 }
 
 void RSC_Texture::BindNull() {
   glBindTexture(GL_TEXTURE_2D, 0);
   RSC_Texture::GLBoundTexture = 0;
+}
+void RSC_Texture::Bind(GLuint id) {
+  if (RSC_Texture::GLBoundTexture != id) {
+    glBindTexture(GL_TEXTURE_2D, id);
+    RSC_Texture::GLBoundTexture = id;
+  }
 }
 
 void RSC_Texture::SetColorKey(unsigned char Red, unsigned char Green,

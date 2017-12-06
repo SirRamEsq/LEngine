@@ -41,6 +41,8 @@ class RSC_Texture {
   uint8_t GetPixelAlpha(const int &x, const int &y) const;
 
   bool ExportTexture(const char *path) const;
+  static bool ExportTexture(GLuint id, unsigned int width, unsigned int height,
+                            unsigned int bpp, GLuint format, const char *path);
 
   int RenderToTexture(const Rect &area, RSC_Texture *otherTexture,
                       LOrigin origin = L_ORIGIN_CENTER) const;
@@ -50,6 +52,7 @@ class RSC_Texture {
   void UpdateDataFromGL();
 
   static void BindNull();
+  static void Bind(GLuint id);
 
   static std::unique_ptr<RSC_Texture> LoadResource(const std::string &fname);
 

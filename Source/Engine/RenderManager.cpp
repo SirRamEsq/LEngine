@@ -197,6 +197,11 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
   glTexCoord2f(Left, Bottom);
   glVertex3f(0, resolution.y, 0);
   glEnd();
+
+  /*
+  RSC_Texture::ExportTexture(mDepthTextureID, view.w, view.h, 1, GL_DEPTH_COMPONENT,
+                             "./test.png");
+							 */
 }
 
 /////////////////

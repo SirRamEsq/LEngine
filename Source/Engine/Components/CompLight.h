@@ -55,7 +55,10 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   std::unique_ptr<ComponentLight> ConstructComponent(EID id,
                                                      ComponentLight *parent);
   void Update();
-  void Render(RSC_Texture *textureDiffuse, RSC_Texture *textureDestination);
+  /// \TODO pass textureNormal as optional param
+  void Render(GLuint textureDiffuse, GLuint textureDepth,
+              GLuint textureDestination, unsigned int width,
+              unsigned int height);
 
   void BuildVAO();
 

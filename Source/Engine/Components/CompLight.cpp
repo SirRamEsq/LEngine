@@ -84,8 +84,9 @@ void ComponentLightManager::Update() {
   // BuildVAO();
 }
 
-void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
-                                   RSC_Texture *textureDestination) {
+void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
+                                   GLuint textureDestination,
+                                   unsigned int width, unsigned int height) {
   std::vector<Light *> lights;
   for (auto comp = activeComponents.begin(); comp != activeComponents.end();
        comp++) {
@@ -96,66 +97,48 @@ void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
       if (light->render) {
         lights.push_back(light);
       }
+      if (lights.size() >= MAX_LIGHTS) {
+        // breakout of both for loops
+        goto breakout;
+      }
     }
   }
+// Look ma! A decent goto!
+breakout:
 
   std::sort(lights.begin(), lights.end(), &SortLights);
-  // Set framebuffer to clear destination Texture
+
   return;
-  /*
+
+  // Setup framebuffer
   RSC_GLProgram::BindNULL();
   RSC_Texture::BindNull();
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                         textureDestination->GetOpenGLID(), 0);
+                         textureDestination, 0);
   // Clear
   glClearColor(0.25f, 0.55f, 0.85f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-
-  // Render diffuse to destination, (only the areas that contain light will be
-  // processed by the shader)
-  textureDiffuse->RenderToTexture(Rect(0, 0, textureDestination->GetWidth(),
-                                       textureDestination->GetHeight()),
-                                  textureDestination);
-
-  shaderProgram->Bind();
 
   // Push viewport bit
   glPushAttrib(GL_VIEWPORT_BIT);
   // Setup frame buffer render
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-  // Attach Diffuse and Light textures
-  K_TextureMan.LoadItem("SpotLight.png", "SpotLight.png");
-  lightTexture = K_TextureMan.GetItem("SpotLight.png");
+  // Bind textures
   glActiveTexture(GL_TEXTURE1);
-  lightTexture->Bind();
+  RSC_Texture::Bind(textureDiffuse);
   glActiveTexture(GL_TEXTURE2);
-  textureDiffuse->Bind();
-
-  // Map samplers to their respective texture bind points
-  GLuint diffuseLocation =
-      glGetUniformLocation(shaderProgram->GetHandle(), "diffuse");
-  GLuint lightTextureLocation =
-      glGetUniformLocation(shaderProgram->GetHandle(), "lightTexture");
-  glUniform1i(diffuseLocation, 2);
-  glUniform1i(lightTextureLocation, 1);
+  RSC_Texture::Bind(textureDepth);
 
   // Set Render Viewport
-  glViewport(0, 0, textureDestination->GetWidth(),
-             textureDestination->GetHeight());
+  glViewport(0, 0, width, height);
 
   // Atatch buffer texture
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                         textureDestination->GetOpenGLID(), 0);
+                         textureDestination, 0);
 
-  // Output destination
-  /*glBindFragDataLocation(shaderProgram->GetHandle(), 0, "outputColor");
-  GLuint attachments[1] = {GL_COLOR_ATTACHMENT0};
-  glDrawBuffers(1, attachments);*/
-
-  /*
   glBindVertexArray(vao.GetVAOID());
   glDrawArrays(GL_QUADS, 0, numberOfLights * 4);
 
@@ -174,7 +157,6 @@ void ComponentLightManager::Render(RSC_Texture *textureDiffuse,
   RSC_Texture::BindNull();
   glActiveTexture(GL_TEXTURE0);
   RSC_Texture::BindNull();
-  */
 }
 
 void ComponentLightManager::BuildVAO() {
