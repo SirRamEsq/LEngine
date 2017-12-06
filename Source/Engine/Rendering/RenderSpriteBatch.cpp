@@ -51,10 +51,10 @@ RenderSpriteBatch::RenderSpriteBatch(RenderManager *rm, const std::string &tex,
   currentSize = 0;
   // this dependency on the Kernel is ok, this is just to grab a resource
   texture = K_TextureMan.GetItem(textureName);
-  std::stringstream ss;
-  ss << "ERROR: RenderSpriteBatch; Couldn't find texture named: "
-     << textureName;
   if (texture == NULL) {
+    std::stringstream ss;
+    ss << "ERROR: RenderSpriteBatch; Couldn't find texture named: "
+       << textureName;
     LOG_INFO(ss.str());
   }
   AddToRenderManager();
@@ -137,8 +137,6 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   if (texture != NULL) {
     texture->Bind();
   }
-  // draw points 0-4 from the currently bound VAO with current in-use shader
-  // render 'numberOfSprites' number of elements
   glDrawArrays(GL_QUADS, 0, numberOfSprites * 4);
 }
 

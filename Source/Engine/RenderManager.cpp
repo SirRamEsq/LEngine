@@ -40,12 +40,22 @@ RenderCamera::RenderCamera(RenderManager *rm, Rect viewPort)
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-  glGenRenderbuffers(1, &mDepthRBO);
-  glBindRenderbuffer(GL_RENDERBUFFER, mDepthRBO);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, viewPort.w,
-                        viewPort.h);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                            GL_RENDERBUFFER, mDepthRBO);
+  // Create depth texture
+  glGenTextures(1, &mDepthTextureID);
+  glBindTexture(GL_TEXTURE_2D, mDepthTextureID);
+
+  // GL_LINEAR does not make sense for depth texture. However, next tutorial
+  // shows usage of GL_LINEAR and PCF
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  // Remove artefact on the edges of the shadowmap
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, viewPort.w, viewPort.h,
+               0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+  RSC_Texture::BindNull();
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -67,7 +77,7 @@ RenderCamera::RenderCamera(RenderManager *rm, Rect viewPort)
 
 RenderCamera::~RenderCamera() {
   glDeleteFramebuffers(1, &FBO);
-  glDeleteRenderbuffers(1, &mDepthRBO);
+  glDeleteTextures(1, &mDepthTextureID);
   // should this be called? what if this fbo is currently bound?
   // glBindFramebuffer(GL_FRAMEBUFFER, 0);
   dependencyRenderManager->RemoveCamera(this);
@@ -135,6 +145,9 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   // Atatch buffer texture
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          frameBufferTextureDiffuse->GetOpenGLID(), 0);
+  // Atatch buffer texture
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                         mDepthTextureID, 0);
 }
 
 void RenderCamera::RenderFrameBufferTextureFinal() {
@@ -272,7 +285,7 @@ void RenderManager::Render() {
       // Write to depth
       glDepthMask(GL_TRUE);
       for (auto i = worldOpaque.begin(); i != worldOpaque.end(); i++) {
-		ProcessDrawCall(*i, *camera);
+        ProcessDrawCall(*i, *camera);
       }
 
       // Render transparent objects
@@ -280,13 +293,13 @@ void RenderManager::Render() {
       glDepthMask(GL_FALSE);
       for (auto i = worldTransparent.begin(); i != worldTransparent.end();
            i++) {
-		ProcessDrawCall(*i, *camera);
+        ProcessDrawCall(*i, *camera);
       }
       glDepthMask(GL_TRUE);
 
       // Maybe have per camera objects as well?
-	  // Per viewport objects?
-	  // used, for example, multiple HUDs in scplit-screen
+      // Per viewport objects?
+      // used, for example, multiple HUDs in scplit-screen
 
       // Need better way to handle light
       // Kernel::stateMan.GetCurrentState()->comLightMan.Render(
