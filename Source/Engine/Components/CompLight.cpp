@@ -1,6 +1,8 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
+#include "../Resolution.h"
+
 bool SortLights(Light *l1, Light *l2) {
   if (l1->type > l2->type) {
     return true;
@@ -58,6 +60,9 @@ std::map<int, std::unique_ptr<Light>> *ComponentLight::GetLights() {
 //////////////////////////
 // ComponentLightManager//
 //////////////////////////
+GLuint ComponentLightManager::GlobalLightUBO = 0;
+const GLuint ComponentLightManager::LightBindingIndex = 3;
+
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
     : BaseComponentManager_Impl(e), vao(0, MAX_LIGHTS) {
   glGenFramebuffers(1, &FBO);
@@ -77,12 +82,6 @@ void ComponentLightManager::Update() {
     i->second->updatedThisFrame = false;
   }
 
-  // BuildVAO();
-}
-
-void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
-                                   GLuint textureDestination,
-                                   unsigned int width, unsigned int height) {
   std::vector<Light *> lights;
   for (auto comp = activeComponents.begin(); comp != activeComponents.end();
        comp++) {
@@ -102,14 +101,80 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
 // Look ma! A decent goto!
 breakout:
 
-  if(lights.size() == 0){return;}
   std::sort(lights.begin(), lights.end(), &SortLights);
+  UpdateLightUBO(lights);
+}
 
-  return;
+void ComponentLightManager::CreateLightUBO() {
+  GLuint bufferSize = (sizeof(float) * 16) * 3;
+  glGenBuffers(1, &GlobalLightUBO);
+  glBindBuffer(GL_UNIFORM_BUFFER, GlobalLightUBO);
+  glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
+  // Bind generated CPU buffer to the index
+  glBindBufferBase(GL_UNIFORM_BUFFER, LightBindingIndex, GlobalLightUBO);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void ComponentLightManager::BindLightUBO(RSC_GLProgram *program) {
+  if (GlobalLightUBO == 0) {
+    CreateLightUBO();
+  }
+  try {
+    GLuint programHandle = program->GetHandle();
+    GLuint uboHandle = program->GetUniformBlockHandle("LightData");
+    // Bind program GPU buffer to the index
+    glUniformBlockBinding(programHandle, uboHandle, LightBindingIndex);
+  } catch (LEngineShaderProgramException e) {
+  }
+}
+
+void ComponentLightManager::UpdateLightUBO(std::vector<Light *> lights) {
+  glBindBuffer(GL_UNIFORM_BUFFER, GlobalLightUBO);
+
+  int offset = 0;
+  // all elements are 4 floats
+  int dataSize = (sizeof(float) * 4);
+  for (auto i = lights.begin(); i != lights.end(); i++) {
+    auto light = *i;
+    float pos[4];
+    pos[0] = light->pos.x;
+    pos[1] = light->pos.y;
+    pos[2] = light->pos.z;
+    pos[3] = 1.0;
+    float color[4];
+    color[0] = light->color.x;
+    color[1] = light->color.y;
+    color[2] = light->color.z;
+    color[3] = 1.0;
+    float extra[4];
+    extra[0] = light->distance;
+    extra[1] = light->noise;
+    extra[2] = 0;
+    extra[3] = 0;
+
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &pos[0]);
+    offset += dataSize;
+
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &color[0]);
+    offset += dataSize;
+
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &extra[0]);
+    offset += dataSize;
+  }
+
+  // offset of variable location for total light count
+  int lightCountOffset = MAX_LIGHTS * (dataSize * 3);
+  int totalLights = lights.size();
+  glBufferSubData(GL_UNIFORM_BUFFER, lightCountOffset, sizeof(int), &totalLights);
+}
+
+void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
+                                   GLuint textureDestination,
+                                   unsigned int width, unsigned int height,
+                                   RSC_GLProgram *program) {
+  program->Bind();
 
   // Setup framebuffer
-  RSC_GLProgram::BindNULL();
-  RSC_Texture::BindNull();
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          textureDestination, 0);
@@ -124,7 +189,6 @@ breakout:
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
   // Bind textures
-  glActiveTexture(GL_TEXTURE1);
   RSC_Texture::Bind(textureDiffuse);
   glActiveTexture(GL_TEXTURE2);
   RSC_Texture::Bind(textureDepth);
@@ -136,24 +200,46 @@ breakout:
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          textureDestination, 0);
 
-  glBindVertexArray(vao.GetVAOID());
-  glDrawArrays(GL_QUADS, 0, numberOfLights * 4);
+  // glBindVertexArray(vao.GetVAOID());
+  // glDrawArrays(GL_QUADS, 0, numberOfLights * 4);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0f, width, height, 0, 0, 1);  // 2D
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  float Left = 0;
+  float Right = 1;  // * ratioX;
+  // texture is upside down, invert top and bottom
+  float Top = 1;  // * ratioY;
+  float Bottom = 0;
+  glBegin(GL_QUADS);
+  glTexCoord2f(Left, Top);
+  glVertex3f(0, 0, 0);
+
+  glTexCoord2f(Right, Top);
+  glVertex3f(width, 0, 0);
+
+  glTexCoord2f(Right, Bottom);
+  glVertex3f(width, height, 0);
+
+  glTexCoord2f(Left, Bottom);
+  glVertex3f(0, height, 0);
+  glEnd();
 
   // Unbind everything
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glBindVertexArray(NULL);
-  RSC_GLProgram::BindNULL();
 
   // Back to initial viewport
   glPopAttrib();
 
   // Unbind Textures
-  glActiveTexture(GL_TEXTURE2);
-  RSC_Texture::BindNull();
-  glActiveTexture(GL_TEXTURE1);
   RSC_Texture::BindNull();
   glActiveTexture(GL_TEXTURE0);
   RSC_Texture::BindNull();
+
+  RSC_GLProgram::BindNULL();
 }
 
 void ComponentLightManager::BuildVAO() {

@@ -33,6 +33,7 @@ instantiates them
 */
 
 class ComponentCamera;
+class ComponentLightManager;
 class RenderCamera {
   friend class RenderManager;
   friend class ComponentCamera;
@@ -53,7 +54,8 @@ class RenderCamera {
   Rect GetScreenSpace() const;
   void SetScreenSpace(Rect screen);
 
-  void RenderFrameBufferTextureFinal();
+  void RenderFrameBufferTextureFinal(ComponentLightManager *lightMan,
+                                     RSC_GLProgram *program);
   void RenderFrameBufferTextureDiffuse();
 
  protected:

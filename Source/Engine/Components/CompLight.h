@@ -15,7 +15,7 @@
 #include "lights/Light.h"
 #include "CompPosition.h"
 
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 32
 
 // forward declare
 class ComponentLightManager;
@@ -58,13 +58,17 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   /// \TODO pass textureNormal as optional param
   void Render(GLuint textureDiffuse, GLuint textureDepth,
               GLuint textureDestination, unsigned int width,
-              unsigned int height);
+              unsigned int height, RSC_GLProgram *program);
 
   void BuildVAO();
 
   void SetAmbientLight(Vec4 light);
 
+  static void BindLightUBO(RSC_GLProgram *program);
+
  private:
+  static void CreateLightUBO();
+  static void UpdateLightUBO(std::vector<Light *> lights);
   GLuint FBO;  // frame buffer object id
   const RSC_Texture *lightTexture;
   VAOWrapper2D vao;
@@ -72,6 +76,9 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   Light mAmbientLight;
 
   unsigned int numberOfLights;
+
+  static GLuint GlobalLightUBO;
+  static const GLuint LightBindingIndex;
 };
 
 #endif  // L_ENGINE_COMP_LIGHT

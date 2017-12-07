@@ -6,6 +6,8 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
+#include "Components/CompLight.h"
+
 #include "Resources/RSC_Map.h"
 
 #include <sstream>
@@ -104,12 +106,12 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   T = T.Translate(Vec3(-view.x, -view.y, 0.0));
 
   Matrix4 R = Matrix4::IdentityMatrix();
-  R = R.RotateZ(45);
+  R = R.RotateZ(0);
 
   Matrix4 S = Matrix4::IdentityMatrix();
   S = S.Scale(Vec3(1, 1, 1));
 
-  //Matrix4 viewMat = T * R * S;
+  // Matrix4 viewMat = T * R * S;
   Matrix4 viewMat = S * R * T;
 
   // Will render texture upside down
@@ -153,7 +155,11 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
                          mDepthTextureID, 0);
 }
 
-void RenderCamera::RenderFrameBufferTextureFinal() {
+void RenderCamera::RenderFrameBufferTextureFinal(
+    ComponentLightManager *lightMan, RSC_GLProgram *program) {
+  lightMan->Render(frameBufferTextureDiffuse->GetOpenGLID(), mDepthTextureID,
+                   frameBufferTextureFinal->GetOpenGLID(), view.w, view.h,
+                   program);
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {
@@ -317,6 +323,8 @@ void RenderManager::Render() {
 
       //(*currentCamera)->RenderFrameBufferTextureFinal();
       (*camera)->RenderFrameBufferTextureDiffuse();
+      //(*camera)->RenderFrameBufferTextureFinal(
+          //&Kernel::stateMan.GetCurrentState()->comLightMan, &defaultProgramLight);
     }
   }
 
@@ -675,5 +683,13 @@ void RenderManager::LoadDefaultShaders() {
   if (shaderProgram != NULL) {
     defaultProgramSprite.CopyShadersFromProgram(shaderProgram);
     SetupUniformBuffers(&defaultProgramSprite);
+  }
+
+  name = defaultProgramLightName;
+  shaderProgram = K_ShaderProgramMan.GetLoadItem(name, name);
+  if (shaderProgram != NULL) {
+    defaultProgramLight.CopyShadersFromProgram(shaderProgram);
+    SetupUniformBuffers(&defaultProgramLight);
+	ComponentLightManager::BindLightUBO(&defaultProgramLight);
   }
 }
