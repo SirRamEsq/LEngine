@@ -104,31 +104,34 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   T = T.Translate(Vec3(-view.x, -view.y, 0.0));
 
   Matrix4 R = Matrix4::IdentityMatrix();
-  R = R.RotateZ(0);
+  R = R.RotateZ(45);
 
   Matrix4 S = Matrix4::IdentityMatrix();
-  S = S.Scale(Vec3(4, 4, 1));
+  S = S.Scale(Vec3(1, 1, 1));
 
-  // not used yet, should be used
-  Matrix4 modelViewMat = T * R * S;
+  //Matrix4 viewMat = T * R * S;
+  Matrix4 viewMat = S * R * T;
 
   // Will render texture upside down
   Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
       // Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
       Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
-
-  float position[4];
-  // Render Using only full integers for translation to get that pixel-perfect
-  // look
-  position[0] = view.x;
-  position[1] = view.y;
-  position[2] = view.w;
-  position[3] = view.h;
+  auto projectionMatInverse = projectionMat.Inverse();
 
   glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
-  glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float) * 4), position);
-  glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(float) * 4), (sizeof(float) * 16),
-                  &projectionMat.m);
+
+  int offset = 0;
+  int dataSize = (sizeof(float) * 16);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &viewMat.m);
+
+  offset += dataSize;
+  dataSize = (sizeof(float) * 16);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &projectionMat.m);
+
+  offset += dataSize;
+  dataSize = (sizeof(float) * 16);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &projectionMatInverse.m);
+
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
   // Push viewport bit
@@ -199,9 +202,10 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
   glEnd();
 
   /*
-  RSC_Texture::ExportTexture(mDepthTextureID, view.w, view.h, 1, GL_DEPTH_COMPONENT,
+  RSC_Texture::ExportTexture(mDepthTextureID, view.w, view.h, 1,
+  GL_DEPTH_COMPONENT,
                              "./test.png");
-							 */
+               */
 }
 
 /////////////////
@@ -626,9 +630,8 @@ void RenderManager::LoadDefaultShaders() {
     // The memory location ID is then sent to each individual camera so that the
     // cameras can bind
     // the needed data into the uniform buffer
-    // This buffer stores a mat4 (proj matrix) and a vec2 (camera translation)
-    // 2 floats (padded to vec4)for vec2, 16 for matrix
-    GLuint bufferSize = (sizeof(float) * 4) + (sizeof(float) * 16);
+    // This buffer stores three mat4 (view mat, proj matr and inverse)
+    GLuint bufferSize = (sizeof(float) * 16) * 3;
     glGenBuffers(1, &GlobalCameraUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
     glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);

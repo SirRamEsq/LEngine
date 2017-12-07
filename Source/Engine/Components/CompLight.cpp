@@ -1,11 +1,8 @@
 #include "CompLight.h"
 #include "../Kernel.h"
 
-// Will sort lights based on shader program address
-// this will group lights that share a program together
-// Will this lead to weird and variable rendering orders? probably...
 bool SortLights(Light *l1, Light *l2) {
-  if (l1->shaderProgram > l2->shaderProgram) {
+  if (l1->type > l2->type) {
     return true;
   }
   return false;
@@ -64,10 +61,9 @@ std::map<int, std::unique_ptr<Light>> *ComponentLight::GetLights() {
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
     : BaseComponentManager_Impl(e), vao(0, MAX_LIGHTS) {
   glGenFramebuffers(1, &FBO);
-  mAmbientLight.x = 1.0f;
-  mAmbientLight.y = 1.0f;
-  mAmbientLight.z = 1.0f;
-  mAmbientLight.w = 0.0f;
+  mAmbientLight.color.x = 1.0f;
+  mAmbientLight.color.y = 1.0f;
+  mAmbientLight.color.z = 1.0f;
 }
 
 void ComponentLightManager::Update() {
@@ -106,6 +102,7 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
 // Look ma! A decent goto!
 breakout:
 
+  if(lights.size() == 0){return;}
   std::sort(lights.begin(), lights.end(), &SortLights);
 
   return;

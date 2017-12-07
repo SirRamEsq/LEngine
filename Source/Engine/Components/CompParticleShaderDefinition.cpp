@@ -25,11 +25,9 @@ const std::string PARTICLE_SHADER_VERTEX_DECLARATIONS =
     "layout (location = 6) in vec2 scaling;\n"
 
     "layout(std140) uniform CameraData{\n"
-    "//Only camera translation is needed\n"
-    "//Camera scaling and rotation will take place when the camera applies "
-    "it's buffer texutre (that it renderes the screen to) to a viewport\n"
-    "vec4 cameraTranslation;\n"
+    "mat4 viewMatrix;\n"
     "mat4 projMatrix;\n"
+    "mat4 projMatrixInverse;\n"
     "};\n"
 
     "out vec4 fragmentColor;\n"
@@ -55,9 +53,11 @@ const std::string PARTICLE_SHADER_VERTEX_MAIN_BEGIN =
     "fragmentColor.a	= timeRatio;\n"
     "fragmentUV=textureCoords;\n"
 
-    "vec2 temp=particlePosition;\n"
-    "temp.x = particlePosition.x - cameraTranslation.x;\n"
-    "temp.y = particlePosition.y - cameraTranslation.y;\n";
+    "vec4 temp;\n"
+    "temp.x = particlePosition.x;\n"
+    "temp.y = particlePosition.y;\n"
+    "temp.z = 0.0;\n"
+    "temp.w = 1.0;\n";
 
 const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN(float magicNumber) {
   // 18 works pretty well
@@ -95,9 +95,11 @@ const std::string PARTICLE_SHADER_VERTEX_POINT_BEGIN(float magicNumber) {
         "fragmentColor.a	= timeRatio;\n"
         "fragmentUV=textureCoords;\n"
 
-        "vec2 temp=particlePosition;\n"
-        "temp.x = particlePosition.x - cameraTranslation.x;\n"
-        "temp.y = particlePosition.y - cameraTranslation.y;\n";
+        "vec4 temp;\n"
+        "temp.x = particlePosition.x;\n"
+        "temp.y = particlePosition.y;\n"
+        "temp.z = 0.0;\n"
+        "temp.w = 1.0;\n";
   return ss.str();
 }
 
@@ -114,7 +116,8 @@ const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_EFFECT_EXPAND =
 const std::string PARTICLE_SHADER_VERTEX_MAIN_LUASTRING_END =
     // z is depth, will be between 0.0 and 1.0
     "float depth = (time - lifetime.x) / (lifetime.y - lifetime.x);\n"
-    "vec4 luaOut=projMatrix * vec4(temp, depth, 1.0);\n";
+	"temp.z = depth;"
+    "vec4 luaOut=projMatrix * viewMatrix * temp;\n";
 
 const std::string PARTICLE_SHADER_VERTEX_MAIN_END =
     "gl_Position = luaOut;\n"

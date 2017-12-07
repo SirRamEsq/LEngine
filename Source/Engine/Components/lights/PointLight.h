@@ -5,7 +5,7 @@
 
 class PointLight : public Light {
  public:
-  float radius;
+  PointLight() { type = LIGHT_POINT; }
 };
 
 #endif

@@ -4,19 +4,27 @@
 #include "../../glslHelper.h"
 #include "../../Resources/RSC_GLShader.h"
 
+enum LIGHT_TYPE { LIGHT_GENERIC = 0, LIGHT_POINT = 1 };
+
 /// POD class
 class Light {
  public:
-  /// RGB and intensity
-  Vec4 color;
+  /// RGB
+  Vec3 color;
+
+  /// X,Y,Depth in world coorindates
+  Vec3 pos;
 
   /// Light flickering value [0.0f - 1.0f]
   float noise;
 
+  /// Distance the light extends to
+  float distance;
+
   /// Whether or not light is rendered
   bool render;
 
-  RSC_GLProgram* shaderProgram;
+  LIGHT_TYPE type;
 };
 
 #endif

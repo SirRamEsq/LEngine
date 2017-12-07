@@ -66,9 +66,10 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
 
  private:
   GLuint FBO;  // frame buffer object id
-  Vec4 mAmbientLight;
   const RSC_Texture *lightTexture;
   VAOWrapper2D vao;
+
+  Light mAmbientLight;
 
   unsigned int numberOfLights;
 };
