@@ -175,6 +175,7 @@ bool IteratorIsRLast(Iter iter, const Data &data) {
 }
 
 std::string GL_GetError();
+std::string GL_CheckFramebuffer();
 
 std::vector<std::string> StringSplit(const char *str, char c);
 

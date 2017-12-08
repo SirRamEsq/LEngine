@@ -51,6 +51,8 @@ class RSC_Texture {
   void Clear();
   void UpdateDataFromGL();
 
+  void GenerateID() const;
+
   static void BindNull();
   static void Bind(GLuint id);
 

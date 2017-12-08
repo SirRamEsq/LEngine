@@ -37,6 +37,8 @@ RenderCamera::RenderCamera(RenderManager *rm, Rect viewPort)
   rotation = 0;
   nearClippingPlane = -100;
   farClippingPlane = 100;
+  frameBufferTextureDiffuse->GenerateID();
+  frameBufferTextureFinal->GenerateID();
   SetView(viewPort);
 
   glGenFramebuffers(1, &FBO);
@@ -60,20 +62,6 @@ RenderCamera::RenderCamera(RenderManager *rm, Rect viewPort)
   RSC_Texture::BindNull();
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-  // Does the GPU support current FBO configuration?
-  GLenum status;
-  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  switch (status) {
-    case GL_FRAMEBUFFER_COMPLETE:
-      break;
-    default:
-      std::stringstream ss;
-      ss << "RenderCamera framebuffer failed, status: " << status << std::endl;
-      LOG_FATAL(ss.str());
-      break;
-  }
-
   dependencyRenderManager->AddCamera(this);
 }
 
@@ -154,18 +142,24 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
                          mDepthTextureID, 0);
 
-  //Some drivers report an error in this funciton, even though everything is fine
+  // Some drivers report an error in this funciton, even though everything is
+  // fine
   GL_GetError();
+  auto fbError = GL_CheckFramebuffer();
+  if(fbError != ""){
+	  LOG_ERROR(fbError);
+  }
 }
 
 void RenderCamera::RenderFrameBufferTextureFinal(
     ComponentLightManager *lightMan, RSC_GLProgram *program) {
-  /*
   lightMan->Render(frameBufferTextureDiffuse->GetOpenGLID(), mDepthTextureID,
                    frameBufferTextureFinal->GetOpenGLID(), view.w, view.h,
                    program);
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
-  */
+
+  //frameBufferTextureFinal->ExportTexture("T_F.png");
+  //frameBufferTextureDiffuse->ExportTexture("T_D.png");
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {
   RenderFrameBufferTexture(frameBufferTextureDiffuse.get());
@@ -338,9 +332,10 @@ void RenderManager::Render() {
       // (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
 
       //(*currentCamera)->RenderFrameBufferTextureFinal();
-      (*camera)->RenderFrameBufferTextureDiffuse();
-      //(*camera)->RenderFrameBufferTextureFinal(
-      //&Kernel::stateMan.GetCurrentState()->comLightMan, &defaultProgramLight);
+      //(*camera)->RenderFrameBufferTextureDiffuse();
+      (*camera)->RenderFrameBufferTextureFinal(
+          &Kernel::stateMan.GetCurrentState()->comLightMan,
+          &defaultProgramLight);
     }
   }
 

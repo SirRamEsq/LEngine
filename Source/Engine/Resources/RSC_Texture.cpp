@@ -108,13 +108,13 @@ bool RSC_Texture::ExportTexture(const char *path) const {
   return true;
 }
 bool RSC_Texture::ExportTexture(GLuint id, unsigned int width,
-                                unsigned int height, unsigned int bpp, GLuint format, const char *path) {
+                                unsigned int height, unsigned int bpp,
+                                GLuint format, const char *path) {
   TextureData texData;
   Bind(id);
   unsigned int texSize = width * height * bpp;
   texData.data.reset(new unsigned char[texSize]);
-  glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE,
-                texData.data.get());
+  glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, texData.data.get());
 
   if (SOIL_save_image(path, SOIL_SAVE_TYPE_BMP, width, height, bpp,
                       texData.data.get()) == 0) {
@@ -145,7 +145,7 @@ void RSC_Texture::LoadFile(const std::string &fName) {
   mTextureFormat = GL_RGBA;
 }
 
-void RSC_Texture::Bind() const {
+void RSC_Texture::GenerateID() const {
   if (mGLID == 0) {
     // Generate one new texture Id.
     glGenTextures(1, &mGLID);
@@ -185,6 +185,10 @@ void RSC_Texture::Bind() const {
     // Once the data is passed off to opengl, the current mTexData.data is just
     // a copy
   }
+}
+
+void RSC_Texture::Bind() const {
+  GenerateID();
   Bind(mGLID);
 }
 

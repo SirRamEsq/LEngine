@@ -224,6 +224,32 @@ std::string GL_GetError() {
   return ss.str();
 }
 
+std::string GL_CheckFramebuffer() {
+  GLenum status;
+  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  std::string errorString;
+  switch (status) {
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+      errorString = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+      break;
+	//case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+      //errorString = "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+      //break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+      errorString = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+      break;
+	case GL_FRAMEBUFFER_UNSUPPORTED:
+      errorString = "GL_FRAMEBUFFER_UNSUPPORTED";
+      break;
+    case GL_FRAMEBUFFER_COMPLETE:
+      errorString = "";
+      break;
+    default:
+      errorString = "?";
+  }
+  return errorString;
+}
+
 std::string GetDate() {
   time_t rawTime;
   time(&rawTime);

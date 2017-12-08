@@ -51,6 +51,7 @@ class ComponentLight : public BaseComponent {
 class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
  public:
   ComponentLightManager(EventDispatcher *e);
+  ~ComponentLightManager();
 
   std::unique_ptr<ComponentLight> ConstructComponent(EID id,
                                                      ComponentLight *parent);

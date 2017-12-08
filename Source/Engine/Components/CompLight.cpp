@@ -64,14 +64,44 @@ GLuint ComponentLightManager::GlobalLightUBO = 0;
 const GLuint ComponentLightManager::LightBindingIndex = 3;
 
 ComponentLightManager::ComponentLightManager(EventDispatcher *e)
-    : BaseComponentManager_Impl(e), vao(0, MAX_LIGHTS) {
+    : BaseComponentManager_Impl(e), vao((VAO_TEXTURE), 1) {
+  if (GlobalLightUBO == 0) {
+    CreateLightUBO();
+  }
   glGenFramebuffers(1, &FBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   mAmbientLight.color.x = 1.0f;
   mAmbientLight.color.y = 1.0f;
   mAmbientLight.color.z = 1.0f;
+
+  // Render full screen quad
+  float Left = 0;
+  float Right = 1;  // * ratioX;
+  // texture is upside down, invert top and bottom
+  float Top = 1;  // * ratioY;
+  float Bottom = 0;
+  vao.GetTextureArray()[0].x = Left;
+  vao.GetTextureArray()[0].y = Top;
+
+  vao.GetTextureArray()[1].x = Right;
+  vao.GetTextureArray()[1].y = Top;
+
+  vao.GetTextureArray()[2].x = Right;
+  vao.GetTextureArray()[2].y = Bottom;
+
+  vao.GetTextureArray()[3].x = Left;
+  vao.GetTextureArray()[3].y = Bottom;
+
+  GLenum status;
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+ComponentLightManager::~ComponentLightManager() {
+  glDeleteFramebuffers(1, &FBO);
 }
 
 void ComponentLightManager::Update() {
+  /*
   // Update all entities
   for (auto i = componentList.begin(); i != componentList.end(); i++) {
     UpdateComponent(i->second.get());
@@ -81,6 +111,7 @@ void ComponentLightManager::Update() {
   for (auto i = componentList.begin(); i != componentList.end(); i++) {
     i->second->updatedThisFrame = false;
   }
+  */
 
   std::vector<Light *> lights;
   for (auto comp = activeComponents.begin(); comp != activeComponents.end();
@@ -102,11 +133,12 @@ void ComponentLightManager::Update() {
 breakout:
 
   std::sort(lights.begin(), lights.end(), &SortLights);
-  //UpdateLightUBO(lights);
+  UpdateLightUBO(lights);
 }
 
 void ComponentLightManager::CreateLightUBO() {
-  GLuint bufferSize = (sizeof(float) * 16) * 3;
+  // MAX_LIGHTS set of 3 vec4 plus an integer
+  GLuint bufferSize = sizeof(int) + (MAX_LIGHTS * (sizeof(float) * 4) * 3);
   glGenBuffers(1, &GlobalLightUBO);
   glBindBuffer(GL_UNIFORM_BUFFER, GlobalLightUBO);
   glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
@@ -116,9 +148,6 @@ void ComponentLightManager::CreateLightUBO() {
 }
 
 void ComponentLightManager::BindLightUBO(RSC_GLProgram *program) {
-  if (GlobalLightUBO == 0) {
-    CreateLightUBO();
-  }
   try {
     GLuint programHandle = program->GetHandle();
     GLuint uboHandle = program->GetUniformBlockHandle("LightData");
@@ -165,49 +194,97 @@ void ComponentLightManager::UpdateLightUBO(std::vector<Light *> lights) {
   // offset of variable location for total light count
   int lightCountOffset = MAX_LIGHTS * (dataSize * 3);
   int totalLights = lights.size();
-  glBufferSubData(GL_UNIFORM_BUFFER, lightCountOffset, sizeof(int), &totalLights);
+  glBufferSubData(GL_UNIFORM_BUFFER, lightCountOffset, sizeof(int),
+                  &totalLights);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+#ifndef DEBUG_MODE
+  auto GLerror = GL_GetError();
+  if (GLerror != "") {
+    LOG_DEBUG(GLerror);
+  }
+#endif
 }
 
 void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
                                    GLuint textureDestination,
                                    unsigned int width, unsigned int height,
                                    RSC_GLProgram *program) {
-  program->Bind();
+  // Not using depth
+  glDisable(GL_DEPTH_TEST);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  RSC_GLProgram::BindNULL();
+  glBindVertexArray(0);
 
   // Setup framebuffer
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          textureDestination, 0);
   // Clear
-  glClearColor(0.25f, 0.55f, 0.85f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+  auto GLerror = GL_GetError();
+  if (GLerror != "") {
+    LOG_DEBUG(GLerror);
+  }
+
+  // Do this first so that RSC_Texture doesn't get messed up
+  RSC_Texture::BindNull();
+  // Bind textures
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureDiffuse);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textureDepth);
+
+  vao.GetVertexArray()[0].x = 0;
+  vao.GetVertexArray()[0].y = 0;
+
+  vao.GetVertexArray()[1].x = width;
+  vao.GetVertexArray()[1].y = 0;
+
+  vao.GetVertexArray()[2].x = width;
+  vao.GetVertexArray()[2].y = height;
+
+  vao.GetVertexArray()[3].x = 0;
+  vao.GetVertexArray()[3].y = height;
+
+  vao.UpdateGPU();
+  vao.Bind();
+
+  GLerror = GL_GetError();
+  if (GLerror != "") {
+    LOG_DEBUG(GLerror);
+  }
+
+  program->Bind();
+  float ambientLight[3];
+  ambientLight[0] = mAmbientLight.color.x;
+  ambientLight[1] = mAmbientLight.color.x;
+  ambientLight[2] = mAmbientLight.color.x;
+  glUniform3fv(program->GetUniformLocation("AMBIENT_COLOR"), 1,
+               &ambientLight[0]);
+  GLerror = GL_GetError();
+  if (GLerror != "") {
+    LOG_DEBUG(GLerror);
+  }
+
+  // GLint infoLogLength;
+  // glGetShaderiv(program->GetHandle(), GL_INFO_LOG_LENGTH, &infoLogLength);
+  // GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+  // glGetShaderInfoLog(program->GetHandle(), infoLogLength, NULL, strInfoLog);
+  // std::string str(strInfoLog);
+  // LOG_DEBUG(str);
 
   // Push viewport bit
   glPushAttrib(GL_VIEWPORT_BIT);
-  // Setup frame buffer render
-  glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-
-  // Bind textures
-  RSC_Texture::Bind(textureDiffuse);
-  glActiveTexture(GL_TEXTURE1);
-  RSC_Texture::Bind(textureDepth);
-
   // Set Render Viewport
   glViewport(0, 0, width, height);
 
-  // Atatch buffer texture
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                         textureDestination, 0);
+  auto fbError = GL_CheckFramebuffer();
+  if(fbError != ""){
+	  LOG_ERROR(fbError);
+  }
 
-  // glBindVertexArray(vao.GetVAOID());
-  // glDrawArrays(GL_QUADS, 0, numberOfLights * 4);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0f, width, height, 0, 0, 1);  // 2D
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+  glDrawArrays(GL_QUADS, 0, 4);
 
   // Unbind everything
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -217,11 +294,17 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glPopAttrib();
 
   // Unbind Textures
-  RSC_Texture::BindNull();
+  glBindTexture(GL_TEXTURE_2D, 0);
   glActiveTexture(GL_TEXTURE0);
-  RSC_Texture::BindNull();
+  glBindTexture(GL_TEXTURE_2D, 0);
+
 
   RSC_GLProgram::BindNULL();
+  GLerror = GL_GetError();
+  if (GLerror != "") {
+    LOG_DEBUG(GLerror);
+  }
+  glEnable(GL_DEPTH_TEST);
 }
 
 void ComponentLightManager::BuildVAO() {
