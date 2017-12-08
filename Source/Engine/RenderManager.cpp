@@ -158,7 +158,7 @@ void RenderCamera::RenderFrameBufferTextureFinal(
                    program);
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
 
-  //frameBufferTextureFinal->ExportTexture("T_F.png");
+  frameBufferTextureFinal->ExportTexture("T_F.png");
   //frameBufferTextureDiffuse->ExportTexture("T_D.png");
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {

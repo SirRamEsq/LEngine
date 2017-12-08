@@ -70,16 +70,14 @@ ComponentLightManager::ComponentLightManager(EventDispatcher *e)
   }
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-  mAmbientLight.color.x = 1.0f;
-  mAmbientLight.color.y = 1.0f;
-  mAmbientLight.color.z = 1.0f;
+  mAmbientLight.color.x = 0.7f;
+  mAmbientLight.color.y = 0.5f;
+  mAmbientLight.color.z = 0.5f;
 
-  // Render full screen quad
   float Left = 0;
-  float Right = 1;  // * ratioX;
-  // texture is upside down, invert top and bottom
-  float Top = 1;  // * ratioY;
-  float Bottom = 0;
+  float Right = 1;
+  float Top = 0; 
+  float Bottom = 1;
   vao.GetTextureArray()[0].x = Left;
   vao.GetTextureArray()[0].y = Top;
 
@@ -92,7 +90,6 @@ ComponentLightManager::ComponentLightManager(EventDispatcher *e)
   vao.GetTextureArray()[3].x = Left;
   vao.GetTextureArray()[3].y = Bottom;
 
-  GLenum status;
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -209,10 +206,10 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
                                    GLuint textureDestination,
                                    unsigned int width, unsigned int height,
                                    RSC_GLProgram *program) {
-  // Not using depth
-  glDisable(GL_DEPTH_TEST);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   RSC_GLProgram::BindNULL();
+  // Do this first so that RSC_Texture doesn't get messed up
+  RSC_Texture::BindNull();
   glBindVertexArray(0);
 
   // Setup framebuffer
@@ -221,45 +218,48 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
                          textureDestination, 0);
   // Clear
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
   glClear(GL_COLOR_BUFFER_BIT);
   auto GLerror = GL_GetError();
   if (GLerror != "") {
     LOG_DEBUG(GLerror);
   }
 
-  // Do this first so that RSC_Texture doesn't get messed up
-  RSC_Texture::BindNull();
   // Bind textures
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textureDiffuse);
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, textureDepth);
 
-  vao.GetVertexArray()[0].x = 0;
-  vao.GetVertexArray()[0].y = 0;
+  vao.GetVertexArray()[0].x = -1.0;
+  vao.GetVertexArray()[0].y = -1.0;
 
-  vao.GetVertexArray()[1].x = width;
-  vao.GetVertexArray()[1].y = 0;
+  vao.GetVertexArray()[1].x = 1.0;
+  vao.GetVertexArray()[1].y = -1.0;
 
-  vao.GetVertexArray()[2].x = width;
-  vao.GetVertexArray()[2].y = height;
+  vao.GetVertexArray()[2].x = 1.0;
+  vao.GetVertexArray()[2].y = 1.0;
 
-  vao.GetVertexArray()[3].x = 0;
-  vao.GetVertexArray()[3].y = height;
+  vao.GetVertexArray()[3].x = -1.0;
+  vao.GetVertexArray()[3].y = 1.0;
 
   vao.UpdateGPU();
   vao.Bind();
+
+  program->Bind();
+  // Then bind the uniform samplers to texture units:
+  glUniform1i(program->GetUniformLocation("diffuseTex"), 0);
+  glUniform1i(program->GetUniformLocation("depthTex"), 1);
 
   GLerror = GL_GetError();
   if (GLerror != "") {
     LOG_DEBUG(GLerror);
   }
 
-  program->Bind();
   float ambientLight[3];
   ambientLight[0] = mAmbientLight.color.x;
-  ambientLight[1] = mAmbientLight.color.x;
-  ambientLight[2] = mAmbientLight.color.x;
+  ambientLight[1] = mAmbientLight.color.y;
+  ambientLight[2] = mAmbientLight.color.z;
   glUniform3fv(program->GetUniformLocation("AMBIENT_COLOR"), 1,
                &ambientLight[0]);
   GLerror = GL_GetError();
@@ -280,8 +280,8 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glViewport(0, 0, width, height);
 
   auto fbError = GL_CheckFramebuffer();
-  if(fbError != ""){
-	  LOG_ERROR(fbError);
+  if (fbError != "") {
+    LOG_ERROR(fbError);
   }
 
   glDrawArrays(GL_QUADS, 0, 4);
@@ -298,13 +298,11 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, 0);
 
-
   RSC_GLProgram::BindNULL();
   GLerror = GL_GetError();
   if (GLerror != "") {
     LOG_DEBUG(GLerror);
   }
-  glEnable(GL_DEPTH_TEST);
 }
 
 void ComponentLightManager::BuildVAO() {
