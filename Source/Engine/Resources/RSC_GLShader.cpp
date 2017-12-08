@@ -173,6 +173,7 @@ bool RSC_GLProgram::CopyShadersFromProgram(const RSC_GLProgram *program) {
   if (mLinked) {
     return false;
   }
+  glGetError();
 
   DetatchShaders();
 
@@ -321,7 +322,7 @@ GLint RSC_GLProgram::GetUniformLocation(const std::string &name) const {
        << mHandleID << " doesn't have an active Uniform Location named '"
        << name << "'";
     LOG_TRACE(ss.str());
-    //throw LEngineShaderProgramException(ss.str(), this);
+    // throw LEngineShaderProgramException(ss.str(), this);
   }
   return returnVal;
 }
@@ -393,8 +394,16 @@ std::unique_ptr<RSC_GLProgram> RSC_GLProgram::LoadResourceFromXML(
   }
   auto program = std::make_unique<RSC_GLProgram>();
 
-  program->AddShader(shaders[0]);
-  program->AddShader(shaders[1]);
+  if (shaders[0] != NULL) {
+    if(program->AddShader(shaders[0]) == false){
+		LOG_ERROR("0");	
+	}
+  }
+  if (shaders[1] != NULL) {
+    if(program->AddShader(shaders[1]) == false){
+		LOG_ERROR("1");	
+	}
+  }
 
   program->LinkProgram();
 

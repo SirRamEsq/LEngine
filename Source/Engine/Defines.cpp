@@ -197,8 +197,8 @@ long double unpack754(uint64_t i, unsigned bits, unsigned expbits) {
 
 std::string GL_GetError() {
   GLenum err;
+  std::stringstream ss;
   while ((err = glGetError()) != GL_NO_ERROR) {
-    std::stringstream ss;
     std::string errorString;
     switch (err) {
       case GL_INVALID_OPERATION:
@@ -219,11 +219,10 @@ std::string GL_GetError() {
       default:
         errorString = "?";
     }
-    return errorString;
+    ss << errorString << std::endl;
   }
-  return "";
+  return ss.str();
 }
-
 
 std::string GetDate() {
   time_t rawTime;

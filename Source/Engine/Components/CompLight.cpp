@@ -102,7 +102,7 @@ void ComponentLightManager::Update() {
 breakout:
 
   std::sort(lights.begin(), lights.end(), &SortLights);
-  UpdateLightUBO(lights);
+  //UpdateLightUBO(lights);
 }
 
 void ComponentLightManager::CreateLightUBO() {
@@ -190,7 +190,7 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
 
   // Bind textures
   RSC_Texture::Bind(textureDiffuse);
-  glActiveTexture(GL_TEXTURE2);
+  glActiveTexture(GL_TEXTURE1);
   RSC_Texture::Bind(textureDepth);
 
   // Set Render Viewport
@@ -208,24 +208,6 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glOrtho(0.0f, width, height, 0, 0, 1);  // 2D
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  float Left = 0;
-  float Right = 1;  // * ratioX;
-  // texture is upside down, invert top and bottom
-  float Top = 1;  // * ratioY;
-  float Bottom = 0;
-  glBegin(GL_QUADS);
-  glTexCoord2f(Left, Top);
-  glVertex3f(0, 0, 0);
-
-  glTexCoord2f(Right, Top);
-  glVertex3f(width, 0, 0);
-
-  glTexCoord2f(Right, Bottom);
-  glVertex3f(width, height, 0);
-
-  glTexCoord2f(Left, Bottom);
-  glVertex3f(0, height, 0);
-  glEnd();
 
   // Unbind everything
   glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -153,14 +153,19 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   // Atatch buffer texture
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
                          mDepthTextureID, 0);
+
+  //Some drivers report an error in this funciton, even though everything is fine
+  GL_GetError();
 }
 
 void RenderCamera::RenderFrameBufferTextureFinal(
     ComponentLightManager *lightMan, RSC_GLProgram *program) {
+  /*
   lightMan->Render(frameBufferTextureDiffuse->GetOpenGLID(), mDepthTextureID,
                    frameBufferTextureFinal->GetOpenGLID(), view.w, view.h,
                    program);
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
+  */
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {
   RenderFrameBufferTexture(frameBufferTextureDiffuse.get());
@@ -249,9 +254,20 @@ RenderManager::RenderManager() : timeElapsed(0) {
 
 void RenderManager::ProcessDrawCall(RenderableObject *obj,
                                     RenderCamera *camera) {
-  obj->Render(camera);
 #ifdef DEBUG_MODE
   auto GLerror = GL_GetError();
+  if (GLerror != "") {
+    std::stringstream ss;
+    ss << "GL Error '" << GLerror << "' Occured before rendering a "
+       << obj->GetTypeString();
+    LOG_ERROR(ss.str());
+  }
+#endif
+
+  obj->Render(camera);
+
+#ifdef DEBUG_MODE
+  GLerror = GL_GetError();
   if (GLerror != "") {
     std::stringstream ss;
     ss << "GL Error '" << GLerror << "' Occured when rendering a "
@@ -324,7 +340,7 @@ void RenderManager::Render() {
       //(*currentCamera)->RenderFrameBufferTextureFinal();
       (*camera)->RenderFrameBufferTextureDiffuse();
       //(*camera)->RenderFrameBufferTextureFinal(
-          //&Kernel::stateMan.GetCurrentState()->comLightMan, &defaultProgramLight);
+      //&Kernel::stateMan.GetCurrentState()->comLightMan, &defaultProgramLight);
     }
   }
 
@@ -690,6 +706,6 @@ void RenderManager::LoadDefaultShaders() {
   if (shaderProgram != NULL) {
     defaultProgramLight.CopyShadersFromProgram(shaderProgram);
     SetupUniformBuffers(&defaultProgramLight);
-	ComponentLightManager::BindLightUBO(&defaultProgramLight);
+    ComponentLightManager::BindLightUBO(&defaultProgramLight);
   }
 }

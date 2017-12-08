@@ -133,6 +133,7 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
 
   float depth = GetDepth();
   glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
+  
 
   if (texture != NULL) {
     texture->Bind();
