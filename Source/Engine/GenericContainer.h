@@ -84,7 +84,6 @@ const T *GenericContainer<T>::GetItem(const std::string &name) {
   }
   std::stringstream ss;
   ss << "Cannot get Item Named: " << name;
-  // throw LEngineException(ss.str());
   return NULL;
 }
 
@@ -105,6 +104,10 @@ bool GenericContainer<T>::LoadItem(const std::string &name,
   mapIt i = items.find(name);
   if (i != items.end()) {
     return true;
+  }
+
+  if (item.get() == NULL) {
+    return false;
   }
 
   items[name] = std::unique_ptr<const T>(item.release());
@@ -128,16 +131,16 @@ bool GenericContainer<T>::LoadItem(const std::string &name,
     return false;
   }
 
-  std::unique_ptr<const T> newItem(function(fname));
-  if (newItem.get() == NULL) {
+  try {
+    std::unique_ptr<const T> newItem(function(fname));
+    return LoadItem(name, newItem);
+
+  } catch (LEngineFileException e) {
     std::stringstream ss;
     ss << "Couldn't find resource named " << name;
     log->Write(ss.str());
     return false;
   }
-
-  items[name] = std::move(newItem);
-  return true;
 }
 
 template <class T>

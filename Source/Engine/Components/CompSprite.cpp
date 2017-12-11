@@ -34,7 +34,6 @@ bool AnimationData::SetImageIndex(const int &imageIndex) {
   return true;
 }
 
-
 bool AnimationData::SetAnimation(const std::string &aniName) {
   if (currentAnimationName == aniName) {
     return true;
@@ -132,7 +131,7 @@ void ComponentSprite::Update() {
     int xPos = floor(pos.x + renderSprite->offset.x + 0.5f);
     int yPos = floor(pos.y + renderSprite->offset.y + 0.5f);
 
-	//Translate position back from the origin offset
+    // Translate position back from the origin offset
     renderSprite->data.translate.x = xPos - renderSprite->data.vertexOrigin1.x;
     renderSprite->data.translate.y = yPos - renderSprite->data.vertexOrigin1.y;
   }
@@ -322,15 +321,25 @@ int ComponentSprite::AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
   if (texture == NULL) {
     std::stringstream ss;
     ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named "
-       << sprite->GetTextureName();
+       << textureName;
     LOG_INFO(ss.str());
-    return -1;
+    //return -1;
+  }
+  auto textureNormalName = sprite->GetTextureNormalName();
+  const RSC_Texture *textureNormal =
+      K_TextureMan.GetLoadItem(textureNormalName, textureNormalName);
+  if (textureNormal == NULL) {
+    std::stringstream ss;
+    ss << "[C++] ComponentSprite::AddSprite couldn't find Texture Normal named "
+       << textureNormalName;
+    LOG_INFO(ss.str());
+    //return -1;
   }
 
   mSprites.push_back(sprite);
   mAnimationData.push_back(data);
   mRenderableSprites.push_back(std::make_unique<RenderSpriteBatch::Sprite>(
-      rm, sprite->GetTextureName(), texture->GetWidth(), texture->GetHeight(),
+      rm, texture, textureNormal, texture->GetWidth(), texture->GetHeight(),
       depth, offset));
 
   CalculateVerticies(mNumberOfLoadedSprites);

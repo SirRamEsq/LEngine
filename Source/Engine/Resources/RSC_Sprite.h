@@ -105,6 +105,7 @@ class RSC_Sprite {
   void SetOrigin(LOrigin o);
 
   std::string GetTextureName() const { return mTextureName; }
+  std::string GetTextureNormalName() const { return mTextureNormalName; }
 
   void SetColorKey(const std::string &aniName, unsigned int image,
                    unsigned int r, unsigned int g, unsigned int b);

@@ -108,7 +108,8 @@ class RenderManager {
 
   // returns sprite batch that supports 'textureName' and has room for at least
   // numSprites more room
-  RenderSpriteBatch *GetSpriteBatch(const std::string &textureName,
+  RenderSpriteBatch *GetSpriteBatch(const RSC_Texture *tex,
+                                    const RSC_Texture *texNormal,
                                     const MAP_DEPTH &depth,
                                     const int &numSprites);
   MAP_DEPTH nextTextID;
@@ -178,10 +179,11 @@ class RenderManager {
   static const GLuint ProgramDataBindingIndex;
 
   int spriteBatchMaxSize;
-  std::map<MAP_DEPTH, std::map<std::string,
-                               std::vector<std::unique_ptr<RenderSpriteBatch>>>>
-      spriteBatchMap;  // map each sprite batch to a texture name and depth
-                       // value
+  std::map<MAP_DEPTH,                              // depth
+           std::map<const RSC_Texture *,           // texture
+                    std::map<const RSC_Texture *,  // textureNormal
+                             std::vector<std::unique_ptr<RenderSpriteBatch>>>>>
+      spriteBatchMap;
 
   // Time since creation of RenderManager
   unsigned int timeElapsed = 0;

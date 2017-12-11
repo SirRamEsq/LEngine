@@ -38,7 +38,8 @@ class RenderSpriteBatch : public RenderableObjectWorld {
       Vec2 translate;
     };
 
-    Sprite(RenderManager *rm, const std::string &texture, const unsigned int &w,
+    Sprite(RenderManager *rm, const RSC_Texture *tex,
+           const RSC_Texture *texNormal, const unsigned int &w,
            const unsigned int &h, const MAP_DEPTH &d,
            const Vec2 &off = Vec2(
                0.0f, 0.0f));  // Have class auto register with a sprite batch;
@@ -46,7 +47,8 @@ class RenderSpriteBatch : public RenderableObjectWorld {
 
     Data data;
     bool isActive;
-    std::string textureName;
+    const RSC_Texture *texture;
+    const RSC_Texture *textureNormal;
     MAP_DEPTH depth;
 
     unsigned int textureWidth;
@@ -67,16 +69,16 @@ class RenderSpriteBatch : public RenderableObjectWorld {
   bool CanAddSprites(const int &numSprites);
 
  protected:
-  RenderSpriteBatch(RenderManager *rm, const std::string &tex,
-                    const unsigned int &maxSize);
+  RenderSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
+                    const RSC_Texture *texNormal, const unsigned int &maxSize);
 
  private:
   VAOWrapper2D vao;
   const unsigned int maxSprites;
   unsigned int currentSize;
 
-  const std::string textureName;
   const RSC_Texture *texture;
+  const RSC_Texture *textureNormal;
 
   std::set<Sprite *> sprites;
 };

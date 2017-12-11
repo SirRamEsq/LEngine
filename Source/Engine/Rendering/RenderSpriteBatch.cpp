@@ -1,19 +1,22 @@
 #include "RenderSpriteBatch.h"
-#include "../Kernel.h"
+#include "../RenderManager.h"
+#include "../Resources/RSC_Texture.h"
 
 ////////////////////
 // RenderableSprite//
 ////////////////////
 
-RenderSpriteBatch::Sprite::Sprite(RenderManager *rm, const std::string &texture,
+RenderSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Texture *tex,
+                                  const RSC_Texture *texNormal,
                                   const unsigned int &w, const unsigned int &h,
                                   const MAP_DEPTH &d, const Vec2 &off)
-    : textureName(texture),
+    : texture(tex),
+      textureNormal(texNormal),
       textureWidth(w),
       textureHeight(h),
       depth(d),
       offset(off) {
-  spriteBatch = rm->GetSpriteBatch(textureName, depth, 1);
+  spriteBatch = rm->GetSpriteBatch(texture, textureNormal, depth, 1);
   spriteBatch->AddSprite(this);
 
   data.color.x = 1.0f;
@@ -41,22 +44,16 @@ RenderSpriteBatch::Sprite::~Sprite() { spriteBatch->DeleteSprite(this); }
 // RenderSpriteBatch//
 /////////////////////
 
-RenderSpriteBatch::RenderSpriteBatch(RenderManager *rm, const std::string &tex,
+RenderSpriteBatch::RenderSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
+                                     const RSC_Texture *texNormal,
                                      const unsigned int &maxSize)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::SpriteBatch),
       maxSprites(maxSize),
-      textureName(tex),
+      texture(tex),
+      textureNormal(texNormal),
       vao((VAO_TEXTURE | VAO_COLOR | VAO_EXTRA | VAO_SCALINGROTATION),
           maxSize) {
   currentSize = 0;
-  // this dependency on the Kernel is ok, this is just to grab a resource
-  texture = K_TextureMan.GetItem(textureName);
-  if (texture == NULL) {
-    std::stringstream ss;
-    ss << "ERROR: RenderSpriteBatch; Couldn't find texture named: "
-       << textureName;
-    LOG_INFO(ss.str());
-  }
   AddToRenderManager();
 }
 
@@ -133,7 +130,6 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
 
   float depth = GetDepth();
   glUniform1fv(program->GetUniformLocation("depth"), 1, &depth);
-  
 
   if (texture != NULL) {
     texture->Bind();

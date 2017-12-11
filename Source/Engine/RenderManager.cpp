@@ -146,8 +146,8 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   // fine
   GL_GetError();
   auto fbError = GL_CheckFramebuffer();
-  if(fbError != ""){
-	  LOG_ERROR(fbError);
+  if (fbError != "") {
+    LOG_ERROR(fbError);
   }
 }
 
@@ -159,7 +159,7 @@ void RenderCamera::RenderFrameBufferTextureFinal(
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
 
   frameBufferTextureFinal->ExportTexture("T_F.png");
-  //frameBufferTextureDiffuse->ExportTexture("T_D.png");
+  // frameBufferTextureDiffuse->ExportTexture("T_D.png");
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {
   RenderFrameBufferTexture(frameBufferTextureDiffuse.get());
@@ -334,8 +334,8 @@ void RenderManager::Render() {
       //(*currentCamera)->RenderFrameBufferTextureFinal();
       (*camera)->RenderFrameBufferTextureDiffuse();
       //(*camera)->RenderFrameBufferTextureFinal(
-          //&Kernel::stateMan.GetCurrentState()->comLightMan,
-          //&defaultProgramLight);
+      //&Kernel::stateMan.GetCurrentState()->comLightMan,
+      //&defaultProgramLight);
     }
   }
 
@@ -369,25 +369,34 @@ void RenderManager::AssignCameraUBO(RSC_GLProgram *program) {
   }
 }
 
-RenderSpriteBatch *RenderManager::GetSpriteBatch(const std::string &textureName,
+RenderSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
+                                                 const RSC_Texture *texNormal,
                                                  const MAP_DEPTH &depth,
                                                  const int &numSprites) {
-  auto textureMapIt =
-      spriteBatchMap.find(depth);  // If there isn't a map for this depth value,
-                                   // create it and assign texturemapit to it
+  auto textureMapIt = spriteBatchMap.find(depth);
+  // If there isn't a map for this depth value,
+  // create it and assign texturemapit to it
   if (textureMapIt == spriteBatchMap.end()) {
     spriteBatchMap[depth];
     textureMapIt = spriteBatchMap.find(depth);
   }
 
-  auto spriteBatchVectorIt =
-      textureMapIt->second.find(textureName);  // If there isn't a vector for
-                                               // this texture name value, then
-  // create it and assign spriteBatchVectorIt to it
-  if (spriteBatchVectorIt == textureMapIt->second.end()) {
-    textureMapIt->second[textureName];
-    spriteBatchVectorIt = textureMapIt->second.find(textureName);
+  auto textureNormalMapIt = textureMapIt->second.find(tex);
+  // If there isn't a map for this normal texture
+  // create it and assign textureNormalMapit to it
+  if (textureNormalMapIt == textureMapIt->second.end()) {
+    textureMapIt->second[tex];
+    textureNormalMapIt = textureMapIt->second.find(tex);
   }
+
+  auto spriteBatchVectorIt = textureNormalMapIt->second.find(texNormal);
+  // If there isn't a vector for this texture name value, then
+  // create it and assign spriteBatchVectorIt to it
+  if (spriteBatchVectorIt == textureNormalMapIt->second.end()) {
+    textureNormalMapIt->second[texNormal];
+    spriteBatchVectorIt = textureNormalMapIt->second.find(texNormal);
+  }
+
 
   RenderSpriteBatch *batch = NULL;
   for (auto vectorIt = spriteBatchVectorIt->second.begin();
@@ -403,7 +412,7 @@ RenderSpriteBatch *RenderManager::GetSpriteBatch(const std::string &textureName,
   if (batch == NULL) {
     // Max size 256
     spriteBatchVectorIt->second.push_back(std::unique_ptr<RenderSpriteBatch>(
-        new RenderSpriteBatch(this, textureName, 256)));
+        new RenderSpriteBatch(this, tex, texNormal, 256)));
     batch = (spriteBatchVectorIt->second.back()).get();
     batch->SetDepth(depth);
   }
