@@ -130,6 +130,7 @@ class RSC_Sprite {
   aniMap animations;
   std::string spriteName;
   std::string mTextureName;
+  std::string mTextureNormalName;
 
   int width, height;  // for calculating center of image
   int transparentColorRed;

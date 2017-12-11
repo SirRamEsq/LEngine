@@ -55,6 +55,7 @@ class RSC_Texture {
 
   static void BindNull();
   static void Bind(GLuint id);
+  static void SetActiveTexture(GLuint id);
 
   static std::unique_ptr<RSC_Texture> LoadResource(const std::string &fname);
 
@@ -78,7 +79,8 @@ class RSC_Texture {
 
   // The openGL id of this texture
   mutable GLuint mGLID;
-  static GLuint GLBoundTexture;
+  static std::vector<GLuint> GLBoundTextures;
+  static GLuint activeTexture;
 
   std::string mFileName;
 };

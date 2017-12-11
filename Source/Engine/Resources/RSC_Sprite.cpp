@@ -297,6 +297,14 @@ bool RSC_Sprite::LoadFromXML(const char *dat, unsigned int fsize) {
     if (attribute != NULL) {
       mTextureName = attribute->value();
     }
+    attribute = node->first_attribute("textureNormalName");
+    if (attribute != NULL) {
+      mTextureNormalName = attribute->value();
+    }
+	else{
+		/// \TODO Set default normal texture
+		mTextureNormalName = "";
+	}
 
     xml_node<> *animationNode =
         node->first_node();  // point to the first child of <sprite>

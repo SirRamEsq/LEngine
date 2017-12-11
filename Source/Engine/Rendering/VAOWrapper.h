@@ -28,7 +28,6 @@ class VAOWrapper2D {
 
   Vec2 *GetVertexArray() { return vboVertexArray.get(); }
   Vec2 *GetTextureArray() { return vboTextureArray.get(); }
-  Vec2 *GetNormalArray() { return vboNormalArray.get(); }
   Vec4 *GetColorArray() { return vboColorArray.get(); }
   Vec3 *GetScalingRotationArray() { return vboScalingRotationArray.get(); }
   Vec2 *GetExtraArray() { return vboExtraArray.get(); }
@@ -37,7 +36,6 @@ class VAOWrapper2D {
 
   // Sets default values for when an array is not in use
   void SetDefaultTexture(Vec2 vec);
-  void SetDefaultNormal(Vec2 vec);
   void SetDefaultColor(Vec4 vec);
   void SetDefaultScalingRotation(Vec3 vec);
   void SetDefaultExtra(Vec2 vec);
@@ -50,13 +48,11 @@ class VAOWrapper2D {
   // Indicies for each type of data passed to the shader
   static const GLuint indexVertex;
   static const GLuint indexTexture;
-  static const GLuint indexNormal;
   static const GLuint indexColor;
   static const GLuint indexScalingRotation;
   static const GLuint indexExtra;
 
   bool UsingTexture() const { return usingTexture; }
-  bool UsingNormal() const { return usingNormal; }
   bool UsingColor() const { return usingColor; }
   bool UsingScalingRotation() const { return usingScalingRotation; }
   bool UsingExtra() const { return usingExtra; }
@@ -70,7 +66,6 @@ class VAOWrapper2D {
   // OpenGL generated VBO ID values
   GLuint vboVertex;
   GLuint vboTexture;
-  GLuint vboNormal;
   GLuint vboColor;
   GLuint vboScalingRotation;
   GLuint vboExtra;
@@ -81,14 +76,12 @@ class VAOWrapper2D {
   // Actual Arrays containing data that will be passed to the GPU
   std::unique_ptr<Vec2[]> vboVertexArray;
   std::unique_ptr<Vec2[]> vboTextureArray;
-  std::unique_ptr<Vec2[]> vboNormalArray;
   std::unique_ptr<Vec4[]> vboColorArray;
   std::unique_ptr<Vec3[]> vboScalingRotationArray;
   std::unique_ptr<Vec2[]> vboExtraArray;
 
   // Default values for when an array is not in use
   Vec2 defaultTexture;
-  Vec2 defaultNormal;
   Vec4 defaultColor;
   Vec3 defaultScalingRotation;
   Vec2 defaultExtra;
@@ -96,13 +89,11 @@ class VAOWrapper2D {
   // Sizes of the various buffers in bytes
   unsigned int sizeVertex;
   unsigned int sizeTexture;
-  unsigned int sizeNormal;
   unsigned int sizeColor;
   unsigned int sizeScalingRotation;
   unsigned int sizeExtra;
 
   bool usingTexture;
-  bool usingNormal;
   bool usingColor;
   bool usingScalingRotation;
   bool usingExtra;

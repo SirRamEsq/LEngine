@@ -332,10 +332,10 @@ void RenderManager::Render() {
       // (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
 
       //(*currentCamera)->RenderFrameBufferTextureFinal();
-      //(*camera)->RenderFrameBufferTextureDiffuse();
-      (*camera)->RenderFrameBufferTextureFinal(
-          &Kernel::stateMan.GetCurrentState()->comLightMan,
-          &defaultProgramLight);
+      (*camera)->RenderFrameBufferTextureDiffuse();
+      //(*camera)->RenderFrameBufferTextureFinal(
+          //&Kernel::stateMan.GetCurrentState()->comLightMan,
+          //&defaultProgramLight);
     }
   }
 

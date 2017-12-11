@@ -7,7 +7,15 @@
 #include <cstring>
 #include <string>
 
-GLuint RSC_Texture::GLBoundTexture = 0;
+std::vector<GLuint> RSC_Texture::GLBoundTextures = [] {
+  std::vector<GLuint> v;
+  v.push_back(0);  // texture0
+  v.push_back(0);  // texture1
+  v.push_back(0);  // texture2
+  return v;
+}();
+
+GLuint RSC_Texture::activeTexture = 0;
 
 // This function copies the data passed to it
 RSC_Texture::RSC_Texture(const unsigned char *data, unsigned int dsize,
@@ -194,12 +202,18 @@ void RSC_Texture::Bind() const {
 
 void RSC_Texture::BindNull() {
   glBindTexture(GL_TEXTURE_2D, 0);
-  RSC_Texture::GLBoundTexture = 0;
+  RSC_Texture::GLBoundTextures[activeTexture] = 0;
 }
+
+void RSC_Texture::SetActiveTexture(GLuint id) {
+  activeTexture = id;
+  glActiveTexture(id);
+}
+
 void RSC_Texture::Bind(GLuint id) {
-  if (RSC_Texture::GLBoundTexture != id) {
+  if (RSC_Texture::GLBoundTextures[activeTexture] != id) {
     glBindTexture(GL_TEXTURE_2D, id);
-    RSC_Texture::GLBoundTexture = id;
+    RSC_Texture::GLBoundTextures[activeTexture] = id;
   }
 }
 

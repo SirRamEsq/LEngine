@@ -26,7 +26,6 @@ GLenum extraAttributeType = GL_FLOAT;
 
 const GLuint VAOWrapper2D::indexVertex = 0;
 const GLuint VAOWrapper2D::indexTexture = 1;
-const GLuint VAOWrapper2D::indexNormal = 2;
 const GLuint VAOWrapper2D::indexColor = 3;
 const GLuint VAOWrapper2D::indexScalingRotation = 4;
 const GLuint VAOWrapper2D::indexExtra = 5;
@@ -38,19 +37,16 @@ VAOWrapper2D::VAOWrapper2D(unsigned int flags, unsigned int maxSize)
 
   defaultScalingRotation = Vec3(1, 1, 0);
   defaultTexture = Vec2(0, 0);
-  defaultNormal = Vec2(0, 0);
   defaultColor = Vec4(1, 1, 1, 1);
-  defaultExtra = Vec2(0,0);
+  defaultExtra = Vec2(0, 0);
 
   vboVertex = 0;
   vboTexture = 0;
-  vboNormal = 0;
   vboColor = 0;
   vboScalingRotation = 0;
   vboExtra = 0;
 
   usingTexture = ((attributeFlags & VAO_TEXTURE) == VAO_TEXTURE);
-  usingNormal = ((attributeFlags & VAO_NORMAL) == VAO_NORMAL);
   usingColor = ((attributeFlags & VAO_COLOR) == VAO_COLOR);
   usingScalingRotation =
       ((attributeFlags & VAO_SCALINGROTATION) == VAO_SCALINGROTATION);
@@ -64,9 +60,6 @@ VAOWrapper2D::~VAOWrapper2D() {
 
   if (usingTexture) {
     glDeleteBuffers(1, &vboTexture);
-  }
-  if (usingNormal) {
-    glDeleteBuffers(1, &vboNormal);
   }
   if (usingColor) {
     glDeleteBuffers(1, &vboColor);
@@ -113,22 +106,6 @@ void VAOWrapper2D::CreateVBOs() {
     glEnableVertexAttribArray(indexTexture);
   } else {
     glDisableVertexAttribArray(indexTexture);
-  }
-
-  if (usingNormal) {
-    sizeNormal = (vboMaxSize * sizeof(Vec2) * 4);
-    vboNormalArray.reset(new Vec2[vboMaxSize * 4]);
-
-    glGenBuffers(1, &vboNormal);
-    glBindBuffer(GL_ARRAY_BUFFER, vboNormal);
-    glBufferData(GL_ARRAY_BUFFER, sizeNormal, vboNormalArray.get(),
-                 GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, vboNormal);
-    glVertexAttribPointer(indexNormal, normalAttributeSize, normalAttributeType,
-                          GL_FALSE, 0, NULL);
-    glEnableVertexAttribArray(indexNormal);
-  } else {
-    glDisableVertexAttribArray(indexNormal);
   }
 
   if (usingColor) {
@@ -191,11 +168,6 @@ void VAOWrapper2D::UpdateGPU() {
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeTexture, vboTextureArray.get());
   }
 
-  if (usingNormal) {
-    glBindBuffer(GL_ARRAY_BUFFER, vboNormal);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeNormal, vboNormalArray.get());
-  }
-
   if (usingColor) {
     glBindBuffer(GL_ARRAY_BUFFER, vboColor);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeColor, vboColorArray.get());
@@ -214,7 +186,6 @@ void VAOWrapper2D::UpdateGPU() {
 }
 
 void VAOWrapper2D::SetDefaultTexture(Vec2 vec) { defaultTexture = vec; }
-void VAOWrapper2D::SetDefaultNormal(Vec2 vec) { defaultNormal = vec; }
 void VAOWrapper2D::SetDefaultColor(Vec4 vec) { defaultColor = vec; }
 void VAOWrapper2D::SetDefaultScalingRotation(Vec3 vec) {
   defaultScalingRotation = vec;
@@ -226,9 +197,6 @@ void VAOWrapper2D::Bind() {
 
   if (!usingTexture) {
     glVertexAttrib2f(indexTexture, defaultTexture.x, defaultTexture.y);
-  }
-  if (!usingNormal) {
-    glVertexAttrib2f(indexNormal, defaultNormal.x, defaultNormal.y);
   }
   if (!usingColor) {
     glVertexAttrib4f(indexColor, defaultColor.x, defaultColor.y, defaultColor.z,
