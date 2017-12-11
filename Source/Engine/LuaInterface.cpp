@@ -1011,6 +1011,11 @@ void LuaInterface::DeleteLayer(TiledLayerGeneric *layer) {
   parentState->DeleteMapLayer(layer);
 }
 
+void LuaInterface::SetAmbientLight(float r, float g, float b){
+	Vec3 color(r,g,b);
+    Kernel::stateMan.GetCurrentState()->comLightMan.SetAmbientLight(color);
+}
+
 LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     const std::string &name, luabridge::LuaRef value) {
   auto m = GetMap();
@@ -1113,6 +1118,7 @@ void LuaInterface::ExposeCPP() {
                    &LuaInterface::RemapInputToNextKeyPress)
       .addFunction("SimulateKeyPress", &LuaInterface::SimulateKeyPress)
       .addFunction("SimulateKeyRelease", &LuaInterface::SimulateKeyRelease)
+      .addFunction("SetAmbientLight", &LuaInterface::SetAmbientLight)
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
 

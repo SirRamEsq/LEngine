@@ -70,41 +70,12 @@ ComponentLightManager::ComponentLightManager(EventDispatcher *e)
   }
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-  mAmbientLight.color.x = 2.0f;
-  mAmbientLight.color.y = 1.0f;
-  mAmbientLight.color.z = 1.0f;
-
-  float Left = 0;
-  float Right = 1;
-  float Top = 0; 
-  float Bottom = 1;
-  vao.GetTextureArray()[0].x = Left;
-  vao.GetTextureArray()[0].y = Top;
-
-  vao.GetTextureArray()[1].x = Right;
-  vao.GetTextureArray()[1].y = Top;
-
-  vao.GetTextureArray()[2].x = Right;
-  vao.GetTextureArray()[2].y = Bottom;
-
-  vao.GetTextureArray()[3].x = Left;
-  vao.GetTextureArray()[3].y = Bottom;
-
-  vao.GetVertexArray()[0].x = -1.0;
-  vao.GetVertexArray()[0].y = -1.0;
-
-  vao.GetVertexArray()[1].x = 1.0;
-  vao.GetVertexArray()[1].y = -1.0;
-
-  vao.GetVertexArray()[2].x = 1.0;
-  vao.GetVertexArray()[2].y = 1.0;
-
-  vao.GetVertexArray()[3].x = -1.0;
-  vao.GetVertexArray()[3].y = 1.0;
-
-  vao.UpdateGPU();
+  mAmbientLight.color.x = 1.0;
+  mAmbientLight.color.y = 1.0;
+  mAmbientLight.color.z = 1.0;
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  BuildVAO();
 }
 
 ComponentLightManager::~ComponentLightManager() {
@@ -269,39 +240,35 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
 }
 
 void ComponentLightManager::BuildVAO() {
-  /*
-  unsigned int vertex = 0;
-  unsigned int lightCount = 0;
+  float Left = 0;
+  float Right = 1;
+  float Top = 0;
+  float Bottom = 1;
+  vao.GetTextureArray()[0].x = Left;
+  vao.GetTextureArray()[0].y = Top;
 
-  for (auto i = componentList.begin(); i != componentList.end(); i++) {
-    auto lightSources = ((ComponentLight *)(i->second.get()))->lightSources;
-    for (auto lightSource = lightSources.begin();
-         lightSource != lightSources.end(); lightSource++) {
-      float radius = lightSource->radius;
-      auto pos =
-          ((ComponentLight *)(i->second.get()))->myPos->GetPositionWorld();
-      pos = pos.Round();
+  vao.GetTextureArray()[1].x = Right;
+  vao.GetTextureArray()[1].y = Top;
 
-      // Will subtract camera translation in shader later on during rendering
+  vao.GetTextureArray()[2].x = Right;
+  vao.GetTextureArray()[2].y = Bottom;
 
-      Vec2 topLeftVertex(-radius + pos.x, -radius + pos.y);
-      Vec2 topRightVertex(radius + pos.x, -radius + pos.y);
-      Vec2 bottomRightVertex(radius + pos.x, radius + pos.y);
-      Vec2 bottomLeftVertex(-radius + pos.x, radius + pos.y);
+  vao.GetTextureArray()[3].x = Left;
+  vao.GetTextureArray()[3].y = Bottom;
 
-      vao.GetVertexArray()[vertex] = topLeftVertex;
-      vao.GetVertexArray()[vertex + 1] = topRightVertex;
-      vao.GetVertexArray()[vertex + 2] = bottomRightVertex;
-      vao.GetVertexArray()[vertex + 3] = bottomLeftVertex;
+  vao.GetVertexArray()[0].x = -1.0;
+  vao.GetVertexArray()[0].y = -1.0;
 
-      lightCount += 1;
-      vertex += 4;
-    }
-  }
+  vao.GetVertexArray()[1].x = 1.0;
+  vao.GetVertexArray()[1].y = -1.0;
 
-  numberOfLights = lightCount;
+  vao.GetVertexArray()[2].x = 1.0;
+  vao.GetVertexArray()[2].y = 1.0;
+
+  vao.GetVertexArray()[3].x = -1.0;
+  vao.GetVertexArray()[3].y = 1.0;
+
   vao.UpdateGPU();
-  */
 }
 
 std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(
@@ -312,4 +279,8 @@ std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(
       this);
 
   return std::move(light);
+}
+
+void ComponentLightManager::SetAmbientLight(Vec3 color) {
+  mAmbientLight.color = color;
 }

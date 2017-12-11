@@ -63,7 +63,7 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
 
   void BuildVAO();
 
-  void SetAmbientLight(Vec4 light);
+  void SetAmbientLight(Vec3 color);
 
   static void BindLightUBO(RSC_GLProgram *program);
 
@@ -71,12 +71,9 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   static void CreateLightUBO();
   static void UpdateLightUBO(std::vector<Light *> lights);
   GLuint FBO;  // frame buffer object id
-  const RSC_Texture *lightTexture;
   VAOWrapper2D vao;
 
   Light mAmbientLight;
-
-  unsigned int numberOfLights;
 
   static GLuint GlobalLightUBO;
   static const GLuint LightBindingIndex;

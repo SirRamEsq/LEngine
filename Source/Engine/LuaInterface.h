@@ -199,6 +199,8 @@ class LuaInterface {
   bool RecordKeysBegin();
   bool RecordKeysEnd();
 
+  void SetAmbientLight(float r, float g, float b);
+
   static const std::string LUA_52_INTERFACE_ENV_TABLE;
   static const std::string DEBUG_LOG;
   static const std::string BASE_SCRIPT_NAME;
