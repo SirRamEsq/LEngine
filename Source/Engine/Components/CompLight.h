@@ -13,6 +13,7 @@
 #include "../Rendering/VAOWrapper.h"
 
 #include "lights/Light.h"
+#include "lights/PointLight.h"
 #include "CompPosition.h"
 
 #define MAX_LIGHTS 32
@@ -34,6 +35,7 @@ class ComponentLight : public BaseComponent {
   /// Adds a light, takes ownership of the light, returns an index referring to
   /// the light
   int AddLight(std::unique_ptr<Light> light);
+  PointLight* CreatePointLight();
 
   void EnableLight(int index);
   void DisableLight(int index);

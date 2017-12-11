@@ -747,6 +747,12 @@ ComponentCamera *LuaInterface::GetCameraComponent(const EID &id) {
   }
   return parentState->comCameraMan.GetComponent(id);
 }
+ComponentLight *LuaInterface::GetLightComponent(const EID &id) {
+  if (parentState->comLightMan.HasComponent(id) == false) {
+    parentState->comLightMan.AddComponent(id);
+  }
+  return parentState->comLightMan.GetComponent(id);
+}
 
 bool LuaInterface::HasPositionComponent(const EID &id) {
   return parentState->comPosMan.HasComponent(id);
@@ -763,6 +769,9 @@ bool LuaInterface::HasParticleComponent(const EID &id) {
 bool LuaInterface::HasCameraComponent(const EID &id) {
   return parentState->comCameraMan.HasComponent(id);
 }
+bool LuaInterface::HasLightComponent(const EID &id) {
+  return parentState->comLightMan.HasComponent(id);
+}
 ////////////
 // Entities//
 ////////////
@@ -777,8 +786,7 @@ luabridge::LuaRef LuaInterface::EntityGetInterface(const EID &id) {
 }
 
 Coord2df LuaInterface::EntityGetPositionWorld(EID entity) {
-  ComponentPosition *pos =
-      (Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity));
+  ComponentPosition *pos = (parentState->comPosMan.GetComponent(entity));
   if (pos == NULL) {
     std::stringstream ss;
     ss << "EntityGetPositionWorld was passed entity id " << entity
@@ -790,8 +798,7 @@ Coord2df LuaInterface::EntityGetPositionWorld(EID entity) {
 }
 
 Coord2df LuaInterface::EntityGetMovement(EID entity) {
-  return (Kernel::stateMan.GetCurrentState()->comPosMan.GetComponent(entity))
-      ->GetMovement();
+  return (parentState->comPosMan.GetComponent(entity))->GetMovement();
 }
 
 EID LuaInterface::EntityNew(std::string name, int x, int y, MAP_DEPTH depth,
@@ -1011,9 +1018,9 @@ void LuaInterface::DeleteLayer(TiledLayerGeneric *layer) {
   parentState->DeleteMapLayer(layer);
 }
 
-void LuaInterface::SetAmbientLight(float r, float g, float b){
-	Vec3 color(r,g,b);
-    Kernel::stateMan.GetCurrentState()->comLightMan.SetAmbientLight(color);
+void LuaInterface::SetAmbientLight(float r, float g, float b) {
+  Vec3 color(r, g, b);
+  parentState->comLightMan.SetAmbientLight(color);
 }
 
 LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
@@ -1028,8 +1035,8 @@ LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     } else if (type == LUA_TNUMBER) {
       // case LUA_TNUMBER:
       // auto boolValue = (value.cast<bool>() ? "true" : "false");
-      //return LB_VEC_WRAPPER<TiledLayerGeneric *>(
-          //m->GetLayersWithProperty(name, boolValue));
+      // return LB_VEC_WRAPPER<TiledLayerGeneric *>(
+      // m->GetLayersWithProperty(name, boolValue));
       // break;
     } else if (type == LUA_TSTRING) {
       auto stringValue = value.cast<std::string>();
@@ -1074,6 +1081,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetPositionComponent", &LuaInterface::GetPositionComponent)
       .addFunction("GetParticleComponent", &LuaInterface::GetParticleComponent)
       .addFunction("GetCameraComponent", &LuaInterface::GetCameraComponent)
+      .addFunction("GetLightComponent", &LuaInterface::GetLightComponent)
 
       .addFunction("HasSpriteComponent", &LuaInterface::HasSpriteComponent)
       .addFunction("HasCollisionComponent",
@@ -1081,6 +1089,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("HasPositionComponent", &LuaInterface::HasPositionComponent)
       .addFunction("HasParticleComponent", &LuaInterface::HasParticleComponent)
       .addFunction("HasCameraComponent", &LuaInterface::HasCameraComponent)
+      .addFunction("HasLightComponent", &LuaInterface::HasLightComponent)
 
       .addFunction("EntityNew", &LuaInterface::EntityNew)
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)
@@ -1235,7 +1244,8 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetShape", &ComponentCollision::SetShape)
       .addFunction("SetOrder", &ComponentCollision::SetOrder)
       .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
-      .addFunction("CheckForLayer", &ComponentCollision::CheckForLayerLuaInterface)
+      .addFunction("CheckForLayer",
+                   &ComponentCollision::CheckForLayerLuaInterface)
       .endClass()
 
       .beginClass<ComponentParticle>("ComponentParticle")
@@ -1243,6 +1253,20 @@ void LuaInterface::ExposeCPP() {
       .addFunction("DeleteParticleCreators",
                    &ComponentParticle::DeleteParticleCreators)
       .endClass()
+
+      .beginClass<ComponentLight>("ComponentLight")
+      .addFunction("CreatePointLight", &ComponentLight::CreatePointLight)
+      .endClass()
+
+      .beginClass<Light>("Light")
+      .addData("color", &Light::color)
+      .addData("pos", &Light::pos)
+      .addData("noise", &Light::noise)
+      .addData("distance", &Light::distance)
+      .endClass()
+
+      .deriveClass<PointLight, Light>("PointLight")
+	  .endClass()
 
       .beginClass<RSC_Heightmap>("RSC_Heightmap")
       .addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
@@ -1260,6 +1284,26 @@ void LuaInterface::ExposeCPP() {
       .addFunction("Round", &Coord2df::Round)
       .addFunction("Add", &Coord2df::Add)
       .addFunction("Subtract", &Coord2df::Subtract)
+      .endClass()
+
+      .beginClass<Vec2>("Vec2")
+      .addConstructor<void (*)(void)>()          // Empty Constructor
+      .addConstructor<void (*)(float, float)>()  // Constructor
+      .addData("x", &Vec2::x)
+      .addData("y", &Vec2::y)
+      .addFunction("Round", &Vec2::Round)
+      .addFunction("Add", &Vec2::Add)
+      .addFunction("Subtract", &Vec2::Subtract)
+      .endClass()
+
+      .beginClass<Vec3>("Vec3")
+      .addConstructor<void (*)(void)>()                 // Empty Constructor
+      .addConstructor<void (*)(float, float, float)>()  // Constructor
+      .addData("x", &Vec3::x)
+      .addData("y", &Vec3::y)
+      .addFunction("Round", &Vec3::Round)
+      .addFunction("Add", &Vec3::Add)
+      .addFunction("Subtract", &Vec3::Subtract)
       .endClass()
 
       .beginClass<Color4f>("Color4f")

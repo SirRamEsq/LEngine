@@ -27,7 +27,28 @@ bool ComponentLight::LightExists(int id) {
   return (light != mLights.end());
 }
 
-void ComponentLight::Update() {}
+int ComponentLight::AddLight(std::unique_ptr<Light> light) {
+  int thisLightID = mLastLightID;
+  mLastLightID++;
+  mLights[thisLightID] = std::move(light);
+  return thisLightID;
+}
+PointLight *ComponentLight::CreatePointLight() {
+  int thisLightID = mLastLightID;
+  mLastLightID++;
+  auto newLight = std::make_unique<PointLight>();
+  auto newLightRaw = newLight.get();
+  mLights[thisLightID] = std::move(newLight);
+  return newLightRaw;
+}
+
+void ComponentLight::Update() {
+  auto worldPos = myPos->GetPositionWorld();
+  for (auto light = mLights.begin(); light != mLights.end(); light++) {
+    light->second->worldPos.x = worldPos.x + light->second->pos.x;
+    light->second->worldPos.y = worldPos.y + light->second->pos.y;
+  }
+}
 
 void ComponentLight::EnableLight(int index) {
   auto light = GetLight(index);
@@ -83,7 +104,6 @@ ComponentLightManager::~ComponentLightManager() {
 }
 
 void ComponentLightManager::Update() {
-  /*
   // Update all entities
   for (auto i = componentList.begin(); i != componentList.end(); i++) {
     UpdateComponent(i->second.get());
@@ -93,7 +113,6 @@ void ComponentLightManager::Update() {
   for (auto i = componentList.begin(); i != componentList.end(); i++) {
     i->second->updatedThisFrame = false;
   }
-  */
 
   std::vector<Light *> lights;
   for (auto comp = activeComponents.begin(); comp != activeComponents.end();
@@ -148,8 +167,8 @@ void ComponentLightManager::UpdateLightUBO(std::vector<Light *> lights) {
   for (auto i = lights.begin(); i != lights.end(); i++) {
     auto light = *i;
     float pos[4];
-    pos[0] = light->pos.x;
-    pos[1] = light->pos.y;
+    pos[0] = light->worldPos.x;
+    pos[1] = light->worldPos.y;
     pos[2] = light->pos.z;
     pos[3] = 1.0;
     float color[4];

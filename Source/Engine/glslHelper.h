@@ -29,6 +29,10 @@ class Vec2 {
     return returnVal;
   }
 
+  Vec2 Add (Vec2 vec);
+  Vec2 Subtract (Vec2 vec);
+  Vec2 Round ();
+
   GLfloat x;
   GLfloat y;
 };
@@ -56,6 +60,10 @@ class Vec3 {
   float DotProduct(const Vec3 &vec);
   Vec3 CrossProduct(const Vec3 &vec);
   float SquaredDistance(Vec3 to);
+
+  Vec3 Add (Vec3 vec);
+  Vec3 Subtract (Vec3 vec);
+  Vec3 Round ();
 
   GLfloat x;
   GLfloat y;

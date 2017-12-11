@@ -11,11 +11,11 @@ extern "C" {
 }
 #include <LuaBridge.h>
 
-
 #include "Components/CompCollision.h"
 #include "Components/CompParticle.h"
 #include "Components/CompPosition.h"
 #include "Components/CompSprite.h"
+#include "Components/CompLight.h"
 #include "LuaBridgeVectorWrapper.h"
 
 #include "Resources/RSC_Map.h"
@@ -114,12 +114,14 @@ class LuaInterface {
   ComponentCollision *GetCollisionComponent(const EID &id);
   ComponentParticle *GetParticleComponent(const EID &id);
   ComponentCamera *GetCameraComponent(const EID &id);
+  ComponentLight *GetLightComponent(const EID &id);
 
   bool HasPositionComponent(const EID &id);
   bool HasSpriteComponent(const EID &id);
   bool HasCollisionComponent(const EID &id);
   bool HasParticleComponent(const EID &id);
   bool HasCameraComponent(const EID &id);
+  bool HasLightComponent(const EID &id);
 
   ////////////
   // Entities//

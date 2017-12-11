@@ -11,6 +11,10 @@ Vec2::Vec2() {
 }
 Vec2::Vec2(float xVal, float yVal) : x(xVal), y(yVal) {}
 
+Vec2 Vec2::Add(Vec2 v) { return Vec2(x + v.x, y + v.y); }
+Vec2 Vec2::Subtract(Vec2 v) { return Vec2(x - v.x, y - v.y); }
+Vec2 Vec2::Round() { return Vec2(floor(x + 0.5), floor(y + 0.5)); }
+
 ////////
 // Vec3//
 ////////
@@ -31,6 +35,11 @@ Vec3::Vec3(const Vec4 &vv) {
   x = vv.x;
   y = vv.y;
   z = vv.z;
+}
+Vec3 Vec3::Add(Vec3 v) { return Vec3(x + v.x, y + v.y, z + v.z); }
+Vec3 Vec3::Subtract(Vec3 v) { return Vec3(x - v.x, y - v.y, z - v.z); }
+Vec3 Vec3::Round() {
+  return Vec3(floor(x + 0.5), floor(y + 0.5), floor(z + 0.5));
 }
 
 float Vec3::GetMagnitude() { return sqrt((x * x) + (y * y) + (z * z)); }

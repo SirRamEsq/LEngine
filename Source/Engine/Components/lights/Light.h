@@ -9,11 +9,14 @@ enum LIGHT_TYPE { LIGHT_GENERIC = 0, LIGHT_POINT = 1 };
 /// POD class
 class Light {
  public:
+  Light();
   /// RGB
   Vec3 color;
 
   /// X,Y,Depth in world coorindates
   Vec3 pos;
+
+  Vec2 worldPos;
 
   /// Light flickering value [0.0f - 1.0f]
   float noise;
