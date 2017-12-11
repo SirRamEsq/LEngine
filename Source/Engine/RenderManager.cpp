@@ -157,9 +157,6 @@ void RenderCamera::RenderFrameBufferTextureFinal(
                    frameBufferTextureFinal->GetOpenGLID(), view.w, view.h,
                    program);
   RenderFrameBufferTexture(frameBufferTextureFinal.get());
-
-  frameBufferTextureFinal->ExportTexture("T_F.png");
-  // frameBufferTextureDiffuse->ExportTexture("T_D.png");
 }
 void RenderCamera::RenderFrameBufferTextureDiffuse() {
   RenderFrameBufferTexture(frameBufferTextureDiffuse.get());
@@ -326,16 +323,10 @@ void RenderManager::Render() {
       // Per viewport objects?
       // used, for example, multiple HUDs in scplit-screen
 
-      // Need better way to handle light
-      // Kernel::stateMan.GetCurrentState()->comLightMan.Render(
-      // (*currentCamera)->GetFrameBufferTextureDiffuse(),
-      // (*currentCamera)->GetFrameBufferTextureFinal(), defaultProgramLight);
-
-      //(*currentCamera)->RenderFrameBufferTextureFinal();
-      (*camera)->RenderFrameBufferTextureDiffuse();
-      //(*camera)->RenderFrameBufferTextureFinal(
-      //&Kernel::stateMan.GetCurrentState()->comLightMan,
-      //&defaultProgramLight);
+      //(*camera)->RenderFrameBufferTextureDiffuse();
+      (*camera)->RenderFrameBufferTextureFinal(
+      &Kernel::stateMan.GetCurrentState()->comLightMan,
+      &defaultProgramLight);
     }
   }
 

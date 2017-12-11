@@ -134,6 +134,12 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   if (texture != NULL) {
     texture->Bind();
   }
+  if (textureNormal != NULL) {
+    RSC_Texture::SetActiveTexture(GL_TEXTURE1);
+    textureNormal->Bind();
+    RSC_Texture::SetActiveTexture(GL_TEXTURE0);
+  }
+
   glDrawArrays(GL_QUADS, 0, numberOfSprites * 4);
 }
 

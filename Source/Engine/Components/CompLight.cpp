@@ -70,9 +70,9 @@ ComponentLightManager::ComponentLightManager(EventDispatcher *e)
   }
   glGenFramebuffers(1, &FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-  mAmbientLight.color.x = 0.0f;
-  mAmbientLight.color.y = 0.0f;
-  mAmbientLight.color.z = 0.0f;
+  mAmbientLight.color.x = 2.0f;
+  mAmbientLight.color.y = 1.0f;
+  mAmbientLight.color.z = 1.0f;
 
   float Left = 0;
   float Right = 1;
@@ -89,6 +89,20 @@ ComponentLightManager::ComponentLightManager(EventDispatcher *e)
 
   vao.GetTextureArray()[3].x = Left;
   vao.GetTextureArray()[3].y = Bottom;
+
+  vao.GetVertexArray()[0].x = -1.0;
+  vao.GetVertexArray()[0].y = -1.0;
+
+  vao.GetVertexArray()[1].x = 1.0;
+  vao.GetVertexArray()[1].y = -1.0;
+
+  vao.GetVertexArray()[2].x = 1.0;
+  vao.GetVertexArray()[2].y = 1.0;
+
+  vao.GetVertexArray()[3].x = -1.0;
+  vao.GetVertexArray()[3].y = 1.0;
+
+  vao.UpdateGPU();
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -206,22 +220,10 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
                                    GLuint textureDestination,
                                    unsigned int width, unsigned int height,
                                    RSC_GLProgram *program) {
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  RSC_GLProgram::BindNULL();
-  glBindVertexArray(0);
-
   // Setup framebuffer
   glBindFramebuffer(GL_FRAMEBUFFER, FBO);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                          textureDestination, 0);
-  // Clear
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-  glClear(GL_COLOR_BUFFER_BIT);
-  auto GLerror = GL_GetError();
-  if (GLerror != "") {
-    LOG_DEBUG(GLerror);
-  }
 
   // Bind textures
   RSC_Texture::SetActiveTexture(GL_TEXTURE0);
@@ -229,19 +231,6 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   RSC_Texture::SetActiveTexture(GL_TEXTURE1);
   RSC_Texture::Bind(textureDepth);
 
-  vao.GetVertexArray()[0].x = -1.0;
-  vao.GetVertexArray()[0].y = -1.0;
-
-  vao.GetVertexArray()[1].x = 1.0;
-  vao.GetVertexArray()[1].y = -1.0;
-
-  vao.GetVertexArray()[2].x = 1.0;
-  vao.GetVertexArray()[2].y = 1.0;
-
-  vao.GetVertexArray()[3].x = -1.0;
-  vao.GetVertexArray()[3].y = 1.0;
-
-  vao.UpdateGPU();
   vao.Bind();
 
   program->Bind();
@@ -249,33 +238,12 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glUniform1i(program->GetUniformLocation("diffuseTex"), 0);
   glUniform1i(program->GetUniformLocation("depthTex"), 1);
 
-  GLerror = GL_GetError();
-  if (GLerror != "") {
-    LOG_DEBUG(GLerror);
-  }
-
   float ambientLight[3];
   ambientLight[0] = mAmbientLight.color.x;
   ambientLight[1] = mAmbientLight.color.y;
   ambientLight[2] = mAmbientLight.color.z;
   glUniform3fv(program->GetUniformLocation("AMBIENT_COLOR"), 1,
                &ambientLight[0]);
-  GLerror = GL_GetError();
-  if (GLerror != "") {
-    LOG_DEBUG(GLerror);
-  }
-
-  // GLint infoLogLength;
-  // glGetShaderiv(program->GetHandle(), GL_INFO_LOG_LENGTH, &infoLogLength);
-  // GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-  // glGetShaderInfoLog(program->GetHandle(), infoLogLength, NULL, strInfoLog);
-  // std::string str(strInfoLog);
-  // LOG_DEBUG(str);
-
-  // Push viewport bit
-  glPushAttrib(GL_VIEWPORT_BIT);
-  // Set Render Viewport
-  glViewport(0, 0, width, height);
 
   auto fbError = GL_CheckFramebuffer();
   if (fbError != "") {
@@ -288,16 +256,13 @@ void ComponentLightManager::Render(GLuint textureDiffuse, GLuint textureDepth,
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glBindVertexArray(NULL);
 
-  // Back to initial viewport
-  glPopAttrib();
-
   // Unbind Textures
   RSC_Texture::BindNull();
   RSC_Texture::SetActiveTexture(GL_TEXTURE0);
   RSC_Texture::BindNull();
 
   RSC_GLProgram::BindNULL();
-  GLerror = GL_GetError();
+  auto GLerror = GL_GetError();
   if (GLerror != "") {
     LOG_DEBUG(GLerror);
   }
