@@ -108,6 +108,12 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
       Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
   auto projectionMatInverse = projectionMat.Inverse();
 
+  float viewport[4];
+  viewport[0] = view.x;
+  viewport[1] = view.y;
+  viewport[2] = view.w;
+  viewport[3] = view.h;
+
   glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
 
   int offset = 0;
@@ -121,6 +127,10 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   offset += dataSize;
   dataSize = (sizeof(float) * 16);
   glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &projectionMatInverse.m);
+
+  offset += dataSize;
+  dataSize = (sizeof(float) * 4);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &viewport[0]);
 
   Vec4 testVector(-1,-1,1,1);
   auto test1 = projectionMatInverse * testVector;
@@ -653,8 +663,8 @@ void RenderManager::LoadDefaultShaders() {
     // The memory location ID is then sent to each individual camera so that the
     // cameras can bind
     // the needed data into the uniform buffer
-    // This buffer stores three mat4 (view mat, proj matr and inverse)
-    GLuint bufferSize = (sizeof(float) * 16) * 3;
+    // This buffer stores three mat4 (view mat, proj matr and inverse) and a vec4
+    GLuint bufferSize = ( ((sizeof(float) * 16) * 3) + sizeof(float)* 4);
     glGenBuffers(1, &GlobalCameraUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
     glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);
