@@ -122,6 +122,10 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   dataSize = (sizeof(float) * 16);
   glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &projectionMatInverse.m);
 
+  Vec4 testVector(-1,-1,1,1);
+  auto test1 = projectionMatInverse * testVector;
+  auto test2 = viewMat.Inverse() * test1;
+
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
   // Push viewport bit
@@ -278,8 +282,8 @@ void RenderManager::Render() {
   float values[4];
   values[0] = timeElapsed;
   values[1] = 0;
-  values[2] = 0;
-  values[3] = 0;
+  values[2] = resolution.x;
+  values[3] = resolution.y;
 
   glBufferSubData(GL_UNIFORM_BUFFER, 0, (sizeof(float) * 4), &values);
   glBindBuffer(GL_UNIFORM_BUFFER, 0);

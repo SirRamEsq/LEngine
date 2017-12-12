@@ -1266,7 +1266,7 @@ void LuaInterface::ExposeCPP() {
       .endClass()
 
       .deriveClass<PointLight, Light>("PointLight")
-	  .endClass()
+      .endClass()
 
       .beginClass<RSC_Heightmap>("RSC_Heightmap")
       .addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
