@@ -132,9 +132,12 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   dataSize = (sizeof(float) * 4);
   glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &viewport[0]);
 
-  Vec4 testVector(-1,-1,1,1);
+  Vec4 testVector(-1, -1, 90, 1);
+  Vec4 testVector2(-1, -1, -10, 1);
   auto test1 = projectionMatInverse * testVector;
   auto test2 = viewMat.Inverse() * test1;
+  auto test3 = projectionMat * testVector;
+  auto test4 = projectionMat * testVector2;
 
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
@@ -219,9 +222,8 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
 
   /*
   RSC_Texture::ExportTexture(mDepthTextureID, view.w, view.h, 1,
-  GL_DEPTH_COMPONENT,
-                             "./test.png");
-               */
+  GL_DEPTH_COMPONENT, "./test.png");
+  */
 }
 
 /////////////////
@@ -339,8 +341,8 @@ void RenderManager::Render() {
 
       //(*camera)->RenderFrameBufferTextureDiffuse();
       (*camera)->RenderFrameBufferTextureFinal(
-      &Kernel::stateMan.GetCurrentState()->comLightMan,
-      &defaultProgramLight);
+          &Kernel::stateMan.GetCurrentState()->comLightMan,
+          &defaultProgramLight);
     }
   }
 
@@ -401,7 +403,6 @@ RenderSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
     textureNormalMapIt->second[texNormal];
     spriteBatchVectorIt = textureNormalMapIt->second.find(texNormal);
   }
-
 
   RenderSpriteBatch *batch = NULL;
   for (auto vectorIt = spriteBatchVectorIt->second.begin();
@@ -663,8 +664,9 @@ void RenderManager::LoadDefaultShaders() {
     // The memory location ID is then sent to each individual camera so that the
     // cameras can bind
     // the needed data into the uniform buffer
-    // This buffer stores three mat4 (view mat, proj matr and inverse) and a vec4
-    GLuint bufferSize = ( ((sizeof(float) * 16) * 3) + sizeof(float)* 4);
+    // This buffer stores three mat4 (view mat, proj matr and inverse) and a
+    // vec4
+    GLuint bufferSize = (((sizeof(float) * 16) * 3) + sizeof(float) * 4);
     glGenBuffers(1, &GlobalCameraUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, GlobalCameraUBO);
     glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_DYNAMIC_DRAW);

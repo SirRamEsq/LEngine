@@ -1263,6 +1263,7 @@ void LuaInterface::ExposeCPP() {
       .addData("pos", &Light::pos)
       .addData("noise", &Light::noise)
       .addData("distance", &Light::distance)
+      .addData("render", &Light::render)
       .endClass()
 
       .deriveClass<PointLight, Light>("PointLight")
