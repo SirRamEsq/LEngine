@@ -329,10 +329,12 @@ int ComponentSprite::AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
   const RSC_Texture *textureNormal =
       K_TextureMan.GetLoadItem(textureNormalName, textureNormalName);
   if (textureNormal == NULL) {
+	/*
     std::stringstream ss;
     ss << "[C++] ComponentSprite::AddSprite couldn't find Texture Normal named "
        << textureNormalName;
     LOG_INFO(ss.str());
+	*/
     //return -1;
   }
 
