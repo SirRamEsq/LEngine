@@ -43,5 +43,6 @@ Install lua rocks and configure it for 5.2
 	make build
 	sudo make install
 	sudo luarocks install luafilesystem
+	//For debugging
 	sudo luarocks install luasocket
 =============================================

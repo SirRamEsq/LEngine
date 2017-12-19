@@ -151,7 +151,8 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "tostring = tostring,						"
     "	"
     "							\n"
-    "type = type,							"
+    "type = type,					\n		"
+    "require = require,						"
     "	"
     "								\n"
     // Can set metatables, but not get
@@ -482,6 +483,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
 
   // Data structure containing Luafunction ID values
   std::unordered_map<const RSC_Script *, int> scriptFunctions;
+  // this datastructure defines the order in which scripts are run
+  std::vector<const RSC_Script *> scriptOrder;
 
   // Use Rbegin and REnd so that type functions are called in the order
   // that they are declared in
@@ -492,6 +495,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     if (script != NULL) {
       auto scriptFunction = LookupFunction(script);
       scriptFunctions[script] = (scriptFunction);
+      scriptOrder.push_back(script);
       if (scriptFunction != -1) {
         // push type function along with base class argument and call function
         lua_rawgeti(lState, LUA_REGISTRYINDEX, scriptFunction);
@@ -505,12 +509,12 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
 
   std::stringstream fullyQualifiedScriptName;
   // Call previously acquired script function ID values
-  for (auto i = scriptFunctions.begin(); i != scriptFunctions.end(); i++) {
-    auto scriptFunction = i->second;
-    auto script = i->first;
+  for (auto i = scriptOrder.begin(); i != scriptOrder.end(); i++) {
+    auto scriptFunction = scriptFunctions[*i];
+    auto script = *i;
     auto scriptName = script->scriptName;
     fullyQualifiedScriptName << scriptName;
-    if (!IteratorIsLast(i, scriptFunctions)) {
+    if (!IteratorIsLast(i, scriptOrder)) {
       fullyQualifiedScriptName << " : ";
     }
     if (scriptFunction != -1) {
