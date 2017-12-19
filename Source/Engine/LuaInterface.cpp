@@ -152,7 +152,6 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "	"
     "							\n"
     "type = type,					\n		"
-    "require = require,						"
     "	"
     "								\n"
     // Can set metatables, but not get
@@ -245,8 +244,17 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "\n"
     "os = { date = os.date, clock = os.clock, difftime = os.difftime, time = "
     "os.time },	\n"
-    "}									"
     "	"
+	"select=select, \n"
+#ifdef DEBUG_MODE
+	"rawget=rawget, \n"
+	"require=require, \n"
+	"package=package, \n"
+	"error=error, \n"
+	"coroutine=coroutine, \n"
+	"getmetatable=getmetatable \n"
+#endif
+    "}									"
     "									\n";
 
 LuaInterface::LuaInterface(GameState *state) : parentState(state) {
