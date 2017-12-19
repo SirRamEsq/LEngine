@@ -477,8 +477,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
 
   // Base Script will be the first one run
   if (baseScript != NULL) {
-    auto It = scripts.begin();
-    scripts.insert(It, baseScript);
+    scripts.insert(scripts.begin(), baseScript);
   }
 
   // Data structure containing Luafunction ID values
@@ -495,7 +494,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     if (script != NULL) {
       auto scriptFunction = LookupFunction(script);
       scriptFunctions[script] = (scriptFunction);
-      scriptOrder.push_back(script);
+	  //push front
+      scriptOrder.insert(scriptOrder.begin(), script);
       if (scriptFunction != -1) {
         // push type function along with base class argument and call function
         lua_rawgeti(lState, LUA_REGISTRYINDEX, scriptFunction);
