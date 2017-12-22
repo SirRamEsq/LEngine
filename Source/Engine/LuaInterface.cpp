@@ -90,51 +90,58 @@ const std::string LuaInterface::BASE_SCRIPT_NAME = "__BaseEntity.lua";
 const std::string LuaInterface::TYPE_DIR = "Common/";
 
 const std::string LuaInterface::DEBUG_LOG = "LUA_INTERFACE";
+
+//Debug table has all lua functionality
+#ifdef DEBUG_MODE
+const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
+    "newLoadFile = function(dir, env)\n"
+    "if (env==nil) then return nil; end \n"
+    "return loadfile(dir, \"bt\", env)\n"
+    "end\n"
+    "L_ENGINE_ENV = {}\n"
+	"for k,v in pairs(_ENV)do\n"
+	"L_ENGINE_ENV[k]=v\n"
+	"end\n"
+    "L_ENGINE_ENV._ENV = {}\n"
+    "L_ENGINE_ENV.loadfile = newLoadFile\n"
+    "L_ENGINE_ENV.utilityPath = utilityPath\n"
+    "L_ENGINE_ENV.CPP = CPP\n"
+	;
+//Standard table has cherry picked functionality
+#else
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // http://stackoverflow.com/questions/34388285/creating-a-secure-lua-sandbox
 
     // Wrapper around loadfile; Files can only load new files if they specify an
     // _ENV
-    "newLoadFile = function(dir, env)					"
-    "	"
-    "				   \n"
-    "if (env==nil) then return nil; end					"
-    "				   \n"
-    "return loadfile(dir, \"bt\", env)					"
-    "	"
-    "			   \n"
+    "newLoadFile = function(dir, env)\n"
+    "if (env==nil) then return nil; end \n"
+    "return loadfile(dir, \"bt\", env)\n"
     "end								"
-    "	"
     "								   \n"
     // Global table for this environment
     // Note, that in lua 5.2, there is nothing special about _G;
     //_ENV is the global table for a given function; _G is simply set at the
     // start of the entire lua state
     "L_ENGINE_ENV_G = {}						"
-    "	"
     "						   \n"
     "L_ENGINE_ENV = {							"
-    "	"
     "						   \n"
 
     // Global table between all scripts
     "_G = L_ENGINE_ENV_G,						"
-    "	"
     "							\n"
     // It is expected to have exposed CPP data (thus creating the CPP table)
     // before running this string
     "CPP = CPP,								"
     "									\n"
     "utilityPath= utilityPath,						"
-    "	"
     "						\n"
     // Use secure wrapper around loadfile
     "loadfile = newLoadFile,						"
-    "	"
     "						\n"
     // Built in Lua functions
     "ipairs = ipairs,							"
-    "	"
     "							\n"
     "next = next,							"
     "	"
@@ -171,51 +178,35 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "	"
     "	\n"
     "wrap = coroutine.wrap						"
-    "	"
     "						\n"
     "},									"
-    "									"
-    "	"
     "\n"
     "string = {								"
     "									\n"
     "byte = string.byte, char = string.char, find = string.find,	"
-    "	"
     "		\n"
     "format = string.format, gmatch = string.gmatch, gsub = "
     "string.gsub,	"
     "	\n"
     "len = string.len, lower = string.lower, match = string.match,	"
-    "	"
     "		\n"
     "rep = string.rep, reverse = string.reverse, sub = string.sub,	"
-    "	"
     "		\n"
     "upper = string.upper						"
-    "	"
     "							\n"
     "},									"
-    "									"
-    "	"
     "\n"
     "table = {								"
-    "	"
     "								\n"
     "insert = table.insert, maxn = table.maxn, remove = table.remove,	"
-    "	"
     "	\n"
     "sort = table.sort							"
-    "	"
     "							\n"
     "},									"
-    "									"
-    "	"
     "\n"
     "math = {								"
-    "	"
     "								\n"
     "abs = math.abs, acos = math.acos, asin = math.asin,		"
-    "	"
     "			\n"
     "atan = math.atan, atan2 = math.atan2, ceil = math.ceil, cos = "
     "math.cos,	"
@@ -224,38 +215,19 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "math.floor,	"
     "	\n"
     "fmod = math.fmod, frexp = math.frexp, huge = math.huge,		"
-    "	"
     "		\n"
     "ldexp = math.ldexp, log = math.log, log10 = math.log10, max = "
-    "math.max,	"
-    "\n"
-    "min = math.min, modf = math.modf, pi = math.pi, pow = math.pow,	"
-    "	"
-    "	\n"
+    "math.max,\n"
+    "min = math.min, modf = math.modf, pi = math.pi, pow = math.pow,\n"
     "rad = math.rad, randomseed = math.randomseed, random = math.random, sin = "
-    "math.sin, sinh = "
-    "math.sinh,	"
-    "\n"
-    "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh			"
-    "				\n"
-    "},									"
-    "									"
-    "	"
-    "\n"
+    "math.sin, sinh = math.sinh,	\n"
+    "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh"
+    "},\n"
     "os = { date = os.date, clock = os.clock, difftime = os.difftime, time = "
     "os.time },	\n"
-    "	"
 	"select=select, \n"
-#ifdef DEBUG_MODE
-	"rawget=rawget, \n"
-	"require=require, \n"
-	"package=package, \n"
-	"error=error, \n"
-	"coroutine=coroutine, \n"
-	"getmetatable=getmetatable \n"
+    "}\n";
 #endif
-    "}									"
-    "									\n";
 
 LuaInterface::LuaInterface(GameState *state) : parentState(state) {
   lState = luaL_newstate();
@@ -307,7 +279,7 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
 
   // run InitLEngine script using the restricted environment
   std::string lEngineLoad1 =
-      "f1 = loadfile(LEngineInitPath, \"bt\", L_ENGINE_ENV)";
+      "f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV)";
   // Run the loadfile, returning a function
   std::string lEngineLoad2 = "NewLEngine = f1()";
 
