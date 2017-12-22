@@ -14,11 +14,17 @@ class RSC_MapImpl;
 class TiledData;
 
 struct TileAnimation {
+  TileAnimation();
   struct Frame {
     GID tileID;
     int length;
   };
   std::vector<Frame> frames;
+  int Length() const ;
+
+ private:
+  mutable int cachedSize;
+  mutable int cachedLength;
 };
 
 // A tiled set defines what tiles are. Each tile set has a texture and also
@@ -65,6 +71,7 @@ class TiledSet : public GIDEnabled {
 
   void AddTileAnimation(GID id, TileAnimation animation);
   const TileAnimation *GetTileAnimation(GID id);
+  const std::map<GID, TileAnimation> *GetTileAnimations() const;
 
  private:
   bool initializationOK;

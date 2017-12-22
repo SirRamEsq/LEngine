@@ -3,6 +3,24 @@
 
 #include "math.h"
 
+TileAnimation::TileAnimation() {
+  cachedLength = 0;
+  cachedSize = 0;
+}
+int TileAnimation::Length() const {
+  // update cahcedLength if needed
+  if (frames.size() != cachedSize) {
+    int totalLength = 0;
+    for (auto i = frames.begin(); i != frames.end(); i++) {
+      totalLength += i->length;
+    }
+    cachedLength = totalLength;
+    cachedSize = frames.size();
+  }
+
+  return cachedLength;
+}
+
 TiledSet::TiledSet(const std::string &n, const std::string &tex,
                    const unsigned int tileW, const unsigned int tileH,
                    GID first, GIDManager *man)
@@ -289,6 +307,9 @@ void TiledSet::AddTileAnimation(GID id, TileAnimation animation) {
     LOG_ERROR(ss.str());
   }
   tileAnimations[id] = animation;
+}
+const std::map<GID, TileAnimation> *TiledSet::GetTileAnimations() const {
+  return &tileAnimations;
 }
 const TileAnimation *TiledSet::GetTileAnimation(GID id) {
   auto it = tileAnimations.find(id);

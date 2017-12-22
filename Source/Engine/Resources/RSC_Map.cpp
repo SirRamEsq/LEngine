@@ -381,6 +381,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
 
   std::string testString;
   std::string valueString;
+  std::string orient;
+  std::string renderOrder;
 
   // This is used for loading multiple maps that share the same tiled set;
   std::map<GIDManager::Range, GIDManager::Range> tiledToEngineGID;
@@ -391,6 +393,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   attributes["backgroundcolor"] = XML_Attribute("string", &bgColorString);
   attributes["width"] = XML_Attribute("unsigned int", &tilesWide);
   attributes["height"] = XML_Attribute("unsigned int", &tilesHigh);
+  attributes["orientation"] = XML_Attribute("string", &orient);
+  attributes["renderorder"] = XML_Attribute("string", &renderOrder);
   attributes["tilewidth"] = XML_Attribute("unsigned int", &sizeOfTileWidth);
   attributes["tileheight"] = XML_Attribute("unsigned int", &sizeOfTileHeight);
   TMXLoadAttributes(node, attributes);
@@ -401,7 +405,23 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
     std::stringstream ss;
     ss << "Couldn't load map named: " << TMXname
        << "\n    Tile width and height are not 16 pixels";
-    LOG_INFO(ss.str());
+    LOG_FATAL(ss.str());
+    throw ExitException();
+  }
+
+  if (orient != "orthogonal") {
+    std::stringstream ss;
+    ss << "Couldn't load map with orientation '" << orient
+       << "'\n    orientation must be orthogonal";
+    LOG_FATAL(ss.str());
+    throw ExitException();
+  }
+  if (renderOrder != "left-up") {
+    std::stringstream ss;
+    ss << "Couldn't load map with renderorder '" << renderOrder
+       << "'\n    orientation must be left-up";
+    LOG_FATAL(ss.str());
+    throw ExitException();
   }
 
   // Translate background color from string to int
@@ -995,6 +1015,8 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     TMXLoadProperties(tileProperties, properties);
     ts->tileProperties[tilePropertyID] = properties;
   }
+
+  auto animations = tiledSetRootNode->first_node("animation");
 
   return returnSmartPonter;
 }

@@ -1,6 +1,6 @@
 #include "RenderTileLayer.h"
 #include "../Kernel.h"
-
+#include <algorithm>
 
 RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::TileLayer),
@@ -29,38 +29,33 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
 RenderTileLayer::~RenderTileLayer() {}
 
 void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
-  unsigned int vertexIndex = ((y * layer->tileWidth) + x) * 4;
-  Vec2 translate;
+  auto vertexIndex = CalculateVertexIndex(x, y);
 
   Vec2 topLeftVertex(0.0f, 0.0f);
   Vec2 topRightVertex(16.0f, 0.0f);
   Vec2 bottomRightVertex(16.0f, 16.0f);
   Vec2 bottomLeftVertex(0.0f, 16.0f);
 
-  // Default y is '1' because '0%0' is undefined
-  Vec2 animationVertex(0, 1);
-
-  float topTex, rightTex, leftTex, bottomTex;
-  GID gid;
-
+  Vec2 translate;
   translate.x = x * 16;
   translate.y = y * 16;
-
-  gid = layer->GetGID(x, y);
 
   vao.GetVertexArray()[vertexIndex] = topLeftVertex + translate;
   vao.GetVertexArray()[vertexIndex + 1] = topRightVertex + translate;
   vao.GetVertexArray()[vertexIndex + 2] = bottomRightVertex + translate;
   vao.GetVertexArray()[vertexIndex + 3] = bottomLeftVertex + translate;
 
-  /*
-  const LAnimation *animation = tiledSet->GetAnimationDataFromGID(gid);
-  if (animation != NULL) {
-    animationVertex.x = animation->GetSpeed();
-    animationVertex.y = animation->NumberOfImages();
-  }
-  */
+  auto gid = layer->GetGID(x, y);
+  SetTileTexture(vertexIndex, gid);
+}
 
+unsigned int RenderTileLayer::CalculateVertexIndex(unsigned int x,
+                                                   unsigned int y) {
+  return ((y * layer->tileWidth) + x) * 4;
+}
+
+void RenderTileLayer::SetTileTexture(unsigned int vertexIndex, GID gid) {
+  float topTex, rightTex, leftTex, bottomTex;
   tiledSet->GetTextureCoordinatesFromGID(gid, leftTex, rightTex, topTex,
                                          bottomTex);
   Vec2 topLeftTex(leftTex, topTex);
@@ -72,11 +67,6 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   vao.GetTextureArray()[vertexIndex + 1] = topRightTex;
   vao.GetTextureArray()[vertexIndex + 2] = bottomLeftTex;
   vao.GetTextureArray()[vertexIndex + 3] = bottomRightTex;
-
-  // vao.GetAnimationArray()[vertexIndex] = animationVertex;
-  // vao.GetAnimationArray()[vertexIndex + 1] = animationVertex;
-  // vao.GetAnimationArray()[vertexIndex + 2] = animationVertex;
-  // vao.GetAnimationArray()[vertexIndex + 3] = animationVertex;
 }
 
 void RenderTileLayer::BuildVAO() {
@@ -97,11 +87,64 @@ void RenderTileLayer::BuildVAOArea(Rect area) {
   // must call vao.UpdateGPU() when done!
 }
 
+bool RenderTileLayer::UpdateTileAnimations(const RenderCamera *camera) {
+  bool dataUpdated = false;
+  auto animations = tiledSet->GetTileAnimations();
+  if (animations->empty()) {
+    // nothing to do, no data updated
+    return dataUpdated;
+  }
+
+  // cache results
+  std::map<GID, GID> animationCache;
+
+  auto time = renderManager->GetTimeElapsed();
+  auto view = camera->GetView();
+  int left = view.GetLeft() / 16;
+  int right = view.GetRight() / 16;
+  int top = view.GetTop() / 16;
+  int bottom = view.GetBottom() / 16;
+  left = std::max(0, left);
+  right = std::min(int(layer->tileWidth), right);
+  top = std::max(0, top);
+  bottom = std::min(int(layer->tileHeight), bottom);
+
+  for (auto x = left; x != right; x++) {
+    for (auto y = top; y != bottom; y++) {
+      GID tileImage = 0;
+      auto gid = layer->GetGID(x, y);
+      auto cached = animationCache.find(gid);
+      if (cached == animationCache.end()) {
+        auto it = animations->find(gid);
+        if (it != animations->end()) {
+          auto ani = it->second;
+          // update cache
+          int range = time % ani.Length();
+
+          for (auto i = ani.frames.begin(); i != ani.frames.end(); i++) {
+            range -= i->length;
+            if (range < 0) {
+              tileImage = i->tileID;
+              animationCache[gid] = tileImage;
+            }
+          }
+        }
+      } else {
+        tileImage = cached->second;
+      }
+      auto index = CalculateVertexIndex(x, y);
+      SetTileTexture(index, tileImage);
+      dataUpdated = true;
+    }
+  }
+  return dataUpdated;
+}
+
 void RenderTileLayer::Render(const RenderCamera *camera,
                              const RSC_GLProgram *program) {
   /// \TODO divide tileMaps into chunks and render only visible chunks
 
-  program->Bind();
+  bool updateGPU = UpdateTileAnimations(camera);
   if (layer->updatedAreas.size() > 0) {
     for (auto i = layer->updatedAreas.begin(); i != layer->updatedAreas.end();
          i++) {
@@ -110,8 +153,14 @@ void RenderTileLayer::Render(const RenderCamera *camera,
     // not the best practice, clearing out the vector from the renderer, but it
     // works
     layer->updatedAreas.clear();
+    updateGPU = true;
+  }
+
+  if (updateGPU) {
     vao.UpdateGPU();
   }
+
+  program->Bind();
 
   float colors[4];
   colors[0] = 1.0;

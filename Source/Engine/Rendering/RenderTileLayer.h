@@ -20,6 +20,13 @@ class RenderTileLayer : public RenderableObjectWorld {
   bool isTransparent();
 
  private:
+  /// Returns true if any data was updated
+  bool UpdateTileAnimations(const RenderCamera *camera);
+  /// Get the VAO vertex index from a texture coordinate
+  unsigned int CalculateVertexIndex(unsigned int x, unsigned int y);
+  /// Sets the texture of a tile @ vertexIndex to the image associated with the
+  /// passed gid
+  void SetTileTexture(unsigned int vertexIndex, GID gid);
   void BuildVAOTile(unsigned int x, unsigned int y);
 
   unsigned int animatedRefreshRateTimer;

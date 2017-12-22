@@ -284,6 +284,10 @@ void RenderManager::ProcessDrawCall(RenderableObject *obj,
 #endif
 }
 
+unsigned int RenderManager::GetTimeElapsed(){
+	return timeElapsed;
+}
+
 void RenderManager::Render() {
   auto resolution = Resolution::GetResolution();
   glViewport(0, 0, resolution.x, resolution.y);

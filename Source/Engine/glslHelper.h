@@ -22,6 +22,11 @@ class Vec2 {
   Vec2();
   Vec2(float xVal, float yVal);
 
+  void operator=(const Vec2 &v) {
+    x = v.x;
+    y = v.y;
+  }
+
   Vec2 operator+(const Vec2 &v) const {
     Vec2 returnVal;
     returnVal.x = x + v.x;
@@ -29,9 +34,9 @@ class Vec2 {
     return returnVal;
   }
 
-  Vec2 Add (Vec2 vec);
-  Vec2 Subtract (Vec2 vec);
-  Vec2 Round ();
+  Vec2 Add(Vec2 vec);
+  Vec2 Subtract(Vec2 vec);
+  Vec2 Round();
 
   GLfloat x;
   GLfloat y;
@@ -61,9 +66,9 @@ class Vec3 {
   Vec3 CrossProduct(const Vec3 &vec);
   float SquaredDistance(Vec3 to);
 
-  Vec3 Add (Vec3 vec);
-  Vec3 Subtract (Vec3 vec);
-  Vec3 Round ();
+  Vec3 Add(Vec3 vec);
+  Vec3 Subtract(Vec3 vec);
+  Vec3 Round();
 
   GLfloat x;
   GLfloat y;
