@@ -1,5 +1,11 @@
 #include "LayerTile.h"
 
+std::vector<std::string> TiledTileLayer::SUPPORTED_ENCODINGS = [] {
+	std::vector<std::string> v;
+	v.push_back("TMX");
+    return v;
+}();
+
 void TiledTileLayer::InitializeMap() {
   // Build 2D array
   for (unsigned int x = 0; x < tileWidth; x++) {

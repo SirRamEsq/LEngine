@@ -462,9 +462,11 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
 
           if (file.get()->length == 0) {
             LOG_INFO("File Length is null");
+            tileSetRootNode = NULL;
           }
           if (file.get()->GetData() == NULL) {
             LOG_INFO("Data is null");
+            tileSetRootNode = NULL;
           }
 
           xmlFile = std::string(file->GetData(), file->length);
@@ -477,6 +479,7 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
                 "rapidxml::parse error"
              << "\n    What is: " << e.what();
           LOG_INFO(ss.str());
+          tileSetRootNode = NULL;
 
         } catch (LEngineFileException e) {
           std::stringstream ss;
@@ -484,13 +487,16 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
                 "error"
              << "\n    What is: " << e.what();
           LOG_INFO(ss.str());
+          tileSetRootNode = NULL;
         }
       }
       // External Tilesets don't have their first gid included in their file,
       // only the actual map assigns gids
       // that's why the first gid is passed as a separate value here
-      tiledData->AddTileSet(
-          TMXLoadTiledSet(tileSetRootNode, tilesetFirstGID, tiledData->gid));
+      if (tileSetRootNode != NULL) {
+        tiledData->AddTileSet(
+            TMXLoadTiledSet(tileSetRootNode, tilesetFirstGID, tiledData->gid));
+      }
     }
 
     else if (nn == "layer") {
@@ -570,8 +576,7 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   attributes["opacity"] = XML_Attribute("float", &alpha);
   TMXLoadAttributes(rootNode, attributes);
 
-  rapidxml::xml_node<> *subnode = rootNode->first_node();
-  testString = subnode->name();
+  rapidxml::xml_node<> *propertiesNode = rootNode->first_node("properties");
 
   bool propertyCollision = false;
   bool propertyHMap = false;
@@ -581,25 +586,28 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   std::string geoShaderName;
 
   XML_PropertyMap properties;
-  TMXLoadProperties(subnode, properties);
+  if (propertiesNode != NULL) {
+    TMXLoadProperties(propertiesNode, properties);
 
-  attributes.clear();
-  attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
-  attributes[tiledProperties::tile::SOLID] =
-      XML_Attribute("bool", &propertyCollision);
-  attributes[tiledProperties::tile::HMAP] =
-      XML_Attribute("bool", &propertyHMap);
-  attributes[tiledProperties::SHADER_FRAG] =
-      XML_Attribute("string", &fragShaderName);
-  attributes[tiledProperties::SHADER_VERT] =
-      XML_Attribute("string", &vertShaderName);
-  attributes[tiledProperties::SHADER_GEO] =
-      XML_Attribute("string", &geoShaderName);
-  attributes[tiledProperties::tile::ANIMATION_SPEED] =
-      XML_Attribute("unsigned int", &animationRate);
-  TMXLoadAttributesFromProperties(&properties,
-                                  attributes);  // store unspecified properties
-                                                // in tileLayer->extraproperties
+    attributes.clear();
+    attributes[tiledProperties::DEPTH] = XML_Attribute("int", &depth);
+    attributes[tiledProperties::tile::SOLID] =
+        XML_Attribute("bool", &propertyCollision);
+    attributes[tiledProperties::tile::HMAP] =
+        XML_Attribute("bool", &propertyHMap);
+    attributes[tiledProperties::SHADER_FRAG] =
+        XML_Attribute("string", &fragShaderName);
+    attributes[tiledProperties::SHADER_VERT] =
+        XML_Attribute("string", &vertShaderName);
+    attributes[tiledProperties::SHADER_GEO] =
+        XML_Attribute("string", &geoShaderName);
+    attributes[tiledProperties::tile::ANIMATION_SPEED] =
+        XML_Attribute("unsigned int", &animationRate);
+    TMXLoadAttributesFromProperties(
+        &properties,
+        attributes);  // store unspecified properties
+                      // in tileLayer->extraproperties
+  }
 
   std::unique_ptr<TiledTileLayer> tileLayer(
       new TiledTileLayer(width, height, name, depth, &gidManager));
@@ -619,14 +627,41 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
     tileLayer->layerFlags = tileLayer->layerFlags | TF_useHMap;
   }
 
-  subnode = subnode->next_sibling();
+  auto dataNode = rootNode->first_node("data");
+  auto encoding = dataNode->first_attribute("encoding");
+  auto isInfinite = (dataNode->first_node("chunk") != NULL);
+  if (isInfinite) {
+    LOG_FATAL("Chunks / Infinite maps are not supported")
+    throw ExitException();
+  }
+  if (encoding != NULL) {
+    auto encodingStr = encoding->value();
+    bool supported = false;
+    for (auto str = TiledTileLayer::SUPPORTED_ENCODINGS.begin();
+         str != TiledTileLayer::SUPPORTED_ENCODINGS.end(); str++) {
+      if (*str == encodingStr) {
+        supported = true;
+      }
+    }
+
+    if (!supported) {
+      std::stringstream ss;
+      ss << "Tiled Data format '" << encodingStr << "' not supported";
+      LOG_FATAL(ss.str());
+      throw ExitException();
+    }
+  }
   std::vector<GID> data;
   GID id = 0;
-  for (subnode = subnode->first_node(); subnode;
+  for (auto subnode = dataNode->first_node(); subnode;
        subnode = subnode->next_sibling()) {
-    valueString = subnode->first_attribute("gid")->value();
-    // LOG_INFO("ValueString is: ", valueString);
-    id = strtol(valueString.c_str(), NULL, 10);
+    auto gidNode = subnode->first_attribute("gid");
+    if (gidNode != NULL) {
+      valueString = gidNode->value();
+      id = strtol(valueString.c_str(), NULL, 10);
+    } else {
+      id = 0;
+    }
 
     data.push_back(id);
   }
@@ -653,9 +688,13 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
       y++;
     }
   }
-  tileLayer->animatedRefreshRate =
-      animationRate;  // if zero, no animation will occur
-  // LOG_INFO(TMXname, Log::typeDefault);
+
+  if (tileLayer->tileSet == NULL) {
+    std::stringstream ss;
+    ss << "TiledLayer named " << name << " doesn't have a tileSet";
+    LOG_ERROR(ss.str());
+    return NULL;
+  }
 
   return tileLayer;
 }

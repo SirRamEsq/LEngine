@@ -59,6 +59,8 @@ class TiledTileLayer : public TiledLayerGeneric {
 
   void InitializeMap();
   bool inline IsValidXY(unsigned int x, unsigned int y) const;
+
+  static std::vector<std::string> SUPPORTED_ENCODINGS;
 };
 
 #endif
