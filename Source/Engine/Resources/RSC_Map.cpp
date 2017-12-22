@@ -69,6 +69,9 @@ bool SortLayersByDepth(T &l1, T &l2) {
 }
 
 bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
+  if (layer.get() == NULL) {
+    return false;
+  }
   MAP_DEPTH depth = layer->GetDepth();
   auto layerType = layer->layerType;
 
@@ -624,7 +627,12 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   GID id = 0;
   for (subnode = subnode->first_node(); subnode;
        subnode = subnode->next_sibling()) {
-    valueString = subnode->first_attribute("gid")->value();
+    auto gidNode = subnode->first_attribute("gid");
+    if (gidNode != NULL) {
+      valueString = gidNode->value();
+    } else {
+      valueString = "0";
+    }
     // LOG_INFO("ValueString is: ", valueString);
     id = strtol(valueString.c_str(), NULL, 10);
 
@@ -643,7 +651,8 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
   for (unsigned int i = 0; i < data.size(); i++) {
     if (tileLayer->tileSet == NULL) {
       if (data[i] != 0) {
-        tileLayer->tileSet = ((TiledSet *)gidManager.GetItem(data[i]));
+        auto tileSet = ((TiledSet *)gidManager.GetItem(data[i]));
+        tileLayer->tileSet = tileSet;
       }
     }
     tileLayer->data2D[x][y] = data[i];
@@ -652,6 +661,10 @@ std::unique_ptr<TiledTileLayer> TiledData::TMXLoadTiledTileLayer(
       x = 0;
       y++;
     }
+  }
+  if (tileLayer->tileSet == NULL) {
+    LOG_ERROR("TILESET NULL");
+    return NULL;
   }
   tileLayer->animatedRefreshRate =
       animationRate;  // if zero, no animation will occur
@@ -1000,5 +1013,10 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     ts->tileProperties[tilePropertyID] = properties;
   }
 
+  if (returnSmartPonter.get() == NULL) {
+    std::stringstream ss;
+    ss << "Tiledset loading failed for tiled set " << name;
+    LOG_ERROR(ss.str());
+  }
   return returnSmartPonter;
 }

@@ -7,6 +7,10 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
   SetDepth(l->GetDepth());
   layer = l;
 
+  if (l == NULL) {
+    LOG_ERROR("LAYER IS NULL");
+  }
+
   color.a = l->GetAlpha();
   animatedRefreshRateTimer = l->GetAnimationRate();
 
@@ -18,8 +22,9 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
 
   // Get Texture and TiledSet to be used
   tiledSet = layer->GetTiledSet();
-  textureWidth = tiledSet->GetTexture()->GetWidth();
-  textureHeight = tiledSet->GetTexture()->GetHeight();
+  auto tex = tiledSet->GetTexture();
+  textureWidth = tex->GetWidth();
+  textureHeight = tex->GetHeight();
   BuildVAO();
 
   AddToRenderManager();
@@ -52,11 +57,13 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   vao.GetVertexArray()[vertexIndex + 2] = bottomRightVertex + translate;
   vao.GetVertexArray()[vertexIndex + 3] = bottomLeftVertex + translate;
 
+  /*
   const LAnimation *animation = tiledSet->GetAnimationDataFromGID(gid);
   if (animation != NULL) {
     animationVertex.x = animation->GetSpeed();
     animationVertex.y = animation->NumberOfImages();
   }
+  */
 
   tiledSet->GetTextureCoordinatesFromGID(gid, leftTex, rightTex, topTex,
                                          bottomTex);
@@ -96,6 +103,9 @@ void RenderTileLayer::BuildVAOArea(Rect area) {
 
 void RenderTileLayer::Render(const RenderCamera *camera,
                              const RSC_GLProgram *program) {
+  if (tiledSet == NULL) {
+    return;
+  }
   /// \TODO divide tileMaps into chunks and render only visible chunks
 
   program->Bind();
