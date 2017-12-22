@@ -1,6 +1,7 @@
 #include "RenderTileLayer.h"
 #include "../Kernel.h"
 
+
 RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::TileLayer),
       vao((VAO_TEXTURE), l->tileWidth * l->tileHeight) {
@@ -52,11 +53,13 @@ void RenderTileLayer::BuildVAOTile(unsigned int x, unsigned int y) {
   vao.GetVertexArray()[vertexIndex + 2] = bottomRightVertex + translate;
   vao.GetVertexArray()[vertexIndex + 3] = bottomLeftVertex + translate;
 
+  /*
   const LAnimation *animation = tiledSet->GetAnimationDataFromGID(gid);
   if (animation != NULL) {
     animationVertex.x = animation->GetSpeed();
     animationVertex.y = animation->NumberOfImages();
   }
+  */
 
   tiledSet->GetTextureCoordinatesFromGID(gid, leftTex, rightTex, topTex,
                                          bottomTex);

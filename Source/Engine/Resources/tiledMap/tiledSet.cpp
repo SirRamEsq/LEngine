@@ -121,14 +121,6 @@ Rect TiledSet::GetTextureRectFromGID(GID id) const {
   return returnVal;  // posX, posY, TileWidth, TileHeight
 }
 
-const LAnimation *TiledSet::GetAnimationDataFromGID(GID id) const {
-  auto it = tileAnimations.find(id);
-  if (it == tileAnimations.end()) {
-    return NULL;
-  }
-  return it->second;
-}
-
 void TiledSet::LoadHeightMaps(GID id) {
   if (texture == NULL) {
     return;
@@ -287,4 +279,21 @@ std::string TiledSet::GetTileProperty(GID id,
   }
 
   return std::get<1>(propertyIterator->second);
+}
+
+void TiledSet::AddTileAnimation(GID id, TileAnimation animation) {
+  auto it = tileAnimations.find(id);
+  if (it != tileAnimations.end()) {
+    std::stringstream ss;
+    ss << "Tile Animation for GID " << id << " already exists!";
+    LOG_ERROR(ss.str());
+  }
+  tileAnimations[id] = animation;
+}
+const TileAnimation *TiledSet::GetTileAnimation(GID id) {
+  auto it = tileAnimations.find(id);
+  if (it != tileAnimations.end()) {
+    return &it->second;
+  }
+  return NULL;
 }

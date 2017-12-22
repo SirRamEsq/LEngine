@@ -57,6 +57,9 @@ TiledData::TiledData(const TiledData &rhs)
 TiledData::~TiledData() {}
 
 bool TiledData::AddTileSet(std::unique_ptr<TiledSet> tileSet) {
+  if (tileSet.get() == NULL) {
+    return false;
+  }
   tiledSets[tileSet->name] = tileSet.get();
   tiledTileSets.push_back(std::unique_ptr<TiledSet>(tileSet.release()));
   return true;
@@ -69,6 +72,9 @@ bool SortLayersByDepth(T &l1, T &l2) {
 }
 
 bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
+  if (layer.get() == NULL) {
+    return false;
+  }
   MAP_DEPTH depth = layer->GetDepth();
   auto layerType = layer->layerType;
 
@@ -758,7 +764,8 @@ std::unique_ptr<TiledObjectLayer> TiledData::TMXLoadTiledObjectLayer(
     newObj.tiledID = objID;
 
     // Get pointer to node containing the new object's properties
-    rapidxml::xml_node<> *objectPropertiesNode = subnodeObject->first_node();
+    rapidxml::xml_node<> *objectPropertiesNode =
+        subnodeObject->first_node("properties");
 
     if (objectPropertiesNode != NULL) {
       std::string name;
@@ -926,24 +933,12 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
 std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     rapidxml::xml_node<> *tiledSetRootNode, const GID &firstGID,
     GIDManager &gidManager) {
-  /*XML Tile property structure goes like this;
-      <tileset>
-          <image source="Images/GrassTerrain.png" trans="ff00ff" width="256"
-     height="256"/>
-          <tile ID="44">
-              <properties>
-                  <property name="IMG_LENGTH" type="int" value="3"/>
-                  ...
-                  <property name="IMG_SPEED" type="int" value="10"/>
-              </properties>
-          </tile>
-          <tile ID="45">
-              ...
-          </tile>
-          ...
-      </tileset>
-  */
-  rapidxml::xml_node<> *subNodeImage = tiledSetRootNode->first_node();
+  auto usesGrid = (tiledSetRootNode->first_node("grid") != NULL);
+  if (usesGrid) {
+    LOG_ERROR("TiledSets with multiple images are not supported")
+    return NULL;
+  }
+  auto subNodeImage = tiledSetRootNode->first_node("image");
   // Tileset attributes
   GID tilesetFirstGID = firstGID;
   std::string name = "";
@@ -978,10 +973,7 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
   ts->SetLastGID((ts->GetFirstGID() + ts->GetTilesTotal()) - 1);
 
   // Get Unique Tile Properties
-  rapidxml::xml_node<> *subNodeTileRoot =
-      subNodeImage
-          ->next_sibling();  // points toward <tile> tag which is sibling
-                             // of <image>
+  auto subNodeTileRoot = tiledSetRootNode->first_node("tile");
 
   // Iterate through all of the <tile> tags
   GID tilePropertyID;
@@ -991,51 +983,16 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
     // Get GID of tile that the properties are associated with
     // This GID is the value of the tile within the tileset, between 0 and (max
     // number of tiles -1)
-    valueString = subNodeTileRoot->first_attribute()->value();
+    valueString = subNodeTileRoot->first_attribute("id")->value();
     tilePropertyID = strtol(valueString.c_str(), NULL, 10);
 
     // Add tileset's starting GID to get the actual value of the tile.
     tilePropertyID += tilesetFirstGID;
 
-    rapidxml::xml_node<> *subNodeTileProperty =
-        subNodeTileRoot->first_node();  // Points toward <properties>
+    auto tileProperties = subNodeTileRoot->first_node("properties");
 
     XML_PropertyMap properties;
-    TMXLoadProperties(subNodeTileProperty, properties);
-
-    attributes.clear();
-    // Store animation data in the tileAnimations data structure
-    std::string spriteName = "";
-    std::string animationName = "";
-    attributes[tiledProperties::tSet::SPRITE] =
-        XML_Attribute("string", &spriteName);
-    attributes[tiledProperties::tSet::ANIMATION] =
-        XML_Attribute("string", &animationName);
-    // Store all other properties in the tileProperties data structure of type
-    // map<string, string>
-    TMXLoadAttributesFromProperties(&properties, attributes);
-
-    if (spriteName != "") {
-      const RSC_Sprite *spr = K_SpriteMan.GetLoadItem(spriteName, spriteName);
-      if (spr != NULL) {
-        const LAnimation *animation = spr->GetAnimation(animationName);
-        if (animation != NULL) {
-          /*
-          Only load if the animation was created via animation sequence
-          (Meaning that the animation frames are contiguous on the texture)
-          */
-          if (animation->loadTag == LOAD_TAG_ANIMATION_SEQUENCE) {
-            ts->tileAnimations[tilePropertyID] = animation;
-          } else {
-            LOG_INFO("[C++] RSC_MapImpl::TMXLoadTiledSet; For TileSet " + name +
-                     ": Animation named " + animationName + " in Sprite " +
-                     spriteName +
-                     " cannot be loaded as it was not defined "
-                     "using an 'animationSequence' tag");
-          }
-        }
-      }
-    }
+    TMXLoadProperties(tileProperties, properties);
     ts->tileProperties[tilePropertyID] = properties;
   }
 
