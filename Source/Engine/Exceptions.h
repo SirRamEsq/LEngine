@@ -27,4 +27,10 @@ class LEngineFileException : public LEngineException {
   const std::string fileName;
 };
 
+class ExitException : public std::exception {
+ public:
+  ExitException() {}
+  virtual const char *what() const throw() { return "Exit"; }
+};
+
 #endif  // L_ENGINE_EXCEPTIONS

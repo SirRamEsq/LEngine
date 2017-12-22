@@ -3,6 +3,24 @@
 
 #include "math.h"
 
+TileAnimation::TileAnimation() {
+  cachedLength = 0;
+  cachedSize = 0;
+}
+int TileAnimation::Length() const {
+  // update cahcedLength if needed
+  if (frames.size() != cachedSize) {
+    int totalLength = 0;
+    for (auto i = frames.begin(); i != frames.end(); i++) {
+      totalLength += i->length;
+    }
+    cachedLength = totalLength;
+    cachedSize = frames.size();
+  }
+
+  return cachedLength;
+}
+
 TiledSet::TiledSet(const std::string &n, const std::string &tex,
                    const unsigned int tileW, const unsigned int tileH,
                    GID first, GIDManager *man)
@@ -119,14 +137,6 @@ Rect TiledSet::GetTextureRectFromGID(GID id) const {
   x = indexValue;
   Rect returnVal(x * 16, y * 16, 16, 16);
   return returnVal;  // posX, posY, TileWidth, TileHeight
-}
-
-const LAnimation *TiledSet::GetAnimationDataFromGID(GID id) const {
-  auto it = tileAnimations.find(id);
-  if (it == tileAnimations.end()) {
-    return NULL;
-  }
-  return it->second;
 }
 
 void TiledSet::LoadHeightMaps(GID id) {
@@ -287,4 +297,24 @@ std::string TiledSet::GetTileProperty(GID id,
   }
 
   return std::get<1>(propertyIterator->second);
+}
+
+void TiledSet::AddTileAnimation(GID id, TileAnimation animation) {
+  auto it = tileAnimations.find(id);
+  if (it != tileAnimations.end()) {
+    std::stringstream ss;
+    ss << "Tile Animation for GID " << id << " already exists!";
+    LOG_ERROR(ss.str());
+  }
+  tileAnimations[id] = animation;
+}
+const std::map<GID, TileAnimation> *TiledSet::GetTileAnimations() const {
+  return &tileAnimations;
+}
+const TileAnimation *TiledSet::GetTileAnimation(GID id) {
+  auto it = tileAnimations.find(id);
+  if (it != tileAnimations.end()) {
+    return &it->second;
+  }
+  return NULL;
 }

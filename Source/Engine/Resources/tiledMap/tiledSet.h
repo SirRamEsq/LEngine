@@ -13,6 +13,20 @@
 class RSC_MapImpl;
 class TiledData;
 
+struct TileAnimation {
+  TileAnimation();
+  struct Frame {
+    GID tileID;
+    int length;
+  };
+  std::vector<Frame> frames;
+  int Length() const ;
+
+ private:
+  mutable int cachedSize;
+  mutable int cachedLength;
+};
+
 // A tiled set defines what tiles are. Each tile set has a texture and also
 // contains special properties of any tiles should have them.
 // Each tile has a unique GID. Each tileSet has a Range of GIDs for each tile it
@@ -35,7 +49,6 @@ class TiledSet : public GIDEnabled {
   bool ContainsTile(GID id) const;
   void GetTextureCoordinatesFromGID(GID id, float &left, float &right,
                                     float &top, float &bottom) const;
-  const LAnimation *GetAnimationDataFromGID(GID id) const;
   Rect GetTextureRectFromGID(GID id) const;
 
   RSC_Heightmap GetHeightMap(GID id) const {
@@ -56,12 +69,9 @@ class TiledSet : public GIDEnabled {
   const std::string name;
   const std::string textureName;
 
- protected:
-  std::map<GID, const LAnimation *> tileAnimations;  // This can be directly
-                                                     // accessed by RSC_Map (for
-                                                     // the purpose of loading
-                                                     // the animations in from a
-                                                     // file)
+  void AddTileAnimation(GID id, TileAnimation animation);
+  const TileAnimation *GetTileAnimation(GID id);
+  const std::map<GID, TileAnimation> *GetTileAnimations() const;
 
  private:
   bool initializationOK;
@@ -76,6 +86,8 @@ class TiledSet : public GIDEnabled {
 
   // Only used if HMAP flags are set
   std::map<GID, RSC_Heightmap> tileHMAPs;
+
+  std::map<GID, TileAnimation> tileAnimations;
 };
 
 #endif

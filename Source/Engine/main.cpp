@@ -8,7 +8,10 @@ int main(int argc, char *argv[]) {
 
   Kernel::Inst(argc, argv);
 
-  while (Kernel::Run()) {
+  try {
+    while (Kernel::Run()) {
+    }
+  } catch (ExitException e) {
   }
   Kernel::Close();
 
@@ -47,7 +50,8 @@ int main(int argc, char *argv[]) {
  *
  * \subsection Tiled Tiled:
  * Tiled is used as the Engine's map editor.<br>
- * Tiled Properties beginning with and underscore '_' are reserved by the engine.<br>
+ * Tiled Properties beginning with and underscore '_' are reserved by the
+ * engine.<br>
  * For a list of properties that the engine looks for in different
  * tile layers, see tiledProperties
  * 		\see LuaInterface::ExposeCPP()

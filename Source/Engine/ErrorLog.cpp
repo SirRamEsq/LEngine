@@ -1,7 +1,9 @@
 #include "Defines.h"
 #include "Errorlog.h"
 #include "SDLInit.h"
+
 #include <exception>
+#include <iostream>
 
 /////////
 // Entry//
@@ -122,4 +124,7 @@ void LOG_CPP(std::string message, Log::SEVERITY severity, int line,
               << "    [C++ | " << file << " | " << line << "]" << std::endl
               << "    \"" << message << "\"";
   Log::staticLog.Write(fullMessage.str(), severity);
+  if(severity == Log::SEVERITY::FATAL){
+	  std::cout << fullMessage.str() << std::endl;
+  }
 }

@@ -103,6 +103,7 @@ class RenderManager {
   RenderManager();
 
   void Render();
+  unsigned int GetTimeElapsed();
 
   void AssignCameraUBO(RSC_GLProgram *program);
 
