@@ -1,8 +1,10 @@
 #include "CompSprite.h"
 #include "../Kernel.h"
 
-AnimationData::AnimationData(const TAnimationMap *aniMap) : animations(aniMap) {
+AnimationData::AnimationData(const TAnimationMap *aniMap)
+    : animations(aniMap) {
   animate = true;
+  playOnce = false;
   currentTime = 0;
   currentImageIndex = 0;
   animationSpeed = 0.0f;
@@ -18,7 +20,13 @@ void AnimationData::Update() {
 
   currentTime += animationSpeed;
   if (currentTime >= maxTime) {
-    currentTime -= maxTime;
+    if (playOnce) {
+      animate = false;
+      currentTime = maxTime;
+	  playOnceCallback.Execute();
+    } else {
+      currentTime -= maxTime;
+    }
   }
   currentImageIndex = currentAnimation->GetFrameFromTimeElapsed(currentTime);
 }
@@ -32,6 +40,16 @@ bool AnimationData::SetImageIndex(const int &imageIndex) {
   currentImageIndex = imageIndex;
 
   return true;
+}
+
+bool AnimationData::SetAnimationPlayOnce(const std::string &aniName,
+                                         LuaCallback callback) {
+  auto returnValue = SetAnimation(aniName);
+  if (returnValue) {
+    playOnce = true;
+    playOnceCallback = callback;
+  }
+  return returnValue;
 }
 
 bool AnimationData::SetAnimation(const std::string &aniName) {
@@ -51,6 +69,8 @@ bool AnimationData::SetAnimation(const std::string &aniName) {
   animationSpeed = animation->second.GetSpeed();
   currentAnimation = &animation->second;
   defaultAnimationSpeed = animationSpeed;
+  animate = true;
+  playOnce = false;
 
   return true;
 }
@@ -135,6 +155,15 @@ void ComponentSprite::Update() {
     renderSprite->data.translate.x = xPos - renderSprite->data.vertexOrigin1.x;
     renderSprite->data.translate.y = yPos - renderSprite->data.vertexOrigin1.y;
   }
+}
+
+void ComponentSprite::AnimationPlayOnce(int index,
+                                        const std::string &animationName,
+                                        LuaCallback callback) {
+  if (!SpriteExists(index)) {
+    return;
+  }
+  mAnimationData[index].SetAnimationPlayOnce(animationName, callback);
 }
 
 void ComponentSprite::CalculateVerticies(int index) {
@@ -323,19 +352,20 @@ int ComponentSprite::AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
     ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named "
        << textureName;
     LOG_INFO(ss.str());
-    //return -1;
+    // return -1;
   }
   auto textureNormalName = sprite->GetTextureNormalName();
   const RSC_Texture *textureNormal =
       K_TextureMan.GetLoadItem(textureNormalName, textureNormalName);
   if (textureNormal == NULL) {
-	/*
-    std::stringstream ss;
-    ss << "[C++] ComponentSprite::AddSprite couldn't find Texture Normal named "
-       << textureNormalName;
-    LOG_INFO(ss.str());
-	*/
-    //return -1;
+    /*
+      std::stringstream ss;
+      ss << "[C++] ComponentSprite::AddSprite couldn't find Texture Normal named
+      "
+         << textureNormalName;
+      LOG_INFO(ss.str());
+    */
+    // return -1;
   }
 
   mSprites.push_back(sprite);

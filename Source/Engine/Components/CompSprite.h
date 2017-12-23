@@ -8,6 +8,7 @@
 #include "../RenderManager.h"
 #include "../Resources/RSC_Sprite.h"
 #include "CompPosition.h"
+#include "../LuaCallback.h"
 
 class ComponentSpriteManager;
 
@@ -17,6 +18,8 @@ struct AnimationData {
 
   void Update();
   bool SetAnimation(const std::string &aniName);
+  bool SetAnimationPlayOnce(const std::string &aniName,
+                            LuaCallback callback);
   bool SetImageIndex(const int &imageIndex);
   const std::string &GetAnimation() { return currentAnimationName; }
   int GetImageIndex() { return currentImageIndex; }
@@ -28,6 +31,8 @@ struct AnimationData {
   const TAnimationMap *animations;
 
  private:
+  bool playOnce;
+  LuaCallback playOnceCallback;
   int currentImageIndex;
   float currentTime;
   float maxTime;
@@ -52,6 +57,8 @@ class ComponentSprite : public BaseComponent {
                 float x = 0.0f, float y = 0.0f);
 
   void SetAnimation(int index, const std::string &animationName);
+  void AnimationPlayOnce(int index, const std::string &animationName,
+                         LuaCallback callback);
   void SetAnimationSpeed(int index, float speed);
   float GetAnimationSpeed(int index);
   void SetImageIndex(int index, int imageIndex);
@@ -116,7 +123,7 @@ class ComponentSpriteManager
 =========================================================
 ===Quick Note about LuaBridge and Multiple Inheritence===
 =========================================================
-After trying to expose ComponentSprite to luaBridge by declaring it as a derived
+After trying to expose ComponentSprite to luabridge by declaring it as a derived
 class of
 RenderableObject, I would encounter an inexplicable segfault everytime I tried
 to run certain

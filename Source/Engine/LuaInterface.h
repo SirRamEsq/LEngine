@@ -9,6 +9,7 @@ extern "C" {
 #include "lua5.2/lua.h"
 #include "lua5.2/lualib.h"
 }
+#include "LuaCallback.h"
 #include <LuaBridge.h>
 
 #include "Components/CompCollision.h"
@@ -58,6 +59,7 @@ struct EntityCreationPacket {
   luabridge::LuaRef mPropertyTable;
 };
 
+//Forwared Declare
 class GS_Test;
 
 class LuaInterface {
@@ -79,6 +81,7 @@ class LuaInterface {
   ///////////
   // General//
   ///////////
+  LuaCallback CreateCallback(luabridge::LuaRef cb);
   void ListenForInput(EID id, const std::string &inputName);
   void LogFatal(EID id, const std::string &error);
   void LogError(EID id, const std::string &error);
@@ -208,9 +211,8 @@ class LuaInterface {
   static const std::string BASE_SCRIPT_NAME;
   static const std::string TYPE_DIR;
 
- protected:
   lua_State *GetState() { return lState; }
-
+ protected:
   /// Creates 'CPP' table in the global table
   void ExposeCPP();
 

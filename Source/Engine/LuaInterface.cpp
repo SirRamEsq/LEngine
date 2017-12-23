@@ -91,7 +91,7 @@ const std::string LuaInterface::TYPE_DIR = "Common/";
 
 const std::string LuaInterface::DEBUG_LOG = "LUA_INTERFACE";
 
-//Debug table has all lua functionality
+// Debug table has all lua functionality
 #ifdef DEBUG_MODE
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "newLoadFile = function(dir, env)\n"
@@ -99,15 +99,14 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "return loadfile(dir, \"bt\", env)\n"
     "end\n"
     "L_ENGINE_ENV = {}\n"
-	"for k,v in pairs(_ENV)do\n"
-	"L_ENGINE_ENV[k]=v\n"
-	"end\n"
+    "for k,v in pairs(_ENV)do\n"
+    "L_ENGINE_ENV[k]=v\n"
+    "end\n"
     "L_ENGINE_ENV._ENV = {}\n"
     "L_ENGINE_ENV.loadfile = newLoadFile\n"
     "L_ENGINE_ENV.utilityPath = utilityPath\n"
-    "L_ENGINE_ENV.CPP = CPP\n"
-	;
-//Standard table has cherry picked functionality
+    "L_ENGINE_ENV.CPP = CPP\n";
+// Standard table has cherry picked functionality
 #else
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // http://stackoverflow.com/questions/34388285/creating-a-secure-lua-sandbox
@@ -225,7 +224,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "},\n"
     "os = { date = os.date, clock = os.clock, difftime = os.difftime, time = "
     "os.time },	\n"
-	"select=select, \n"
+    "select=select, \n"
     "}\n";
 #endif
 
@@ -278,8 +277,7 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
       "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" ";
 
   // run InitLEngine script using the restricted environment
-  std::string lEngineLoad1 =
-      "f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV)";
+  std::string lEngineLoad1 = "f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV)";
   // Run the loadfile, returning a function
   std::string lEngineLoad2 = "NewLEngine = f1()";
 
@@ -474,7 +472,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     if (script != NULL) {
       auto scriptFunction = LookupFunction(script);
       scriptFunctions[script] = (scriptFunction);
-	  //push front
+      // push front
       scriptOrder.insert(scriptOrder.begin(), script);
       if (scriptFunction != -1) {
         // push type function along with base class argument and call function
@@ -1007,6 +1005,10 @@ void LuaInterface::SetAmbientLight(float r, float g, float b) {
   parentState->comLightMan.SetAmbientLight(color);
 }
 
+LuaCallback LuaInterface::CreateCallback(luabridge::LuaRef cb) {
+	return LuaCallback(cb);	
+}
+
 LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     const std::string &name, luabridge::LuaRef value) {
   auto m = GetMap();
@@ -1051,6 +1053,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("PlaySound", &LuaInterface::PlaySound)
 
       .addFunction("LoadSprite", &LuaInterface::LoadSprite)
+      .addFunction("CreateCallback", &LuaInterface::CreateCallback)
 
       .addFunction("LogFatal", &LuaInterface::LogFatal)
       .addFunction("LogError", &LuaInterface::LogError)
@@ -1122,6 +1125,10 @@ void LuaInterface::ExposeCPP() {
                    &LuaInterface::GetLayersWithProperty)
       .endClass()
 
+      .beginClass<LuaCallback>("LuaCallback")
+	  	.addFunction("Execute", &LuaCallback::Execute)
+	  .endClass()
+
       .beginClass<TiledLayerGeneric>("TiledLayerGeneric")
       .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)
       .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
@@ -1184,6 +1191,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
       .addFunction("SetAnimation", &ComponentSprite::SetAnimation)
       .addFunction("SetAnimationSpeed", &ComponentSprite::SetAnimationSpeed)
+      .addFunction("AnimationPlayOnce", &ComponentSprite::AnimationPlayOnce)
       .addFunction("GetAnimationSpeed", &ComponentSprite::GetAnimationSpeed)
       .addFunction("DefaultAnimationSpeed",
                    &ComponentSprite::DefaultAnimationSpeed)
