@@ -1016,9 +1016,23 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
       TMXLoadProperties(tileProperties, properties);
       ts->tileProperties[tilePropertyID] = properties;
     }
-  }
 
-  auto animations = tiledSetRootNode->first_node("animation");
+    auto animationsNode = subNodeTileRoot->first_node("animation");
+    if (animationsNode != NULL) {
+      auto frameNode = animationsNode->first_node("frame");
+      TileAnimation animation;
+      for (; frameNode != 0; frameNode = frameNode->next_sibling()) {
+		  TileAnimation::Frame f;
+        f.tileID = StringToNumber<int>(frameNode->first_attribute("tileid")->value());
+		f.tileID += tilesetFirstGID;
+        float length = StringToNumber<int>(frameNode->first_attribute("duration")->value());
+		length = (length / 1000) * 60;
+		f.length = int(length);
+        animation.frames.push_back(f);
+      }
+      returnSmartPonter->AddTileAnimation(tilePropertyID, animation);
+    }
+  }
 
   return returnSmartPonter;
 }

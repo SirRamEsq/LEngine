@@ -105,9 +105,9 @@ bool RenderTileLayer::UpdateTileAnimations(const RenderCamera *camera) {
   auto time = renderManager->GetTimeElapsed();
   auto view = camera->GetView();
   int left = view.GetLeft() / 16;
-  int right = view.GetRight() / 16;
+  int right = (view.GetRight() / 16) + 1;
   int top = view.GetTop() / 16;
-  int bottom = view.GetBottom() / 16;
+  int bottom = (view.GetBottom() / 16) + 1;
   left = std::max(0, left);
   right = std::min(int(layer->tileWidth), right);
   top = std::max(0, top);
@@ -130,8 +130,11 @@ bool RenderTileLayer::UpdateTileAnimations(const RenderCamera *camera) {
             if (range < 0) {
               tileImage = i->tileID;
               animationCache[gid] = tileImage;
+			  break;
             }
           }
+        } else {
+          continue;
         }
       } else {
         tileImage = cached->second;
