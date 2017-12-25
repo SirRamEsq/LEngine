@@ -8,18 +8,26 @@
 #include "../RenderManager.h"
 #include "../Resources/RSC_Sprite.h"
 #include "CompPosition.h"
-#include "../LuaCallback.h"
+
+// Lua headers
+extern "C" {
+#include "lua5.2/lauxlib.h"
+#include "lua5.2/lua.h"
+#include "lua5.2/lualib.h"
+}
+#include <LuaBridge.h>
 
 class ComponentSpriteManager;
 
 struct AnimationData {
+  typedef std::function<void()> Callback;
   typedef const std::map<std::string, LAnimation> TAnimationMap;
   AnimationData(const TAnimationMap *aniMap);
 
   void Update();
   bool SetAnimation(const std::string &aniName);
   bool SetAnimationPlayOnce(const std::string &aniName,
-                            LuaCallback callback);
+                            Callback callback);
   bool SetImageIndex(const int &imageIndex);
   const std::string &GetAnimation() { return currentAnimationName; }
   int GetImageIndex() { return currentImageIndex; }
@@ -32,7 +40,7 @@ struct AnimationData {
 
  private:
   bool playOnce;
-  LuaCallback playOnceCallback;
+  Callback playOnceCallback;
   int currentImageIndex;
   float currentTime;
   float maxTime;
@@ -58,7 +66,7 @@ class ComponentSprite : public BaseComponent {
 
   void SetAnimation(int index, const std::string &animationName);
   void AnimationPlayOnce(int index, const std::string &animationName,
-                         LuaCallback callback);
+                         luabridge::LuaRef callback);
   void SetAnimationSpeed(int index, float speed);
   float GetAnimationSpeed(int index);
   void SetImageIndex(int index, int imageIndex);

@@ -9,7 +9,6 @@ extern "C" {
 #include "lua5.2/lua.h"
 #include "lua5.2/lualib.h"
 }
-#include "LuaCallback.h"
 #include <LuaBridge.h>
 
 #include "Components/CompCollision.h"
@@ -81,7 +80,6 @@ class LuaInterface {
   ///////////
   // General//
   ///////////
-  LuaCallback CreateCallback(luabridge::LuaRef cb);
   void ListenForInput(EID id, const std::string &inputName);
   void LogFatal(EID id, const std::string &error);
   void LogError(EID id, const std::string &error);

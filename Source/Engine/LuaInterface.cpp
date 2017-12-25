@@ -1005,10 +1005,6 @@ void LuaInterface::SetAmbientLight(float r, float g, float b) {
   parentState->comLightMan.SetAmbientLight(color);
 }
 
-LuaCallback LuaInterface::CreateCallback(luabridge::LuaRef cb) {
-	return LuaCallback(cb);	
-}
-
 LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     const std::string &name, luabridge::LuaRef value) {
   auto m = GetMap();
@@ -1053,7 +1049,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("PlaySound", &LuaInterface::PlaySound)
 
       .addFunction("LoadSprite", &LuaInterface::LoadSprite)
-      .addFunction("CreateCallback", &LuaInterface::CreateCallback)
 
       .addFunction("LogFatal", &LuaInterface::LogFatal)
       .addFunction("LogError", &LuaInterface::LogError)
@@ -1124,10 +1119,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetLayersWithProperty",
                    &LuaInterface::GetLayersWithProperty)
       .endClass()
-
-      .beginClass<LuaCallback>("LuaCallback")
-	  	.addFunction("Execute", &LuaCallback::Execute)
-	  .endClass()
 
       .beginClass<TiledLayerGeneric>("TiledLayerGeneric")
       .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)

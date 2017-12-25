@@ -23,7 +23,7 @@ void AnimationData::Update() {
     if (playOnce) {
       animate = false;
       currentTime = maxTime;
-	  playOnceCallback.Execute();
+	  playOnceCallback();
     } else {
       currentTime -= maxTime;
     }
@@ -43,7 +43,7 @@ bool AnimationData::SetImageIndex(const int &imageIndex) {
 }
 
 bool AnimationData::SetAnimationPlayOnce(const std::string &aniName,
-                                         LuaCallback callback) {
+                                         Callback callback) {
   auto returnValue = SetAnimation(aniName);
   if (returnValue) {
     playOnce = true;
@@ -159,11 +159,12 @@ void ComponentSprite::Update() {
 
 void ComponentSprite::AnimationPlayOnce(int index,
                                         const std::string &animationName,
-                                        LuaCallback callback) {
+                                        luabridge::LuaRef callback) {
   if (!SpriteExists(index)) {
     return;
   }
-  mAnimationData[index].SetAnimationPlayOnce(animationName, callback);
+  auto callbackLambda = [callback]() { callback(); };
+  mAnimationData[index].SetAnimationPlayOnce(animationName, callbackLambda);
 }
 
 void ComponentSprite::CalculateVerticies(int index) {
