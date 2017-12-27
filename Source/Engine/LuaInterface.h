@@ -58,7 +58,7 @@ struct EntityCreationPacket {
   luabridge::LuaRef mPropertyTable;
 };
 
-//Forwared Declare
+// Forwared Declare
 class GS_Test;
 
 class LuaInterface {
@@ -210,9 +210,13 @@ class LuaInterface {
   static const std::string TYPE_DIR;
 
   lua_State *GetState() { return lState; }
+
  protected:
   /// Creates 'CPP' table in the global table
   void ExposeCPP();
+  /// Acts as require for lua
+  luabridge::LuaRef ModuleLoad(const std::string &moduleName);
+  std::map<std::string, int> mLoadedModules;
 
  private:
   /// Will Get the loaded lua function associated with the passed lua script

@@ -94,6 +94,36 @@ const std::string LuaInterface::DEBUG_LOG = "LUA_INTERFACE";
 // Debug table has all lua functionality
 #ifdef DEBUG_MODE
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
+    /*
+    Could probably remove the dependency on LuaFileSystem entirely if I just
+    pass
+    the current directory from the engine
+    */
+    "lfs = require(\"lfs\")\n"
+    "utilityPath		= lfs.currentdir() .. "
+    "\"/Data/Resources/Scripts/Utility\" \n"
+    "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" \n"
+
+    "_REQUIRE_FUNCTION = function (moduleName) \n"
+    " local module = CPP.interface:ModuleLoad(moduleName) \n"
+    " if module == nil then \n"
+    "  local errorString = \"Couldn't load module named \" .. moduleName \n"
+    "  CPP.interface:LogError(0, errorString) \n"
+    "  return nil \n"
+    " end \n"
+	//wrap in a loader function, see
+	//https://www.lua.org/manual/5.2/manual.html#pdf-require
+	" loader = function(a1, a2) return module end \n"
+    " return loader\n"
+    "end \n"
+    // remove default package loaders
+    // package.loaders is lua 5.1
+    // package.searchers is lua 5.2
+    "package.loaders = {} \n"
+    "package.loaders[1] = _REQUIRE_FUNCTION \n"
+    "package.searchers = {} \n"
+    "package.searchers[1] = _REQUIRE_FUNCTION \n"
+
     "newLoadFile = function(dir, env)\n"
     "if (env==nil) then return nil; end \n"
     "return loadfile(dir, \"bt\", env)\n"
@@ -105,7 +135,12 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "L_ENGINE_ENV._ENV = {}\n"
     "L_ENGINE_ENV.loadfile = newLoadFile\n"
     "L_ENGINE_ENV.utilityPath = utilityPath\n"
-    "L_ENGINE_ENV.CPP = CPP\n";
+    "L_ENGINE_ENV.CPP = CPP\n"
+
+    // run InitLEngine script using the restricted environment
+    //"f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV) \n"
+    "f1 = require(\"Utility/LEngineInit.lua\") \n"
+    "NewLEngine = f1\n";
 // Standard table has cherry picked functionality
 #else
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
@@ -113,6 +148,31 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
 
     // Wrapper around loadfile; Files can only load new files if they specify an
     // _ENV
+    "lfs = require(\"lfs\")\n"
+    "utilityPath		= lfs.currentdir() .. "
+    "\"/Data/Resources/Scripts/Utility\" \n"
+    "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" \n"
+
+    "_REQUIRE_FUNCTION = function (moduleName) \n"
+    " local module = CPP.interface:ModuleLoad(moduleName) \n"
+    " if module == nil then \n"
+    "  local errorString = \"Couldn't load module named \" .. moduleName \n"
+    "  CPP.interface:LogError(0, errorString) \n"
+    "  return nil \n"
+    " end \n"
+	//wrap in a loader function, see
+	//https://www.lua.org/manual/5.2/manual.html#pdf-require
+	" loader = function(a1, a2) return module end \n"
+    " return loader\n"
+    "end \n"
+    // remove default package loaders
+    // package.loaders is lua 5.1
+    // package.searchers is lua 5.2
+    "package.loaders = {} \n"
+    "package.loaders[1] = _REQUIRE_FUNCTION \n"
+    "package.searchers = {} \n"
+    "package.searchers[1] = _REQUIRE_FUNCTION \n"
+
     "newLoadFile = function(dir, env)\n"
     "if (env==nil) then return nil; end \n"
     "return loadfile(dir, \"bt\", env)\n"
@@ -122,110 +182,73 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // Note, that in lua 5.2, there is nothing special about _G;
     //_ENV is the global table for a given function; _G is simply set at the
     // start of the entire lua state
-    "L_ENGINE_ENV_G = {}						"
-    "						   \n"
-    "L_ENGINE_ENV = {							"
-    "						   \n"
-
+    "L_ENGINE_ENV_G = {}\n"
+    "L_ENGINE_ENV = {\n"
     // Global table between all scripts
-    "_G = L_ENGINE_ENV_G,						"
-    "							\n"
+    "_G = L_ENGINE_ENV_G,\n"
     // It is expected to have exposed CPP data (thus creating the CPP table)
     // before running this string
-    "CPP = CPP,								"
-    "									\n"
-    "utilityPath= utilityPath,						"
-    "						\n"
+    "CPP = CPP,\n"
+    "utilityPath= utilityPath,\n"
     // Use secure wrapper around loadfile
-    "loadfile = newLoadFile,						"
-    "						\n"
+    "loadfile = newLoadFile, \n"
+	"require = require,\n"
     // Built in Lua functions
-    "ipairs = ipairs,							"
-    "							\n"
-    "next = next,							"
-    "	"
-    "								\n"
-    "pairs = pairs,							"
-    "	"
-    "								\n"
-    "pcall = pcall,							"
-    "	"
-    "								\n"
-    "tonumber = tonumber,						"
-    "	"
-    "							\n"
-    "tostring = tostring,						"
-    "	"
-    "							\n"
-    "type = type,					\n		"
-    "	"
-    "								\n"
+    "ipairs = ipairs,\n"
+    "next = next,\n"
+    "pairs = pairs,	\n"
+    "pcall = pcall,	\n"
+    "tonumber = tonumber,\n"
+    "tostring = tostring,\n"
+    "type = type,\n"
     // Can set metatables, but not get
-    "setmetatable = setmetatable,					"
-    "	"
-    "						\n"
-    "unpack = unpack,							"
-    "	"
-    "							\n"
-    "coroutine = {							"
-    "	"
-    "								\n"
-    "create = coroutine.create, resume = coroutine.resume,		"
-    "	"
-    "		\n"
-    "running = coroutine.running, status = coroutine.status,		"
-    "	"
-    "	\n"
-    "wrap = coroutine.wrap						"
-    "						\n"
-    "},									"
-    "\n"
-    "string = {								"
-    "									\n"
-    "byte = string.byte, char = string.char, find = string.find,	"
-    "		\n"
-    "format = string.format, gmatch = string.gmatch, gsub = "
-    "string.gsub,	"
-    "	\n"
-    "len = string.len, lower = string.lower, match = string.match,	"
-    "		\n"
-    "rep = string.rep, reverse = string.reverse, sub = string.sub,	"
-    "		\n"
-    "upper = string.upper						"
-    "							\n"
-    "},									"
-    "\n"
-    "table = {								"
-    "								\n"
-    "insert = table.insert, maxn = table.maxn, remove = table.remove,	"
-    "	\n"
-    "sort = table.sort							"
-    "							\n"
-    "},									"
-    "\n"
-    "math = {								"
-    "								\n"
-    "abs = math.abs, acos = math.acos, asin = math.asin,		"
-    "			\n"
-    "atan = math.atan, atan2 = math.atan2, ceil = math.ceil, cos = "
-    "math.cos,	"
-    "\n"
-    "cosh = math.cosh, deg = math.deg, exp = math.exp, floor = "
-    "math.floor,	"
-    "	\n"
-    "fmod = math.fmod, frexp = math.frexp, huge = math.huge,		"
-    "		\n"
-    "ldexp = math.ldexp, log = math.log, log10 = math.log10, max = "
+    "setmetatable = setmetatable,\n"
+    "unpack = unpack,\n"
+
+    "coroutine = {	\n"
+    "create = coroutine.create, resume = coroutine.resume,\n"
+    "running = coroutine.running, status = coroutine.status,\n"
+    "wrap = coroutine.wrap\n"
+    "},\n"
+
+    "string = {	\n"
+    "byte = string.byte, char = string.char, find = string.find,\n"
+    "format = string.format, gmatch = string.gmatch,"
+    "gsub = string.gsub,	\n"
+    "len = string.len, lower = string.lower, match = string.match,	\n"
+    "rep = string.rep, reverse = string.reverse, sub = string.sub,	\n"
+    "upper = string.upper\n"
+    "},\n"
+
+    "table = {\n"
+    "insert = table.insert, maxn = table.maxn, remove = table.remove,	\n"
+    "sort = table.sort\n"
+    "},\n"
+
+    "math = {\n"
+    "abs = math.abs, acos = math.acos, asin = math.asin,		\n"
+    "atan = math.atan, atan2 = math.atan2, ceil = math.ceil, cos = \n"
+    "math.cos,	\n"
+    "cosh = math.cosh, deg = math.deg, exp = math.exp, floor = \n"
+    "math.floor,	\n"
+    "fmod = math.fmod, frexp = math.frexp, huge = math.huge,		\n"
+    "ldexp = math.ldexp, log = math.log, log10 = math.log10, max = \n"
     "math.max,\n"
     "min = math.min, modf = math.modf, pi = math.pi, pow = math.pow,\n"
     "rad = math.rad, randomseed = math.randomseed, random = math.random, sin = "
+    "\n"
     "math.sin, sinh = math.sinh,	\n"
-    "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh"
+    "sqrt = math.sqrt, tan = math.tan, tanh = math.tanh\n"
     "},\n"
-    "os = { date = os.date, clock = os.clock, difftime = os.difftime, time = "
+
+    "os = { date = os.date, clock = os.clock, difftime = os.difftime, time = \n"
     "os.time },	\n"
+
     "select=select, \n"
-    "}\n";
+    "}\n"
+    "f1 = require(\"Utility/LEngineInit.lua\") \n"
+    "NewLEngine = f1\n";
+
 #endif
 
 LuaInterface::LuaInterface(GameState *state) : parentState(state) {
@@ -257,51 +280,18 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
   if (interfaceInstance.isNil()) {
     LOG_FATAL("interface instance is nil");
   }
-  /*
-  Could probably remove the dependency on LuaFileSystem entirely if I just pass
-  the current directory from the engine
-  */
-  // Set Lua common directory using luaFileSystem
-  std::string lfsLoad1 = "lfs = require(\"lfs\")";
 
-  // Append to package.path
-  // std::string lfsLoad2	  = "package.path = package.path .. \";\" ..
-  // lfs.currentdir() .. \"/Data/Resources/Scripts/Common/?.lua\" ";
-  // std::string lfsLoad3	  = "LEngineInitPath = lfs.currentdir() ..
-  // \"/Data/Resources/Scripts/Common/LEngineInit.lua\" ";
-
-  std::string lfsLoad2 =
-      "utilityPath		= lfs.currentdir() .. "
-      "\"/Data/Resources/Scripts/Utility\" ";
-  std::string lfsLoad3 =
-      "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" ";
-
-  // run InitLEngine script using the restricted environment
-  std::string lEngineLoad1 = "f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV)";
-  // Run the loadfile, returning a function
-  std::string lEngineLoad2 = "NewLEngine = f1()";
-
-  const std::string *doStrings[6];
-  doStrings[0] = &lfsLoad1;
-  doStrings[1] = &lfsLoad2;
-  doStrings[2] = &lfsLoad3;
-  doStrings[3] = &LUA_52_INTERFACE_ENV_TABLE;
-  doStrings[4] = &lEngineLoad1;
-  doStrings[5] = &lEngineLoad2;
-
-  auto error = 0;
-  for (int i = 0; i <= 5; i++) {
-    error = luaL_dostring(lState, doStrings[i]->c_str());
-    if (error != 0) {
-      std::stringstream ss;
-      ss << "Lua String could not be run " << *doStrings[i]
-         << " | Error code is: " << error << " "
-         << "   ...Error Message is " << lua_tostring(lState, -1);
-      LOG_FATAL(ss.str());
-      lua_pop(lState, -1);  // pop error message
-      // GetErrorInfo(lState);
-      return;
-    }
+  auto error = luaL_dostring(lState, LUA_52_INTERFACE_ENV_TABLE.c_str());
+  if (error != 0) {
+    std::stringstream ss;
+    ss << "Lua String could not be run \n"
+       << LUA_52_INTERFACE_ENV_TABLE << "\n"
+       << " | Error code is: " << error << " "
+       << "   ...Error Message is " << lua_tostring(lState, -1);
+    LOG_FATAL(ss.str());
+    lua_pop(lState, -1);  // pop error message
+    // GetErrorInfo(lState);
+    return;
   }
 
   LuaRef engineFunction = getGlobal(lState, "NewLEngine");
@@ -333,18 +323,76 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
       LOG_FATAL(e.what());
     }
   }
-
-  // /Data/Resources/Scripts/Common can now be accessed by all scripts (though
-  // require isn't currently allowed)
-  // lfs is nil
-  // NewLEngine is now a function that can be used to created new instances of
-  // LEngine
-  // classes[baseScript] can be used to get a new base entity
 }
 
 LuaInterface::~LuaInterface() {
   // close state
   lua_close(lState);
+}
+
+LuaRef LuaInterface::ModuleLoad(const std::string &moduleName) {
+  LuaRef failure(lState);
+
+  // step 1, has the packgae already been loaded?
+  auto i = mLoadedModules.find(moduleName);
+  if (i != mLoadedModules.end()) {
+    auto module = i->second;
+    // push reference and return
+    lua_rawgeti(lState, LUA_REGISTRYINDEX, module);
+    LuaRef moduleRef = LuaRef::fromStack(lState, -1);
+    lua_pop(lState, 1);
+    return moduleRef;
+  }
+
+  // step 2, can we find a RSC_Script matching the moduleName?
+  auto script = K_ScriptMan.GetLoadItem(moduleName, moduleName);
+  if (script == NULL) {
+    return failure;
+  }
+
+  // step 3; can the script be run?
+  int error =
+      luaL_loadbufferx(lState, script->script.c_str(), script->script.length(),
+                       script->scriptName.c_str(), "bt");
+  if (error != 0) {
+    std::stringstream errorMsg;
+    errorMsg << "Script [" << script->scriptName
+             << "] could not be loaded from require\n"
+             << "   ...Error code " << error << "\n"
+             << "   ...Error Message is " << lua_tostring(lState, -1);
+    // completely clear the stack before return
+    lua_settop(lState, 0);
+    throw LEngineException(errorMsg.str());
+  }
+
+  // push environment onto stack
+  lua_getglobal(lState, "L_ENGINE_ENV");
+  // pop environment and assign to upvalue#1 (the func environment)
+  lua_setupvalue(lState, -2, 1);
+
+  // Pcall will run the module and push the return value to the top
+  if (int error = lua_pcall(lState, 0, 1, 0) != 0) {
+    std::stringstream errorMsg;
+    errorMsg << "Script [" << script->scriptName
+             << "] could not be run from require\n"
+             << "   ...Error code " << error << "\n"
+             << "   ...Error Message is " << lua_tostring(lState, -1);
+    // completely clear the stack before return
+    lua_settop(lState, 0);
+    throw LEngineException(errorMsg.str());
+  }
+
+  // Gets reference to the top of the stack and pops
+  int module = luaL_ref(lState, LUA_REGISTRYINDEX);
+  // store reference for later
+  mLoadedModules[moduleName] = module;
+
+  // push reference and return
+  lua_rawgeti(lState, LUA_REGISTRYINDEX, module);
+  LuaRef moduleRef = LuaRef::fromStack(lState, -1);
+  lua_pop(lState, 1);
+
+  return moduleRef;
 }
 
 int LuaInterface::RunScriptLoadFromChunk(const RSC_Script *script) {
@@ -365,10 +413,10 @@ int LuaInterface::RunScriptLoadFromChunk(const RSC_Script *script) {
     throw LEngineException(errorMsg.str());
   }
 
-  lua_getglobal(lState, "L_ENGINE_ENV");  // push environment onto stack
-  lua_setupvalue(
-      lState, -2,
-      1);  // pop environment and assign to upvalue#1 (the func environment)
+  // push environment onto stack
+  lua_getglobal(lState, "L_ENGINE_ENV");
+  // pop environment and assign to upvalue#1 (the func environment)
+  lua_setupvalue(lState, -2, 1);
 
   if (int error = lua_pcall(lState, 0, 1, 0) != 0) {
     // Calling pcall pops the function and its args [#args is arg 1] from the
@@ -388,8 +436,7 @@ int LuaInterface::RunScriptLoadFromChunk(const RSC_Script *script) {
 
   // Get top of stack (returned value from pcall)
   int stackTop = lua_gettop(lState);
-  if (lua_isfunction(lState, stackTop) ==
-      false) {  // Returned value isn't table; cannot be used
+  if (lua_isfunction(lState, stackTop) == false) {
     std::stringstream errorMsg;
     errorMsg << "Returned value is not function in script ["
              << script->scriptName << "] \n"
@@ -532,8 +579,9 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
 
   // Set 'name+eid" to the returned table containing the 'Update', 'Init',
   // etc... functions
+  // store temporarily in returnedTableName  (will later set to nil)
   std::stringstream returnedTableName;
-  returnedTableName << name << id;
+  returnedTableName << "_LE_TABLE_" << name << id;
   lua_setglobal(lState, returnedTableName.str().c_str());  // assign and pop
                                                            // value
 
@@ -600,6 +648,10 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   scriptComponent->SetScriptPointerOnce(returnedTable, &scripts);
   scriptComponent->scriptName = fullyQualifiedScriptName.str();
   scriptComponent->RunFunction("Initialize");
+
+  // set returnedTableName to nil
+  lua_pushnil(lState);
+  lua_setglobal(lState, returnedTableName.str().c_str());
 
   return true;
 }
@@ -1112,6 +1164,8 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetAmbientLight", &LuaInterface::SetAmbientLight)
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
+
+      .addFunction("ModuleLoad", &LuaInterface::ModuleLoad)
 
       //.addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
 
