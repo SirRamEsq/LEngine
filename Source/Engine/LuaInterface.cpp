@@ -111,9 +111,9 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "  CPP.interface:LogError(0, errorString) \n"
     "  return nil \n"
     " end \n"
-	//wrap in a loader function, see
-	//https://www.lua.org/manual/5.2/manual.html#pdf-require
-	" loader = function(a1, a2) return module end \n"
+    // wrap in a loader function, see
+    // https://www.lua.org/manual/5.2/manual.html#pdf-require
+    " loader = function(a1, a2) return module end \n"
     " return loader\n"
     "end \n"
     // remove default package loaders
@@ -160,9 +160,9 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "  CPP.interface:LogError(0, errorString) \n"
     "  return nil \n"
     " end \n"
-	//wrap in a loader function, see
-	//https://www.lua.org/manual/5.2/manual.html#pdf-require
-	" loader = function(a1, a2) return module end \n"
+    // wrap in a loader function, see
+    // https://www.lua.org/manual/5.2/manual.html#pdf-require
+    " loader = function(a1, a2) return module end \n"
     " return loader\n"
     "end \n"
     // remove default package loaders
@@ -192,7 +192,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "utilityPath= utilityPath,\n"
     // Use secure wrapper around loadfile
     "loadfile = newLoadFile, \n"
-	"require = require,\n"
+    "require = require,\n"
     // Built in Lua functions
     "ipairs = ipairs,\n"
     "next = next,\n"
@@ -331,66 +331,67 @@ LuaInterface::~LuaInterface() {
 }
 
 LuaRef LuaInterface::ModuleLoad(const std::string &moduleName) {
-  LuaRef failure(lState);
+  LuaRef nil(lState);
 
   // step 1, has the packgae already been loaded?
   auto i = mLoadedModules.find(moduleName);
   if (i != mLoadedModules.end()) {
     auto module = i->second;
     // push reference and return
-    lua_rawgeti(lState, LUA_REGISTRYINDEX, module);
+    lua_rawgeti(lState, LUA_REGISTRYINDEX, module);  // stack size + 1
     LuaRef moduleRef = LuaRef::fromStack(lState, -1);
-    lua_pop(lState, 1);
+    lua_pop(lState, 1);  // stack size + 0
     return moduleRef;
   }
 
   // step 2, can we find a RSC_Script matching the moduleName?
   auto script = K_ScriptMan.GetLoadItem(moduleName, moduleName);
   if (script == NULL) {
-    return failure;
+    return nil;
   }
 
   // step 3; can the script be run?
   int error =
       luaL_loadbufferx(lState, script->script.c_str(), script->script.length(),
                        script->scriptName.c_str(), "bt");
+  // stack size + 1
   if (error != 0) {
-    std::stringstream errorMsg;
-    errorMsg << "Script [" << script->scriptName
-             << "] could not be loaded from require\n"
-             << "   ...Error code " << error << "\n"
-             << "   ...Error Message is " << lua_tostring(lState, -1);
-    // completely clear the stack before return
-    lua_settop(lState, 0);
-    throw LEngineException(errorMsg.str());
+    std::stringstream ss;
+    ss << "Script [" << script->scriptName
+       << "] could not be loaded from require\n"
+       << "   ...Error code " << error << "\n"
+       << "   ...Error Message is " << lua_tostring(lState, -1);
+    LOG_ERROR(ss.str());
+    lua_pop(lState, 1);  // stack size + 0
+    return nil;
   }
 
   // push environment onto stack
-  lua_getglobal(lState, "L_ENGINE_ENV");
+  lua_getglobal(lState, "L_ENGINE_ENV");  // stack size + 2
   // pop environment and assign to upvalue#1 (the func environment)
-  lua_setupvalue(lState, -2, 1);
+  lua_setupvalue(lState, -2, 1);  // stack size + 1
 
   // Pcall will run the module and push the return value to the top
-  if (int error = lua_pcall(lState, 0, 1, 0) != 0) {
-    std::stringstream errorMsg;
-    errorMsg << "Script [" << script->scriptName
-             << "] could not be run from require\n"
-             << "   ...Error code " << error << "\n"
-             << "   ...Error Message is " << lua_tostring(lState, -1);
-    // completely clear the stack before return
-    lua_settop(lState, 0);
-    throw LEngineException(errorMsg.str());
+  if (int error = lua_pcall(lState, 0, 1, 0) != 0) {  // stack size + 1
+    std::stringstream ss;
+    ss << "Script [" << script->scriptName
+       << "] could not be run from require\n"
+       << "   ...Error code " << error << "\n"
+       << "   ...Error Message is " << lua_tostring(lState, -1);
+    LOG_ERROR(ss.str());
+    lua_pop(lState, 1);  // stack size + 0
+    return nil;
   }
 
   // Gets reference to the top of the stack and pops
-  int module = luaL_ref(lState, LUA_REGISTRYINDEX);
+  int module = luaL_ref(lState, LUA_REGISTRYINDEX);  // stack size + 0
   // store reference for later
   mLoadedModules[moduleName] = module;
 
   // push reference and return
-  lua_rawgeti(lState, LUA_REGISTRYINDEX, module);
+  lua_rawgeti(lState, LUA_REGISTRYINDEX, module);  // stack size + 1
   LuaRef moduleRef = LuaRef::fromStack(lState, -1);
-  lua_pop(lState, 1);
+  lua_pop(lState, 1);  // stack size + 0
 
   return moduleRef;
 }
@@ -695,10 +696,8 @@ std::string LuaInterface::GenerateLogEntry(EID id, const std::string &error) {
   ComponentScript *component = parentState->comScriptMan.GetComponent(id);
   std::stringstream ss;
 
-  std::string name = component->scriptName;
-  if (component == NULL) {
-    name = "?????";
-  } else {
+  std::string name = "???";
+  if (component != NULL) {
     name = component->scriptName;
   }
   ss << "[LUA"

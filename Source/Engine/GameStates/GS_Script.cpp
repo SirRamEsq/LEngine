@@ -95,7 +95,8 @@ GS_Script *GS_Script::PushState(const std::string &scriptPath) {
 
   gameStateManager->PushState(newState, script);
 
-  pushedStates.push_back(newState);
+  //kinda sorta memory leak if all these states are kept around...
+  //pushedStates.push_back(newState);
 
   return newState.get();
 }

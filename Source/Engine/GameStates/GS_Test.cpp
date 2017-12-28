@@ -53,11 +53,13 @@ Assertion::Assertion(const std::string &desc, bool p)
 
 GS_Test::GS_Test(GameStateManager *gsm, const RSC_Script *stateScript)
     : GS_Script(gsm) {
+  quit = false;
   if (stateScript == NULL) {
     throw LEngineException("GS_Test::Init, stateScript is NULL");
     quit = true;
     return;
   }
+  entityScript = NULL;
 
   mStateScript = stateScript;
   ExposeTestingInterface(luaInterface.GetState());
@@ -77,7 +79,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   quit = false;
 
   auto baseScript = K_ScriptMan.GetLoadItem(scriptType, scriptType);
-  //REQUIRE (baseScript != NULL);
+  // REQUIRE (baseScript != NULL);
 
   comScriptMan.AddComponent(eid);
   std::vector<const RSC_Script *> scripts;
@@ -85,7 +87,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   scripts.push_back(mStateScript);
   luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
-  //REQUIRE(entityScript != NULL);
+  // REQUIRE(entityScript != NULL);
 }
 
 void GS_Test::HandleEvent(const Event *event) {
@@ -124,6 +126,13 @@ bool GS_Test::Update() {
 
 std::vector<Assertion> GS_Test::Test() {
   mCurrentTestAssertions.clear();
+  if (entityScript == NULL) {
+    std::stringstream errorMessage;
+    errorMessage << "Couldn't load test script";
+    Assertion fail(errorMessage.str(), false);
+    mCurrentTestAssertions.push_back(fail);
+    return mCurrentTestAssertions;
+  }
   try {
     luabridge::LuaRef testTable = entityScript->GetScriptPointer()["TESTS"];
     // REQUIRE(testTable.isNil() == false);
@@ -169,6 +178,8 @@ void GS_Test::ExposeTestingInterface(lua_State *state) {
       .addFunction("Update", &GS_Test::KernelUpdate)
       .addFunction("REQUIRE_EQUAL", &GS_Test::REQUIRE_EQUAL)
       .addFunction("REQUIRE_NOT_EQUAL", &GS_Test::REQUIRE_NOT_EQUAL)
+      .addFunction("REQUIRE_NO_THROW", &GS_Test::REQUIRE_NO_THROW)
+      .addFunction("REQUIRE_THROW", &GS_Test::REQUIRE_THROW)
       .endClass()
       .endNamespace();
 }
@@ -201,6 +212,38 @@ bool GS_Test::REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2) {
     return false;
   }
   Pass(ss.str());
+  return true;
+}
+
+bool GS_Test::REQUIRE_THROW(luabridge::LuaRef callback) {
+  try {
+    if (callback.isFunction()) {
+      callback();
+    } else {
+      Error("Callback is not function!");
+      return false;
+    }
+  } catch (const luabridge::LuaException &e) {
+    Pass("Callback successfully threw a LuaException");
+    return true;
+  }
+  Error("Callback Did not throw a LuaException");
+  return false;
+}
+
+bool GS_Test::REQUIRE_NO_THROW(luabridge::LuaRef callback) {
+  try {
+    if (callback.isFunction()) {
+      callback();
+    } else {
+      Error("Callback is not function!");
+      return false;
+    }
+  } catch (const luabridge::LuaException &e) {
+    Error("Callback threw a LuaException");
+    return false;
+  }
+  Pass("Callback Did not throw a LuaException");
   return true;
 }
 

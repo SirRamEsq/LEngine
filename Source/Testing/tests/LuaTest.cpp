@@ -45,9 +45,9 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   auto mapDepth = 10;
   auto parent = 0;
   std::vector<const RSC_Script *> scripts;
-	  scripts.push_back(script.get());
-  luaInterface->RunScript(eid, scripts, mapDepth, parent, scriptName,
-                          NULL, NULL);
+  scripts.push_back(script.get());
+  luaInterface->RunScript(eid, scripts, mapDepth, parent, scriptName, NULL,
+                          NULL);
 
   REQUIRE(lastError == "Interface Working");
 
@@ -256,6 +256,8 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
     }
   }
 
+  K_StateMan.PopState();
+  Kernel::Update();
   for (auto script = scripts.begin(); script != scripts.end(); script++) {
     auto testState = std::make_shared<GS_Test>(&K_StateMan, script->get());
     K_StateMan.PushState(testState);
@@ -264,6 +266,7 @@ TEST_CASE("RunLuaTests with Engine test Harness", "[lua]") {
     auto assertions = testState->Test();
     CheckLuaAssertions(assertions);
     K_StateMan.PopState();
+    Kernel::Update();
   }
 
   testLog.CloseFileHandle();

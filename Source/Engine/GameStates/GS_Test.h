@@ -44,6 +44,12 @@ class GS_Test : public GS_Script {
   /// Will Error if false, Pass if true
   bool REQUIRE_NOT_EQUAL(luabridge::LuaRef r1, luabridge::LuaRef r2);
 
+  /// Function must generate a lua_exception
+  bool REQUIRE_THROW(luabridge::LuaRef callback);
+
+  /// Function must NOT generate a lua_exception
+  bool REQUIRE_NO_THROW(luabridge::LuaRef callback);
+
   /// Will call the Kernel Update function
   void KernelUpdate();
 
