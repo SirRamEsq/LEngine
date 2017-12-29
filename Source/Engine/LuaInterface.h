@@ -77,6 +77,7 @@ class LuaInterface {
                  /*optional args*/ const TiledObject *obj,
                  luabridge::LuaRef *initTable);
 
+  void ExecuteString(const std::string& code);
   ///////////
   // General//
   ///////////

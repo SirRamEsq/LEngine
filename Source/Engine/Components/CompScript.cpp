@@ -182,13 +182,15 @@ void ComponentScript::HandleEvent(const Event *event) {
         auto packet = EColPacket::ExtraDataDefinition::GetExtraData(event);
         func(event->sender, *packet);
       }
-    } else if (event->message == Event::MSG::COLLISION_TILE) {
+    }
+/*	else if (event->message == Event::MSG::COLLISION_TILE) {
       auto func = GetFunction("OnTileCollision");
       if (not func.isNil()) {
         auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
         func(*packet);
       }
-    } else if (event->message == Event::MSG::LUA_EVENT) {
+    }*/
+	else if (event->message == Event::MSG::LUA_EVENT) {
       auto func = GetFunction("OnLuaEvent");
       if (not func.isNil()) {
         func(event->sender, event->description);

@@ -223,7 +223,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(RSC_Map *currentMap) {
       // Adds box coordinates to entity's coordinates
       box1->UpdateWorldCoord();
       shape = box1->GetWorldCoord();
-	  auto registerFirst = box1->mReturnOnlyFirstTileCollision;
+      auto registerFirst = box1->mReturnOnlyFirstTileCollision;
 
       for (auto layerCallback = layerCallbacks->begin();
            layerCallback != layerCallbacks->end(); layerCallback++) {
@@ -238,11 +238,12 @@ void ComponentCollisionManager::UpdateCheckTileCollision(RSC_Map *currentMap) {
           packet.tl = layer;
 
           RegisterTileCollision(&packet, compIt1->first, callback);
-		  if(registerFirst){
-			  break;
-		  }
+          if (registerFirst) {
+            goto breakout;
+          }
         }
       }
+    breakout:;
     }
   }
 }

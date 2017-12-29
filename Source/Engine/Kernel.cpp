@@ -215,31 +215,41 @@ bool Kernel::Update() {
   Resolution::UpdateResolution(SDLMan->mMainWindow);
   ImGuiNewFrame(SDLMan->mMainWindow);
 
-  if (debugMode) {
-    DEBUG_DebugWindowBegin();
-    DEBUG_DisplayLog();
-    DEBUG_DebugWindowEnd();
-  }
+#ifdef DEBUG_MODE
+  DEBUG_DebugWindowBegin();
+  DEBUG_DisplayLog();
+  DEBUG_DebugWindowEnd();
+#endif
 
   nextGameTick = SDL_GetTicks() + SKIP_TICKS;
+
+#ifdef DEBUG_MODE
   if ((not debugPause) or (debugNextFrame)) {
     returnValue = stateMan.Update();
   }
+#else
+  returnValue = stateMan.Update();
+#endif
 
   // Audio subsystem can be put on a different thread
   // although with sdlMixer, it already is on a different thread
   audioSubsystem.ProcessEvents();
 
-  gameLoops++;
-
+// Rendering
+#ifdef DEBUG_MODE
+  stateMan.Draw();
+  glFinish();
+#else
   // If we're behind, skip drawing
   // Don't skip if the max amount of frame skip has been passed
   if ((SDL_GetTicks() < nextGameTick) or (gameLoops > MAX_FRAMESKIP)) {
-    // game render
     stateMan.Draw();
     glFinish();
   }
+#endif
+
   SDL_GL_SwapWindow(SDLMan->GetWindow());
+  gameLoops++;
 
   return returnValue;
 }

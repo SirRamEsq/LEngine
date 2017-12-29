@@ -141,6 +141,10 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     //"f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV) \n"
     "f1 = require(\"Utility/LEngineInit.lua\") \n"
     "NewLEngine = f1\n";
+    //"_DEBUG = require(\"Utility/mobdebug.lua\") \n"
+    //"L_ENGINE_ENV._DEBUG = _DEBUG \n"
+    //"_DEBUG.start(\"localhost\") \n";
+
 // Standard table has cherry picked functionality
 #else
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
@@ -322,6 +326,19 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
     } catch (LEngineException e) {
       LOG_FATAL(e.what());
     }
+  }
+}
+
+void LuaInterface::ExecuteString(const std::string &code) {
+  auto error = luaL_dostring(lState, code.c_str());
+  if (error != 0) {
+    std::stringstream ss;
+    ss << "Lua String could not be run \n"
+       << LUA_52_INTERFACE_ENV_TABLE << "\n"
+       << " | Error code is: " << error << " "
+       << "   ...Error Message is " << lua_tostring(lState, -1);
+    LOG_ERROR(ss.str());
+    lua_pop(lState, -1);  // pop error message
   }
 }
 
