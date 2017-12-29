@@ -1199,11 +1199,9 @@ void LuaInterface::ExposeCPP() {
 
       .beginClass<TColPacket>("TColPacket")
       .addConstructor<void (*)(void)>()
-      .addFunction("GetX", &TColPacket::GetX)
-      .addFunction("GetY", &TColPacket::GetY)
       .addFunction("GetTileX", &TColPacket::GetTileX)
       .addFunction("GetTileY", &TColPacket::GetTileY)
-      .addFunction("GetID", &TColPacket::GetID)
+      .addFunction("GetBox", &TColPacket::GetBox)
       .addFunction("GetLayer", &TColPacket::GetLayer)
       .addFunction("GetHmap", &TColPacket::GetHmap)
       .endClass()
@@ -1212,7 +1210,7 @@ void LuaInterface::ExposeCPP() {
       .addConstructor<void (*)(void)>()
       .addFunction("GetName", &EColPacket::GetName)
       .addFunction("GetType", &EColPacket::GetType)
-      .addFunction("GetID", &EColPacket::GetID)
+      .addFunction("GetBox", &EColPacket::GetBox)
       .endClass()
 
       .beginClass<RenderableObject>("RenderableObject")
@@ -1270,18 +1268,26 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetRight", &Rect::GetRight)
       .endClass()
 
+      .beginClass<CollisionBox>("CollisionBox")
+      .addFunction("Activate", &CollisionBox::Activate)
+      .addFunction("Deactivate", &CollisionBox::Deactivate)
+      .addFunction("GetID", &CollisionBox::GetID)
+      .addFunction("CheckForEntities", &CollisionBox::CheckForEntities)
+      .addFunction("CheckForTiles", &CollisionBox::CheckForTiles)
+      .addFunction("SetShape", &CollisionBox::SetShape)
+      .addFunction("SetOrder", &CollisionBox::SetOrder)
+      .addFunction("RegisterEveryTileCollision",
+                   &CollisionBox::RegisterEveryTileCollision)
+      .addFunction("RegisterFirstTileCollision",
+                   &CollisionBox::RegisterFirstTileCollision)
+      .addFunction("CheckForLayer", &CollisionBox::CheckForLayerLuaInterface)
+      .addFunction("CheckForLayers", &CollisionBox::CheckForLayersLuaInterface)
+      .endClass()
+
       .beginClass<ComponentCollision>("ComponentCollision")
-      .addFunction("Activate", &ComponentCollision::Activate)
-      .addFunction("Deactivate", &ComponentCollision::Deactivate)
       .addFunction("SetPrimaryCollisionBox",
                    &ComponentCollision::SetPrimaryCollisionBox)
-      .addFunction("CheckForEntities", &ComponentCollision::CheckForEntities)
-      .addFunction("CheckForTiles", &ComponentCollision::CheckForTiles)
-      .addFunction("SetShape", &ComponentCollision::SetShape)
-      .addFunction("SetOrder", &ComponentCollision::SetOrder)
       .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
-      .addFunction("CheckForLayer",
-                   &ComponentCollision::CheckForLayerLuaInterface)
       .endClass()
 
       .beginClass<ComponentParticle>("ComponentParticle")
@@ -1463,6 +1469,7 @@ void LuaInterface::ExposeCPP() {
 
       .beginClass<RSC_Map>("RSC_Map")
       .addFunction("GetTileLayer", &RSC_Map::GetTileLayer)
+      .addFunction("GetSolidTileLayers", &RSC_Map::GetSolidTileLayers)
       .addFunction("GetProperty", &RSC_Map::GetProperty)
       .addFunction("GetWidthTiles", &RSC_Map::GetWidthTiles)
       .addFunction("GetHeightTiles", &RSC_Map::GetHeightTiles)

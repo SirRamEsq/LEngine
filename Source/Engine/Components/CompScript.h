@@ -29,7 +29,7 @@ class ComponentScriptManager;
 class ComponentInput;
 class ComponentScript;
 class ComponentCollision;
-struct EColPacket;
+class EColPacket;
 class LuaInterface;
 
 class ComponentScript : public BaseComponent {

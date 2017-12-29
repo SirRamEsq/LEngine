@@ -28,6 +28,7 @@ void CallbackFunction(const Event *event) {
 
 TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
   GameStateManager_Mock dummyManager(NULL);
+  callbackValue = 0;
   REQUIRE(0 == callbackValue);
 
   RSC_MapMock testMap("TEST", 64, 64);
@@ -67,8 +68,12 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
   int boxw = 1;
   int boxh = 1;
   Rect box(0, 0, boxw, boxh);
-  int boxID = compCol->AddCollisionBox(&box);
-  compCol->CheckForTiles(boxID);
+  auto cbox = compCol->AddCollisionBox(&box);
+  cbox->CheckForTiles();
+
+  auto callback = [](TColPacket *packet) { return; };
+  auto solidLayers = testMap.GetSolidTileLayers();
+  cbox->CheckForLayer(&solidLayers, callback);
   positionManager.Update();
 
   SECTION("Basic test") {
@@ -82,6 +87,21 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
     compPos->SetPositionLocal(pos);
     collisionManager.UpdateCheckTileCollision(&testMap);
     REQUIRE(2 == callbackValue);
+  }
+
+  SECTION("Activate / Deactivate") {
+    cbox->Activate();
+    cbox->Deactivate();
+    cbox->Deactivate();
+    cbox->Activate();
+    cbox->Activate();
+    cbox->Activate();
+    collisionManager.UpdateCheckTileCollision(&testMap);
+    REQUIRE(1 == callbackValue);
+
+    cbox->Deactivate();
+    collisionManager.UpdateCheckTileCollision(&testMap);
+    REQUIRE(1 == callbackValue);
   }
 
   SECTION("Out of bounds test") {
@@ -205,9 +225,9 @@ TEST_CASE("Entity Collision tests", "[collision]") {
     compCol->SetEventCallbackFunction(CallbackFunction);
 
     Rect box(0, 0, 8, 8);
-    int boxID = compCol->AddCollisionBox(&box);
-    compCol->CheckForEntities(boxID);
-    compCol->SetPrimaryCollisionBox(boxID);
+    auto cbox = compCol->AddCollisionBox(&box);
+    cbox->CheckForEntities();
+    compCol->SetPrimaryCollisionBox(cbox);
 
     entity++;
   }
@@ -253,9 +273,9 @@ TEST_CASE("Entity Collision tests", "[collision]") {
       compCol->SetEventCallbackFunction(CallbackFunction);
 
       Rect box(0, 0, COLLISION_GRID_SIZE * 2, COLLISION_GRID_SIZE * 2);
-      int boxID = compCol->AddCollisionBox(&box);
-      compCol->CheckForEntities(boxID);
-      compCol->SetPrimaryCollisionBox(boxID);
+      auto cbox = compCol->AddCollisionBox(&box);
+      cbox->CheckForEntities();
+      compCol->SetPrimaryCollisionBox(cbox);
 
       entity++;
     }

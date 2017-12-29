@@ -1,4 +1,6 @@
 #include "Coordinates.h"
+
+#include "Resources/RSC_Map.h"
 #include <memory>
 
 CollisionResponse::CollisionResponse(const Coord2df &vec, bool collided)
@@ -109,6 +111,76 @@ CollisionResponse Rect::Contains(const Shape *shape) const {
   return shape->Contains(this);
 }
 
+CollisionResponseTile Rect::Contains(const TiledTileLayer *layer) const {
+  CollisionResponseTile returnValue;
+  if (layer == NULL) {
+    return returnValue;
+  }
+  auto collisions = &returnValue.collisions;
+  Coord2df ul(0, 0), dr(0, 0);
+
+  ul.x = GetLeft();
+  ul.y = GetTop();
+  dr.x = GetRight();
+  dr.y = GetBottom();
+  int txx1 = ul.x;
+  int txx2 = dr.x;
+  int tyy1 = ul.y;
+  int tyy2 = dr.y;
+
+  CoordToGrid(txx1, tyy1);
+  CoordToGrid(txx2, tyy2);
+  if ((txx1 == txx2) and
+      (tyy1 == tyy2)) {  // if the top left is the same as the bottom right,
+    if (layer->HasTile(txx1, tyy1)) {
+      collisions->push_back(Coord2df(txx1, tyy1));
+    }
+    return returnValue;
+  }
+
+  int differenceX = txx2 - txx1;  // Both differences will always be positive
+  int differenceY = tyy2 - tyy1;
+
+  bool negativeH = (GetOriginHorizontal() == Shape::Origin::Right);
+  bool negativeW = (GetOriginVertical() == Shape::Origin::Bottom);
+  int tx, ty;
+
+  if (negativeW) {
+    tx = txx2;
+  } else {
+    tx = txx1;
+  }
+  if (negativeH) {
+    ty = tyy2;
+  } else {
+    ty = tyy1;
+  }
+
+  for (int iter = 0; iter <= differenceX; iter++) {
+    for (int iter2 = 0; iter2 <= differenceY; iter2++) {
+      if (layer->HasTile(tx, ty)) {
+        collisions->push_back(Coord2df(tx, ty));
+      }
+      if (!negativeH) {
+        ty += 1;
+      } else {
+        ty -= 1;
+      }
+    }
+    if (negativeH) {
+      ty = tyy2;
+    } else {
+      ty = tyy1;
+    }
+    if (!negativeW) {
+      tx += 1;
+    } else {
+      tx -= 1;
+    }
+  }
+  return returnValue;
+}
+
 //////////
 // Circle//
 //////////
@@ -152,6 +224,9 @@ CollisionResponse Circle::Contains(const Circle *r) const {
 CollisionResponse Circle::Contains(const Shape *shape) const {
   return shape->Contains(this);
 }
+CollisionResponseTile Circle::Contains(const TiledTileLayer *layer) const {
+  return CollisionResponseTile();
+}
 /////////////
 // Collision//
 /////////////
@@ -172,7 +247,7 @@ CollisionResponse CollisionRectRect(const Rect &RR, const Rect &R) {
   return CollisionResponse(RR.GetCenter() - R.GetCenter(), true);
 }
 
-CollisionResponse CollisionRectCircle(const Rect &R, const Circle C) {
+CollisionResponse CollisionRectCircle(const Rect &R, const Circle &C) {
   if (R.GetBottom() < C.GetTop()) {
     return CollisionResponse(0, 0, false);
   }

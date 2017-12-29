@@ -136,7 +136,7 @@ void GameStateManager_Impl::PushNextState() {
   if (nextFrameState.get() != NULL) {
     // Pop current state before pushing the new one
     if (swapState == true) {
-      PopState();
+      PopTopState();
     }
     mGameStates.push_back(nextFrameState);
     nextFrameState.reset();

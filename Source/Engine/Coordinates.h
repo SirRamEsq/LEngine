@@ -3,6 +3,7 @@
 
 #include "Defines.h"
 
+class TiledTileLayer;
 class Coord2df {
  public:
   Coord2df() {
@@ -72,6 +73,11 @@ struct CollisionResponse {
   bool mCollided;
 };
 
+struct CollisionResponseTile {
+  // All tiles collided with
+  std::vector<Coord2df> collisions;
+};
+
 // forward declares
 class Circle;
 class Rect;
@@ -112,6 +118,7 @@ class Shape {
   virtual CollisionResponse Contains(const Shape *shape) const = 0;
   virtual CollisionResponse Contains(const Rect *r) const = 0;
   virtual CollisionResponse Contains(const Circle *r) const = 0;
+  virtual CollisionResponseTile Contains(const TiledTileLayer *layer) const = 0;
 
   virtual std::unique_ptr<Shape> MakeCopy() const = 0;
 
@@ -152,6 +159,7 @@ class Rect : public Shape {
   CollisionResponse Contains(const Shape *shape) const;
   CollisionResponse Contains(const Rect *r) const;
   CollisionResponse Contains(const Circle *r) const;
+  CollisionResponseTile Contains(const TiledTileLayer *layer) const;
 
   Origin GetOriginHorizontal() const;
   Origin GetOriginVertical() const;
@@ -183,6 +191,7 @@ class Circle : public Shape {
   CollisionResponse Contains(const Shape *shape) const;
   CollisionResponse Contains(const Rect *r) const;
   CollisionResponse Contains(const Circle *r) const;
+  CollisionResponseTile Contains(const TiledTileLayer *layer) const;
 
   Origin GetOriginHorizontal() const;
   Origin GetOriginVertical() const;
@@ -194,7 +203,7 @@ class Circle : public Shape {
 };
 
 CollisionResponse CollisionRectRect(const Rect &RR, const Rect &R);
-CollisionResponse CollisionRectCircle(const Rect &R, const Circle C);
+CollisionResponse CollisionRectCircle(const Rect &R, const Circle &C);
 CollisionResponse CollisionRectPoint(const Rect &R, const Coord2df &point);
 CollisionResponse CollisionCircleCircle(const Circle &CC, const Circle &C);
 CollisionResponse CollisionCirclePoint(const Circle &CC, const Coord2df &point);

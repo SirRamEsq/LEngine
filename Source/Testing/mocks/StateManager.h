@@ -11,7 +11,7 @@ class GameStateManager_Mock : public GameStateManager {
 
  public:
   GameStateManager_Mock(InputManager *input) : GameStateManager(input) {}
-  virtual GameState *GetCurrentState() {}
+  virtual GameState *GetCurrentState() {return NULL;}
 
   virtual void PushState(const std::shared_ptr<GameState> &state,
                          const RSC_Script *script = NULL) {}
@@ -19,16 +19,16 @@ class GameStateManager_Mock : public GameStateManager {
   virtual void SwapState(const std::shared_ptr<GameState> &state,
                          const RSC_Script *script = NULL) {}
 
-  virtual void PopState() {}
-  virtual int StackSize() {}
-  virtual bool IsEmpty() {}
+  virtual void PopState() {return;}
+  virtual int StackSize() {return 0;}
+  virtual bool IsEmpty() {return true;}
   InputManager *inputManager;
 
  protected:
   virtual void Close() {}
 
   virtual void HandleEvent(const Event *event) {}
-  virtual bool Update() {}
+  virtual bool Update() {return true;}
   virtual void Draw() {}
 
   virtual void DrawPreviousState(GameState *gs) {}
