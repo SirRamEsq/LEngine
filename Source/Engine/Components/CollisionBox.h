@@ -5,6 +5,9 @@
 #include "../Defines.h"
 
 #include "../Errorlog.h"
+#include <unordered_map>
+#include <functional>
+#include <iostream>
 
 // Lua Includes
 extern "C" {
@@ -14,7 +17,6 @@ extern "C" {
 }
 #include <LuaBridge.h>
 
-#include <unordered_map>
 
 enum CB_FLAGS { PRIMARY = 1, ENT_CHECK = 2, TILE_CHECK = 4 };
 

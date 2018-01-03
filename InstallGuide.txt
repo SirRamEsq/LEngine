@@ -20,7 +20,7 @@ Do one of the following:
 - OR -
 
 (2) Use one great big command;
-	sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev
+	sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev lua5.2
 
 
 NOTES:
@@ -42,7 +42,13 @@ Install lua rocks and configure it for 5.2
 	./configure --lua-version=5.2 --versioned-rocks-dir
 	make build
 	sudo make install
+
+	//Dependency for busted
 	sudo luarocks install luafilesystem
+
+	/For Unit testing
+	sudo luarocks install busted
+
 	//For debugging
 	sudo luarocks install luasocket
 =============================================

@@ -2,6 +2,7 @@
 #define L_SPRITECOMP
 
 #include <memory>
+#include <functional>
 
 #include "../BaseComponentManager.h"
 #include "../Event.h"

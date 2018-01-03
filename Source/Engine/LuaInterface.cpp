@@ -99,11 +99,6 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     pass
     the current directory from the engine
     */
-    "lfs = require(\"lfs\")\n"
-    "utilityPath		= lfs.currentdir() .. "
-    "\"/Data/Resources/Scripts/Utility\" \n"
-    "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" \n"
-
     "_REQUIRE_FUNCTION = function (moduleName) \n"
     " local module = CPP.interface:ModuleLoad(moduleName) \n"
     " if module == nil then \n"
@@ -124,39 +119,23 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "package.searchers = {} \n"
     "package.searchers[1] = _REQUIRE_FUNCTION \n"
 
-    "newLoadFile = function(dir, env)\n"
-    "if (env==nil) then return nil; end \n"
-    "return loadfile(dir, \"bt\", env)\n"
-    "end\n"
     "L_ENGINE_ENV = {}\n"
     "for k,v in pairs(_ENV)do\n"
     "L_ENGINE_ENV[k]=v\n"
     "end\n"
     "L_ENGINE_ENV._ENV = {}\n"
-    "L_ENGINE_ENV.loadfile = newLoadFile\n"
     "L_ENGINE_ENV.utilityPath = utilityPath\n"
     "L_ENGINE_ENV.CPP = CPP\n"
 
     // run InitLEngine script using the restricted environment
-    //"f1 = newLoadFile(LEngineInitPath, L_ENGINE_ENV) \n"
     "f1 = require(\"Utility/LEngineInit.lua\") \n"
     "NewLEngine = f1\n";
-    //"_DEBUG = require(\"Utility/mobdebug.lua\") \n"
-    //"L_ENGINE_ENV._DEBUG = _DEBUG \n"
-    //"_DEBUG.start(\"localhost\") \n";
 
 // Standard table has cherry picked functionality
 #else
 const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // http://stackoverflow.com/questions/34388285/creating-a-secure-lua-sandbox
 
-    // Wrapper around loadfile; Files can only load new files if they specify an
-    // _ENV
-    "lfs = require(\"lfs\")\n"
-    "utilityPath		= lfs.currentdir() .. "
-    "\"/Data/Resources/Scripts/Utility\" \n"
-    "LEngineInitPath	= utilityPath .. \"/LEngineInit.lua\" \n"
-
     "_REQUIRE_FUNCTION = function (moduleName) \n"
     " local module = CPP.interface:ModuleLoad(moduleName) \n"
     " if module == nil then \n"
@@ -177,11 +156,6 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "package.searchers = {} \n"
     "package.searchers[1] = _REQUIRE_FUNCTION \n"
 
-    "newLoadFile = function(dir, env)\n"
-    "if (env==nil) then return nil; end \n"
-    "return loadfile(dir, \"bt\", env)\n"
-    "end								"
-    "								   \n"
     // Global table for this environment
     // Note, that in lua 5.2, there is nothing special about _G;
     //_ENV is the global table for a given function; _G is simply set at the
@@ -194,8 +168,6 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // before running this string
     "CPP = CPP,\n"
     "utilityPath= utilityPath,\n"
-    // Use secure wrapper around loadfile
-    "loadfile = newLoadFile, \n"
     "require = require,\n"
     // Built in Lua functions
     "ipairs = ipairs,\n"

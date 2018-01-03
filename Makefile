@@ -1,5 +1,5 @@
 #Compiler and Linker
-CC			:= g++
+CC			:= g++ #clang
 
 #The Target Binary Program
 TARGET					:= LEngine
