@@ -83,6 +83,17 @@ void Kernel::Close() {
   PHYSFS_deinit();
 }
 
+std::string Kernel::GetNameFromEID(EID id) {
+  auto state = stateMan.GetCurrentState();
+  if (state == NULL) {
+    return "!";
+  }
+  auto component = state->comScriptMan.GetComponent(id);
+  if (component == NULL) {
+    return "!";
+  }
+  return component->scriptName;
+}
 void Kernel::Inst() {
   int argc = 0;
   char *argv[0];

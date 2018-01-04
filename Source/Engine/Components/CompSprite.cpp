@@ -1,8 +1,10 @@
 #include "CompSprite.h"
 #include "../Kernel.h"
 
-AnimationData::AnimationData(const TAnimationMap *aniMap)
-    : animations(aniMap) {
+unsigned int ComponentSprite::MAX_SPRITES_DEFAULT = 8;
+
+AnimationData::AnimationData(const RSC_Sprite *spr)
+    : animations(spr->GetAnimationMapPointer()) {
   animate = true;
   playOnce = false;
   currentTime = 0;
@@ -23,7 +25,7 @@ void AnimationData::Update() {
     if (playOnce) {
       animate = false;
       currentTime = maxTime;
-	  playOnceCallback();
+      playOnceCallback();
     } else {
       currentTime -= maxTime;
     }
@@ -79,34 +81,29 @@ ComponentSprite::ComponentSprite(EID id, ComponentPosition *pos,
                                  RenderManager *r,
                                  ComponentSpriteManager *manager)
     : BaseComponent(id, manager) {
+  SetMaxSprites(MAX_SPRITES_DEFAULT);
   rm = r;
   mEntityID = id;
   myPos = pos;
-  mNumberOfLoadedSprites = 0;
 }
 
 ComponentSprite::~ComponentSprite() {}
 
 void ComponentSprite::Update() {
-  AnimationData *animation = NULL;
-  RenderSpriteBatch::Sprite *renderSprite = NULL;
-  const RSC_Sprite *spriteData = NULL;
-
   Coord2df pos = myPos->GetPositionWorld();
 
-  // Update animationData and RenderagbleSprite info
-  for (int it = 0; it != mNumberOfLoadedSprites; it++) {
-    renderSprite = mRenderableSprites[it].get();
-    if (renderSprite->isActive == false) {
+  for (auto i = mSprites.begin(); i != mSprites.end(); i++) {
+    auto renderSprite = &(i->mRenderableSprite);
+    if (!renderSprite->isActive) {
       continue;
     }
 
-    animation = &mAnimationData[it];
-    spriteData = mSprites[it];
+    auto animation = &i->mAnimation;
+    auto spriteRSC = i->mSpriteRSC;
 
     animation->Update();
 
-    auto ani = spriteData->GetAnimation(animation->GetAnimation());
+    auto ani = spriteRSC->GetAnimation(animation->GetAnimation());
     auto index = animation->GetImageIndex();
 
     // Top Left
@@ -157,25 +154,38 @@ void ComponentSprite::Update() {
   }
 }
 
-void ComponentSprite::AnimationPlayOnce(int index,
-                                        const std::string &animationName,
-                                        luabridge::LuaRef callback) {
-  if (!SpriteExists(index)) {
-    return;
+Sprite::Sprite(RenderManager *rm, const RSC_Sprite *sprite, MAP_DEPTH depth)
+    : mAnimation(sprite),
+      mRenderableSprite(rm, sprite, depth, Vec2(0, 0)),
+      mSpriteRSC(sprite) {
+  auto textureName = sprite->GetTextureName();
+  const RSC_Texture *texture = K_TextureMan.GetLoadItem(textureName);
+
+  if (texture == NULL) {
+    std::stringstream ss;
+    ss << "Couldn't find Texture named " << textureName;
+    LOG_INFO(ss.str());
   }
-  auto callbackLambda = [callback]() { callback(); };
-  mAnimationData[index].SetAnimationPlayOnce(animationName, callbackLambda);
+
+  CalculateVerticies();
 }
 
-void ComponentSprite::CalculateVerticies(int index) {
-  LOrigin origin = mSprites[index]->GetOrigin();
-  float spriteWidth = mSprites[index]->GetWidth();
-  float spriteHeight = mSprites[index]->GetHeight();
+void Sprite::AnimationPlayOnce(const std::string &animationName,
+                               luabridge::LuaRef callback) {
+  auto callbackLambda = [callback]() { callback(); };
+  mAnimation.SetAnimationPlayOnce(animationName, callbackLambda);
+}
+
+void Sprite::CalculateVerticies() {
+  LOrigin origin = mSpriteRSC->GetOrigin();
+  float spriteWidth = mSpriteRSC->GetWidth();
+  float spriteHeight = mSpriteRSC->GetHeight();
 
   int spriteWidthHalf = spriteWidth / 2;
   int spriteHeightHalf = spriteHeight / 2;
 
-  RenderSpriteBatch::Sprite *rSprite = mRenderableSprites[index].get();
+  // laconic access
+  auto rSprite = &mRenderableSprite;
 
   switch (origin) {
     case L_ORIGIN_CENTER:
@@ -235,151 +245,68 @@ void ComponentSprite::CalculateVerticies(int index) {
   }
 }
 
-bool ComponentSprite::SpriteExists(int index) {
-  if ((index < 0) || (index >= mNumberOfLoadedSprites)) {
+void Sprite::SetRotation(float rotation) {
+  mRenderableSprite.rotation = rotation;
+}
+void Sprite::SetScaling(float scalingX, float scalingY) {
+  mRenderableSprite.scaleX = scalingX;
+  mRenderableSprite.scaleY = scalingY;
+}
+void Sprite::SetScalingX(float scalingX) {
+  mRenderableSprite.scaleX = scalingX;
+}
+void Sprite::SetScalingY(float scalingY) {
+  mRenderableSprite.scaleY = scalingY;
+}
+
+void Sprite::SetAnimation(const std::string &animationName) {
+  mAnimation.SetAnimation(animationName);
+}
+
+void Sprite::SetAnimationSpeed(float speed) {
+  mAnimation.animationSpeed = speed;
+}
+
+float Sprite::GetAnimationSpeed() { return mAnimation.animationSpeed; }
+
+float Sprite::DefaultAnimationSpeed() {
+  return mAnimation.defaultAnimationSpeed;
+}
+
+void Sprite::SetImageIndex(int imageIndex) {
+  mAnimation.SetImageIndex(imageIndex);
+}
+
+int Sprite::GetImageIndex() { return mAnimation.GetImageIndex(); }
+
+void Sprite::Render(bool render) { mRenderableSprite.isActive = render; }
+
+void Sprite::SetOffset(float x, float y) {
+  mRenderableSprite.offset.x = x;
+  mRenderableSprite.offset.y = y;
+}
+
+void ComponentSprite::SetMaxSprites(unsigned int spriteCount) {
+  mMaxSprites = spriteCount;
+  mSprites.reserve(sizeof(Sprite) * spriteCount);
+}
+
+Sprite *ComponentSprite::AddSprite(const RSC_Sprite *sprite, MAP_DEPTH depth) {
+  if (mSprites.size() >= mMaxSprites) {
     std::stringstream ss;
-    ss << "Sprite Index out of range: Sprite Index '" << index
-       << "' doesn't exist for entity with ID " << mEntityID;
+    ss << "Will not create sprite, number of sprites is equal to max "
+       << mMaxSprites << "'" << std::endl
+       << "In Script '" << Kernel::GetNameFromEID(mEntityID) << "'";
     LOG_ERROR(ss.str());
-    return false;
-  }
-  return true;
-}
-
-void ComponentSprite::SetRotation(int index, float rotation) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mRenderableSprites[index].get()->rotation = rotation;
-}
-void ComponentSprite::SetScaling(int index, float scalingX, float scalingY) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  RenderSpriteBatch::Sprite *sprite = mRenderableSprites[index].get();
-  sprite->scaleX = scalingX;
-  sprite->scaleY = scalingY;
-}
-void ComponentSprite::SetScalingX(int index, float scalingX) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mRenderableSprites[index].get()->scaleX = scalingX;
-}
-void ComponentSprite::SetScalingY(int index, float scalingY) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mRenderableSprites[index].get()->scaleY = scalingY;
-}
-
-void ComponentSprite::SetAnimation(int index,
-                                   const std::string &animationName) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mAnimationData[index].SetAnimation(animationName);
-}
-
-void ComponentSprite::SetAnimationSpeed(int index, float speed) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mAnimationData[index].animationSpeed = speed;
-}
-
-float ComponentSprite::GetAnimationSpeed(int index) {
-  if (!SpriteExists(index)) {
-    return 0;
-  }
-  return mAnimationData[index].animationSpeed;
-}
-
-float ComponentSprite::DefaultAnimationSpeed(int index) {
-  if (!SpriteExists(index)) {
-    return 0.0f;
-  }
-  return mAnimationData[index].defaultAnimationSpeed;
-}
-
-void ComponentSprite::SetImageIndex(int index, int imageIndex) {
-  if (!SpriteExists(index)) {
-    return;
-  }
-  mAnimationData[index].SetImageIndex(imageIndex);
-}
-
-int ComponentSprite::GetImageIndex(int index) {
-  if (!SpriteExists(index)) {
-    return 0;
-  }
-  mAnimationData[index].GetImageIndex();
-}
-
-bool ComponentSprite::RenderSprite(int index, bool render) {
-  if (!SpriteExists(index)) {
-    return false;
-  }
-  mRenderableSprites[index].get()->isActive = render;
-  return true;
-}
-
-bool ComponentSprite::AnimateSprite(int index, bool animate) {
-  if (!SpriteExists(index)) {
-    return false;
-  }
-  mAnimationData[index].animate = animate;
-  return true;
-}
-
-void ComponentSprite::SetOffset(int index, float x, float y) {
-  if (!SpriteExists(index)) {
-    return;
+    return NULL;
   }
 
-  mRenderableSprites[index]->offset.x = x;
-  mRenderableSprites[index]->offset.y = y;
-}
-
-int ComponentSprite::AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
-                               float x, float y) {
-  Vec2 offset(x, y);
-  AnimationData data(sprite->GetAnimationMapPointer());
-  auto textureName = sprite->GetTextureName();
-  const RSC_Texture *texture =
-      K_TextureMan.GetLoadItem(textureName, textureName);
-  if (texture == NULL) {
-    std::stringstream ss;
-    ss << "[C++] ComponentSprite::AddSprite couldn't find Texture named "
-       << textureName;
-    LOG_INFO(ss.str());
-    // return -1;
-  }
-  auto textureNormalName = sprite->GetTextureNormalName();
-  const RSC_Texture *textureNormal =
-      K_TextureMan.GetLoadItem(textureNormalName, textureNormalName);
-  if (textureNormal == NULL) {
-    /*
-      std::stringstream ss;
-      ss << "[C++] ComponentSprite::AddSprite couldn't find Texture Normal named
-      "
-         << textureNormalName;
-      LOG_INFO(ss.str());
-    */
-    // return -1;
+  if (sprite == NULL) {
+    return NULL;
   }
 
-  mSprites.push_back(sprite);
-  mAnimationData.push_back(data);
-  mRenderableSprites.push_back(std::make_unique<RenderSpriteBatch::Sprite>(
-      rm, texture, textureNormal, texture->GetWidth(), texture->GetHeight(),
-      depth, offset));
-
-  CalculateVerticies(mNumberOfLoadedSprites);
-
-  int idToReturn = mNumberOfLoadedSprites;  // return handle to this sprite
-  mNumberOfLoadedSprites += 1;
-  return idToReturn;
+  mSprites.emplace(mSprites.end(), rm, sprite, depth);
+  return &mSprites.back();
 }
 
 void ComponentSprite::HandleEvent(const Event *event) {}

@@ -380,7 +380,7 @@ void RenderManager::AssignCameraUBO(RSC_GLProgram *program) {
   }
 }
 
-RenderSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
+RenderableSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
                                                  const RSC_Texture *texNormal,
                                                  const MAP_DEPTH &depth,
                                                  const int &numSprites) {
@@ -408,7 +408,7 @@ RenderSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
     spriteBatchVectorIt = textureNormalMapIt->second.find(texNormal);
   }
 
-  RenderSpriteBatch *batch = NULL;
+  RenderableSpriteBatch *batch = NULL;
   for (auto vectorIt = spriteBatchVectorIt->second.begin();
        vectorIt != spriteBatchVectorIt->second.end(); vectorIt++) {
     if ((*vectorIt)->CanAddSprites(numSprites) == true) {
@@ -421,8 +421,8 @@ RenderSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
   // batch to it
   if (batch == NULL) {
     // Max size 256
-    spriteBatchVectorIt->second.push_back(std::unique_ptr<RenderSpriteBatch>(
-        new RenderSpriteBatch(this, tex, texNormal, 256)));
+    spriteBatchVectorIt->second.push_back(std::unique_ptr<RenderableSpriteBatch>(
+        new RenderableSpriteBatch(this, tex, texNormal, 256)));
     batch = (spriteBatchVectorIt->second.back()).get();
     batch->SetDepth(depth);
   }

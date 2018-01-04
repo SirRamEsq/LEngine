@@ -12,7 +12,7 @@
 
 #include "Rendering/RenderImageLayer.h"
 #include "Rendering/RenderPrimitives.h"
-#include "Rendering/RenderSpriteBatch.h"
+#include "Rendering/RenderableSpriteBatch.h"
 #include "Rendering/RenderTileLayer.h"
 #include "Rendering/RenderableObject.h"
 #include "Resources/RSC_GLShader.h"
@@ -109,7 +109,7 @@ class RenderManager {
 
   // returns sprite batch that supports 'textureName' and has room for at least
   // numSprites more room
-  RenderSpriteBatch *GetSpriteBatch(const RSC_Texture *tex,
+  RenderableSpriteBatch *GetSpriteBatch(const RSC_Texture *tex,
                                     const RSC_Texture *texNormal,
                                     const MAP_DEPTH &depth,
                                     const int &numSprites);
@@ -183,7 +183,7 @@ class RenderManager {
   std::map<MAP_DEPTH,                              // depth
            std::map<const RSC_Texture *,           // texture
                     std::map<const RSC_Texture *,  // textureNormal
-                             std::vector<std::unique_ptr<RenderSpriteBatch>>>>>
+                             std::vector<std::unique_ptr<RenderableSpriteBatch>>>>>
       spriteBatchMap;
 
   // Time since creation of RenderManager

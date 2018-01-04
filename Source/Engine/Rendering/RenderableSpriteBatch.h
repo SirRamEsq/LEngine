@@ -8,15 +8,20 @@
 #include <set>
 
 class RSC_Texture;
+class RSC_Sprite;
 
-class RenderSpriteBatch : public RenderableObjectWorld {
+class RenderableSpriteBatch : public RenderableObjectWorld {
   // Class constructor is protected, only meant to be initialized by
   // RenderManager
   // Class does NOT own RenderableSprites;
   friend class RenderManager;
 
  public:
-  struct Sprite {
+  /**
+   * This class will auto register with a sprite batch
+   */
+  class Sprite {
+   public:
     struct Data {
       Vec2 vertex1;
       Vec2 vertex2;
@@ -38,11 +43,8 @@ class RenderSpriteBatch : public RenderableObjectWorld {
       Vec2 translate;
     };
 
-    Sprite(RenderManager *rm, const RSC_Texture *tex,
-           const RSC_Texture *texNormal, const unsigned int &w,
-           const unsigned int &h, const MAP_DEPTH &d,
-           const Vec2 &off = Vec2(
-               0.0f, 0.0f));  // Have class auto register with a sprite batch;
+    Sprite(const Sprite &other);
+    Sprite(RenderManager *rm, const RSC_Sprite *spr, MAP_DEPTH d, Vec2 off);
     ~Sprite();
 
     Data data;
@@ -51,14 +53,13 @@ class RenderSpriteBatch : public RenderableObjectWorld {
     const RSC_Texture *textureNormal;
     MAP_DEPTH depth;
 
-    unsigned int textureWidth;
-    unsigned int textureHeight;
     float scaleX;
     float scaleY;
     float rotation;
     Vec2 offset;
 
-    RenderSpriteBatch *spriteBatch;
+    RenderableSpriteBatch *spriteBatch;
+    RenderManager *manager;
   };
 
   bool isTransparent();
@@ -69,8 +70,9 @@ class RenderSpriteBatch : public RenderableObjectWorld {
   bool CanAddSprites(const int &numSprites);
 
  protected:
-  RenderSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
-                    const RSC_Texture *texNormal, const unsigned int &maxSize);
+  RenderableSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
+                        const RSC_Texture *texNormal,
+                        const unsigned int &maxSize);
 
  private:
   VAOWrapper2D vao;

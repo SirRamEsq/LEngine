@@ -646,11 +646,11 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   return true;
 }
 
-const RSC_Sprite *LuaInterface::LoadSprite(const std::string &sprPath) {
+const RSC_Sprite *LuaInterface::LoadSpriteResource(const std::string &sprPath) {
   const RSC_Sprite *sprite = K_SpriteMan.GetItem(sprPath);
   if (sprite == NULL) {
     if (K_SpriteMan.LoadItem(sprPath, sprPath) == false) {
-      LOG_ERROR("LuaInterface::LoadSprite; Couldn't Load Sprite Named: " +
+      LOG_ERROR("Couldn't Load Sprite Named: " +
                 sprPath);
       return NULL;
     }
@@ -1088,7 +1088,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("ListenForInput", &LuaInterface::ListenForInput)
       .addFunction("PlaySound", &LuaInterface::PlaySound)
 
-      .addFunction("LoadSprite", &LuaInterface::LoadSprite)
+      .addFunction("LoadSpriteResource", &LuaInterface::LoadSpriteResource)
 
       .addFunction("LogFatal", &LuaInterface::LogFatal)
       .addFunction("LogError", &LuaInterface::LogError)
@@ -1218,26 +1218,28 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetScalingY", &RenderableObject::SetScalingY)
       .endClass()
 
+      .beginClass<Sprite>("Sprite")
+      .addFunction("SetAnimation", &Sprite::SetAnimation)
+      .addFunction("SetAnimationSpeed", &Sprite::SetAnimationSpeed)
+      .addFunction("AnimationPlayOnce", &Sprite::AnimationPlayOnce)
+      .addFunction("GetAnimationSpeed", &Sprite::GetAnimationSpeed)
+      .addFunction("DefaultAnimationSpeed",
+                   &Sprite::DefaultAnimationSpeed)
+      .addFunction("SetImage", &Sprite::SetImageIndex)
+      .addFunction("GetImage", &Sprite::GetImageIndex)
+
+      .addFunction("SetRotation", &Sprite::SetRotation)
+      .addFunction("SetScaling", &Sprite::SetScaling)
+      .addFunction("SetScalingX", &Sprite::SetScalingX)
+      .addFunction("SetScalingY", &Sprite::SetScalingY)
+
+      .addFunction("SetOffset", &Sprite::SetOffset)
+
+      .addFunction("Render", &Sprite::Render)
+      .endClass()
+
       .beginClass<ComponentSprite>("ComponentSprite")
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
-      .addFunction("SetAnimation", &ComponentSprite::SetAnimation)
-      .addFunction("SetAnimationSpeed", &ComponentSprite::SetAnimationSpeed)
-      .addFunction("AnimationPlayOnce", &ComponentSprite::AnimationPlayOnce)
-      .addFunction("GetAnimationSpeed", &ComponentSprite::GetAnimationSpeed)
-      .addFunction("DefaultAnimationSpeed",
-                   &ComponentSprite::DefaultAnimationSpeed)
-      .addFunction("SetImage", &ComponentSprite::SetImageIndex)
-      .addFunction("GetImage", &ComponentSprite::GetImageIndex)
-
-      .addFunction("SetRotation", &ComponentSprite::SetRotation)
-      .addFunction("SetScaling", &ComponentSprite::SetScaling)
-      .addFunction("SetScalingX", &ComponentSprite::SetScalingX)
-      .addFunction("SetScalingY", &ComponentSprite::SetScalingY)
-
-      .addFunction("SetOffset", &ComponentSprite::SetOffset)
-
-      .addFunction("RenderSprite", &ComponentSprite::RenderSprite)
-      .addFunction("AnimateSprite", &ComponentSprite::AnimateSprite)
       .endClass()
 
       .beginClass<Shape>("Shape")

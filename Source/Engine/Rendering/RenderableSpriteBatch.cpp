@@ -1,4 +1,5 @@
-#include "RenderSpriteBatch.h"
+#include "RenderableSpriteBatch.h"
+#include "../Kernel.h"
 #include "../RenderManager.h"
 #include "../Resources/RSC_Texture.h"
 
@@ -6,15 +7,38 @@
 // RenderableSprite//
 ////////////////////
 
-RenderSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Texture *tex,
-                                  const RSC_Texture *texNormal,
-                                  const unsigned int &w, const unsigned int &h,
-                                  const MAP_DEPTH &d, const Vec2 &off)
-    : texture(tex),
-      textureNormal(texNormal),
-      textureWidth(w),
-      textureHeight(h),
+RenderableSpriteBatch::Sprite::Sprite(const Sprite &other)
+    : texture(other.texture),
+      textureNormal(other.textureNormal),
+      depth(other.depth),
+      offset(other.offset) {
+  manager = other.manager;
+  auto rm = manager;
+  spriteBatch = rm->GetSpriteBatch(texture, textureNormal, depth, 1);
+  spriteBatch->AddSprite(this);
+
+  data.color = other.data.color;
+
+  scaleX = other.scaleX;
+  scaleY = other.scaleY;
+  rotation = other.rotation;
+
+  data.scalingRotation.x = scaleX;
+  data.scalingRotation.y = scaleY;
+  data.scalingRotation.z = rotation;
+
+  data.translate = other.data.translate;
+
+  isActive = other.isActive;
+}
+
+RenderableSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Sprite *spr,
+                                      MAP_DEPTH d, Vec2 off)
+    : texture(K_TextureMan.GetLoadItem(spr->GetTextureName())),
+      textureNormal(NULL),
+      manager(rm),
       depth(d),
+
       offset(off) {
   spriteBatch = rm->GetSpriteBatch(texture, textureNormal, depth, 1);
   spriteBatch->AddSprite(this);
@@ -38,15 +62,16 @@ RenderSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Texture *tex,
   isActive = true;
 }
 
-RenderSpriteBatch::Sprite::~Sprite() { spriteBatch->DeleteSprite(this); }
+RenderableSpriteBatch::Sprite::~Sprite() { spriteBatch->DeleteSprite(this); }
 
 /////////////////////
-// RenderSpriteBatch//
+// RenderableSpriteBatch//
 /////////////////////
 
-RenderSpriteBatch::RenderSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
-                                     const RSC_Texture *texNormal,
-                                     const unsigned int &maxSize)
+RenderableSpriteBatch::RenderableSpriteBatch(RenderManager *rm,
+                                             const RSC_Texture *tex,
+                                             const RSC_Texture *texNormal,
+                                             const unsigned int &maxSize)
     : RenderableObjectWorld(rm, RenderableObject::TYPE::SpriteBatch),
       maxSprites(maxSize),
       texture(tex),
@@ -57,16 +82,17 @@ RenderSpriteBatch::RenderSpriteBatch(RenderManager *rm, const RSC_Texture *tex,
   AddToRenderManager();
 }
 
-bool RenderSpriteBatch::CanAddSprites(const int &numSprites) {
+bool RenderableSpriteBatch::CanAddSprites(const int &numSprites) {
   return (numSprites + currentSize) < maxSprites;
 }
 
-void RenderSpriteBatch::AddSprite(RenderSpriteBatch::Sprite *sprite) {
+void RenderableSpriteBatch::AddSprite(RenderableSpriteBatch::Sprite *sprite) {
   sprites.insert(sprite);
   currentSize++;
 }
 
-void RenderSpriteBatch::DeleteSprite(RenderSpriteBatch::Sprite *sprite) {
+void RenderableSpriteBatch::DeleteSprite(
+    RenderableSpriteBatch::Sprite *sprite) {
   auto spriteIt = sprites.find(sprite);
   if (spriteIt == sprites.end()) {
     return;
@@ -76,12 +102,12 @@ void RenderSpriteBatch::DeleteSprite(RenderSpriteBatch::Sprite *sprite) {
   currentSize--;
 }
 
-void RenderSpriteBatch::Render(const RenderCamera *camera,
-                               const RSC_GLProgram *program) {
+void RenderableSpriteBatch::Render(const RenderCamera *camera,
+                                   const RSC_GLProgram *program) {
   vao.Bind();
   unsigned int numberOfSprites = 0;
   unsigned int vertexIndex = 0;
-  RenderSpriteBatch::Sprite *sprite;
+  RenderableSpriteBatch::Sprite *sprite;
   for (auto i = sprites.begin(); i != sprites.end(); i++) {
     // Create array of correct values
     // if sprite isn't active, do not add one from 'numberOfSprites' or add its
@@ -143,4 +169,4 @@ void RenderSpriteBatch::Render(const RenderCamera *camera,
   glDrawArrays(GL_QUADS, 0, numberOfSprites * 4);
 }
 
-bool RenderSpriteBatch::isTransparent() { return true; }
+bool RenderableSpriteBatch::isTransparent() { return true; }

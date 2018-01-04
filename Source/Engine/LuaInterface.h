@@ -92,7 +92,7 @@ class LuaInterface {
   // sends event to audio subsystem
   void PlaySound(const std::string &sndName, int volume);
   void PlayMusic(const std::string &musName, int volume, int loops);
-  const RSC_Sprite *LoadSprite(const std::string &sprPath);
+  const RSC_Sprite *LoadSpriteResource(const std::string &sprPath);
 
   Coord2df GetMousePosition();
   float GetMouseWheel();

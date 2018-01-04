@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
     while (Kernel::Run()) {
     }
   } catch (ExitException e) {
+    std::cout << e.what();
   }
   Kernel::Close();
 

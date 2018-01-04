@@ -90,6 +90,14 @@ class Kernel {
   static void ImGuiCreateFontsTexture();
   static void ImGuiInvalidateFontTexture();
 
+  /**
+   * Drills down into the Scriptmanager of the current state
+   * gets the name of the script with the id
+   * not super elegant or efficent
+   * but works
+   */
+  static std::string GetNameFromEID(EID id);
+
  private:
   static bool debugMode;
   static bool debugPause;

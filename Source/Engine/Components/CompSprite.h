@@ -23,23 +23,22 @@ class ComponentSpriteManager;
 struct AnimationData {
   typedef std::function<void()> Callback;
   typedef const std::map<std::string, LAnimation> TAnimationMap;
-  AnimationData(const TAnimationMap *aniMap);
+  AnimationData(const RSC_Sprite *sprite);
 
   void Update();
   bool SetAnimation(const std::string &aniName);
-  bool SetAnimationPlayOnce(const std::string &aniName,
-                            Callback callback);
+  bool SetAnimationPlayOnce(const std::string &aniName, Callback callback);
   bool SetImageIndex(const int &imageIndex);
   const std::string &GetAnimation() { return currentAnimationName; }
   int GetImageIndex() { return currentImageIndex; }
 
-  bool animate;
   float animationSpeed;
   float defaultAnimationSpeed;
 
   const TAnimationMap *animations;
 
  private:
+  bool animate;
   bool playOnce;
   Callback playOnceCallback;
   int currentImageIndex;
@@ -48,6 +47,48 @@ struct AnimationData {
   int maxFrames;
   std::string currentAnimationName;
   const LAnimation *currentAnimation;
+};
+
+class ComponentSprite;
+
+class Sprite {
+  friend ComponentSprite;
+
+ public:
+  Sprite(RenderManager* rm, const RSC_Sprite *sprite, MAP_DEPTH depth);
+
+  void SetAnimation(const std::string &animationName);
+  void AnimationPlayOnce(const std::string &animationName,
+                         luabridge::LuaRef callback);
+  void SetAnimationSpeed(float speed);
+  float GetAnimationSpeed();
+  void SetImageIndex(int imageIndex);
+  int GetImageIndex();
+
+  /// Whether this sprite is rendered
+  void Render(bool render);
+
+  /// Set rotation of sprite
+  void SetRotation(float rotation);
+  /// Set Scaling of Sprite
+  void SetScaling(float scalingX, float scalingY);
+  void SetScalingX(float scalingX);
+  void SetScalingY(float scalingY);
+
+  void SetOffset(float x, float y);
+
+  void CalculateVerticies();
+
+  float DefaultAnimationSpeed();
+
+ protected:
+  AnimationData mAnimation;
+  /// Resource this Sprite is based off of
+  const RSC_Sprite *mSpriteRSC;
+  /** Will Add / Remove itself from the appropriate sprite batch at
+   *  instantiation and destruction
+   */
+  RenderableSpriteBatch::Sprite mRenderableSprite;
 };
 
 class ComponentSprite : public BaseComponent {
@@ -62,56 +103,27 @@ class ComponentSprite : public BaseComponent {
   void HandleEvent(const Event *event);
 
   /// returns sprite index
-  int AddSprite(const RSC_Sprite *sprite, const MAP_DEPTH &depth,
-                float x = 0.0f, float y = 0.0f);
+  Sprite *AddSprite(const RSC_Sprite *sprite, MAP_DEPTH depth);
 
-  void SetAnimation(int index, const std::string &animationName);
-  void AnimationPlayOnce(int index, const std::string &animationName,
-                         luabridge::LuaRef callback);
-  void SetAnimationSpeed(int index, float speed);
-  float GetAnimationSpeed(int index);
-  void SetImageIndex(int index, int imageIndex);
-  int GetImageIndex(int index);
-
-  /// Set whether a given sprite is rendered
-  bool RenderSprite(int index, bool render);
-  /// Set whether a given sprite is animated
-  bool AnimateSprite(int index, bool animate);
-  /// Set rotation of sprite
-  void SetRotation(int index, float rotation);
-  /// Set Scaling of Sprite
-  void SetScaling(int index, float scalingX, float scalingY);
-  void SetScalingX(int index, float scalingX);
-  void SetScalingY(int index, float scalingY);
-
-  void SetOffset(int index, float x, float y);
-
-  bool SpriteExists(int index);
-
-  void CalculateVerticies(int index);
-
-  float DefaultAnimationSpeed(int index);
+  /**
+   * Max size needs to be set to reserve memory in the sprite vector
+   * If the vector resizes and needs to reallocate memory, all references
+   * to its contents become invalid.
+   * Therefore, if you need more than MAX_SPRITES_DEFAULT, call this function
+   * with the desired number of sprites BEFORE creating any sprites
+   */
+  void SetMaxSprites(unsigned int spriteCount);
 
  protected:
   ComponentPosition *myPos;
   RenderManager *rm;
 
  private:
-  int mNumberOfLoadedSprites;
-  /*
-  Cannot delete sprites from component after adding them in, it would mess up
-  the indexing system;\
-  Instead of deleting, just turn off rendering
-  may want to send actual data struct to lua instead of an integer
-  */
+  /// Maximum number of sprites allowed for this entity
+  unsigned int mMaxSprites;
+  std::vector<Sprite> mSprites;
 
-  std::vector<AnimationData>
-      mAnimationData;  // Used to determine what part of the sprite to use
-  std::vector<const RSC_Sprite *> mSprites;
-  std::vector<std::unique_ptr<RenderSpriteBatch::Sprite>>
-      mRenderableSprites;  // class owns renderableSprites, which auto adds and
-  // deletes itself to the appropriate sprite batch when
-  // instantiated and deleted
+  static unsigned int MAX_SPRITES_DEFAULT;
 };
 
 class ComponentSpriteManager

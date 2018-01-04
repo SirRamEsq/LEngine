@@ -54,6 +54,10 @@ void ImGui::SetNextWindowSizeConstraintsWrapper(const Coord2df &size_min,
 
 void ImGui::Sprite(const RSC_Sprite *sprite, const std::string &animation,
                    int frame) {
+  if (sprite == NULL) {
+    LOG_ERROR("Sprite is NULL");
+    return;
+  }
   Coord2df size(0, 0);
   Coord2df startUV(0, 0);
   Coord2df endUV(0, 0);
@@ -74,7 +78,7 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
 
   return ImGui::ImageButton(textureID, size, startUV, endUV, 0,
-                     ImColor(255, 255, 255, 125));
+                            ImColor(255, 255, 255, 125));
 }
 
 void ImGui::ProgressBarWrapper(float fraction, const Coord2df &screenSize) {

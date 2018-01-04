@@ -21,6 +21,7 @@
 class LuaInterfaceB;
 class GameStateManager_Impl;
 class TiledLayerGeneric;
+class Kernel;
 
 class GameState {
   friend GameStateManager_Impl;
@@ -28,6 +29,7 @@ class GameState {
   friend LuaInterface;
   friend EntityManager;
   friend RenderManager;
+  friend Kernel;
 
   friend ComponentPositionManager;
   friend ComponentInputManager;

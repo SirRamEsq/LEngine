@@ -34,6 +34,7 @@ class GenericContainer {
   bool LoadItem(const std::string &name, const std::string &fname);
   /// Get Item if it exists, try loading if it doesn't
   const T *GetLoadItem(const std::string &name, const std::string &fname);
+  const T *GetLoadItem(const std::string &name);
   void DeleteItem(const std::string &name);
 
   mapIt ItBegin() { return items.begin(); }
@@ -178,5 +179,10 @@ const T *GenericContainer<T>::GetLoadItem(const std::string &name,
     item = GetItem(name);
   }
   return item;
+}
+
+template <class T>
+const T *GenericContainer<T>::GetLoadItem(const std::string &name){
+	return GetLoadItem(name, name);
 }
 #endif
