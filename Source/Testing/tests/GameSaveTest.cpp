@@ -28,8 +28,18 @@ TEST_CASE("Can Save and Load GameSaves", "[gameSave]") {
   REQUIRE(saveFile.GetDouble(doubleName) == doubleValue);
   REQUIRE(saveFile.GetString(stringName) == stringValue);
 
-  bool fileExists = saveFile.FileExists();
-  REQUIRE(fileExists == false);
+  REQUIRE(saveFile.ExistsBool(boolName) == true);
+  REQUIRE(saveFile.ExistsInt(intName) == true);
+  REQUIRE(saveFile.ExistsDouble(doubleName) == true);
+  REQUIRE(saveFile.ExistsString(stringName) == true);
+
+  std::string nonsense = "asfkb";
+  REQUIRE(saveFile.ExistsBool(nonsense) == false);
+  REQUIRE(saveFile.ExistsInt(nonsense) == false);
+  REQUIRE(saveFile.ExistsDouble(nonsense) == false);
+  REQUIRE(saveFile.ExistsString(nonsense) == false);
+
+  REQUIRE(saveFile.FileExists() == false);
   saveFile.WriteToFile();
 
   GameSave newSaveFile(saveName);
@@ -43,6 +53,6 @@ TEST_CASE("Can Save and Load GameSaves", "[gameSave]") {
 
   newSaveFile.DeleteFile();
   REQUIRE(newSaveFile.FileExists() == false);
-  
+
   CloseTestPhysfs();
 }

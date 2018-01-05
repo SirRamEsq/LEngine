@@ -25,6 +25,11 @@ class GameSave {
   void SetDouble(const std::string& key, double value);
   void SetString(const std::string& key, std::string value);
 
+  bool ExistsBool(const std::string& key);
+  bool ExistsInt(const std::string& key);
+  bool ExistsDouble(const std::string& key);
+  bool ExistsString(const std::string& key);
+
   bool GetBool(const std::string& name) const;
   int GetInt(const std::string& name) const;
   double GetDouble(const std::string& name) const;

@@ -286,6 +286,35 @@ std::string GameSave::GetString(const std::string& name) const {
   return i->second;
 }
 
+bool GameSave::ExistsBool(const std::string& key) {
+  auto i = mBools.find(key);
+  if (i == mBools.end()) {
+    return false;
+  }
+  return true;
+}
+bool GameSave::ExistsInt(const std::string& key) {
+  auto i = mInts.find(key);
+  if (i == mInts.end()) {
+    return false;
+  }
+  return true;
+}
+bool GameSave::ExistsDouble(const std::string& key) {
+  auto i = mDoubles.find(key);
+  if (i == mDoubles.end()) {
+    return false;
+  }
+  return true;
+}
+bool GameSave::ExistsString(const std::string& key) {
+  auto i = mStrings.find(key);
+  if (i == mStrings.end()) {
+    return false;
+  }
+  return true;
+}
+
 void GameSave::ProcessFile(FileData* data) {
   const char* buffer = data->GetData();
   const char* bufferStart = &buffer[0];

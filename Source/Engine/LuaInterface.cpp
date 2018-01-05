@@ -585,7 +585,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     LuaRef engineTableRef = engineRef();
 
     engineTableRef["Initialize"](id, name, fullyQualifiedScriptName.str(),
-                                 depth, parent, Kernel::IsInDebugMode());
+                                 depth, parent, EID_RESERVED_STATE_ENTITY, Kernel::IsInDebugMode());
 
     // Assign Instance to generated table
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
@@ -1485,6 +1485,11 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetInt", &GameSave::GetInt)
       .addFunction("GetDouble", &GameSave::GetDouble)
       .addFunction("GetString", &GameSave::GetString)
+
+      .addFunction("ExistsBool", &GameSave::ExistsBool)
+      .addFunction("ExistsInt", &GameSave::ExistsInt)
+      .addFunction("ExistsDouble", &GameSave::ExistsDouble)
+      .addFunction("ExistsString", &GameSave::ExistsString)
       .endClass()
 
       .beginClass<GS_Script>("GameState")
