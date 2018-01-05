@@ -16,7 +16,7 @@ struct TEST_DIR_BLANK : std::exception {
 std::string LUA_TEST_DIR = "";
 
 int main(int argc, char* argv[]) {
-	Log::staticLog.CloseFileHandle();
+  Log::staticLog.CloseFileHandle();
   Catch::Session session;
 
   int result = 20;

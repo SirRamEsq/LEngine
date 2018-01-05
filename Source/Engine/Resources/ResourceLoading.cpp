@@ -1,9 +1,23 @@
 #include "ResourceLoading.h"
 #include "../Kernel.h"
 
+bool GenericFileExists(const std::string &fileName) {
+  bool fileExists = false;
+
+  PHYSFS_getLastError();
+  if (PHYSFS_exists(fileName.c_str()) == 0) {
+    fileExists = false;
+  } else {
+    fileExists = true;
+  }
+  PHYSFS_getLastError();
+
+  return fileExists;
+}
+
 std::unique_ptr<FileData> LoadGenericFile(const std::string &fileName) {
   // Clear previous errors
-  PHYSFS_getLastError() ;
+  PHYSFS_getLastError();
 
   if (PHYSFS_exists(fileName.c_str()) == 0) {
     std::stringstream ss;
@@ -34,7 +48,7 @@ std::unique_ptr<FileData> LoadGenericFile(const std::string &fileName) {
     ss << "Physfs Error in Generic File '" << fileName
        << "' Error: " << physfsError;
     LOG_INFO(ss.str());
-    //throw LEngineFileException(ss.str(), fileName);
+    // throw LEngineFileException(ss.str(), fileName);
   }
 
   PHYSFS_close(file);

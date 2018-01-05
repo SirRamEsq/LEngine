@@ -31,9 +31,7 @@ class FileData {
   FileData &operator=(const FileData &other) = delete;
 };
 
-class Kernel;  // Forward Declare
-
 std::unique_ptr<FileData> LoadGenericFile(const std::string &fileName);
-// LEvent*                     LoadEVENT   (const std::string& fname);
+bool GenericFileExists(const std::string &fileName);
 
 #endif

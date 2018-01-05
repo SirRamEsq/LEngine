@@ -4,7 +4,7 @@
 #include "../../Engine/GenericContainer.h"
 
 TEST_CASE("Can Load Prefab from XML", "[resources][prefab]") {
-  InitPhysfs();
+  InitTestPhysfs();
   // GenericContainer<RSC_Prefab> prefabs;
   auto prefab1 = RSC_Prefab::LoadResource("cppTestPrefab.xml");
 
@@ -83,5 +83,5 @@ TEST_CASE("Can Load Prefab from XML", "[resources][prefab]") {
   floatValue2 = (prefab1->mProperties.floats.find(key))->second;
   REQUIRE(floatValue1 == floatValue2);
 
-  ClosePhysfs();
+  CloseTestPhysfs();
 }
