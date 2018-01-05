@@ -33,7 +33,7 @@ class GameSave {
   const std::string mName;
 
  private:
-  void ReadFromFile(FileData* data);
+  void ProcessFile(FileData* data);
 
   std::unordered_map<std::string, bool> mBools;
   std::unordered_map<std::string, int> mInts;

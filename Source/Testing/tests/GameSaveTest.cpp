@@ -4,17 +4,18 @@
 
 TEST_CASE("Can Save and Load GameSaves", "[gameSave]") {
   InitTestPhysfs();
+
   std::string saveName("UNIT_TEST_SAVE");
   GameSave saveFile(saveName);
 
-  std::string boolName = "key";
-  std::string intName = "key";
-  std::string doubleName = "key";
+  std::string boolName = "boolTrue";
+  std::string intName = "negativeInt";
+  std::string doubleName = "negativeDouble";
   std::string stringName = "key";
 
   bool boolValue = true;
-  int intValue = 234;
-  double doubleValue = 2345.99833f;
+  int intValue = -234;
+  double doubleValue = -2345.99833f;
   std::string stringValue = "strValue!324";
 
   saveFile.SetBool(boolName, boolValue);

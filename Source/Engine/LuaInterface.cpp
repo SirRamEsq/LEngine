@@ -5,6 +5,7 @@
 #include "Resolution.h"
 #include "StateManager.h"
 #include "gui/imgui_LEngine.h"
+#include "GameSave.h"
 
 #include <sstream>
 
@@ -1466,10 +1467,24 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetHeightTiles", &RSC_Map::GetHeightTiles)
       .addFunction("GetWidthPixels", &RSC_Map::GetWidthPixels)
       .addFunction("GetHeightPixels", &RSC_Map::GetHeightPixels)
+      .endClass()
 
-      /// \TODO implement this
-      //.addFunction("GetLayersWithPropertyBool", &RSC_Map::GetHeightPixels)
+      .beginClass<GameSave>("GameSave")
+      .addConstructor<void (*)(const std::string&)>()
+      .addFunction("WriteToFile", &GameSave::WriteToFile)
+      .addFunction("ReadFromFile", &GameSave::ReadFromFile)
+      .addFunction("DeleteFile", &GameSave::DeleteFile)
+      .addFunction("FileExists", &GameSave::FileExists)
 
+      .addFunction("SetBool", &GameSave::SetBool)
+      .addFunction("SetInt", &GameSave::SetInt)
+      .addFunction("SetDouble", &GameSave::SetDouble)
+      .addFunction("SetString", &GameSave::SetString)
+
+      .addFunction("GetBool", &GameSave::GetBool)
+      .addFunction("GetInt", &GameSave::GetInt)
+      .addFunction("GetDouble", &GameSave::GetDouble)
+      .addFunction("GetString", &GameSave::GetString)
       .endClass()
 
       .beginClass<GS_Script>("GameState")

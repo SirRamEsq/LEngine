@@ -223,7 +223,7 @@ void GameSave::ReadFromFile() {
       throw LEngineFileException("Couldn't load save named ", mName);
     }
 
-    ReadFromFile(data.get());
+    ProcessFile(data.get());
 
   } catch (LEngineFileException e) {
     LOG_INFO(e.what());
@@ -286,7 +286,7 @@ std::string GameSave::GetString(const std::string& name) const {
   return i->second;
 }
 
-void GameSave::ReadFromFile(FileData* data) {
+void GameSave::ProcessFile(FileData* data) {
   const char* buffer = data->GetData();
   const char* bufferStart = &buffer[0];
   unsigned int readHead = 0;
