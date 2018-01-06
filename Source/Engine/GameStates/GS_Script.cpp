@@ -66,12 +66,9 @@ void GS_Script::HandleEvent(const Event *event) {
 }
 
 bool GS_Script::Update() {
-  if (nextMap != NULL) {
-    auto tempMap = nextMap;
-    auto tempEntrance = nextMapEntrance;
-    SetCurrentMap(tempMap, tempEntrance);
-    nextMap = NULL;
-    nextMapEntrance = 0;
+  if (mNextMap.mMap != NULL) {
+    SetCurrentMap(mNextMap);
+	mNextMap.Reset();
   }
   UpdateComponentManagers();
   return !quit;

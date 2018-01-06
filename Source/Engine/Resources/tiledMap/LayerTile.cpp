@@ -1,9 +1,9 @@
 #include "LayerTile.h"
 
 std::vector<std::string> TiledTileLayer::SUPPORTED_ENCODINGS = [] {
-	std::vector<std::string> v;
-	v.push_back("TMX");
-    return v;
+  std::vector<std::string> v;
+  v.push_back("TMX");
+  return v;
 }();
 
 void TiledTileLayer::InitializeMap() {
@@ -103,3 +103,13 @@ bool TiledTileLayer::UsesHMaps() const {
 }
 
 float TiledTileLayer::GetFriction() const { return friction; }
+
+void TiledTileLayer::ClearTiles() {
+  for (auto x = 0; x < tileWidth; x++) {
+    for (auto y = 0; y < tileHeight; y++) {
+      data2D[x][y] = 0;
+    }
+  }
+  Rect area(0, 0, tileWidth, tileHeight);
+  UpdateRenderArea(area);
+}

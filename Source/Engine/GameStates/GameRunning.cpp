@@ -42,7 +42,7 @@ void GameRunningState::Init(const RSC_Script *stateScript) {
   }
   K_MapMan.LoadItem(mapName, mapData);
 
-  SetCurrentMap(K_MapMan.GetItem(mapName), 2);
+  //SetCurrentMap(K_MapMan.GetItem(mapName), 2);
 
   t = new RenderText(&renderMan, 0, 0, "FR", false);
   t->SetColorI(0, 100, 50);
@@ -128,7 +128,7 @@ bool GameRunningState::Update() {
   if (changeMap) {
     DEBUGrepeat = 0;
     changeMap = false;
-    SetCurrentMap(K_MapMan.GetItem(changeMapS), changeMapEntrance);
+    //SetCurrentMap(K_MapMan.GetItem(changeMapS), changeMapEntrance);
   }
 
   // GetCurrentMap()->tiledData.AnimateAgain();

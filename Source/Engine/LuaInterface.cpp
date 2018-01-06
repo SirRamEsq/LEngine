@@ -5,9 +5,10 @@
 #include "Resolution.h"
 #include "StateManager.h"
 #include "gui/imgui_LEngine.h"
-#include "GameSave.h"
+#include "GameSave.h""math.h"
 
 #include <sstream>
+#include "math.h"
 
 void stackdump_g(lua_State *l, const std::string &logFile) {
   std::stringstream ss;
@@ -585,7 +586,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     LuaRef engineTableRef = engineRef();
 
     engineTableRef["Initialize"](id, name, fullyQualifiedScriptName.str(),
-                                 depth, parent, EID_RESERVED_STATE_ENTITY, Kernel::IsInDebugMode());
+                                 depth, parent, EID_RESERVED_STATE_ENTITY,
+                                 Kernel::IsInDebugMode());
 
     // Assign Instance to generated table
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
@@ -651,8 +653,7 @@ const RSC_Sprite *LuaInterface::LoadSpriteResource(const std::string &sprPath) {
   const RSC_Sprite *sprite = K_SpriteMan.GetItem(sprPath);
   if (sprite == NULL) {
     if (K_SpriteMan.LoadItem(sprPath, sprPath) == false) {
-      LOG_ERROR("Couldn't Load Sprite Named: " +
-                sprPath);
+      LOG_ERROR("Couldn't Load Sprite Named: " + sprPath);
       return NULL;
     }
     sprite = K_SpriteMan.GetItem(sprPath);
@@ -975,8 +976,8 @@ void LuaInterface::SwapState(const std::string &scriptPath) {
                              script);
 }
 
-bool LuaInterface::LoadMap(const std::string &mapPath,
-                           unsigned int entranceID) {
+bool LuaInterface::LoadMap(const std::string &mapPath, unsigned int entranceID,
+                           LuaRef callback) {
   const RSC_Map *m = K_MapMan.GetLoadItem(mapPath, mapPath);
   if (m == NULL) {
     std::stringstream ss;
@@ -984,7 +985,16 @@ bool LuaInterface::LoadMap(const std::string &mapPath,
     LOG_ERROR(ss.str());
     return false;
   }
-  parentState->SetMapNextFrame(m, entranceID);
+
+  // Use empty lambda if a lua function was not passed
+  if ((callback.isNil()) or (!callback.isFunction())) {
+    auto cb = [](RSC_Map *m) {};
+    parentState->SetMapNextFrame(m, entranceID, cb);
+  } else {
+    auto cb = [callback](RSC_Map *m) { callback(m); };
+    parentState->SetMapNextFrame(m, entranceID, cb);
+  }
+
   return true;
 }
 
@@ -1037,33 +1047,38 @@ GS_Script *LuaInterface::GetCurrentGameState() {
   return NULL;
 }
 
-void LuaInterface::DeleteLayer(TiledLayerGeneric *layer) {
-  parentState->DeleteMapLayer(layer);
-}
-
 void LuaInterface::SetAmbientLight(float r, float g, float b) {
   Vec3 color(r, g, b);
   parentState->comLightMan.SetAmbientLight(color);
 }
 
 LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
-    const std::string &name, luabridge::LuaRef value) {
-  auto m = GetMap();
-  auto type = value.type();
+    RSC_Map *m, const std::string &name, luabridge::LuaRef refValue) {
+  auto type = refValue.type();
   if (m != NULL) {
     if (type == LUA_TBOOLEAN) {
-      bool boolValue = (value.cast<bool>() ? "true" : "false");
-      auto layers = m->GetLayersWithProperty(name, boolValue);
+      bool value = (refValue.cast<bool>() ? "true" : "false");
+      auto layers = m->GetLayersWithProperty(name, value);
       return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
     } else if (type == LUA_TNUMBER) {
-      // case LUA_TNUMBER:
-      // auto boolValue = (value.cast<bool>() ? "true" : "false");
-      // return LB_VEC_WRAPPER<TiledLayerGeneric *>(
-      // m->GetLayersWithProperty(name, boolValue));
-      // break;
+      // check if int or float
+      double doubleValue = refValue.cast<lua_Number>();
+      double roundedValue = std::floor(doubleValue);
+      if (doubleValue == roundedValue) {
+        // Is int
+        int intValue = roundedValue;
+        auto layers = m->GetLayersWithProperty(name, intValue);
+        return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+      } else {
+        // Is Float
+        auto layers = m->GetLayersWithProperty(name, doubleValue);
+        return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+      }
+
     } else if (type == LUA_TSTRING) {
-      auto stringValue = value.cast<std::string>();
-      // return m->GetLayersWithProperty(name, stringValue);
+      auto value = refValue.cast<std::string>();
+      auto layers = m->GetLayersWithProperty(name, value);
+      return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
     }
   }
 
@@ -1156,8 +1171,6 @@ void LuaInterface::ExposeCPP() {
 
       .addFunction("ModuleLoad", &LuaInterface::ModuleLoad)
 
-      //.addFunction("DeleteLayer", &LuaInterface::DeleteLayer)
-
       .addFunction("GetCurrentGameState", &LuaInterface::GetCurrentGameState)
       .addFunction("GetLayersWithProperty",
                    &LuaInterface::GetLayersWithProperty)
@@ -1224,8 +1237,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetAnimationSpeed", &Sprite::SetAnimationSpeed)
       .addFunction("AnimationPlayOnce", &Sprite::AnimationPlayOnce)
       .addFunction("GetAnimationSpeed", &Sprite::GetAnimationSpeed)
-      .addFunction("DefaultAnimationSpeed",
-                   &Sprite::DefaultAnimationSpeed)
+      .addFunction("DefaultAnimationSpeed", &Sprite::DefaultAnimationSpeed)
       .addFunction("SetImage", &Sprite::SetImageIndex)
       .addFunction("GetImage", &Sprite::GetImageIndex)
 
@@ -1461,6 +1473,7 @@ void LuaInterface::ExposeCPP() {
 
       .beginClass<RSC_Map>("RSC_Map")
       .addFunction("GetTileLayer", &RSC_Map::GetTileLayer)
+      .addFunction("DeleteLayer", &RSC_Map::DeleteLayer)
       .addFunction("GetSolidTileLayers", &RSC_Map::GetSolidTileLayers)
       .addFunction("GetProperty", &RSC_Map::GetProperty)
       .addFunction("GetWidthTiles", &RSC_Map::GetWidthTiles)
@@ -1470,7 +1483,7 @@ void LuaInterface::ExposeCPP() {
       .endClass()
 
       .beginClass<GameSave>("GameSave")
-      .addConstructor<void (*)(const std::string&)>()
+      .addConstructor<void (*)(const std::string &)>()
       .addFunction("WriteToFile", &GameSave::WriteToFile)
       .addFunction("ReadFromFile", &GameSave::ReadFromFile)
       .addFunction("DeleteFile", &GameSave::DeleteFile)

@@ -77,7 +77,7 @@ class LuaInterface {
                  /*optional args*/ const TiledObject *obj,
                  luabridge::LuaRef *initTable);
 
-  void ExecuteString(const std::string& code);
+  void ExecuteString(const std::string &code);
   ///////////
   // General//
   ///////////
@@ -104,9 +104,8 @@ class LuaInterface {
                               const std::string &property);
   GS_Script *GetCurrentGameState();
 
-  void DeleteLayer(TiledLayerGeneric *layer);
   LB_VEC_WRAPPER<TiledLayerGeneric *> GetLayersWithProperty(
-      const std::string &name, luabridge::LuaRef value);
+      RSC_Map *m, const std::string &name, luabridge::LuaRef value);
 
   //////////////
   // Components//
@@ -191,8 +190,10 @@ class LuaInterface {
 
   /// Will swap state with a new GS_Script
   void SwapState(const std::string &scriptPath);
-  /// Will load map at specified path
-  bool LoadMap(const std::string &mapPath, unsigned int entranceID);
+  /// Will load map at specified path, then later call the callback when the new
+  /// map is loaded
+  bool LoadMap(const std::string &mapPath, unsigned int entranceID,
+               luabridge::LuaRef callback);
   /// Sets a key
   void RemapInputToNextKeyPress(const std::string &key);
   /// Gets screen resolution

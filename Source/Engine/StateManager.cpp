@@ -2,6 +2,12 @@
 #include "Kernel.h"
 #include "TiledProperties.h"
 
+void GameState::NextMap::Reset() {
+  mMap = NULL;
+  mEntranceID = 0;
+  mCallback = [](RSC_Map* m) {};
+}
+
 GameState::GameState(GameStateManager *gsm)
     : gameStateManager(gsm),
       luaInterface(this),
@@ -17,11 +23,10 @@ GameState::GameState(GameStateManager *gsm)
       comLightMan(&eventDispatcher),
 
       entityMan(gsm) {
+  mNextMap.Reset();
   mCurrentMap = NULL;
   SetDependencies();
 
-  nextMap = NULL;
-  nextMapEntrance = 0;
   isLuaState = false;
 }
 
@@ -458,9 +463,11 @@ void GameState::SetMapLinkEntities(
   }
 }
 
-void GameState::SetMapNextFrame(const RSC_Map *m, unsigned int entranceID) {
-  nextMap = m;
-  nextMapEntrance = entranceID;
+void GameState::SetMapNextFrame(const RSC_Map *m, unsigned int entranceID,
+                                Callback cb) {
+  mNextMap.mMap = m;
+  mNextMap.mEntranceID = entranceID;
+  mNextMap.mCallback = cb;
 }
 
 const std::vector<EID> *GameState::GetEIDFromName(
@@ -473,9 +480,10 @@ const std::vector<EID> *GameState::GetEIDFromName(
   return &i->second;
 }
 
-bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
+bool GameState::SetCurrentMap(NextMap nextMap) {
+  auto m = nextMap.mMap;
   if (m == NULL) {
-    LOG_ERROR("GameState::SetCurrentTiledMap was passed a NULL Pointer");
+    LOG_ERROR("NextMap.mMap is NULL");
     return false;
   }
 
@@ -506,6 +514,8 @@ bool GameState::SetCurrentMap(const RSC_Map *m, unsigned int entranceID) {
   auto objectsUsingEntrance = SetMapGetEntitiesUsingEntrances(layers);
 
   SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
+
+  nextMap.mCallback(mCurrentMap.get());
 
   return true;
 }

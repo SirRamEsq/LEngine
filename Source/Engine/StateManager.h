@@ -41,6 +41,14 @@ class GameState {
   friend ComponentLightManager;
 
  public:
+  typedef std::function<void(RSC_Map *)> Callback;
+  struct NextMap {
+    const RSC_Map *mMap;
+    unsigned int mEntranceID;
+    GameState::Callback mCallback;
+    void Reset();
+  };
+
   bool IsLuaState() const { return isLuaState; }
   GameState(GameStateManager *gsm);
 
@@ -53,7 +61,7 @@ class GameState {
   RenderManager renderMan;
   /// Stores passed arguments till the start of the next frame, then loads the
   /// map
-  void SetMapNextFrame(const RSC_Map *m, unsigned int entranceID);
+  void SetMapNextFrame(const RSC_Map *m, unsigned int entranceID, Callback cb);
 
   /// Creates a new Entity next frame
   EID CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p);
@@ -101,10 +109,9 @@ class GameState {
   std::shared_ptr<InputManager::KeyMapping> input;
 
   void DrawPreviousState();
-  bool SetCurrentMap(const RSC_Map *m, unsigned int entranceID);
+  bool SetCurrentMap(NextMap nextMap);
 
-  const RSC_Map *nextMap;
-  unsigned int nextMapEntrance;
+  NextMap mNextMap;
 
   /// used by LuaInterface to determine if this state is a GS_Script
   bool isLuaState;

@@ -55,7 +55,7 @@ class TiledData {
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
-      const std::string &name, float value);
+      const std::string &name, double value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, int value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
@@ -149,7 +149,7 @@ class RSC_Map {
   virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value) = 0;
   virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
-      const std::string &name, float value) = 0;
+      const std::string &name, double value) = 0;
   virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, int value) = 0;
   virtual std::vector<TiledLayerGeneric *> GetLayersWithProperty(
@@ -160,6 +160,7 @@ class RSC_Map {
   /// \TODO remove 'GetTiledData' from RSC_MAP Interface, the user of this class
   /// should not need to access the Tiled Data
   virtual TiledData *GetTiledData() = 0;
+  virtual void DeleteLayer(TiledLayerGeneric *layer) = 0;
 };
 
 class RSC_MapImpl : public RSC_Map {
@@ -174,6 +175,7 @@ class RSC_MapImpl : public RSC_Map {
   std::unique_ptr<TiledData> tiledData;
 
   static std::unique_ptr<RSC_Map> LoadResource(const std::string &fname);
+  void DeleteLayer(TiledLayerGeneric *layer);
 
   unsigned int GetWidthTiles() const;
   unsigned int GetHeightTiles() const;
@@ -185,7 +187,7 @@ class RSC_MapImpl : public RSC_Map {
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
-      const std::string &name, float value);
+      const std::string &name, double value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, int value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(

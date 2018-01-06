@@ -45,6 +45,8 @@ class TiledTileLayer : public TiledLayerGeneric {
 
   TiledSet *GetTiledSet() const { return tileSet; }
 
+  void ClearTiles();
+
   mutable std::vector<Rect> updatedAreas;
 
  protected:

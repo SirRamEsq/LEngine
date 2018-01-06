@@ -126,21 +126,22 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
 void TiledData::DeleteLayer(TiledLayerGeneric *layer) {
   for (auto i = tiledImageLayers.begin(); i != tiledImageLayers.end(); i++) {
     if (i->get() == layer) {
-      tiledImageLayers.erase(i);
+      //tiledImageLayers.erase(i);
       return;
     }
   }
 
   for (auto i = tiledTileLayers.begin(); i != tiledTileLayers.end(); i++) {
     if (i->get() == layer) {
-      tiledTileLayers.erase(i);
+      auto tileLayer = (TiledTileLayer *)(layer);
+      tileLayer->ClearTiles();
       return;
     }
   }
 
   for (auto i = tiledObjectLayers.begin(); i != tiledObjectLayers.end(); i++) {
     if (i->get() == layer) {
-      tiledObjectLayers.erase(i);
+      //tiledObjectLayers.erase(i);
       return;
     }
   }
@@ -208,7 +209,7 @@ std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
   return tiledData->GetLayersWithProperty(name, value);
 }
 std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
-    const std::string &name, float value) {
+    const std::string &name, double value) {
   return tiledData->GetLayersWithProperty(name, value);
 }
 std::vector<TiledLayerGeneric *> RSC_MapImpl::GetLayersWithProperty(
@@ -278,7 +279,7 @@ std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
   return layers;
 }
 std::vector<TiledLayerGeneric *> TiledData::GetLayersWithProperty(
-    const std::string &name, float value) {
+    const std::string &name, double value) {
   std::vector<TiledLayerGeneric *> layers;
   for (auto i = tiledLayers.begin(); i != tiledLayers.end(); i++) {
     if (i->second->PropertyExists(name)) {
@@ -444,20 +445,24 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
                                // entities it listens to
       std::string listenString = "";
       std::string scriptString = "";
+	  double ambientR = 1.0f;
+	  double ambientG = 1.0f;
+	  double ambientB = 1.0f;
 
       TMXLoadProperties(node, tiledData->properties);
 
       attributes.clear();
-      attributes["SCRIPT"] = XML_Attribute("string", &scriptString);
-      attributes["LISTEN"] = XML_Attribute("string", &listenString);
+      //attributes["SCRIPT"] = XML_Attribute("string", &scriptString);
+      //attributes["LISTEN"] = XML_Attribute("string", &listenString);
+      attributes["_AMBIENT_R"] = XML_Attribute("double", &ambientR);
+      attributes["_AMBIENT_G"] = XML_Attribute("double", &ambientG);
+      attributes["_AMBIENT_B"] = XML_Attribute("double", &ambientB);
       TMXLoadAttributesFromProperties(&tiledData->properties, attributes);
 
       if (scriptString == "") {
         continue;
       }
 
-      // globalScriptName=scriptString;
-      // TiledData::TMXProcessEventListeners(listenString,mEventSources);
     }
 
     else if (nn == "tileset") {
@@ -1022,12 +1027,14 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
       auto frameNode = animationsNode->first_node("frame");
       TileAnimation animation;
       for (; frameNode != 0; frameNode = frameNode->next_sibling()) {
-		  TileAnimation::Frame f;
-        f.tileID = StringToNumber<int>(frameNode->first_attribute("tileid")->value());
-		f.tileID += tilesetFirstGID;
-        float length = StringToNumber<int>(frameNode->first_attribute("duration")->value());
-		length = (length / 1000) * 60;
-		f.length = int(length);
+        TileAnimation::Frame f;
+        f.tileID =
+            StringToNumber<int>(frameNode->first_attribute("tileid")->value());
+        f.tileID += tilesetFirstGID;
+        float length = StringToNumber<int>(
+            frameNode->first_attribute("duration")->value());
+        length = (length / 1000) * 60;
+        f.length = int(length);
         animation.frames.push_back(f);
       }
       returnSmartPonter->AddTileAnimation(tilePropertyID, animation);
@@ -1035,4 +1042,8 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
   }
 
   return returnSmartPonter;
+}
+
+void RSC_MapImpl::DeleteLayer(TiledLayerGeneric *layer) {
+  tiledData->DeleteLayer(layer);
 }
