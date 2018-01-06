@@ -515,6 +515,7 @@ bool GameState::SetCurrentMap(NextMap nextMap) {
 
   SetMapLinkEntities(layers, tiledIDtoEntityID, objectsUsingEntrance);
 
+  comLightMan.SetAmbientLight(mCurrentMap->GetAmbientLight());
   nextMap.mCallback(mCurrentMap.get());
 
   return true;

@@ -1474,6 +1474,7 @@ void LuaInterface::ExposeCPP() {
       .beginClass<RSC_Map>("RSC_Map")
       .addFunction("GetTileLayer", &RSC_Map::GetTileLayer)
       .addFunction("DeleteLayer", &RSC_Map::DeleteLayer)
+      .addFunction("GetAmbientLight", &RSC_Map::GetAmbientLight)
       .addFunction("GetSolidTileLayers", &RSC_Map::GetSolidTileLayers)
       .addFunction("GetProperty", &RSC_Map::GetProperty)
       .addFunction("GetWidthTiles", &RSC_Map::GetWidthTiles)

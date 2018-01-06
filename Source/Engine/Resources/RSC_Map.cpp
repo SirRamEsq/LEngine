@@ -52,6 +52,8 @@ TiledData::TiledData(const TiledData &rhs)
   }
 
   CopyPropertyMap(rhs.properties, properties);
+
+  mAmbientLight = rhs.mAmbientLight;
 }
 
 TiledData::~TiledData() {}
@@ -126,7 +128,7 @@ bool TiledData::AddLayer(std::unique_ptr<TiledLayerGeneric> layer) {
 void TiledData::DeleteLayer(TiledLayerGeneric *layer) {
   for (auto i = tiledImageLayers.begin(); i != tiledImageLayers.end(); i++) {
     if (i->get() == layer) {
-      //tiledImageLayers.erase(i);
+      // tiledImageLayers.erase(i);
       return;
     }
   }
@@ -141,7 +143,7 @@ void TiledData::DeleteLayer(TiledLayerGeneric *layer) {
 
   for (auto i = tiledObjectLayers.begin(); i != tiledObjectLayers.end(); i++) {
     if (i->get() == layer) {
-      //tiledObjectLayers.erase(i);
+      // tiledObjectLayers.erase(i);
       return;
     }
   }
@@ -325,6 +327,9 @@ TiledLayerGeneric *TiledData::GetLayer(const std::string &name) {
   return tiledLayers[name];
 }
 
+Vec3 TiledData::GetAmbientLight() { return mAmbientLight; }
+void TiledData::SetAmbientLight(Vec3 light) { mAmbientLight = light; }
+
 std::unique_ptr<RSC_Map> RSC_MapImpl::LoadResource(const std::string &fname) {
   std::unique_ptr<RSC_MapImpl> rscMap = NULL;
   try {
@@ -399,7 +404,10 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   attributes["tilewidth"] = XML_Attribute("unsigned int", &sizeOfTileWidth);
   attributes["tileheight"] = XML_Attribute("unsigned int", &sizeOfTileHeight);
   TMXLoadAttributes(node, attributes);
+
   auto tiledData = std::make_unique<TiledData>(tilesWide, tilesHigh);
+      Vec3 light(1.0f, 1.0f, 1.0f);
+      tiledData->SetAmbientLight(light);
 
   if ((sizeOfTileWidth != LENGINE_DEF_TILE_W) or
       (sizeOfTileHeight != LENGINE_DEF_TILE_H)) {
@@ -445,19 +453,21 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
                                // entities it listens to
       std::string listenString = "";
       std::string scriptString = "";
-	  double ambientR = 1.0f;
-	  double ambientG = 1.0f;
-	  double ambientB = 1.0f;
+      double ambientR = 1.0f;
+      double ambientG = 1.0f;
+      double ambientB = 1.0f;
 
       TMXLoadProperties(node, tiledData->properties);
 
       attributes.clear();
-      //attributes["SCRIPT"] = XML_Attribute("string", &scriptString);
-      //attributes["LISTEN"] = XML_Attribute("string", &listenString);
+      // attributes["SCRIPT"] = XML_Attribute("string", &scriptString);
+      // attributes["LISTEN"] = XML_Attribute("string", &listenString);
       attributes["_AMBIENT_R"] = XML_Attribute("double", &ambientR);
       attributes["_AMBIENT_G"] = XML_Attribute("double", &ambientG);
       attributes["_AMBIENT_B"] = XML_Attribute("double", &ambientB);
       TMXLoadAttributesFromProperties(&tiledData->properties, attributes);
+      Vec3 light(ambientR, ambientG, ambientB);
+      tiledData->SetAmbientLight(light);
 
       if (scriptString == "") {
         continue;
@@ -1047,3 +1057,9 @@ std::unique_ptr<TiledSet> TiledData::TMXLoadTiledSet(
 void RSC_MapImpl::DeleteLayer(TiledLayerGeneric *layer) {
   tiledData->DeleteLayer(layer);
 }
+
+void RSC_MapImpl::SetAmbientLight(Vec3 light) {
+  tiledData->SetAmbientLight(light);
+}
+
+Vec3 RSC_MapImpl::GetAmbientLight() { return tiledData->GetAmbientLight(); }

@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "../glslHelper.h"
+
 #include "RSC_Heightmap.h"
 #include "RSC_Sprite.h"
 
@@ -66,6 +68,9 @@ class TiledData {
   unsigned int GetWidth() { return width; }
   unsigned int GetHeight() { return height; }
 
+  Vec3 GetAmbientLight();
+  void SetAmbientLight(Vec3 light);
+
   GIDManager gid;
   const unsigned int width;
   const unsigned int height;
@@ -107,6 +112,7 @@ class TiledData {
   tEntrances mMapEntrances;
 
  private:
+  Vec3 mAmbientLight;
   static std::unique_ptr<TiledSet> TMXLoadTiledSet(
       rapidxml::xml_node<> *tiledSetRootNode, const GID &firstGID,
       GIDManager &gidManager);
@@ -161,6 +167,9 @@ class RSC_Map {
   /// should not need to access the Tiled Data
   virtual TiledData *GetTiledData() = 0;
   virtual void DeleteLayer(TiledLayerGeneric *layer) = 0;
+
+  virtual Vec3 GetAmbientLight() = 0;
+  virtual void SetAmbientLight(Vec3 light) = 0;
 };
 
 class RSC_MapImpl : public RSC_Map {
@@ -199,6 +208,9 @@ class RSC_MapImpl : public RSC_Map {
   EID GetEIDFromName(const std::string &name) const;
 
   TiledData *GetTiledData();
+
+  Vec3 GetAmbientLight();
+  void SetAmbientLight(Vec3 light);
 
  private:
   const std::string mMapName;
