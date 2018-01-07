@@ -6,16 +6,16 @@ GameStateMock::GameStateMock(GameStateManager *gm) : GameState(gm) {
   close = false;
   updateCount = 0;
   drawCount = 0;
+  mNextMap.Reset();
 }
 void GameStateMock::Init(const RSC_Script *stateScript) { init = true; }
 void GameStateMock::Close() { close = true; }
 void GameStateMock::Resume() { resume = true; }
 void GameStateMock::HandleEvent(const Event *) {}
 bool GameStateMock::Update() {
-  if (nextMap != NULL) {
-    SetCurrentMap(nextMap, nextMapEntrance);
-    nextMap = NULL;
-    nextMapEntrance = NULL;
+  if (mNextMap.mMap != NULL) {
+    SetCurrentMap(mNextMap);
+    mNextMap.Reset();
   }
   updateCount += 1;
   return true;

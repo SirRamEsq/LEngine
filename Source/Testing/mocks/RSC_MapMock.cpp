@@ -58,7 +58,7 @@ std::vector<TiledLayerGeneric *> RSC_MapMock::GetLayersWithProperty(
   return layers;
 }
 std::vector<TiledLayerGeneric *> RSC_MapMock::GetLayersWithProperty(
-    const std::string &name, float value) {
+    const std::string &name, double value) {
   std::vector<TiledLayerGeneric *> layers;
   return layers;
 }

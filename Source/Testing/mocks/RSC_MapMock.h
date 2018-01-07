@@ -19,6 +19,10 @@ class RSC_MapMock : public RSC_Map {
   unsigned int GetWidthPixels() const;
   unsigned int GetHeightPixels() const;
 
+  Vec3 GetAmbientLight(){return Vec3();}
+  void SetAmbientLight(Vec3 light) {}
+  void DeleteLayer(TiledLayerGeneric *layer){}
+
   std::vector<TiledTileLayer *> GetSolidTileLayers();
 
   std::string GetProperty(const std::string &property) const;
@@ -32,7 +36,7 @@ class RSC_MapMock : public RSC_Map {
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, const std::string &value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
-      const std::string &name, float value);
+      const std::string &name, double value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       const std::string &name, int value);
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
