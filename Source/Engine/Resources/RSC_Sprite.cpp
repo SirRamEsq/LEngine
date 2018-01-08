@@ -25,8 +25,8 @@ void LAnimation::CalculateUV(int textureWidth, int textureHeight) {
     float rightUV = ((float)(*i).rect.GetRight()) / textureWidth;
     float bottomUV = ((float)(*i).rect.GetBottom()) / textureHeight;
 
-    UVCoords.push_back(std::pair<Coord2df, Coord2df>(
-        Coord2df(leftUV, topUV), Coord2df(rightUV, bottomUV)));
+    UVCoords.push_back(std::pair<Vec2, Vec2>(
+        Vec2(leftUV, topUV), Vec2(rightUV, bottomUV)));
   }
   isUVCalculated = true;
 }
@@ -75,7 +75,7 @@ int LAnimation::GetFrameFromTimeElapsed(float time) const {
 
   return index;
 }
-std::pair<Coord2df, Coord2df> LAnimation::GetUVRandom(int index) const {
+std::pair<Vec2, Vec2> LAnimation::GetUVRandom(int index) const {
   if ((ValidateIndex(index)) and (isUVCalculated)) {
     // Get float between 0.0 and 1.0
     float normalizedRandom = ((float)rand() / (RAND_MAX));
@@ -102,10 +102,10 @@ std::pair<Coord2df, Coord2df> LAnimation::GetUVRandom(int index) const {
     normalizedRandom = ((float)rand() / (RAND_MAX));
     topUV = bottomUV - ((bottomUV - GetUVTop(index)) * normalizedRandom);
 
-    return std::pair<Coord2df, Coord2df>(Coord2df(leftUV, topUV),
-                                         Coord2df(rightUV, bottomUV));
+    return std::pair<Vec2, Vec2>(Vec2(leftUV, topUV),
+                                         Vec2(rightUV, bottomUV));
   }
-  return std::pair<Coord2df, Coord2df>(Coord2df(0, 0), Coord2df(0, 0));
+  return std::pair<Vec2, Vec2>(Vec2(0, 0), Vec2(0, 0));
 }
 
 bool LAnimation::ValidateIndex(int index) const {

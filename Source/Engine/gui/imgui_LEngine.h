@@ -11,21 +11,21 @@ void BeginWrapper(const std::string &name);
 /// Begin new Window with flags
 void BeginFlags(const std::string &name, int flags);
 
-void SetWindowPosWrapper(const char *name, const Coord2df &pos,
+void SetWindowPosWrapper(const char *name, const Vec2 &pos,
                          ImGuiSetCond cond = 0);
-void SetWindowSizeWrapper(const char *name, const Coord2df &size,
+void SetWindowSizeWrapper(const char *name, const Vec2 &size,
                           ImGuiSetCond cond = 0);
-Coord2df GetWindowSizeWrapper();
+Vec2 GetWindowSizeWrapper();
 
-void SetNextWindowSizeWrapper(const Coord2df &size, ImGuiSetCond cond = 0);
-void SetNextWindowPosWrapper(const Coord2df &pos, ImGuiSetCond cond = 0);
+void SetNextWindowSizeWrapper(const Vec2 &size, ImGuiSetCond cond = 0);
+void SetNextWindowPosWrapper(const Vec2 &pos, ImGuiSetCond cond = 0);
 void SetNextWindowPosCenterWrapper(ImGuiSetCond cond = 0);
 /// Must pass y Value
 void SetNextWindowPosCenterWrapperX(float y, ImGuiSetCond cond = 0);
 /// Must pass x Value
 void SetNextWindowPosCenterWrapperY(float x, ImGuiSetCond cond = 0);
-void SetNextWindowSizeConstraintsWrapper(const Coord2df &size_min,
-                                         const Coord2df &size_max);
+void SetNextWindowSizeConstraintsWrapper(const Vec2 &size_min,
+                                         const Vec2 &size_max);
 
 /// Display Text
 void TextWrapper(const std::string &str);
@@ -47,7 +47,7 @@ bool SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
  * \param fraction Amount of progress bar that is full, between 0.0f and 1.0f
  * \param screenSize Pixels taken for each axis
  */
-void ProgressBarWrapper(float fraction, const Coord2df &screenSize);
+void ProgressBarWrapper(float fraction, const Vec2 &screenSize);
 
 /// Display the next widget on the same line as the previous widget
 void SameLineWrapper();
@@ -55,15 +55,15 @@ void SameLineWrapper();
 ////////////////////
 // Parameter Stacks//
 ////////////////////
-void PushStyleColorWindowBG(const Color4f &c);
-void PushStyleColorButton(const Color4f &c);
-void PushStyleColorButtonHovered(const Color4f &c);
-void PushStyleColorButtonActive(const Color4f &c);
-void PushStyleColorFrameBG(const Color4f &c);
-void PushStyleColorFrameBGHovered(const Color4f &c);
-void PushStyleColorFrameBGActive(const Color4f &c);
-void PushStyleColorPlotHistogram(const Color4f &c);
-void PushStyleColorText(const Color4f &c);
+void PushStyleColorWindowBG(const Vec4 &c);
+void PushStyleColorButton(const Vec4 &c);
+void PushStyleColorButtonHovered(const Vec4 &c);
+void PushStyleColorButtonActive(const Vec4 &c);
+void PushStyleColorFrameBG(const Vec4 &c);
+void PushStyleColorFrameBGHovered(const Vec4 &c);
+void PushStyleColorFrameBGActive(const Vec4 &c);
+void PushStyleColorPlotHistogram(const Vec4 &c);
+void PushStyleColorText(const Vec4 &c);
 
 // Returns true if font is pushed
 bool PushFontWrapper(const std::string &name, int size);
@@ -73,8 +73,8 @@ void PopFontWrapper();
 // INTERNAL//
 ////////////
 void CalculateUV(const RSC_Sprite *sprite, const std::string &animation,
-                 int frame, ImTextureID &textureID, Coord2df &size,
-                 Coord2df &startUV, Coord2df &endUV);
+                 int frame, ImTextureID &textureID, Vec2 &size,
+                 Vec2 &startUV, Vec2 &endUV);
 };
 
 #endif

@@ -37,7 +37,7 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
   // set TILE to 1 at 2,2
   testMap.layer.SetGID(solidX, solidY, 1);
   // set position to be collided with at tile 2,2
-  Coord2df pos(2 * LENGINE_DEF_TILE_W, 2 * LENGINE_DEF_TILE_H);
+  Vec2 pos(2 * LENGINE_DEF_TILE_W, 2 * LENGINE_DEF_TILE_H);
 
   EventDispatcher eventDispatcher;
   EntityManager entityMan(&dummyManager);
@@ -214,7 +214,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
   EID entity = EID_MIN;
   // setup 5 entities
   for (int i = 0; i < 5; i++) {
-    Coord2df pos(16 * i, 8 * i);
+    Vec2 pos(16 * i, 8 * i);
 
     positionManager.AddComponent(entity);
     collisionManager.AddComponent(entity);
@@ -241,7 +241,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
     REQUIRE(0 == callbackValueEntity);
 
     auto compPos = positionManager.GetComponent(EID_MIN);
-    Coord2df pos(16, 8);
+    Vec2 pos(16, 8);
     compPos->SetPositionLocal(pos);
 
     collisionManager.UpdateBuckets(testMap.GetWidthPixels());
@@ -262,7 +262,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
 
     // two large entities overlapping
     for (int i = 0; i < 2; i++) {
-      Coord2df pos(COLLISION_GRID_SIZE * 10, COLLISION_GRID_SIZE * 10);
+      Vec2 pos(COLLISION_GRID_SIZE * 10, COLLISION_GRID_SIZE * 10);
 
       positionManager.AddComponent(entity);
       collisionManager.AddComponent(entity);

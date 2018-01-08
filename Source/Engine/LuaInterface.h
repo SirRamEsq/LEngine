@@ -45,14 +45,14 @@ struct EntityCreationPacket {
    * \param type Types that an entity uses
    * \param propertyTable Extra lua properties
    */
-  EntityCreationPacket(std::vector<std::string> scripts, Coord2df pos,
+  EntityCreationPacket(std::vector<std::string> scripts, Vec2 pos,
                        MAP_DEPTH depth, EID parent, const std::string &name,
                        luabridge::LuaRef propertyTable);
 
   EID mParent;
   EID mNewEID;
   MAP_DEPTH mDepth;
-  Coord2df mPos;
+  Vec2 mPos;
   std::vector<std::string> mScriptNames;
   std::string mEntityName;
   luabridge::LuaRef mPropertyTable;
@@ -94,7 +94,7 @@ class LuaInterface {
   void PlayMusic(const std::string &musName, int volume, int loops);
   const RSC_Sprite *LoadSpriteResource(const std::string &sprPath);
 
-  Coord2df GetMousePosition();
+  Vec2 GetMousePosition();
   float GetMouseWheel();
   bool GetMouseButtonLeft();
   bool GetMouseButtonRight();
@@ -129,8 +129,8 @@ class LuaInterface {
   ////////////
   const std::vector<EID> *EntityGetFromName(const std::string &name);
   luabridge::LuaRef EntityGetInterface(const EID &id);
-  Coord2df EntityGetPositionWorld(EID entity);
-  Coord2df EntityGetMovement(EID entity);
+  Vec2 EntityGetPositionWorld(EID entity);
+  Vec2 EntityGetMovement(EID entity);
 
   EID EntityNew(std::string name, int x, int y, MAP_DEPTH depth, EID parent,
                 luabridge::LuaRef scripts, luabridge::LuaRef propertyTable);
@@ -197,8 +197,8 @@ class LuaInterface {
   /// Sets a key
   void RemapInputToNextKeyPress(const std::string &key);
   /// Gets screen resolution
-  Coord2df GetResolution();
-  Coord2df GetVirtualResolution();
+  Vec2 GetResolution();
+  Vec2 GetVirtualResolution();
   void SimulateKeyPress(const std::string &keyName);
   void SimulateKeyRelease(const std::string &keyName);
   bool RecordKeysBegin();

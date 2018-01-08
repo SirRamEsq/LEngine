@@ -31,9 +31,9 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]") {
     float xaccl = 0.2f;
     float yaccl = 0.1f;
 
-    posComp->SetPositionLocal(Coord2df(startX, startY));
-    posComp->SetMovement(Coord2df(xspd, yspd));
-    posComp->SetAcceleration(Coord2df(xaccl, yaccl));
+    posComp->SetPositionLocal(Vec2(startX, startY));
+    posComp->SetMovement(Vec2(xspd, yspd));
+    posComp->SetAcceleration(Vec2(xaccl, yaccl));
 
     posComp->Update();
 
@@ -66,13 +66,13 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]") {
     float childX = 4.0f;
     float childY = 2.0f;
 
-    parent->SetPositionLocal(Coord2df(parentX, parentY));
-    child->SetPositionLocal(Coord2df(childX, childY));
+    parent->SetPositionLocal(Vec2(parentX, parentY));
+    child->SetPositionLocal(Vec2(childX, childY));
 
     float parentXspd = 2.0f;
     float parentYspd = 1.0f;
-    parent->SetMovement(Coord2df(parentXspd, parentYspd));
-    child->SetMovement(Coord2df(0.0f, 0.0f));
+    parent->SetMovement(Vec2(parentXspd, parentYspd));
+    child->SetMovement(Vec2(0.0f, 0.0f));
 
     // parent should be updated before child
     posMan->Update();
@@ -111,13 +111,13 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]") {
     float childX = 4.0f;
     float childY = 2.0f;
 
-    parent->SetPositionLocal(Coord2df(parentX, parentY));
-    child->SetPositionLocal(Coord2df(childX, childY));
+    parent->SetPositionLocal(Vec2(parentX, parentY));
+    child->SetPositionLocal(Vec2(childX, childY));
 
     float parentXspd = 2.0f;
     float parentYspd = 1.0f;
-    parent->SetMovement(Coord2df(parentXspd, parentYspd));
-    child->SetMovement(Coord2df(0.0f, 0.0f));
+    parent->SetMovement(Vec2(parentXspd, parentYspd));
+    child->SetMovement(Vec2(0.0f, 0.0f));
 
     posMan->Update();
 
@@ -141,7 +141,7 @@ TEST_CASE("Test ComponentPosition and Manager", "[position]") {
     float childWorldX = 50.0f;
     float childWorldY = 50.0f;
 
-    child->SetPositionWorld(Coord2df(childWorldX, childWorldY));
+    child->SetPositionWorld(Vec2(childWorldX, childWorldY));
     REQUIRE(child->GetPositionWorld().x == Approx(childWorldX));
     REQUIRE(child->GetPositionWorld().y == Approx(childWorldY));
     // The local position of the child should be the difference between

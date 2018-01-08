@@ -234,12 +234,12 @@ WindowBg background behind the title bar.
                        This helper function will convert an old
 TitleBg/TitleBgActive color into a new one with the same visual output, given
 the OLD color and the OLD WindowBg color.
-                           ImVec4 ConvertTitleBgCol(const ImVec4& win_bg_col,
-const ImVec4& title_bg_col)
+                           ImColor4f ConvertTitleBgCol(const ImColor4f& win_bg_col,
+const ImColor4f& title_bg_col)
                            {
                                float new_a = 1.0f - ((1.0f - win_bg_col.w) *
 (1.0f - title_bg_col.w)), k = title_bg_col.w / new_a;
-                               return ImVec4((win_bg_col.x * win_bg_col.w +
+                               return ImColor4f((win_bg_col.x * win_bg_col.w +
 title_bg_col.x) * k, (win_bg_col.y * win_bg_col.w + title_bg_col.y) * k,
 (win_bg_col.z * win_bg_col.w + title_bg_col.z) * k, new_a);
                            }
@@ -256,7 +256,7 @@ label, const char* str_id = NULL, bool display_frame = true, bool default_open =
 false) as extra parameters were badly designed and rarely used. You can replace
 the "default_open = true" flag in new API with CollapsingHeader(label,
 ImGuiTreeNodeFlags_DefaultOpen).
- - 2016/04/26 (1.49) - changed ImDrawList::PushClipRect(ImVec4 rect) to
+ - 2016/04/26 (1.49) - changed ImDrawList::PushClipRect(ImColor4f rect) to
 ImDraw::PushClipRect(Imvec2 min,ImVec2 max,bool
 intersect_with_current_clip_rect=false). Note that higher-level
 ImGui::PushClipRect() is preferable because it will clip at logic/widget level,
@@ -1237,51 +1237,51 @@ ImGuiStyle::ImGuiStyle() {
                                  // tessellated curves (higher quality, more
                                  // polygons), increase to reduce quality.
 
-  Colors[ImGuiCol_Text] = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-  Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-  Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.70f);
-  Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-  Colors[ImGuiCol_PopupBg] = ImVec4(0.05f, 0.05f, 0.10f, 0.90f);
-  Colors[ImGuiCol_Border] = ImVec4(0.70f, 0.70f, 0.70f, 0.65f);
-  Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-  Colors[ImGuiCol_FrameBg] = ImVec4(
+  Colors[ImGuiCol_Text] = ImColor4f(0.90f, 0.90f, 0.90f, 1.00f);
+  Colors[ImGuiCol_TextDisabled] = ImColor4f(0.60f, 0.60f, 0.60f, 1.00f);
+  Colors[ImGuiCol_WindowBg] = ImColor4f(0.00f, 0.00f, 0.00f, 0.70f);
+  Colors[ImGuiCol_ChildWindowBg] = ImColor4f(0.00f, 0.00f, 0.00f, 0.00f);
+  Colors[ImGuiCol_PopupBg] = ImColor4f(0.05f, 0.05f, 0.10f, 0.90f);
+  Colors[ImGuiCol_Border] = ImColor4f(0.70f, 0.70f, 0.70f, 0.65f);
+  Colors[ImGuiCol_BorderShadow] = ImColor4f(0.00f, 0.00f, 0.00f, 0.00f);
+  Colors[ImGuiCol_FrameBg] = ImColor4f(
       0.80f, 0.80f, 0.80f,
       0.30f);  // Background of checkbox, radio button, plot, slider, text input
-  Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.90f, 0.80f, 0.80f, 0.40f);
-  Colors[ImGuiCol_FrameBgActive] = ImVec4(0.90f, 0.65f, 0.65f, 0.45f);
-  Colors[ImGuiCol_TitleBg] = ImVec4(0.27f, 0.27f, 0.54f, 0.83f);
-  Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.40f, 0.40f, 0.80f, 0.20f);
-  Colors[ImGuiCol_TitleBgActive] = ImVec4(0.32f, 0.32f, 0.63f, 0.87f);
-  Colors[ImGuiCol_MenuBarBg] = ImVec4(0.40f, 0.40f, 0.55f, 0.80f);
-  Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.20f, 0.25f, 0.30f, 0.60f);
-  Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.40f, 0.40f, 0.80f, 0.30f);
-  Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.40f, 0.40f, 0.80f, 0.40f);
-  Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.80f, 0.50f, 0.50f, 0.40f);
-  Colors[ImGuiCol_ComboBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.99f);
-  Colors[ImGuiCol_CheckMark] = ImVec4(0.90f, 0.90f, 0.90f, 0.50f);
-  Colors[ImGuiCol_SliderGrab] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
-  Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.80f, 0.50f, 0.50f, 1.00f);
-  Colors[ImGuiCol_Button] = ImVec4(0.67f, 0.40f, 0.40f, 0.60f);
-  Colors[ImGuiCol_ButtonHovered] = ImVec4(0.67f, 0.40f, 0.40f, 1.00f);
-  Colors[ImGuiCol_ButtonActive] = ImVec4(0.80f, 0.50f, 0.50f, 1.00f);
-  Colors[ImGuiCol_Header] = ImVec4(0.40f, 0.40f, 0.90f, 0.45f);
-  Colors[ImGuiCol_HeaderHovered] = ImVec4(0.45f, 0.45f, 0.90f, 0.80f);
-  Colors[ImGuiCol_HeaderActive] = ImVec4(0.53f, 0.53f, 0.87f, 0.80f);
-  Colors[ImGuiCol_Column] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-  Colors[ImGuiCol_ColumnHovered] = ImVec4(0.70f, 0.60f, 0.60f, 1.00f);
-  Colors[ImGuiCol_ColumnActive] = ImVec4(0.90f, 0.70f, 0.70f, 1.00f);
-  Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
-  Colors[ImGuiCol_ResizeGripHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.60f);
-  Colors[ImGuiCol_ResizeGripActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.90f);
-  Colors[ImGuiCol_CloseButton] = ImVec4(0.50f, 0.50f, 0.90f, 0.50f);
-  Colors[ImGuiCol_CloseButtonHovered] = ImVec4(0.70f, 0.70f, 0.90f, 0.60f);
-  Colors[ImGuiCol_CloseButtonActive] = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
-  Colors[ImGuiCol_PlotLines] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-  Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-  Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-  Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-  Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.00f, 0.00f, 1.00f, 0.35f);
-  Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+  Colors[ImGuiCol_FrameBgHovered] = ImColor4f(0.90f, 0.80f, 0.80f, 0.40f);
+  Colors[ImGuiCol_FrameBgActive] = ImColor4f(0.90f, 0.65f, 0.65f, 0.45f);
+  Colors[ImGuiCol_TitleBg] = ImColor4f(0.27f, 0.27f, 0.54f, 0.83f);
+  Colors[ImGuiCol_TitleBgCollapsed] = ImColor4f(0.40f, 0.40f, 0.80f, 0.20f);
+  Colors[ImGuiCol_TitleBgActive] = ImColor4f(0.32f, 0.32f, 0.63f, 0.87f);
+  Colors[ImGuiCol_MenuBarBg] = ImColor4f(0.40f, 0.40f, 0.55f, 0.80f);
+  Colors[ImGuiCol_ScrollbarBg] = ImColor4f(0.20f, 0.25f, 0.30f, 0.60f);
+  Colors[ImGuiCol_ScrollbarGrab] = ImColor4f(0.40f, 0.40f, 0.80f, 0.30f);
+  Colors[ImGuiCol_ScrollbarGrabHovered] = ImColor4f(0.40f, 0.40f, 0.80f, 0.40f);
+  Colors[ImGuiCol_ScrollbarGrabActive] = ImColor4f(0.80f, 0.50f, 0.50f, 0.40f);
+  Colors[ImGuiCol_ComboBg] = ImColor4f(0.20f, 0.20f, 0.20f, 0.99f);
+  Colors[ImGuiCol_CheckMark] = ImColor4f(0.90f, 0.90f, 0.90f, 0.50f);
+  Colors[ImGuiCol_SliderGrab] = ImColor4f(1.00f, 1.00f, 1.00f, 0.30f);
+  Colors[ImGuiCol_SliderGrabActive] = ImColor4f(0.80f, 0.50f, 0.50f, 1.00f);
+  Colors[ImGuiCol_Button] = ImColor4f(0.67f, 0.40f, 0.40f, 0.60f);
+  Colors[ImGuiCol_ButtonHovered] = ImColor4f(0.67f, 0.40f, 0.40f, 1.00f);
+  Colors[ImGuiCol_ButtonActive] = ImColor4f(0.80f, 0.50f, 0.50f, 1.00f);
+  Colors[ImGuiCol_Header] = ImColor4f(0.40f, 0.40f, 0.90f, 0.45f);
+  Colors[ImGuiCol_HeaderHovered] = ImColor4f(0.45f, 0.45f, 0.90f, 0.80f);
+  Colors[ImGuiCol_HeaderActive] = ImColor4f(0.53f, 0.53f, 0.87f, 0.80f);
+  Colors[ImGuiCol_Column] = ImColor4f(0.50f, 0.50f, 0.50f, 1.00f);
+  Colors[ImGuiCol_ColumnHovered] = ImColor4f(0.70f, 0.60f, 0.60f, 1.00f);
+  Colors[ImGuiCol_ColumnActive] = ImColor4f(0.90f, 0.70f, 0.70f, 1.00f);
+  Colors[ImGuiCol_ResizeGrip] = ImColor4f(1.00f, 1.00f, 1.00f, 0.30f);
+  Colors[ImGuiCol_ResizeGripHovered] = ImColor4f(1.00f, 1.00f, 1.00f, 0.60f);
+  Colors[ImGuiCol_ResizeGripActive] = ImColor4f(1.00f, 1.00f, 1.00f, 0.90f);
+  Colors[ImGuiCol_CloseButton] = ImColor4f(0.50f, 0.50f, 0.90f, 0.50f);
+  Colors[ImGuiCol_CloseButtonHovered] = ImColor4f(0.70f, 0.70f, 0.90f, 0.60f);
+  Colors[ImGuiCol_CloseButtonActive] = ImColor4f(0.70f, 0.70f, 0.70f, 1.00f);
+  Colors[ImGuiCol_PlotLines] = ImColor4f(1.00f, 1.00f, 1.00f, 1.00f);
+  Colors[ImGuiCol_PlotLinesHovered] = ImColor4f(0.90f, 0.70f, 0.00f, 1.00f);
+  Colors[ImGuiCol_PlotHistogram] = ImColor4f(0.90f, 0.70f, 0.00f, 1.00f);
+  Colors[ImGuiCol_PlotHistogramHovered] = ImColor4f(1.00f, 0.60f, 0.00f, 1.00f);
+  Colors[ImGuiCol_TextSelectedBg] = ImColor4f(0.00f, 0.00f, 1.00f, 0.35f);
+  Colors[ImGuiCol_ModalWindowDarkening] = ImColor4f(0.20f, 0.20f, 0.20f, 0.35f);
 }
 
 ImGuiIO::ImGuiIO() {
@@ -1663,15 +1663,15 @@ int ImTextCountUtf8BytesFromStr(const ImWchar *in_text,
   return bytes_count;
 }
 
-ImVec4 ImGui::ColorConvertU32ToFloat4(ImU32 in) {
+ImColor4f ImGui::ColorConvertU32ToFloat4(ImU32 in) {
   float s = 1.0f / 255.0f;
-  return ImVec4(((in >> IM_COL32_R_SHIFT) & 0xFF) * s,
+  return ImColor4f(((in >> IM_COL32_R_SHIFT) & 0xFF) * s,
                 ((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
                 ((in >> IM_COL32_B_SHIFT) & 0xFF) * s,
                 ((in >> IM_COL32_A_SHIFT) & 0xFF) * s);
 }
 
-ImU32 ImGui::ColorConvertFloat4ToU32(const ImVec4 &in) {
+ImU32 ImGui::ColorConvertFloat4ToU32(const ImColor4f &in) {
   ImU32 out;
   out = ((ImU32)IM_F32_TO_INT8_SAT(in.x)) << IM_COL32_R_SHIFT;
   out |= ((ImU32)IM_F32_TO_INT8_SAT(in.y)) << IM_COL32_G_SHIFT;
@@ -1681,13 +1681,13 @@ ImU32 ImGui::ColorConvertFloat4ToU32(const ImVec4 &in) {
 }
 
 ImU32 ImGui::GetColorU32(ImGuiCol idx, float alpha_mul) {
-  ImVec4 c = GImGui->Style.Colors[idx];
+  ImColor4f c = GImGui->Style.Colors[idx];
   c.w *= GImGui->Style.Alpha * alpha_mul;
   return ColorConvertFloat4ToU32(c);
 }
 
-ImU32 ImGui::GetColorU32(const ImVec4 &col) {
-  ImVec4 c = col;
+ImU32 ImGui::GetColorU32(const ImColor4f &col) {
+  ImColor4f c = col;
   c.w *= GImGui->Style.Alpha;
   return ColorConvertFloat4ToU32(c);
 }
@@ -3427,7 +3427,7 @@ void ImGui::RenderTextClipped(const ImVec2 &pos_min, const ImVec2 &pos_max,
 
   // Render
   if (need_clipping) {
-    ImVec4 fine_clip_rect(clip_min->x, clip_min->y, clip_max->x, clip_max->y);
+    ImColor4f fine_clip_rect(clip_min->x, clip_min->y, clip_max->x, clip_max->y);
     window->DrawList->AddText(g.Font, g.FontSize, pos,
                               GetColorU32(ImGuiCol_Text), text,
                               text_display_end, 0.0f, &fine_clip_rect);
@@ -4565,7 +4565,7 @@ bool ImGui::Begin(const char *name, bool *p_open,
     window->Active = true;
     window->OrderWithinParent = 0;
     window->BeginCount = 0;
-    window->ClipRect = ImVec4(-FLT_MAX, -FLT_MAX, +FLT_MAX, +FLT_MAX);
+    window->ClipRect = ImColor4f(-FLT_MAX, -FLT_MAX, +FLT_MAX, +FLT_MAX);
     window->LastFrameActive = current_frame;
     window->IDStack.resize(1);
 
@@ -4946,7 +4946,7 @@ bool ImGui::Begin(const char *name, bool *p_open,
         bg_color_idx = ImGuiCol_PopupBg;
       else if ((flags & ImGuiWindowFlags_ChildWindow) != 0)
         bg_color_idx = ImGuiCol_ChildWindowBg;
-      ImVec4 bg_color = style.Colors[bg_color_idx];
+      ImColor4f bg_color = style.Colors[bg_color_idx];
       if (bg_alpha >= 0.0f) bg_color.w = bg_alpha;
       bg_color.w *= style.Alpha;
       if (bg_color.w > 0.0f)
@@ -5542,7 +5542,7 @@ void ImGui::PopTextWrapPos() {
                                : window->DC.TextWrapPosStack.back();
 }
 
-void ImGui::PushStyleColor(ImGuiCol idx, const ImVec4 &col) {
+void ImGui::PushStyleColor(ImGuiCol idx, const ImColor4f &col) {
   ImGuiContext &g = *GImGui;
   ImGuiColMod backup;
   backup.Col = idx;
@@ -6172,13 +6172,13 @@ void ImGui::Text(const char *fmt, ...) {
   va_end(args);
 }
 
-void ImGui::TextColoredV(const ImVec4 &col, const char *fmt, va_list args) {
+void ImGui::TextColoredV(const ImColor4f &col, const char *fmt, va_list args) {
   PushStyleColor(ImGuiCol_Text, col);
   TextV(fmt, args);
   PopStyleColor();
 }
 
-void ImGui::TextColored(const ImVec4 &col, const char *fmt, ...) {
+void ImGui::TextColored(const ImColor4f &col, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   TextColoredV(col, fmt, args);
@@ -6587,8 +6587,8 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2 &pos, float radius) {
 }
 
 void ImGui::Image(ImTextureID user_texture_id, const ImVec2 &size,
-                  const ImVec2 &uv0, const ImVec2 &uv1, const ImVec4 &tint_col,
-                  const ImVec4 &border_col) {
+                  const ImVec2 &uv0, const ImVec2 &uv1, const ImColor4f &tint_col,
+                  const ImColor4f &border_col) {
   ImGuiWindow *window = GetCurrentWindow();
   if (window->SkipItems) return;
 
@@ -6614,7 +6614,7 @@ void ImGui::Image(ImTextureID user_texture_id, const ImVec2 &size,
 // The color used are the button colors.
 bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2 &size,
                         const ImVec2 &uv0, const ImVec2 &uv1, int frame_padding,
-                        const ImVec4 &bg_col, const ImVec4 &tint_col) {
+                        const ImColor4f &bg_col, const ImColor4f &tint_col) {
   ImGuiWindow *window = GetCurrentWindow();
   if (window->SkipItems) return false;
 
@@ -9268,7 +9268,7 @@ bool ImGui::InputTextEx(const char *label, char *buf, int buf_size,
     RenderFrame(frame_bb.Min, frame_bb.Max, GetColorU32(ImGuiCol_FrameBg), true,
                 style.FrameRounding);
 
-  const ImVec4 clip_rect(
+  const ImColor4f clip_rect(
       frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + size.x,
       frame_bb.Min.y +
           size.y);  // Not using frame_bb.Max because we have adjusted size
@@ -10344,7 +10344,7 @@ void ImGui::EndMenu() { EndPopup(); }
 // A little colored square. Return true when clicked.
 // FIXME: May want to display/ignore the alpha component in the color display?
 // Yet show it in the tooltip.
-bool ImGui::ColorButton(const ImVec4 &col, bool small_height,
+bool ImGui::ColorButton(const ImColor4f &col, bool small_height,
                         bool outline_border) {
   ImGuiWindow *window = GetCurrentWindow();
   if (window->SkipItems) return false;
@@ -10483,7 +10483,7 @@ bool ImGui::ColorEdit4(const char *label, float col[4], bool alpha) {
 
   SameLine(0, style.ItemInnerSpacing.x);
 
-  const ImVec4 col_display(col[0], col[1], col[2], 1.0f);
+  const ImColor4f col_display(col[0], col[1], col[2], 1.0f);
   if (ColorButton(col_display))
     g.ColorEditModeStorage.SetInt(
         id,
@@ -11001,7 +11001,7 @@ void ImGui::Value(const char *prefix, float v, const char *float_format) {
 }
 
 // FIXME: May want to remove those helpers?
-void ImGui::ValueColor(const char *prefix, const ImVec4 &v) {
+void ImGui::ValueColor(const char *prefix, const ImColor4f &v) {
   Text("%s: (%.2f,%.2f,%.2f,%.2f)", prefix, v.x, v.y, v.z, v.w);
   SameLine();
   ColorButton(v, true);

@@ -954,7 +954,7 @@ std::unique_ptr<TiledImageLayer> TiledData::TMXLoadTiledImageLayer(
 
   std::unique_ptr<TiledImageLayer> imageLayer(new TiledImageLayer(
       mapTilesW, mapTilesH, name, depth, &gidManager, texture));
-  imageLayer->SetParallax(Coord2df(paralaxX, paralaxY));
+  imageLayer->SetParallax(Vec2(paralaxX, paralaxY));
   imageLayer->SetAlpha(alpha);
   imageLayer->SetRepeatX(repeatX);
   imageLayer->SetRepeatY(repeatY);

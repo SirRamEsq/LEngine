@@ -1,17 +1,17 @@
 #include "imgui_LEngine.h"
 #include "../Kernel.h"
 
-void ImGui::SetWindowPosWrapper(const char *name, const Coord2df &pos,
+void ImGui::SetWindowPosWrapper(const char *name, const Vec2 &pos,
                                 ImGuiSetCond cond) {
   ImGui::SetWindowPos(name, pos, cond);
 }
 
-void ImGui::SetWindowSizeWrapper(const char *name, const Coord2df &size,
+void ImGui::SetWindowSizeWrapper(const char *name, const Vec2 &size,
                                  ImGuiSetCond cond) {
   ImGui::SetWindowSize(name, size, cond);
 }
 
-Coord2df ImGui::GetWindowSizeWrapper() { return ImGui::GetWindowSize(); }
+Vec2 ImGui::GetWindowSizeWrapper() { return ImGui::GetWindowSize(); }
 
 bool ImGui::ButtonWrapper(const char *label) { return ImGui::Button(label); }
 
@@ -27,28 +27,28 @@ void ImGui::BeginFlags(const std::string &name, int flags) {
   ImGui::Begin(name.c_str(), NULL, flags);
 }
 
-void ImGui::SetNextWindowSizeWrapper(const Coord2df &size, ImGuiSetCond cond) {
+void ImGui::SetNextWindowSizeWrapper(const Vec2 &size, ImGuiSetCond cond) {
   ImGui::SetNextWindowSize(size, cond);
 }
 
-void ImGui::SetNextWindowPosWrapper(const Coord2df &pos, ImGuiSetCond cond) {
+void ImGui::SetNextWindowPosWrapper(const Vec2 &pos, ImGuiSetCond cond) {
   ImGui::SetNextWindowPos(pos, cond);
 }
 
 void ImGui::SetNextWindowPosCenterWrapper(ImGuiSetCond cond) {
-  ImGui::SetNextWindowPosWrapper(Coord2df(-FLT_MAX, -FLT_MAX), cond);
+  ImGui::SetNextWindowPosWrapper(Vec2(-FLT_MAX, -FLT_MAX), cond);
 }
 
 void ImGui::SetNextWindowPosCenterWrapperX(float y, ImGuiSetCond cond) {
-  ImGui::SetNextWindowPosWrapper(Coord2df(-FLT_MAX, y), cond);
+  ImGui::SetNextWindowPosWrapper(Vec2(-FLT_MAX, y), cond);
 }
 
 void ImGui::SetNextWindowPosCenterWrapperY(float x, ImGuiSetCond cond) {
-  ImGui::SetNextWindowPosWrapper(Coord2df(x, -FLT_MAX), cond);
+  ImGui::SetNextWindowPosWrapper(Vec2(x, -FLT_MAX), cond);
 }
 
-void ImGui::SetNextWindowSizeConstraintsWrapper(const Coord2df &size_min,
-                                                const Coord2df &size_max) {
+void ImGui::SetNextWindowSizeConstraintsWrapper(const Vec2 &size_min,
+                                                const Vec2 &size_max) {
   SetNextWindowSizeConstraints(size_min, size_max);
 }
 
@@ -58,9 +58,9 @@ void ImGui::Sprite(const RSC_Sprite *sprite, const std::string &animation,
     LOG_ERROR("Sprite is NULL");
     return;
   }
-  Coord2df size(0, 0);
-  Coord2df startUV(0, 0);
-  Coord2df endUV(0, 0);
+  Vec2 size(0, 0);
+  Vec2 startUV(0, 0);
+  Vec2 endUV(0, 0);
   ImTextureID textureID = 0;
 
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
@@ -70,9 +70,9 @@ void ImGui::Sprite(const RSC_Sprite *sprite, const std::string &animation,
 
 bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
                          int frame) {
-  Coord2df size(0, 0);
-  Coord2df startUV(0, 0);
-  Coord2df endUV(0, 0);
+  Vec2 size(0, 0);
+  Vec2 startUV(0, 0);
+  Vec2 endUV(0, 0);
   ImTextureID textureID = 0;
 
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
@@ -81,7 +81,7 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
                             ImColor(255, 255, 255, 125));
 }
 
-void ImGui::ProgressBarWrapper(float fraction, const Coord2df &screenSize) {
+void ImGui::ProgressBarWrapper(float fraction, const Vec2 &screenSize) {
   ImGui::ProgressBar(fraction, screenSize);
 }
 
@@ -90,40 +90,40 @@ void ImGui::SameLineWrapper() { ImGui::SameLine(); }
 ////////////////////
 // Parameter Stacks//
 ////////////////////
-void ImGui::PushStyleColorWindowBG(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorWindowBG(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_WindowBg, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorButton(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorButton(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_Button, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorButtonHovered(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorButtonHovered(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorButtonActive(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorButtonActive(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorFrameBG(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorFrameBG(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_FrameBg, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorFrameBGActive(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorFrameBGActive(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorFrameBGHovered(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorFrameBGHovered(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorPlotHistogram(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorPlotHistogram(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImColor(c.x, c.y, c.z, c.w));
 }
 
-void ImGui::PushStyleColorText(const Color4f &c) {
-  ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(c.r, c.g, c.b, c.a));
+void ImGui::PushStyleColorText(const Vec4 &c) {
+  ImGui::PushStyleColor(ImGuiCol_Text, ImColor(c.x, c.y, c.z, c.w));
 }
 
 bool ImGui::PushFontWrapper(const std::string &name, int size) {
@@ -142,8 +142,8 @@ void ImGui::PopFontWrapper() { ImGui::PopFont(); }
 // INTERNAL//
 ////////////
 void ImGui::CalculateUV(const RSC_Sprite *sprite, const std::string &animation,
-                        int frame, ImTextureID &textureID, Coord2df &size,
-                        Coord2df &startUV, Coord2df &endUV) {
+                        int frame, ImTextureID &textureID, Vec2 &size,
+                        Vec2 &startUV, Vec2 &endUV) {
   auto ani = sprite->GetAnimation(animation);
   if (ani != NULL) {
     auto texture = K_TextureMan.GetLoadItem(sprite->GetTextureName(),

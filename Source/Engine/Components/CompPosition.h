@@ -29,13 +29,13 @@ struct MapNode {
    * This function should be called by a child node
    * \param [localCoordinates] The Local Coordinates of the child node
    */
-  Coord2df TranslateLocalToWorld(const Coord2df &localCoordinates);
+  Vec2 TranslateLocalToWorld(const Vec2 &localCoordinates);
   /**
    * Transforms World Coordinates into Coordinates relative to this position
    * This function should be called by a child node
    * \param [worldCoordinates] The World Coordinates of the child node
    */
-  Coord2df TranslateWorldToLocal(const Coord2df &worldCoordinates);
+  Vec2 TranslateWorldToLocal(const Vec2 &worldCoordinates);
 
   /**
    * Sets parent and sets Local Coordinates accordingly
@@ -50,9 +50,9 @@ struct MapNode {
   /// Pointer to parent
   MapNode *mParent;
   /// Local representation of position relative to parent
-  Coord2df positionLocal;
+  Vec2 positionLocal;
   /// Absolute representation of position
-  Coord2df positionWorld;
+  Vec2 positionWorld;
 };
 
 class ComponentPositionManager;
@@ -66,37 +66,37 @@ class ComponentPosition : public BaseComponent {
   void SetParent(BaseComponent *p);
 
   /// Get Position Relative to Parent
-  Coord2df GetPositionLocal();
+  Vec2 GetPositionLocal();
   /// Get Absolute Position
-  Coord2df GetPositionWorld();
+  Vec2 GetPositionWorld();
   /// Get Movement Vector
-  Coord2df GetMovement();
+  Vec2 GetMovement();
   /// Get Acceleration Vector
-  Coord2df GetAcceleration();
+  Vec2 GetAcceleration();
 
   /// Sets local position
-  void SetPositionLocal(Coord2df pos);
+  void SetPositionLocal(Vec2 pos);
   /// Wrapper around SetPositionLocal
   void SetPositionLocalX(float x);
   /// Wrapper around SetPositionLocal
   void SetPositionLocalY(float y);
 
   /// Sets absolute position
-  void SetPositionWorld(Coord2df pos);
+  void SetPositionWorld(Vec2 pos);
   /// Wrapper around SetPositionWorld
   void SetPositionWorldX(float x);
   /// Wrapper around SetPositionWorld
   void SetPositionWorldY(float y);
 
   /// Sets Movement Speed
-  void SetMovement(Coord2df mov);
+  void SetMovement(Vec2 mov);
   /// Wrapper around SetMovement
   void SetMovementX(float x);
   /// Wrapper around SetMovement
   void SetMovementY(float y);
 
   /// Sets Acceleration Speed
-  void SetAcceleration(Coord2df acl);
+  void SetAcceleration(Vec2 acl);
   /// Wrapper around SetAcceleration
   void SetAccelerationX(float x);
   /// Wrapper around SetAcceleration
@@ -104,18 +104,18 @@ class ComponentPosition : public BaseComponent {
 
   void SetMaxSpeed(float speed) { maximumSpeed = speed; }
 
-  void IncrementPosition(Coord2df pos);
-  void IncrementMovement(Coord2df mov);
-  void IncrementAcceleration(Coord2df accel);
+  void IncrementPosition(Vec2 pos);
+  void IncrementMovement(Vec2 mov);
+  void IncrementAcceleration(Vec2 accel);
 
-  Coord2df TranslateWorldToLocal(const Coord2df &world);
-  Coord2df TranslateLocalToWorld(const Coord2df &local);
+  Vec2 TranslateWorldToLocal(const Vec2 &world);
+  Vec2 TranslateLocalToWorld(const Vec2 &local);
 
   MapNode *GetMapNode();
 
  private:
-  Coord2df mMovement;
-  Coord2df mAcceleration;
+  Vec2 mMovement;
+  Vec2 mAcceleration;
   float maximumSpeed;
 
   MapNode mNode;

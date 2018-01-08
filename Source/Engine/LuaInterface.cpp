@@ -809,19 +809,19 @@ luabridge::LuaRef LuaInterface::EntityGetInterface(const EID &id) {
   return (parentState->comScriptMan.GetComponent(id))->GetEntityInterface();
 }
 
-Coord2df LuaInterface::EntityGetPositionWorld(EID entity) {
+Vec2 LuaInterface::EntityGetPositionWorld(EID entity) {
   ComponentPosition *pos = (parentState->comPosMan.GetComponent(entity));
   if (pos == NULL) {
     std::stringstream ss;
     ss << "EntityGetPositionWorld was passed entity id " << entity
        << " Which does not exist";
     LOG_ERROR(ss.str());
-    return Coord2df(0, 0);
+    return Vec2(0, 0);
   }
   return pos->GetPositionWorld();
 }
 
-Coord2df LuaInterface::EntityGetMovement(EID entity) {
+Vec2 LuaInterface::EntityGetMovement(EID entity) {
   return (parentState->comPosMan.GetComponent(entity))->GetMovement();
 }
 
@@ -858,7 +858,7 @@ EID LuaInterface::EntityNew(std::string name, int x, int y, MAP_DEPTH depth,
   }
 
   auto packet = std::make_unique<EntityCreationPacket>(
-      scriptNames, Coord2df(x, y), depth, parent, name, propertyTable);
+      scriptNames, Vec2(x, y), depth, parent, name, propertyTable);
 
   return parentState->CreateLuaEntity(std::move(packet));
 }
@@ -1002,7 +1002,7 @@ void LuaInterface::RemapInputToNextKeyPress(const std::string &key) {
   Kernel::stateMan.inputManager->RemapKey(key);
 }
 
-Coord2df LuaInterface::GetMousePosition() {
+Vec2 LuaInterface::GetMousePosition() {
   return Kernel::inputManager.GetMousePosition();
 }
 
@@ -1022,9 +1022,9 @@ bool LuaInterface::GetMouseButtonMiddle() {
   return Kernel::inputManager.GetMouseButtonMiddle();
 }
 
-Coord2df LuaInterface::GetResolution() { return Resolution::GetResolution(); }
+Vec2 LuaInterface::GetResolution() { return Resolution::GetResolution(); }
 
-Coord2df LuaInterface::GetVirtualResolution() {
+Vec2 LuaInterface::GetVirtualResolution() {
   return Resolution::GetVirtualResolution();
 }
 
@@ -1323,16 +1323,6 @@ void LuaInterface::ExposeCPP() {
       .addData("angleV", &RSC_Heightmap::angleV)
       .endClass()
 
-      .beginClass<Coord2df>("Coord2df")
-      .addConstructor<void (*)(void)>()          // Empty Constructor
-      .addConstructor<void (*)(float, float)>()  // Constructor
-      .addData("x", &Coord2df::x)
-      .addData("y", &Coord2df::y)
-      .addFunction("Round", &Coord2df::Round)
-      .addFunction("Add", &Coord2df::Add)
-      .addFunction("Subtract", &Coord2df::Subtract)
-      .endClass()
-
       .beginClass<Vec2>("Vec2")
       .addConstructor<void (*)(void)>()          // Empty Constructor
       .addConstructor<void (*)(float, float)>()  // Constructor
@@ -1353,13 +1343,13 @@ void LuaInterface::ExposeCPP() {
       .addFunction("Subtract", &Vec3::Subtract)
       .endClass()
 
-      .beginClass<Color4f>("Color4f")
+      .beginClass<Vec4>("Color")
       .addConstructor<void (*)(void)>()  // Empty Constructor
       .addConstructor<void (*)(float, float, float, float)>()  // Constructor
-      .addData("r", &Color4f::r)
-      .addData("g", &Color4f::g)
-      .addData("b", &Color4f::b)
-      .addData("a", &Color4f::a)
+      .addData("r", &Vec4::x)
+      .addData("g", &Vec4::y)
+      .addData("b", &Vec4::z)
+      .addData("a", &Vec4::w)
       .endClass()
 
       .beginClass<VectorEID>("VectorEID")
@@ -1567,7 +1557,7 @@ void LuaInterface::SetErrorCallbackFunction(ErrorCallback func) {
 }
 
 EntityCreationPacket::EntityCreationPacket(std::vector<std::string> scripts,
-                                           Coord2df pos, MAP_DEPTH depth,
+                                           Vec2 pos, MAP_DEPTH depth,
                                            EID parent, const std::string &name,
                                            luabridge::LuaRef propertyTable)
     : mPropertyTable(propertyTable) {

@@ -2,6 +2,7 @@
 #define LENGINE_RESOLUTION
 
 #include "Coordinates.h"
+#include "Vector.h"
 #include "SDLInit.h"
 
 /*
@@ -22,10 +23,10 @@ class Resolution {
    * to value obtained from SDL_Window
    */
   static void UpdateResolution(SDL_Window *window);
-  static Coord2df GetResolution();
+  static Vec2 GetResolution();
 
-  static void SetVirtualResolution(const Coord2df &res);
-  static Coord2df GetVirtualResolution();
+  static void SetVirtualResolution(const Vec2 &res);
+  static Vec2 GetVirtualResolution();
 
  private:
   static unsigned int mResolutionX;

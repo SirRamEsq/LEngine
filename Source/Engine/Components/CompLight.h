@@ -8,7 +8,7 @@
 #include "../RenderManager.h"
 #include "../Resources/RSC_GLShader.h"
 #include "../Resources/RSC_Texture.h"
-#include "../glslHelper.h"
+#include "../Vector.h"
 
 #include "../Rendering/VAOWrapper.h"
 

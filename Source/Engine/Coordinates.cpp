@@ -3,7 +3,7 @@
 #include "Resources/RSC_Map.h"
 #include <memory>
 
-CollisionResponse::CollisionResponse(const Coord2df &vec, bool collided)
+CollisionResponse::CollisionResponse(const Vec2 &vec, bool collided)
     : mVectorNormal(vec), mCollided(collided) {}
 
 CollisionResponse::CollisionResponse(float x, float y, bool collided)
@@ -13,9 +13,9 @@ CollisionResponse::CollisionResponse(float x, float y, bool collided)
 /////////
 Shape::Shape(float xx, float yy) : x(xx), y(yy) {}
 
-Shape::Shape(Coord2df pos) : x(pos.x), y(pos.y) {}
+Shape::Shape(Vec2 pos) : x(pos.x), y(pos.y) {}
 
-void Shape::Translate(const Coord2df &pos) {
+void Shape::Translate(const Vec2 &pos) {
   x += pos.x;
   y += pos.y;
 }
@@ -25,13 +25,13 @@ void Shape::Translate(const Coord2df &pos) {
 ////////
 Rect::Rect(float xx, float yy, float ww, float hh)
     : Shape(xx, yy), w(ww), h(hh) {}
-Rect::Rect(const Coord2df &xy, const Coord2df &wh)
+Rect::Rect(const Vec2 &xy, const Vec2 &wh)
     : Shape(xy), w(wh.x), h(wh.y) {}
 Rect::Rect() : Shape(0, 0), w(0), h(0) {}
 
 Rect Rect::Round() const {
-  auto xy = Coord2df(x, y);
-  auto wh = Coord2df(w, h);
+  auto xy = Vec2(x, y);
+  auto wh = Vec2(w, h);
   xy = xy.Round();
   wh = wh.Round();
   return Rect(xy, wh);
@@ -85,7 +85,7 @@ float Rect::GetRight() const {
   }
 }
 
-CollisionResponse Rect::Contains(const Coord2df &point) const {
+CollisionResponse Rect::Contains(const Vec2 &point) const {
   return CollisionRectPoint(*this, point);
 }
 CollisionResponse Rect::Contains(const Rect *r) const {
@@ -96,7 +96,7 @@ CollisionResponse Rect::Contains(const Circle *r) const {
   return CollisionRectCircle(*this, *r);
 }
 
-Coord2df Rect::GetCenter() const {
+Vec2 Rect::GetCenter() const {
   float left = GetLeft();
   float right = GetRight();
   float xDiff = right - left;
@@ -104,7 +104,7 @@ Coord2df Rect::GetCenter() const {
   float top = GetTop();
   float bottom = GetBottom();
   float yDiff = bottom - top;
-  return Coord2df(left + (xDiff / 2), top + (yDiff / 2));
+  return Vec2(left + (xDiff / 2), top + (yDiff / 2));
 }
 
 CollisionResponse Rect::Contains(const Shape *shape) const {
@@ -117,7 +117,7 @@ CollisionResponseTile Rect::Contains(const TiledTileLayer *layer) const {
     return returnValue;
   }
   auto collisions = &returnValue.collisions;
-  Coord2df ul(0, 0), dr(0, 0);
+  Vec2 ul(0, 0), dr(0, 0);
 
   ul.x = GetLeft();
   ul.y = GetTop();
@@ -133,7 +133,7 @@ CollisionResponseTile Rect::Contains(const TiledTileLayer *layer) const {
   if ((txx1 == txx2) and
       (tyy1 == tyy2)) {  // if the top left is the same as the bottom right,
     if (layer->HasTile(txx1, tyy1)) {
-      collisions->push_back(Coord2df(txx1, tyy1));
+      collisions->push_back(Vec2(txx1, tyy1));
     }
     return returnValue;
   }
@@ -159,7 +159,7 @@ CollisionResponseTile Rect::Contains(const TiledTileLayer *layer) const {
   for (int iter = 0; iter <= differenceX; iter++) {
     for (int iter2 = 0; iter2 <= differenceY; iter2++) {
       if (layer->HasTile(tx, ty)) {
-        collisions->push_back(Coord2df(tx, ty));
+        collisions->push_back(Vec2(tx, ty));
       }
       if (!negativeH) {
         ty += 1;
@@ -184,7 +184,7 @@ CollisionResponseTile Rect::Contains(const TiledTileLayer *layer) const {
 //////////
 // Circle//
 //////////
-Circle::Circle(Coord2df pos, float radius) : Shape(pos), r(radius) {}
+Circle::Circle(Vec2 pos, float radius) : Shape(pos), r(radius) {}
 
 Circle::Circle(float xx, float yy, float radius) : Shape(xx, yy), r(radius) {}
 
@@ -201,7 +201,7 @@ std::unique_ptr<Shape> Circle::MakeCopy() const {
   return std::move(returnValue);
 }
 
-Coord2df Circle::GetCenter() const { return Coord2df(x + r, y + r); }
+Vec2 Circle::GetCenter() const { return Vec2(x + r, y + r); }
 
 float Circle::GetTop() const { return y - r; }
 
@@ -211,7 +211,7 @@ float Circle::GetLeft() const { return x - r; }
 
 float Circle::GetRight() const { return x + r; }
 
-CollisionResponse Circle::Contains(const Coord2df &point) const {
+CollisionResponse Circle::Contains(const Vec2 &point) const {
   return CollisionCirclePoint(*this, point);
 }
 CollisionResponse Circle::Contains(const Rect *r) const {
@@ -264,7 +264,7 @@ CollisionResponse CollisionRectCircle(const Rect &R, const Circle &C) {
   return CollisionResponse(0, 0, false);
 }
 
-CollisionResponse CollisionRectPoint(const Rect &R, const Coord2df &point) {
+CollisionResponse CollisionRectPoint(const Rect &R, const Vec2 &point) {
   int leftR, rightR, topR, bottomR;
 
   leftR = R.GetLeft();
@@ -287,6 +287,6 @@ CollisionResponse CollisionCircleCircle(const Circle &CC, const Circle &C) {
 }
 
 CollisionResponse CollisionCirclePoint(const Circle &CC,
-                                       const Coord2df &point) {
+                                       const Vec2 &point) {
   return CollisionResponse(0, 0, false);
 }

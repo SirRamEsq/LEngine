@@ -42,7 +42,7 @@ bool GameStartState::Update() {
   ImGui::BeginFlags("STARTUPWINDOW",
                     ImGuiWindowFlags_NoTitleBar + ImGuiWindowFlags_NoResize);
   ImGui::TextWrapper(countdownMessage);
-  ImGui::ProgressBar(countdown / countdownMax, Coord2df(-1.0f, 0.0f));
+  ImGui::ProgressBar(countdown / countdownMax, Vec2(-1.0f, 0.0f));
 
   ImGui::End();
   if (countdown < 0) {

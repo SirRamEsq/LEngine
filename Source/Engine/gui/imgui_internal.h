@@ -188,8 +188,8 @@ static inline ImVec2 &operator/=(ImVec2 &lhs, const float rhs) {
   lhs.y /= rhs;
   return lhs;
 }
-static inline ImVec4 operator-(const ImVec4 &lhs, const ImVec4 &rhs) {
-  return ImVec4(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+static inline ImColor4f operator-(const ImColor4f &lhs, const ImColor4f &rhs) {
+  return ImColor4f(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
 }
 #endif
 
@@ -228,7 +228,7 @@ static inline ImVec2 ImLerp(const ImVec2 &a, const ImVec2 &b, const ImVec2 &t) {
 static inline float ImLengthSqr(const ImVec2 &lhs) {
   return lhs.x * lhs.x + lhs.y * lhs.y;
 }
-static inline float ImLengthSqr(const ImVec4 &lhs) {
+static inline float ImLengthSqr(const ImColor4f &lhs) {
   return lhs.x * lhs.x + lhs.y * lhs.y + lhs.z * lhs.z + lhs.w * lhs.w;
 }
 static inline float ImInvLength(const ImVec2 &lhs, float fail_value) {
@@ -325,7 +325,7 @@ struct IMGUI_API ImRect {
 
   ImRect() : Min(FLT_MAX, FLT_MAX), Max(-FLT_MAX, -FLT_MAX) {}
   ImRect(const ImVec2 &min, const ImVec2 &max) : Min(min), Max(max) {}
-  ImRect(const ImVec4 &v) : Min(v.x, v.y), Max(v.z, v.w) {}
+  ImRect(const ImColor4f &v) : Min(v.x, v.y), Max(v.z, v.w) {}
   ImRect(float x1, float y1, float x2, float y2) : Min(x1, y1), Max(x2, y2) {}
 
   ImVec2 GetCenter() const {
@@ -408,7 +408,7 @@ struct IMGUI_API ImRect {
 // Stacked color modifier, backup of modified data so we can restore it
 struct ImGuiColMod {
   ImGuiCol Col;
-  ImVec4 BackupValue;
+  ImColor4f BackupValue;
 };
 
 // Stacked style modifier, backup of modified data so we can restore it. Data

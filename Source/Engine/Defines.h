@@ -10,6 +10,8 @@
 #define GLEW_STATIC
 #endif
 
+#include "Vector.h"
+
 #include <string>
 #include <vector>
 
@@ -96,35 +98,6 @@ std::string GetDate();
 std::string GetTime();
 std::string GetDateTime();
 
-class Color4f {
- public:
-  Color4f() {
-    r = 1.0f;
-    g = 1.0f;
-    b = 1.0f;
-    a = 1.0f;
-  }
-  Color4f(float rr, float gg, float bb, float aa) {
-    r = rr;
-    g = gg;
-    b = bb;
-    a = aa;
-  }
-  float r;
-  float g;
-  float b;
-  float a;
-
-  inline Color4f &operator=(Color4f &color) {
-    r = color.r;
-    g = color.g;
-    b = color.b;
-    a = color.a;
-
-    return color;
-  }
-};
-
 // These data structures can be treated as arrays by openGL
 struct LVertexPos2D {
   GLfloat x;
@@ -139,11 +112,11 @@ struct LVertexData2D {
   LTexCoord texCoord;
 };
 
-extern Color4f Color4f_WHITE;
-extern Color4f Color4f_RED;
-extern Color4f Color4f_GREEN;
-extern Color4f Color4f_BLUE;
-extern Color4f Color4f_BLACK;
+extern Vec4 COLOR_WHITE;
+extern Vec4 COLOR_RED;
+extern Vec4 COLOR_GREEN;
+extern Vec4 COLOR_BLUE;
+extern Vec4 COLOR_BLACK;
 
 extern const int COLLISION_GRID_SIZE;
 extern const std::string BLANK_TILE_NAME;

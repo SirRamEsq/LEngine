@@ -317,7 +317,7 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
       // Set position
       comPosMan.AddComponent(ent);
       comPosMan.GetComponent(ent)->SetPositionLocal(
-          Coord2df(objectIt->second.x, objectIt->second.y));
+          Vec2(objectIt->second.x, objectIt->second.y));
 
       // Add script Component and set to be initialized later during linking
       // stage after all entities have EIDs
@@ -458,7 +458,7 @@ void GameState::SetMapLinkEntities(
     for (auto i = objectsUsingEntrance.begin(); i != objectsUsingEntrance.end();
          i++) {
       comPosMan.GetComponent(*i)->SetPositionLocal(
-          Coord2df(correctEntranceX, correctEntranceY));
+          Vec2(correctEntranceX, correctEntranceY));
     }
   }
 }

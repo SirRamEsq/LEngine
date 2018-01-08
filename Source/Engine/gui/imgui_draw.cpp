@@ -145,7 +145,7 @@ using namespace IMGUI_STB_NAMESPACE;
 // ImDrawList
 //-----------------------------------------------------------------------------
 
-static const ImVec4 GNullClipRect(
+static const ImColor4f GNullClipRect(
     -8192.0f, -8192.0f, +8192.0f,
     +8192.0f);  // Large values that are easy to encode in a few bits+shift
 
@@ -227,12 +227,12 @@ void ImDrawList::AddCallback(ImDrawCallback callback, void *callback_data) {
 void ImDrawList::UpdateClipRect() {
   // If current command is used with different settings we need to add a new
   // command
-  const ImVec4 curr_clip_rect = GetCurrentClipRect();
+  const ImColor4f curr_clip_rect = GetCurrentClipRect();
   ImDrawCmd *curr_cmd =
       CmdBuffer.Size > 0 ? &CmdBuffer.Data[CmdBuffer.Size - 1] : NULL;
   if (!curr_cmd ||
       (curr_cmd->ElemCount != 0 &&
-       memcmp(&curr_cmd->ClipRect, &curr_clip_rect, sizeof(ImVec4)) != 0) ||
+       memcmp(&curr_cmd->ClipRect, &curr_clip_rect, sizeof(ImColor4f)) != 0) ||
       curr_cmd->UserCallback != NULL) {
     AddDrawCmd();
     return;
@@ -241,7 +241,7 @@ void ImDrawList::UpdateClipRect() {
   // Try to merge with previous command if it matches, else use current command
   ImDrawCmd *prev_cmd = CmdBuffer.Size > 1 ? curr_cmd - 1 : NULL;
   if (curr_cmd->ElemCount == 0 && prev_cmd &&
-      memcmp(&prev_cmd->ClipRect, &curr_clip_rect, sizeof(ImVec4)) == 0 &&
+      memcmp(&prev_cmd->ClipRect, &curr_clip_rect, sizeof(ImColor4f)) == 0 &&
       prev_cmd->TextureId == GetCurrentTextureId() &&
       prev_cmd->UserCallback == NULL)
     CmdBuffer.pop_back();
@@ -264,7 +264,7 @@ void ImDrawList::UpdateTextureID() {
   // Try to merge with previous command if it matches, else use current command
   ImDrawCmd *prev_cmd = CmdBuffer.Size > 1 ? curr_cmd - 1 : NULL;
   if (prev_cmd && prev_cmd->TextureId == curr_texture_id &&
-      memcmp(&prev_cmd->ClipRect, &GetCurrentClipRect(), sizeof(ImVec4)) == 0 &&
+      memcmp(&prev_cmd->ClipRect, &GetCurrentClipRect(), sizeof(ImColor4f)) == 0 &&
       prev_cmd->UserCallback == NULL)
     CmdBuffer.pop_back();
   else
@@ -279,9 +279,9 @@ void ImDrawList::UpdateTextureID() {
 // ImGui::PushClipRect() to affect logic (hit-testing and widget culling)
 void ImDrawList::PushClipRect(ImVec2 cr_min, ImVec2 cr_max,
                               bool intersect_with_current_clip_rect) {
-  ImVec4 cr(cr_min.x, cr_min.y, cr_max.x, cr_max.y);
+  ImColor4f cr(cr_min.x, cr_min.y, cr_max.x, cr_max.y);
   if (intersect_with_current_clip_rect && _ClipRectStack.Size) {
-    ImVec4 current = _ClipRectStack.Data[_ClipRectStack.Size - 1];
+    ImColor4f current = _ClipRectStack.Data[_ClipRectStack.Size - 1];
     if (cr.x < current.x) cr.x = current.x;
     if (cr.y < current.y) cr.y = current.y;
     if (cr.z > current.z) cr.z = current.z;
@@ -1065,7 +1065,7 @@ void ImDrawList::AddBezierCurve(const ImVec2 &pos0, const ImVec2 &cp0,
 void ImDrawList::AddText(const ImFont *font, float font_size, const ImVec2 &pos,
                          ImU32 col, const char *text_begin,
                          const char *text_end, float wrap_width,
-                         const ImVec4 *cpu_fine_clip_rect) {
+                         const ImColor4f *cpu_fine_clip_rect) {
   if ((col & IM_COL32_A_MASK) == 0) return;
 
   if (text_end == NULL) text_end = text_begin + strlen(text_begin);
@@ -1082,7 +1082,7 @@ void ImDrawList::AddText(const ImFont *font, float font_size, const ImVec2 &pos,
   // low-level ImDrawList::PushTextureId() to
   // change font.
 
-  ImVec4 clip_rect = _ClipRectStack.back();
+  ImColor4f clip_rect = _ClipRectStack.back();
   if (cpu_fine_clip_rect) {
     clip_rect.x = ImMax(clip_rect.x, cpu_fine_clip_rect->x);
     clip_rect.y = ImMax(clip_rect.y, cpu_fine_clip_rect->y);
@@ -1162,7 +1162,7 @@ void ImDrawData::ScaleClipRects(const ImVec2 &scale) {
     for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
       ImDrawCmd *cmd = &cmd_list->CmdBuffer[cmd_i];
       cmd->ClipRect =
-          ImVec4(cmd->ClipRect.x * scale.x, cmd->ClipRect.y * scale.y,
+          ImColor4f(cmd->ClipRect.x * scale.x, cmd->ClipRect.y * scale.y,
                  cmd->ClipRect.z * scale.x, cmd->ClipRect.w * scale.y);
     }
   }
@@ -2320,7 +2320,7 @@ void ImFont::RenderChar(ImDrawList *draw_list, float size, ImVec2 pos,
 }
 
 void ImFont::RenderText(ImDrawList *draw_list, float size, ImVec2 pos,
-                        ImU32 col, const ImVec4 &clip_rect,
+                        ImU32 col, const ImColor4f &clip_rect,
                         const char *text_begin, const char *text_end,
                         float wrap_width, bool cpu_fine_clip) const {
   if (!text_end)

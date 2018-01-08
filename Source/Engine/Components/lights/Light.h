@@ -1,7 +1,7 @@
 #ifndef LENGINE_LIGHT
 #define LENGINE_LIGHT
 
-#include "../../glslHelper.h"
+#include "../../Vector.h"
 #include "../../Resources/RSC_GLShader.h"
 
 enum LIGHT_TYPE { LIGHT_GENERIC = 0, LIGHT_POINT = 1 };

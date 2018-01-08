@@ -1,7 +1,7 @@
 #ifndef LENGINE_RENDERABLE_OBJECT_SPRITE
 #define LENGINE_RENDERABLE_OBJECT_SPRITE
 
-#include "../glslHelper.h"
+#include "../Vector.h"
 #include "RenderableObject.h"
 #include "VAOWrapper.h"
 

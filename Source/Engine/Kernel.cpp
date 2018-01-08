@@ -149,7 +149,7 @@ void Kernel::Inst(int argc, char *argv[]) {
   SDLMan->InitOpenGL();
 
   Resolution::UpdateResolution(SDLMan->mMainWindow);
-  Resolution::SetVirtualResolution(Coord2df(480, 320));
+  Resolution::SetVirtualResolution(Vec2(480, 320));
 
   rscTexMan.SetLoadFunction(&RSC_Texture::LoadResource);
   rscSpriteMan.SetLoadFunction(&RSC_Sprite::LoadResource);
@@ -421,7 +421,7 @@ void Kernel::ImGuiNewFrame(SDL_Window *window) {
   io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0,
                                       h > 0 ? ((float)display_h / h) : 0);
   guiState.projectionMatrix =
-      Matrix4::OrthoGraphicProjectionMatrix(Coord2df(w, h));
+      Matrix4::OrthoGraphicProjectionMatrix(Vec2(w, h));
 
   // Setup time step
   Uint32 time = SDL_GetTicks();

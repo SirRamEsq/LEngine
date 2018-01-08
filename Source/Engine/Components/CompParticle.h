@@ -52,10 +52,10 @@ class ParticleCreator : public RenderableObjectWorld {
 
   void Render(const RenderCamera *camera, const RSC_GLProgram *program);
 
-  void SetVelocity(const Coord2df &velocityMin, const Coord2df &velocityMax);
-  void SetAcceleration(const Coord2df &accelMin, const Coord2df &accelMax);
+  void SetVelocity(const Vec2 &velocityMin, const Vec2 &velocityMax);
+  void SetAcceleration(const Vec2 &accelMin, const Vec2 &accelMax);
   // This position is relative the the position componentŔ
-  void SetPosition(const Coord2df &posMin, const Coord2df &posMax);
+  void SetPosition(const Vec2 &posMin, const Vec2 &posMax);
 
   void SetScalingX(const float &xscaleMin, const float &xscaleMax);
   void SetScalingY(const float &yscaleMin, const float &yscaleMax);
@@ -80,7 +80,7 @@ class ParticleCreator : public RenderableObjectWorld {
   void SetRandomUV(bool value);
 
   void SetUsePoint(bool value);
-  void SetPoint(const Coord2df &v);
+  void SetPoint(const Vec2 &v);
   void SetPointIntensity(float value);
 
   /// Starts the particle Creator
@@ -122,21 +122,21 @@ class ParticleCreator : public RenderableObjectWorld {
   bool mRandomUV;
 
   bool mUsePoint;
-  Coord2df mPointCoordinates;
+  Vec2 mPointCoordinates;
   float mPointIntensity;
 
-  Color4f mDefaultColorMin;
-  Color4f mDefaultColorMax;
+  Vec4 mDefaultColorMin;
+  Vec4 mDefaultColorMax;
 
-  Coord2df mDefaultVelocityMin;
-  Coord2df mDefaultAccelerationMin;
-  Coord2df mDefaultPositionMin;
+  Vec2 mDefaultVelocityMin;
+  Vec2 mDefaultAccelerationMin;
+  Vec2 mDefaultPositionMin;
 
   // These values will be added or subtracted randomly from the defaults for
   // each particle
-  Coord2df mDefaultVelocityMax;
-  Coord2df mDefaultAccelerationMax;
-  Coord2df mDefaultPositionMax;
+  Vec2 mDefaultVelocityMax;
+  Vec2 mDefaultAccelerationMax;
+  Vec2 mDefaultPositionMax;
 
   float mXScalingMin, mYScalingMin;
   float mXScalingMax, mYScalingMax;

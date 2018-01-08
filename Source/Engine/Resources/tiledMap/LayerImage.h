@@ -17,11 +17,11 @@ class TiledImageLayer : public TiledLayerGeneric {
   void SetTexture(const RSC_Texture *tex);
   const RSC_Texture *GetTexture() const;
 
-  void SetOffset(const Coord2df &off);
-  Coord2df GetOffset() const;
+  void SetOffset(const Vec2 &off);
+  Vec2 GetOffset() const;
 
-  void SetParallax(const Coord2df &para);
-  Coord2df GetParallax() const;
+  void SetParallax(const Vec2 &para);
+  Vec2 GetParallax() const;
 
   bool GetRepeatX() const;
   void SetRepeatX(bool val);
@@ -37,8 +37,8 @@ class TiledImageLayer : public TiledLayerGeneric {
   /// If true, image is repeated, if false, image is strectched
   bool repeatX, repeatY;
   bool stretchToMapX, stretchToMapY;
-  Coord2df offset;
-  Coord2df parallax;
+  Vec2 offset;
+  Vec2 parallax;
   const RSC_Texture *texture;
 };
 

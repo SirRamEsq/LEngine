@@ -19,17 +19,17 @@ void Resolution::UpdateResolution(SDL_Window *window) {
   mResolutionY = display_h;
 }
 
-void Resolution::SetVirtualResolution(const Coord2df &res) {
+void Resolution::SetVirtualResolution(const Vec2 &res) {
   auto newVirtualResolution = res.Round();
   mVirtualResolutionX = newVirtualResolution.x;
   mVirtualResolutionY = newVirtualResolution.y;
   mVirtualAspectRatio = mResolutionX / mResolutionY;
 }
 
-Coord2df Resolution::GetVirtualResolution() {
-  return Coord2df(mVirtualResolutionX, mVirtualResolutionY);
+Vec2 Resolution::GetVirtualResolution() {
+  return Vec2(mVirtualResolutionX, mVirtualResolutionY);
 }
 
-Coord2df Resolution::GetResolution() {
-  return Coord2df(mResolutionX, mResolutionY);
+Vec2 Resolution::GetResolution() {
+  return Vec2(mResolutionX, mResolutionY);
 }

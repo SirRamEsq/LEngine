@@ -90,7 +90,7 @@ ComponentSprite::ComponentSprite(EID id, ComponentPosition *pos,
 ComponentSprite::~ComponentSprite() {}
 
 void ComponentSprite::Update() {
-  Coord2df pos = myPos->GetPositionWorld();
+  Vec2 pos = myPos->GetPositionWorld();
 
   for (auto i = mSprites.begin(); i != mSprites.end(); i++) {
     auto renderSprite = &(i->mRenderableSprite);

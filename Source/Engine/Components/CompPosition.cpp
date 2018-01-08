@@ -18,7 +18,7 @@ void MapNode::SetParent(MapNode *parent) {
     positionLocal = mParent->TranslateWorldToLocal(positionLocal);
     return;
   }
-  Coord2df oldParentCoord, newParentcoord;
+  Vec2 oldParentCoord, newParentcoord;
   // Set local coordinates to world
   positionLocal = mParent->TranslateLocalToWorld(positionLocal);
 
@@ -57,8 +57,8 @@ MapNode *MapNode::GetRootNode() {
   return mParent->GetRootNode();
 }
 
-Coord2df MapNode::TranslateLocalToWorld(const Coord2df &localCoordinates) {
-  Coord2df worldCoordinates(localCoordinates);
+Vec2 MapNode::TranslateLocalToWorld(const Vec2 &localCoordinates) {
+  Vec2 worldCoordinates(localCoordinates);
   if (mParent == NULL) {
     return worldCoordinates;
   }
@@ -70,8 +70,8 @@ Coord2df MapNode::TranslateLocalToWorld(const Coord2df &localCoordinates) {
   return mParent->TranslateLocalToWorld(worldCoordinates);
 }
 
-Coord2df MapNode::TranslateWorldToLocal(const Coord2df &worldCoordinates) {
-  Coord2df localCoordinates(worldCoordinates);
+Vec2 MapNode::TranslateWorldToLocal(const Vec2 &worldCoordinates) {
+  Vec2 localCoordinates(worldCoordinates);
   if (mParent == NULL) {
     return localCoordinates;
   }
@@ -110,13 +110,13 @@ void ComponentPosition::SetParent(BaseComponent *p) {
   }
 }
 
-Coord2df ComponentPosition::GetPositionWorld() { return mNode.positionWorld; }
+Vec2 ComponentPosition::GetPositionWorld() { return mNode.positionWorld; }
 
-Coord2df ComponentPosition::GetPositionLocal() { return mNode.positionLocal; }
+Vec2 ComponentPosition::GetPositionLocal() { return mNode.positionLocal; }
 
-Coord2df ComponentPosition::GetMovement() { return mMovement; }
+Vec2 ComponentPosition::GetMovement() { return mMovement; }
 
-Coord2df ComponentPosition::GetAcceleration() { return mAcceleration; }
+Vec2 ComponentPosition::GetAcceleration() { return mAcceleration; }
 
 void ComponentPosition::Update() {
   // Clamp movement speed to maximum
@@ -140,29 +140,29 @@ void ComponentPosition::Update() {
   mNode.UpdateWorld();
 }
 
-void ComponentPosition::IncrementPosition(Coord2df pos) {
+void ComponentPosition::IncrementPosition(Vec2 pos) {
   mNode.positionLocal = mNode.positionLocal + pos;
   mNode.positionWorld = mNode.positionWorld + pos;
 }
-void ComponentPosition::IncrementMovement(Coord2df mov) {
+void ComponentPosition::IncrementMovement(Vec2 mov) {
   mMovement = mMovement + mov;
 }
-void ComponentPosition::IncrementAcceleration(Coord2df accel) {
+void ComponentPosition::IncrementAcceleration(Vec2 accel) {
   mAcceleration = mAcceleration + accel;
 }
 
-void ComponentPosition::SetPositionLocal(Coord2df pos) {
+void ComponentPosition::SetPositionLocal(Vec2 pos) {
   mNode.positionLocal = pos;
   mNode.UpdateWorld();
 }
 void ComponentPosition::SetPositionLocalX(float x) {
-  SetPositionLocal(Coord2df(x, mNode.positionLocal.y));
+  SetPositionLocal(Vec2(x, mNode.positionLocal.y));
 }
 void ComponentPosition::SetPositionLocalY(float y) {
-  SetPositionLocal(Coord2df(mNode.positionLocal.x, y));
+  SetPositionLocal(Vec2(mNode.positionLocal.x, y));
 }
 
-void ComponentPosition::SetPositionWorld(Coord2df pos) {
+void ComponentPosition::SetPositionWorld(Vec2 pos) {
   if (mNode.mParent == NULL) {
     mNode.positionWorld = pos;
     mNode.positionLocal = pos;
@@ -174,35 +174,35 @@ void ComponentPosition::SetPositionWorld(Coord2df pos) {
   mNode.UpdateWorld();
 }
 void ComponentPosition::SetPositionWorldX(float x) {
-  SetPositionWorld(Coord2df(x, mNode.positionWorld.y));
+  SetPositionWorld(Vec2(x, mNode.positionWorld.y));
 }
 void ComponentPosition::SetPositionWorldY(float y) {
-  SetPositionWorld(Coord2df(mNode.positionWorld.x, y));
+  SetPositionWorld(Vec2(mNode.positionWorld.x, y));
 }
 
-void ComponentPosition::SetMovement(Coord2df mov) { mMovement = mov; }
+void ComponentPosition::SetMovement(Vec2 mov) { mMovement = mov; }
 void ComponentPosition::SetMovementX(float x) {
-  SetMovement(Coord2df(x, mMovement.y));
+  SetMovement(Vec2(x, mMovement.y));
 }
 void ComponentPosition::SetMovementY(float y) {
-  SetMovement(Coord2df(mMovement.x, y));
+  SetMovement(Vec2(mMovement.x, y));
 }
 
-void ComponentPosition::SetAcceleration(Coord2df acl) { mAcceleration = acl; }
+void ComponentPosition::SetAcceleration(Vec2 acl) { mAcceleration = acl; }
 void ComponentPosition::SetAccelerationX(float x) {
-  SetAcceleration(Coord2df(x, mAcceleration.y));
+  SetAcceleration(Vec2(x, mAcceleration.y));
 }
 void ComponentPosition::SetAccelerationY(float y) {
-  SetAcceleration(Coord2df(mAcceleration.x, y));
+  SetAcceleration(Vec2(mAcceleration.x, y));
 }
 
-Coord2df ComponentPosition::TranslateWorldToLocal(const Coord2df &world) {
+Vec2 ComponentPosition::TranslateWorldToLocal(const Vec2 &world) {
   // Node is guarnteed to have a parent, if the component doesn't have a parent
   // then the node's parent is set to the rootNode owned by the Manager
   return mNode.mParent->TranslateWorldToLocal(world);
 }
 
-Coord2df ComponentPosition::TranslateLocalToWorld(const Coord2df &local) {
+Vec2 ComponentPosition::TranslateLocalToWorld(const Vec2 &local) {
   // Node is guarnteed to have a parent, if the component doesn't have a parent
   // then the node's parent is set to the rootNode owned by the Manager
   return mNode.mParent->TranslateLocalToWorld(local);

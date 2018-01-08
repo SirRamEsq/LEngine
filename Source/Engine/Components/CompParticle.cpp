@@ -42,13 +42,13 @@ ParticleCreator::ParticleCreator(RenderManager *rm,
   vao = 0;
 
   mUsePoint = false;
-  mPointCoordinates = Coord2df(0.0, 0.0);
+  mPointCoordinates = Vec2(0.0, 0.0);
   mPointIntensity = 18.0;
 
   mParticlesToRender = 0;
   mRandom.SetSeed(mRandom.GenerateSeed());
 
-  Color4f c(1.0f, 1.0f, 1.0f, 1.0f);
+  Vec4 c(1.0f, 1.0f, 1.0f, 1.0f);
   mDefaultColorMax = c;
   mDefaultColorMin = c;
   mState = PARTICLE_CREATOR_STOPPED;
@@ -68,7 +68,7 @@ void ParticleCreator::SetPointIntensity(float value) {
   mPointIntensity = value;
 }
 
-void ParticleCreator::SetPoint(const Coord2df &v) { mPointCoordinates = v; }
+void ParticleCreator::SetPoint(const Vec2 &v) { mPointCoordinates = v; }
 
 void ParticleCreator::SetRandomUV(bool value) { mRandomUV = value; }
 
@@ -304,8 +304,8 @@ void ParticleCreator::SetColor(const float &rMin, const float &gMin,
                                const float &bMin, const float &aMin,
                                const float &rMax, const float &gMax,
                                const float &bMax, const float &aMax) {
-  Color4f cMin(rMin, gMin, bMin, aMax);
-  Color4f cMax(rMax, gMax, bMax, aMax);
+  Vec4 cMin(rMin, gMin, bMin, aMax);
+  Vec4 cMax(rMax, gMax, bMax, aMax);
 
   mDefaultColorMin = cMin;
   mDefaultColorMax = cMax;
@@ -316,20 +316,20 @@ void ParticleCreator::SetColor(const float &rMin, const float &gMin,
 }
 */
 
-void ParticleCreator::SetPosition(const Coord2df &positionMin,
-                                  const Coord2df &positionMax) {
+void ParticleCreator::SetPosition(const Vec2 &positionMin,
+                                  const Vec2 &positionMax) {
   mDefaultPositionMin = positionMin;
   mDefaultPositionMax = positionMax;
 }
 
-void ParticleCreator::SetVelocity(const Coord2df &velocityMin,
-                                  const Coord2df &velocityMax) {
+void ParticleCreator::SetVelocity(const Vec2 &velocityMin,
+                                  const Vec2 &velocityMax) {
   mDefaultVelocityMin = velocityMin;
   mDefaultVelocityMax = velocityMax;
 }
 
-void ParticleCreator::SetAcceleration(const Coord2df &accelMin,
-                                      const Coord2df &accelMax) {
+void ParticleCreator::SetAcceleration(const Vec2 &accelMin,
+                                      const Vec2 &accelMax) {
   mDefaultAccelerationMin = accelMin;
   mDefaultAccelerationMax = accelMax;
 }
@@ -405,14 +405,14 @@ void ParticleCreator::WriteData(const unsigned int &writeLocation,
     Vec2 scaling(mRandom.GenerateRandomFloatValue(mXScalingMin, mXScalingMax),
                  mRandom.GenerateRandomFloatValue(mYScalingMin, mYScalingMax));
 
-    Vec4 color(mRandom.GenerateRandomFloatValue(mDefaultColorMin.r,
-                                                mDefaultColorMax.r),
-               mRandom.GenerateRandomFloatValue(mDefaultColorMin.g,
-                                                mDefaultColorMax.g),
-               mRandom.GenerateRandomFloatValue(mDefaultColorMin.b,
-                                                mDefaultColorMax.b),
-               mRandom.GenerateRandomFloatValue(mDefaultColorMin.a,
-                                                mDefaultColorMax.a));
+    Vec4 color(mRandom.GenerateRandomFloatValue(mDefaultColorMin.x,
+                                                mDefaultColorMax.x),
+               mRandom.GenerateRandomFloatValue(mDefaultColorMin.y,
+                                                mDefaultColorMax.y),
+               mRandom.GenerateRandomFloatValue(mDefaultColorMin.z,
+                                                mDefaultColorMax.z),
+               mRandom.GenerateRandomFloatValue(mDefaultColorMin.w,
+                                                mDefaultColorMax.w));
 
     Rect coord(-1, -1, 2, 2);
     float texCoordLeft = -1;
@@ -433,7 +433,7 @@ void ParticleCreator::WriteData(const unsigned int &writeLocation,
         texCoordTop = mAnimation->GetUVTop(mAnimationFrame);
       }
     }
-    Coord2df pos = myPos->GetPositionWorld();
+    Vec2 pos = myPos->GetPositionWorld();
     Vec2 offset(0, 0);
     Vec2 tex(0, 0);
     Vec2 worldPos(pos.x, pos.y);

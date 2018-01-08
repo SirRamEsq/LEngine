@@ -104,8 +104,8 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
 
   // Will render texture upside down
   Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
-      // Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
-      Coord2df(view.w, view.h), nearClippingPlane, farClippingPlane);
+      // Vec2(view.w, view.h), nearClippingPlane, farClippingPlane);
+      Vec2(view.w, view.h), nearClippingPlane, farClippingPlane);
   auto projectionMatInverse = projectionMat.Inverse();
 
   float viewport[4];

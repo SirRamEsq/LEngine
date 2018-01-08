@@ -62,7 +62,7 @@ class InputManager {
   bool WriteMapSetKeyToNextInput(const std::string &key);
   void OverwriteKeyIni();
 
-  Coord2df GetMousePosition();
+  Vec2 GetMousePosition();
   float GetMouseWheel();
   bool GetMouseButtonLeft();
   bool GetMouseButtonRight();

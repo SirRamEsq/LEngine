@@ -40,20 +40,20 @@
 //#define IMGUI_STB_NAMESPACE     ImGuiStb
 
 //---- Define constructor and implicit cast operators to convert back<>forth
-// from your math types and ImVec2/ImVec4.
+// from your math types and ImVec2/ImColor4f.
 
 #include "../Coordinates.h"
 #define IM_VEC2_CLASS_EXTRA                        \
-  ImVec2(const Coord2df &f) {                      \
+  ImVec2(const Vec2 &f) {                      \
     x = f.x;                                       \
     y = f.y;                                       \
   }                                                \
-  Coord2df ToCoord2df() { return Coord2df(x, y); } \
-  operator Coord2df() const { return Coord2df(x, y); }
+  Vec2 ToVec2() { return Vec2(x, y); } \
+  operator Vec2() const { return Vec2(x, y); }
 
 /*
 #define IM_VEC4_CLASS_EXTRA                                                 \
-        ImVec4(const MyVec4& f) { x = f.x; y = f.y; z = f.z; w = f.w; }     \
+        ImColor4f(const MyVec4& f) { x = f.x; y = f.y; z = f.z; w = f.w; }     \
         operator MyVec4() const { return MyVec4(x,y,z,w); }
 */
 

@@ -9,11 +9,11 @@ const std::string BLANK_ANIMATION_NAME = "BLANK_ANIMATION";
 const std::string BLANK_SPRITE_NAME = "BLANK_SPRITE";
 const std::string BLANK_HMAP_NAME = "BLANK_HMAP";
 
-Color4f Color4f_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
-Color4f Color4f_RED(1.0f, 0.0f, 0.0f, 1.0f);
-Color4f Color4f_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
-Color4f Color4f_BLUE(0.0f, 0.0f, 1.0f, 1.0f);
-Color4f Color4f_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+Vec4 COLOR_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+Vec4 COLOR_RED(1.0f, 0.0f, 0.0f, 1.0f);
+Vec4 COLOR_GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+Vec4 COLOR_BLUE(0.0f, 0.0f, 1.0f, 1.0f);
+Vec4 COLOR_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
 // Vsync should keep the FPS at roughly 60
 const int TICKS_PER_SECOND = 68;

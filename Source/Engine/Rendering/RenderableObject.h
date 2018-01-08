@@ -64,8 +64,8 @@ class RenderableObject {
   void SetRender(const bool &s) { render = s; }
   bool GetRender() { return render; }
 
-  Color4f GetColor() { return color; }
-  void SetColor(Color4f c) { color = c; }
+  Vec4 GetColor() { return color; }
+  void SetColor(Vec4 c) { color = c; }
 
   void SetShaderProgram(const RSC_GLProgram *p) { shaderProgram = p; }
   const RSC_GLProgram *GetShaderProgram() { return shaderProgram; }
@@ -73,7 +73,7 @@ class RenderableObject {
   // void UpdateShaderProgram();
 
   bool render;
-  Color4f color;
+  Vec4 color;
 
   TYPE type;
   std::string GetTypeString();
@@ -85,7 +85,7 @@ class RenderableObject {
  private:
   MAP_DEPTH depth;
   double scaleX, scaleY, rotation;
-  Coord2df position;
+  Vec2 position;
 
   const RSC_GLProgram *shaderProgram;
   static std::map<TYPE, std::string> TYPE_STR;

@@ -25,6 +25,7 @@
 
 #include "AudioSubsystem.h"
 #include "CommandLineArgs.h"
+#include "Matrix.h"
 
 #include <SOIL/SOIL.h>
 

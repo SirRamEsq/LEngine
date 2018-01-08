@@ -10,13 +10,13 @@ ComponentCamera::ComponentCamera(EID id, ComponentPosition *pos,
                                  RenderManager *rm,
                                  ComponentCameraManager *manager)
     : BaseComponent(id, manager),
-      mCamera(rm, Rect(Coord2df(0, 0), Resolution::GetVirtualResolution())) {
+      mCamera(rm, Rect(Vec2(0, 0), Resolution::GetVirtualResolution())) {
   mPosition = pos;
 }
 ComponentCamera::~ComponentCamera() {}
 
 void ComponentCamera::Update() {
-  Coord2df coordinates = mPosition->GetPositionWorld();
+  Vec2 coordinates = mPosition->GetPositionWorld();
   mCamera.view.x = floor(coordinates.x + 0.5f);
   mCamera.view.y = floor(coordinates.y + 0.5f);
 }

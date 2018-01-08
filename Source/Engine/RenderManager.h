@@ -3,7 +3,7 @@
 
 #include "Defines.h"
 #include "SDLInit.h"
-#include "glslHelper.h"
+#include "Vector.h"
 #include <list>
 #include <map>
 #include <memory>

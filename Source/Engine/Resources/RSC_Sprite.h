@@ -58,7 +58,7 @@ class LAnimation {
   float GetUVBottom(int index) const;
   float GetUVRight(int index) const;
   /// Gets random UVCoords bounded by a frame index coords
-  std::pair<Coord2df, Coord2df> GetUVRandom(int index) const;
+  std::pair<Vec2, Vec2> GetUVRandom(int index) const;
 
   int NumberOfImages() const { return images.size(); }
 
@@ -83,7 +83,7 @@ class LAnimation {
 
   /// stores the uv coordinates for each frame
   /// Pair is stored as <(Left, Top), (Right, Bottom)>
-  std::vector<std::pair<Coord2df, Coord2df>> UVCoords;
+  std::vector<std::pair<Vec2, Vec2>> UVCoords;
 };
 
 class RSC_Sprite {

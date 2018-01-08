@@ -97,7 +97,7 @@ void RenderImageLayer::BuildVAO(Rect camera) {
 RenderImageLayer::~RenderImageLayer() {}
 
 bool RenderImageLayer::isTransparent(){
-	if(color.a == 1.0){
+	if(color.w == 1.0){
 		return false;
 	}
 	return true;

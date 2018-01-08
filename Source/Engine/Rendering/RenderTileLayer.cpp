@@ -12,7 +12,7 @@ RenderTileLayer::RenderTileLayer(RenderManager *rm, const TiledTileLayer *l)
     LOG_ERROR("LAYER IS NULL");
   }
 
-  color.a = l->GetAlpha();
+  color.w = l->GetAlpha();
   animatedRefreshRateTimer = l->GetAnimationRate();
 
   if (animatedRefreshRateTimer == 0) {

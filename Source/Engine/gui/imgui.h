@@ -140,10 +140,10 @@ struct ImVec2 {
 #endif
 };
 
-struct ImVec4 {
+struct ImColor4f {
   float x, y, z, w;
-  ImVec4() { x = y = z = w = 0.0f; }
-  ImVec4(float _x, float _y, float _z, float _w) {
+  ImColor4f() { x = y = z = w = 0.0f; }
+  ImColor4f(float _x, float _y, float _z, float _w) {
     x = _x;
     y = _y;
     z = _z;
@@ -151,7 +151,7 @@ struct ImVec4 {
   }
 #ifdef IM_VEC4_CLASS_EXTRA  // Define constructor and implicit cast operators in
                             // imconfig.h to convert back<>forth from your math
-                            // types and ImVec4.
+                            // types and ImColor4f.
   IM_VEC4_CLASS_EXTRA
 #endif
 };
@@ -399,7 +399,7 @@ IMGUI_API ImGuiStorage *GetStateStorage();
 IMGUI_API void PushFont(
     ImFont *font);  // use NULL as a shortcut to push default font
 IMGUI_API void PopFont();
-IMGUI_API void PushStyleColor(ImGuiCol idx, const ImVec4 &col);
+IMGUI_API void PushStyleColor(ImGuiCol idx, const ImColor4f &col);
 IMGUI_API void PopStyleColor(int count = 1);
 IMGUI_API void PushStyleVar(ImGuiStyleVar idx, float val);
 IMGUI_API void PushStyleVar(ImGuiStyleVar idx, const ImVec2 &val);
@@ -416,7 +416,7 @@ IMGUI_API ImU32 GetColorU32(ImGuiCol idx,
                                                       // applied and optional
                                                       // extra alpha multiplier
 IMGUI_API ImU32 GetColorU32(
-    const ImVec4 &col);  // retrieve given color with style alpha applied
+    const ImColor4f &col);  // retrieve given color with style alpha applied
 
 // Parameters stacks (current window)
 IMGUI_API void PushItemWidth(
@@ -566,10 +566,10 @@ IMGUI_API ImGuiID GetID(const void *ptr_id);
 // Widgets
 IMGUI_API void Text(const char *fmt, ...) IM_PRINTFARGS(1);
 IMGUI_API void TextV(const char *fmt, va_list args);
-IMGUI_API void TextColored(const ImVec4 &col, const char *fmt, ...)
+IMGUI_API void TextColored(const ImColor4f &col, const char *fmt, ...)
     IM_PRINTFARGS(2);  // shortcut for PushStyleColor(ImGuiCol_Text, col);
                        // Text(fmt, ...); PopStyleColor();
-IMGUI_API void TextColoredV(const ImVec4 &col, const char *fmt, va_list args);
+IMGUI_API void TextColoredV(const ImColor4f &col, const char *fmt, va_list args);
 IMGUI_API void TextDisabled(const char *fmt, ...)
     IM_PRINTFARGS(1);  // shortcut for PushStyleColor(ImGuiCol_Text,
                        // style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...);
@@ -608,13 +608,13 @@ IMGUI_API bool InvisibleButton(const char *str_id, const ImVec2 &size);
 IMGUI_API void Image(ImTextureID user_texture_id, const ImVec2 &size,
                      const ImVec2 &uv0 = ImVec2(0, 0),
                      const ImVec2 &uv1 = ImVec2(1, 1),
-                     const ImVec4 &tint_col = ImVec4(1, 1, 1, 1),
-                     const ImVec4 &border_col = ImVec4(0, 0, 0, 0));
+                     const ImColor4f &tint_col = ImColor4f(1, 1, 1, 1),
+                     const ImColor4f &border_col = ImColor4f(0, 0, 0, 0));
 IMGUI_API bool ImageButton(
     ImTextureID user_texture_id, const ImVec2 &size,
     const ImVec2 &uv0 = ImVec2(0, 0), const ImVec2 &uv1 = ImVec2(1, 1),
-    int frame_padding = -1, const ImVec4 &bg_col = ImVec4(0, 0, 0, 0),
-    const ImVec4 &tint_col = ImVec4(1, 1, 1, 1));  // <0 frame_padding
+    int frame_padding = -1, const ImColor4f &bg_col = ImColor4f(0, 0, 0, 0),
+    const ImColor4f &tint_col = ImColor4f(1, 1, 1, 1));  // <0 frame_padding
                                                    // uses default frame
                                                    // padding settings. 0
                                                    // for no padding
@@ -634,7 +634,7 @@ IMGUI_API bool Combo(const char *label, int *current_item,
                      bool (*items_getter)(void *data, int idx,
                                           const char **out_text),
                      void *data, int items_count, int height_in_items = -1);
-IMGUI_API bool ColorButton(const ImVec4 &col, bool small_height = false,
+IMGUI_API bool ColorButton(const ImColor4f &col, bool small_height = false,
                            bool outline_border = true);
 IMGUI_API bool ColorEdit3(const char *label,
                           float col[3]);  // Hint: 'float col[3]' function
@@ -890,7 +890,7 @@ IMGUI_API void Value(const char *prefix, int v);
 IMGUI_API void Value(const char *prefix, unsigned int v);
 IMGUI_API void Value(const char *prefix, float v,
                      const char *float_format = NULL);
-IMGUI_API void ValueColor(const char *prefix, const ImVec4 &v);
+IMGUI_API void ValueColor(const char *prefix, const ImColor4f &v);
 IMGUI_API void ValueColor(const char *prefix, ImU32 v);
 
 // Tooltips
@@ -1071,8 +1071,8 @@ IMGUI_API bool BeginChildFrame(
                                         // widget frame
 IMGUI_API void EndChildFrame();
 
-IMGUI_API ImVec4 ColorConvertU32ToFloat4(ImU32 in);
-IMGUI_API ImU32 ColorConvertFloat4ToU32(const ImVec4 &in);
+IMGUI_API ImColor4f ColorConvertU32ToFloat4(ImU32 in);
+IMGUI_API ImU32 ColorConvertFloat4ToU32(const ImColor4f &in);
 IMGUI_API void ColorConvertRGBtoHSV(float r, float g, float b, float &out_h,
                                     float &out_s, float &out_v);
 IMGUI_API void ColorConvertHSVtoRGB(float h, float s, float v, float &out_r,
@@ -1569,7 +1569,7 @@ struct ImGuiStyle {
   float CurveTessellationTol;  // Tessellation tolerance. Decrease for highly
                                // tessellated curves (higher quality, more
                                // polygons), increase to reduce quality.
-  ImVec4 Colors[ImGuiCol_COUNT];
+  ImColor4f Colors[ImGuiCol_COUNT];
 
   IMGUI_API ImGuiStyle();
 };
@@ -2133,15 +2133,15 @@ struct ImGuiSizeConstraintCallbackData {
   IM_COL32(0, 0, 0, 0)  // Transparent black = 0x00000000
 
 // ImColor() helper to implicity converts colors to either ImU32 (packed 4x1
-// byte) or ImVec4 (4x1 float)
+// byte) or ImColor4f (4x1 float)
 // Prefer using IM_COL32() macros if you want a guaranteed compile-time ImU32
 // for usage with ImDrawList API.
-// **Avoid storing ImColor! Store either u32 of ImVec4. This is not a
+// **Avoid storing ImColor! Store either u32 of ImColor4f. This is not a
 // full-featured color class.
 // **None of the ImGui API are using ImColor directly but you can use it as a
-// convenience to pass colors in either ImU32 or ImVec4 formats.
+// convenience to pass colors in either ImU32 or ImColor4f formats.
 struct ImColor {
-  ImVec4 Value;
+  ImColor4f Value;
 
   ImColor() { Value.x = Value.y = Value.z = Value.w = 0.0f; }
   ImColor(int r, int g, int b, int a = 255) {
@@ -2164,11 +2164,11 @@ struct ImColor {
     Value.z = b;
     Value.w = a;
   }
-  ImColor(const ImVec4 &col) { Value = col; }
+  ImColor(const ImColor4f &col) { Value = col; }
   inline operator ImU32() const {
     return ImGui::ColorConvertFloat4ToU32(Value);
   }
-  inline operator ImVec4() const { return Value; }
+  inline operator ImColor4f() const { return Value; }
 
   inline void SetHSV(float h, float s, float v, float a = 1.0f) {
     ImGui::ColorConvertHSVtoRGB(h, s, v, Value.x, Value.y, Value.z);
@@ -2266,7 +2266,7 @@ struct ImDrawCmd {
                           // triangles. Vertices are stored in the callee
                           // ImDrawList's vtx_buffer[] array, indices in
                           // idx_buffer[].
-  ImVec4 ClipRect;        // Clipping rectangle (x1, y1, x2, y2)
+  ImColor4f ClipRect;        // Clipping rectangle (x1, y1, x2, y2)
   ImTextureID TextureId;  // User-provided texture ID. Set by user in
                           // ImfontAtlas::SetTexID() for fonts or passed to
                           // Image*() functions. Ignore if never using images or
@@ -2358,7 +2358,7 @@ struct ImDrawList {
   ImDrawIdx *_IdxWritePtr;  // [Internal] point within IdxBuffer.Data after each
                             // add command (to avoid using the ImVector<>
                             // operators too much)
-  ImVector<ImVec4> _ClipRectStack;        // [Internal]
+  ImVector<ImColor4f> _ClipRectStack;        // [Internal]
   ImVector<ImTextureID> _TextureIdStack;  // [Internal]
   ImVector<ImVec2> _Path;                 // [Internal] current path building
   int _ChannelsCurrent;  // [Internal] current channel number (0)
@@ -2422,7 +2422,7 @@ struct ImDrawList {
   IMGUI_API void AddText(const ImFont *font, float font_size, const ImVec2 &pos,
                          ImU32 col, const char *text_begin,
                          const char *text_end = NULL, float wrap_width = 0.0f,
-                         const ImVec4 *cpu_fine_clip_rect = NULL);
+                         const ImColor4f *cpu_fine_clip_rect = NULL);
   IMGUI_API void AddImage(ImTextureID user_texture_id, const ImVec2 &a,
                           const ImVec2 &b, const ImVec2 &uv_a = ImVec2(0, 0),
                           const ImVec2 &uv_b = ImVec2(1, 1),
@@ -2795,7 +2795,7 @@ struct ImFont {
   IMGUI_API void RenderChar(ImDrawList *draw_list, float size, ImVec2 pos,
                             ImU32 col, unsigned short c) const;
   IMGUI_API void RenderText(ImDrawList *draw_list, float size, ImVec2 pos,
-                            ImU32 col, const ImVec4 &clip_rect,
+                            ImU32 col, const ImColor4f &clip_rect,
                             const char *text_begin, const char *text_end,
                             float wrap_width = 0.0f,
                             bool cpu_fine_clip = false) const;

@@ -192,7 +192,7 @@ void InputManager::OverwriteKeyIni() {
   keyMappingIni.CloseWriteFile();
 }
 
-Coord2df InputManager::GetMousePosition() { return Coord2df(mouseX, mouseY); }
+Vec2 InputManager::GetMousePosition() { return Vec2(mouseX, mouseY); }
 
 bool InputManager::GetMouseButtonLeft() { return mouseButtonLeft; }
 

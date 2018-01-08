@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "../glslHelper.h"
+#include "../Vector.h"
 
 #include "RSC_Heightmap.h"
 #include "RSC_Sprite.h"

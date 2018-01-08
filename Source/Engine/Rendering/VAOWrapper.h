@@ -1,7 +1,12 @@
 #ifndef LENGINE_RENDER_VAOWRAPPER
 #define LENGINE_RENDER_VAOWRAPPER
 
-#include "../glslHelper.h"
+#include <memory>
+
+#include "../Vector.h"
+
+#include <GL/glew.h>
+#include <GL/gl.h>
 
 enum VAO_ATTRIBUTE_ARRAY_FLAGS {
   VAO_VERTEX = 1,
