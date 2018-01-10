@@ -16,12 +16,13 @@ extern "C" {
 #include "Components/CompPosition.h"
 #include "Components/CompSprite.h"
 #include "Components/CompLight.h"
-#include "LuaBridgeVectorWrapper.h"
+//#include "LuaBridgeVectorWrapper.h"
 
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_Script.h"
 
 #include <unordered_set>
+#include <functional>
 
 // Forward declares
 class GameState;
@@ -104,7 +105,7 @@ class LuaInterface {
                               const std::string &property);
   GS_Script *GetCurrentGameState();
 
-  LB_VEC_WRAPPER<TiledLayerGeneric *> GetLayersWithProperty(
+  std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       RSC_Map *m, const std::string &name, luabridge::LuaRef value);
 
   //////////////
@@ -127,7 +128,7 @@ class LuaInterface {
   ////////////
   // Entities//
   ////////////
-  const std::vector<EID> *EntityGetFromName(const std::string &name);
+  std::vector<EID> EntityGetFromName(const std::string &name);
   luabridge::LuaRef EntityGetInterface(const EID &id);
   Vec2 EntityGetPositionWorld(EID entity);
   Vec2 EntityGetMovement(EID entity);
@@ -135,6 +136,8 @@ class LuaInterface {
   EID EntityNew(std::string name, int x, int y, MAP_DEPTH depth, EID parent,
                 luabridge::LuaRef scripts, luabridge::LuaRef propertyTable);
   void EntityDelete(EID entity);
+
+  std::vector<EID> GetEntitiesExcept(luabridge::LuaRef r);
 
   /////////////
   // Rendering//

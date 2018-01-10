@@ -117,6 +117,7 @@ class GameState {
   bool isLuaState;
 
  private:
+  static void ExposeLuaInterface(lua_State *state);
   void AddNameEIDLookup(const std::string &name, EID id);
   void SetMapHandleRenderableLayers(
       const std::map<MAP_DEPTH, TiledLayerGeneric *> &layers);

@@ -11,6 +11,14 @@
 #include <unordered_set>
 #include <vector>
 
+// Lua headers
+extern "C" {
+#include "lua5.2/lauxlib.h"
+#include "lua5.2/lua.h"
+#include "lua5.2/lualib.h"
+}
+#include <LuaBridge.h>
+
 class GameStateManager;
 
 /**
@@ -103,17 +111,19 @@ class EntityManager {
   void SetParent(EID child, EID parent);
 
   /// Deactivates all Entities
-  void DeactivateAllEntities();
+  void DeactivateAll();
   /// Deactivates all Entities except the ones specified
-  void DeactivateAllEntitiesExcept(std::vector<EID> entities);
+  void DeactivateAllExcept(std::vector<EID> entities);
   /// Activates all Entities
-  void ActivateAllEntities();
+  void ActivateAll();
   /// Activates all Entities except the ones specified
-  void ActivateAllEntitiesExcept(std::vector<EID> entities);
+  void ActivateAllExcept(std::vector<EID> entities);
   /// Activate specified entities
   void Activate(std::vector<EID> entities);
   /// Deactivate specified entities
   void Deactivate(std::vector<EID> entities);
+
+  static void ExposeLuaInterface(lua_State *state);
 
  protected:
   /// Clears out nameToEID and EIDToName

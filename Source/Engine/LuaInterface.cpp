@@ -5,10 +5,179 @@
 #include "Resolution.h"
 #include "StateManager.h"
 #include "gui/imgui_LEngine.h"
-#include "GameSave.h""math.h"
+#include "GameSave.h" "math.h"
 
 #include <sstream>
 #include "math.h"
+
+namespace Bindings {
+/**
+ * Converts Lua list-like table to std containers like vector, list.
+ */
+template <class T>
+static T tableToList(const luabridge::LuaRef &table) {
+  T list;
+  if (table.isTable()) {
+    for (size_t i = 1, n = (size_t)table.length();
+         (i <= n && !table[i].isNil()); i++) {
+      list.push_back(table[i]);  // implicit conversion from luabridge::Proxy
+                                 // should be called here
+    }
+  }
+  return list;
+}
+
+/**
+ * Assigns values from containers like list/vector to Lua list-like Table.
+ */
+template <class T>
+static void listToTable(luabridge::LuaRef &table, const T &list) {
+  for (auto element : list) {
+    table.append(element);
+  }
+}
+
+/**
+ * Converts Lua table to std::map containers.
+ */
+template <class T>
+static T tableToMap(const luabridge::LuaRef &table) {
+  T map;
+  if (table.isTable()) {
+    for (luabridge::Iterator iter(table); !iter.isNil(); ++iter) {
+      map[iter.key()] = iter.value();  // implicit conversion from LuaRefs
+                                       // should be called here
+    }
+  }
+  return map;
+}
+/**
+ * Assigns values from map containers to Lua Table.
+ */
+template <class T>
+static void mapToTable(luabridge::LuaRef &table, const T &map) {
+  for (auto element : map) {
+    table[element.first] = element.second;
+  }
+}
+}
+
+using namespace luabridge;
+
+/**
+ * Specializations for luabridge::Stack<T>.
+ */
+
+/**
+ * Stack specialization for std::vector.
+ * Creates new table every time vector is returned to Lua and new vector from
+ * table other way around.
+ */
+template <typename T>
+struct Stack<std::vector<T>> {
+ public:
+  static inline void push(lua_State *L, std::vector<T> vec) {
+    auto table = LuaRef::newTable(L);
+    Bindings::listToTable<std::vector<T>>(table, vec);
+    table.push(L);
+  }
+
+  static inline std::vector<T> get(lua_State *L, int index) {
+    return Bindings::tableToList<std::vector<T>>(
+        LuaRef::fromStack(L, index));
+  }
+};
+
+/**
+ * Stack specialization for std::vector. Const reference version.
+ */
+template <typename T>
+struct Stack<const std::vector<T> &> {
+ public:
+  static inline void push(lua_State *L, const std::vector<T> &vec) {
+    auto table = LuaRef::newTable(L);
+    Bindings::listToTable<std::vector<T>>(table, vec);
+    table.push(L);
+  }
+
+  static inline std::vector<T> get(lua_State *L, int index) {
+    return Bindings::tableToList<std::vector<T>>(
+        LuaRef::fromStack(L, index));
+  }
+};
+
+/**
+ * Stack specialization for std::list. Converts list to Lua table and vice
+ * versa.
+ */
+template <typename T>
+struct Stack<std::list<T>> {
+ public:
+  static inline void push(lua_State *L, std::list<T> list) {
+    auto table = LuaRef::newTable(L);
+    Bindings::listToTable<std::list<T>>(table, list);
+    table.push(L);
+  }
+
+  static inline std::list<T> get(lua_State *L, int index) {
+    return Bindings::tableToList<std::list<T>>(
+        LuaRef::fromStack(L, index));
+  }
+};
+
+/**
+ * Stack specialization for std::list. Const ref version.
+ */
+template <typename T>
+struct Stack<const std::list<T> &> {
+ public:
+  static inline void push(lua_State *L, const std::list<T> &list) {
+    auto table = LuaRef::newTable(L);
+    Bindings::listToTable<std::list<T>>(table, list);
+    table.push(L);
+  }
+
+  static inline std::list<T> get(lua_State *L, int index) {
+    return Bindings::tableToList<std::list<T>>(
+        LuaRef::fromStack(L, index));
+  }
+};
+
+/**
+ * Stack specialization for std::map. Converts map to Lua table and vice versa.
+ */
+template <typename TK, typename TV>
+struct Stack<std::map<TK, TV>> {
+ public:
+  static inline void push(lua_State *L, std::map<TK, TV> map) {
+    auto table = LuaRef::newTable(L);
+    Bindings::mapToTable(table, map);
+    table.push(L);
+  }
+
+  static inline std::map<TK, TV> get(lua_State *L, int index) {
+    return Bindings::tableToMap<std::map<TK, TV>>(
+        LuaRef::fromStack(L, index));
+  }
+};
+
+/**
+ * Stack specialization for std::map. Const ref version.
+ */
+template <typename TK, typename TV>
+struct Stack<const std::map<TK, TV> &> {
+ public:
+  static inline void push(lua_State *L, const std::map<TK, TV> &map) {
+    auto table = LuaRef::newTable(L);
+    Bindings::mapToTable(table, map);
+    table.push(L);
+  }
+
+  static inline std::map<TK, TV> get(lua_State *L, int index) {
+    return Bindings::tableToMap<std::map<TK, TV>>(
+        LuaRef::fromStack(L, index));
+  }
+};
 
 void stackdump_g(lua_State *l, const std::string &logFile) {
   std::stringstream ss;
@@ -84,8 +253,6 @@ int GetErrorInfo(lua_State *L) {
   lua_pushstring(L, msg.str().c_str());
   return 1;
 }
-
-using namespace luabridge;
 
 // Base Entity needs to be inside Type_Dir
 const std::string LuaInterface::BASE_SCRIPT_NAME = "__BaseEntity.lua";
@@ -799,10 +966,10 @@ bool LuaInterface::HasLightComponent(const EID &id) {
 ////////////
 // Entities//
 ////////////
-const std::vector<EID> *LuaInterface::EntityGetFromName(
+std::vector<EID> LuaInterface::EntityGetFromName(
     const std::string &name) {
   auto eids = parentState->GetEIDFromName(name);
-  return eids;
+  return *eids;
 }
 
 luabridge::LuaRef LuaInterface::EntityGetInterface(const EID &id) {
@@ -1052,14 +1219,14 @@ void LuaInterface::SetAmbientLight(float r, float g, float b) {
   parentState->comLightMan.SetAmbientLight(color);
 }
 
-LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
+std::vector<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     RSC_Map *m, const std::string &name, luabridge::LuaRef refValue) {
   auto type = refValue.type();
   if (m != NULL) {
     if (type == LUA_TBOOLEAN) {
       bool value = (refValue.cast<bool>() ? "true" : "false");
       auto layers = m->GetLayersWithProperty(name, value);
-      return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+      return layers;
     } else if (type == LUA_TNUMBER) {
       // check if int or float
       double doubleValue = refValue.cast<lua_Number>();
@@ -1068,28 +1235,36 @@ LB_VEC_WRAPPER<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
         // Is int
         int intValue = roundedValue;
         auto layers = m->GetLayersWithProperty(name, intValue);
-        return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+        return layers;
       } else {
         // Is Float
         auto layers = m->GetLayersWithProperty(name, doubleValue);
-        return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+        return layers;
       }
 
     } else if (type == LUA_TSTRING) {
       auto value = refValue.cast<std::string>();
       auto layers = m->GetLayersWithProperty(name, value);
-      return LB_VEC_WRAPPER<TiledLayerGeneric *>(&layers);
+      return layers;
     }
   }
 
-  // return std::vector<TiledLayerGeneric *>();
-  return LB_VEC_WRAPPER<TiledLayerGeneric *>();
+  return std::vector<TiledLayerGeneric *>();
+}
+
+std::vector<EID> LuaInterface::GetEntitiesExcept(luabridge::LuaRef r) {}
+
+template <class T>
+T at(std::vector<T> &vec, int index) {
+  return vec.at(index);
 }
 
 void LuaInterface::ExposeCPP() {
+  GameState::ExposeLuaInterface(lState);
+  typedef std::vector<std::string> VectorString;
+  typedef std::vector<TiledLayerGeneric *> VectorLayer;
   typedef std::vector<EID> VectorEID;
-  typedef std::vector<EID> VectorString;
-  typedef LB_VEC_WRAPPER<TiledLayerGeneric *> VectorLayer;
+
   /*
    * if a const pointer is passed to lua
    * it WILL NOT CONTAIN non-const methods
@@ -1352,11 +1527,11 @@ void LuaInterface::ExposeCPP() {
       .addData("a", &Vec4::w)
       .endClass()
 
+	  /*
       .beginClass<VectorEID>("VectorEID")
       .addFunction("size", &VectorEID::size)
-      .addFunction<VectorEID::const_reference (VectorEID::*)(
-          VectorEID::size_type) const>("at", &VectorEID::at)
       .addFunction("empty", &VectorEID::empty)
+      .addStaticFunction("at", &at<EID>)
       .endClass()
 
       .beginClass<VectorString>("VectorString")
@@ -1366,14 +1541,22 @@ void LuaInterface::ExposeCPP() {
       .addFunction("empty", &VectorString::empty)
       .endClass()
 
-      /// Maybe add lua friendly wrapper?
-      .beginClass<VectorLayer>("VectorLayer")
-      .addConstructor<void (*)()>()
-      .addFunction("size", &VectorLayer::Size)
-      .addFunction("push", &VectorLayer::Push)
-      .addFunction("at", &VectorLayer::At)
-      .addFunction("empty", &VectorLayer::Empty)
+      .beginClass<VectorLayer::const_reference>("VectorLayer_REF")
+      .addFunction("size", &VectorLayer::const_reference::size)
+      .addFunction<VectorLayer::const_reference (VectorLayer::*)(
+          VectorLayer::size_type) const>("at", &VectorLayer::at)
+      .addStaticFunction("at", &at<EID>)
+      .addFunction("empty", &VectorLayer::empty)
       .endClass()
+
+      .beginClass<VectorLayer>("VectorLayer")
+      .addFunction("size", &VectorLayer::size)
+      .addFunction<VectorLayer::const_reference (VectorLayer::*)(
+          VectorLayer::size_type) const>("at", &VectorLayer::at)
+      .addStaticFunction("at", &at<EID>)
+      .addFunction("empty", &VectorLayer::empty)
+      .endClass()
+	  */
 
       .beginClass<BaseComponent>("BaseComponent")
       .addFunction("SetParent", &BaseComponent::SetParentEID)

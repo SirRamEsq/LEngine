@@ -10,12 +10,12 @@ EntityManager::EntityManager(GameStateManager *gsm) : mStateManager(gsm) {
 void EntityManager::DeleteEntity(EID id) {
   // if the id is alive and not alerady deleted
   if (aliveEntities.find(id) != aliveEntities.end()) {
-  deadEntities.insert(id);
+    deadEntities.insert(id);
   }
 }
 
 unsigned int EntityManager::GetEntityCount() {
-	return aliveEntities.size() - deadEntities.size();
+  return aliveEntities.size() - deadEntities.size();
 }
 
 void EntityManager::DispatchEvent(const Event *event) {
@@ -145,13 +145,13 @@ void EntityManager::SetParent(EID child, EID parent) {
   }
 }
 
-void EntityManager::ActivateAllEntities() {}
+void EntityManager::ActivateAll() {}
 
-void EntityManager::ActivateAllEntitiesExcept(std::vector<EID> entities) {}
+void EntityManager::DeactivateAll() {}
 
-void EntityManager::DeactivateAllEntitiesExcept(std::vector<EID> entities) {}
+void EntityManager::ActivateAllExcept(std::vector<EID> entities) {}
 
-void EntityManager::DeactivateAllEntities() {}
+void EntityManager::DeactivateAllExcept(std::vector<EID> entities) {}
 
 void EntityManager::Activate(std::vector<EID> entities) {
   for (auto i = entities.begin(); i != entities.end(); i++) {
@@ -169,4 +169,25 @@ void EntityManager::Deactivate(std::vector<EID> entities) {
       comp->second->DeactivateComponent(*i);
     }
   }
+}
+void EntityManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginClass<EntityManager>("EntityManager")
+      .addFunction("Activate", &EntityManager::Activate)
+      .addFunction("Deactivate", &EntityManager::Activate)
+
+      .addFunction("ActivateAll", &EntityManager::ActivateAll)
+      .addFunction("DeactivateAll", &EntityManager::DeactivateAll)
+
+      .addFunction("ActivateAllExcept", &EntityManager::ActivateAllExcept)
+      .addFunction("DeactivateAllExcept", &EntityManager::DeactivateAllExcept)
+
+      .addFunction("GetEntityCount", &EntityManager::GetEntityCount)
+      .addFunction("SetParent", &EntityManager::SetParent)
+
+      .addFunction("Delete", &EntityManager::DeleteEntity)
+	  
+	  /// \TODO Be able to create new entities this way
+      //.addFunction("New", &EntityManager::NewEntity)
+      .endClass();
 }

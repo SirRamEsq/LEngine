@@ -18,10 +18,10 @@ class LB_VEC_WRAPPER {
   }
   ~LB_VEC_WRAPPER() {}
 
-  void Push(T value) { mWrappedVector.push_back(value); }
-  T At(int index) { return mWrappedVector.at(index); }
-  int Size() { return mWrappedVector.size(); }
-  bool Empty() { return mWrappedVector.empty(); }
+  void push_back(T value) { mWrappedVector.push_back(value); }
+  T at(int index) { return mWrappedVector.at(index); }
+  int size() { return mWrappedVector.size(); }
+  bool empty() { return mWrappedVector.empty(); }
 
  private:
   std::vector<T> mWrappedVector;

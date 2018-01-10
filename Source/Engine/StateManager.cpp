@@ -5,7 +5,7 @@
 void GameState::NextMap::Reset() {
   mMap = NULL;
   mEntranceID = 0;
-  mCallback = [](RSC_Map* m) {};
+  mCallback = [](RSC_Map *m) {};
 }
 
 GameState::GameState(GameStateManager *gsm)
@@ -31,6 +31,10 @@ GameState::GameState(GameStateManager *gsm)
 }
 
 GameState::~GameState() {}
+
+void GameState::ExposeLuaInterface(lua_State *state) {
+  EntityManager::ExposeLuaInterface(state);
+}
 
 void GameState::SetDependencies() {
   input = gameStateManager->inputManager->SetEventDispatcher(&eventDispatcher);
