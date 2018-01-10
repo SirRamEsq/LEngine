@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "../LuaInclude.h"
+
 #include "../BaseComponent.h"
 #include "../BaseComponentManager.h"
 #include "../RenderManager.h"
@@ -35,7 +37,7 @@ class ComponentLight : public BaseComponent {
   /// Adds a light, takes ownership of the light, returns an index referring to
   /// the light
   int AddLight(std::unique_ptr<Light> light);
-  PointLight* CreatePointLight();
+  PointLight *CreatePointLight();
 
   void EnableLight(int index);
   void DisableLight(int index);
@@ -66,8 +68,10 @@ class ComponentLightManager : public BaseComponentManager_Impl<ComponentLight> {
   void BuildVAO();
 
   void SetAmbientLight(Vec3 color);
+  Vec3 GetAmbientLight();
 
   static void BindLightUBO(RSC_GLProgram *program);
+  static void ExposeLuaInterface(lua_State *state);
 
  private:
   static void CreateLightUBO();

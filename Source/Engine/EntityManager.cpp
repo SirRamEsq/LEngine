@@ -172,6 +172,7 @@ void EntityManager::Deactivate(std::vector<EID> entities) {
 }
 void EntityManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")  //'CPP' table
       .beginClass<EntityManager>("EntityManager")
       .addFunction("Activate", &EntityManager::Activate)
       .addFunction("Deactivate", &EntityManager::Activate)
@@ -186,8 +187,9 @@ void EntityManager::ExposeLuaInterface(lua_State *state) {
       .addFunction("SetParent", &EntityManager::SetParent)
 
       .addFunction("Delete", &EntityManager::DeleteEntity)
-	  
-	  /// \TODO Be able to create new entities this way
+
+      /// \TODO Be able to create new entities this way
       //.addFunction("New", &EntityManager::NewEntity)
-      .endClass();
+      .endClass()
+  .endNamespace();
 }

@@ -293,8 +293,9 @@ void ComponentLightManager::BuildVAO() {
 std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(
     EID id, ComponentLight *parent) {
   auto light = std::make_unique<ComponentLight>(
-      id, (ComponentPosition *)Kernel::stateMan.GetCurrentState()
-              ->comPosMan.GetComponent(id),
+      id,
+      (ComponentPosition *)Kernel::stateMan.GetCurrentState()
+          ->comPosMan.GetComponent(id),
       this);
 
   return std::move(light);
@@ -302,4 +303,15 @@ std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(
 
 void ComponentLightManager::SetAmbientLight(Vec3 color) {
   mAmbientLight.color = color;
+}
+Vec3 ComponentLightManager::GetAmbientLight() { return mAmbientLight.color; }
+
+void ComponentLightManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")  //'CPP' table
+      .beginClass<ComponentLightManager>("ComponentLightManager")
+      .addFunction("GetAmbient", &ComponentLightManager::GetAmbientLight)
+      .addFunction("SetAmbient", &ComponentLightManager::SetAmbientLight)
+      .endClass()
+      .endNamespace();
 }

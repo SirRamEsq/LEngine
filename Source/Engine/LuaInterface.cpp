@@ -5,7 +5,8 @@
 #include "Resolution.h"
 #include "StateManager.h"
 #include "gui/imgui_LEngine.h"
-#include "GameSave.h" "math.h"
+#include "GameSave.h"
+#include "math.h"
 
 #include <sstream>
 #include "math.h"
@@ -83,8 +84,7 @@ struct Stack<std::vector<T>> {
   }
 
   static inline std::vector<T> get(lua_State *L, int index) {
-    return Bindings::tableToList<std::vector<T>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToList<std::vector<T>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -101,8 +101,7 @@ struct Stack<const std::vector<T> &> {
   }
 
   static inline std::vector<T> get(lua_State *L, int index) {
-    return Bindings::tableToList<std::vector<T>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToList<std::vector<T>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -120,8 +119,7 @@ struct Stack<std::list<T>> {
   }
 
   static inline std::list<T> get(lua_State *L, int index) {
-    return Bindings::tableToList<std::list<T>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToList<std::list<T>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -138,8 +136,7 @@ struct Stack<const std::list<T> &> {
   }
 
   static inline std::list<T> get(lua_State *L, int index) {
-    return Bindings::tableToList<std::list<T>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToList<std::list<T>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -156,8 +153,7 @@ struct Stack<std::map<TK, TV>> {
   }
 
   static inline std::map<TK, TV> get(lua_State *L, int index) {
-    return Bindings::tableToMap<std::map<TK, TV>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToMap<std::map<TK, TV>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -174,8 +170,7 @@ struct Stack<const std::map<TK, TV> &> {
   }
 
   static inline std::map<TK, TV> get(lua_State *L, int index) {
-    return Bindings::tableToMap<std::map<TK, TV>>(
-        LuaRef::fromStack(L, index));
+    return Bindings::tableToMap<std::map<TK, TV>>(LuaRef::fromStack(L, index));
   }
 };
 
@@ -966,8 +961,7 @@ bool LuaInterface::HasLightComponent(const EID &id) {
 ////////////
 // Entities//
 ////////////
-std::vector<EID> LuaInterface::EntityGetFromName(
-    const std::string &name) {
+std::vector<EID> LuaInterface::EntityGetFromName(const std::string &name) {
   auto eids = parentState->GetEIDFromName(name);
   return *eids;
 }
@@ -1214,11 +1208,6 @@ GS_Script *LuaInterface::GetCurrentGameState() {
   return NULL;
 }
 
-void LuaInterface::SetAmbientLight(float r, float g, float b) {
-  Vec3 color(r, g, b);
-  parentState->comLightMan.SetAmbientLight(color);
-}
-
 std::vector<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
     RSC_Map *m, const std::string &name, luabridge::LuaRef refValue) {
   auto type = refValue.type();
@@ -1259,6 +1248,13 @@ T at(std::vector<T> &vec, int index) {
   return vec.at(index);
 }
 
+EntityManager* LuaInterface::GetEntityManager() const {
+  return &parentState->entityMan;
+}
+ComponentLightManager *LuaInterface::GetLightManager() const {
+  return &parentState->comLightMan;
+}
+
 void LuaInterface::ExposeCPP() {
   GameState::ExposeLuaInterface(lState);
   typedef std::vector<std::string> VectorString;
@@ -1273,6 +1269,9 @@ void LuaInterface::ExposeCPP() {
   getGlobalNamespace(lState)                     // global namespace to lua
       .beginNamespace("CPP")                     //'CPP' table
       .beginClass<LuaInterface>("LuaInterface")  // define class object
+      .addProperty("entity", &LuaInterface::GetEntityManager)  // read only
+      .addProperty("light", &LuaInterface::GetLightManager)    // read only
+
       .addFunction("RenderObjectDelete", &LuaInterface::RenderObjectDelete)
       .addFunction("RenderObjectLine", &LuaInterface::RenderObjectLine)
 
@@ -1340,7 +1339,6 @@ void LuaInterface::ExposeCPP() {
                    &LuaInterface::RemapInputToNextKeyPress)
       .addFunction("SimulateKeyPress", &LuaInterface::SimulateKeyPress)
       .addFunction("SimulateKeyRelease", &LuaInterface::SimulateKeyRelease)
-      .addFunction("SetAmbientLight", &LuaInterface::SetAmbientLight)
       .addFunction("RecordKeysBegin", &LuaInterface::RecordKeysBegin)
       .addFunction("RecordKeysEnd", &LuaInterface::RecordKeysEnd)
 
@@ -1499,7 +1497,6 @@ void LuaInterface::ExposeCPP() {
       .endClass()
 
       .beginClass<Vec2>("Vec2")
-      .addConstructor<void (*)(void)>()          // Empty Constructor
       .addConstructor<void (*)(float, float)>()  // Constructor
       .addData("x", &Vec2::x)
       .addData("y", &Vec2::y)
@@ -1509,54 +1506,22 @@ void LuaInterface::ExposeCPP() {
       .endClass()
 
       .beginClass<Vec3>("Vec3")
-      .addConstructor<void (*)(void)>()                 // Empty Constructor
       .addConstructor<void (*)(float, float, float)>()  // Constructor
       .addData("x", &Vec3::x)
       .addData("y", &Vec3::y)
+      .addData("z", &Vec3::z)
       .addFunction("Round", &Vec3::Round)
       .addFunction("Add", &Vec3::Add)
       .addFunction("Subtract", &Vec3::Subtract)
       .endClass()
 
       .beginClass<Vec4>("Color")
-      .addConstructor<void (*)(void)>()  // Empty Constructor
       .addConstructor<void (*)(float, float, float, float)>()  // Constructor
       .addData("r", &Vec4::x)
       .addData("g", &Vec4::y)
       .addData("b", &Vec4::z)
       .addData("a", &Vec4::w)
       .endClass()
-
-	  /*
-      .beginClass<VectorEID>("VectorEID")
-      .addFunction("size", &VectorEID::size)
-      .addFunction("empty", &VectorEID::empty)
-      .addStaticFunction("at", &at<EID>)
-      .endClass()
-
-      .beginClass<VectorString>("VectorString")
-      .addFunction("size", &VectorString::size)
-      .addFunction<VectorString::const_reference (VectorString::*)(
-          VectorString::size_type) const>("at", &VectorString::at)
-      .addFunction("empty", &VectorString::empty)
-      .endClass()
-
-      .beginClass<VectorLayer::const_reference>("VectorLayer_REF")
-      .addFunction("size", &VectorLayer::const_reference::size)
-      .addFunction<VectorLayer::const_reference (VectorLayer::*)(
-          VectorLayer::size_type) const>("at", &VectorLayer::at)
-      .addStaticFunction("at", &at<EID>)
-      .addFunction("empty", &VectorLayer::empty)
-      .endClass()
-
-      .beginClass<VectorLayer>("VectorLayer")
-      .addFunction("size", &VectorLayer::size)
-      .addFunction<VectorLayer::const_reference (VectorLayer::*)(
-          VectorLayer::size_type) const>("at", &VectorLayer::at)
-      .addStaticFunction("at", &at<EID>)
-      .addFunction("empty", &VectorLayer::empty)
-      .endClass()
-	  */
 
       .beginClass<BaseComponent>("BaseComponent")
       .addFunction("SetParent", &BaseComponent::SetParentEID)

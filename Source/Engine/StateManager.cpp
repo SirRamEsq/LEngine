@@ -34,6 +34,7 @@ GameState::~GameState() {}
 
 void GameState::ExposeLuaInterface(lua_State *state) {
   EntityManager::ExposeLuaInterface(state);
+  ComponentLightManager::ExposeLuaInterface(state);
 }
 
 void GameState::SetDependencies() {

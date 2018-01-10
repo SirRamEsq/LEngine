@@ -3,20 +3,13 @@
 
 // Engine headers
 #include "Defines.h"
-// Lua headers
-extern "C" {
-#include "lua5.2/lauxlib.h"
-#include "lua5.2/lua.h"
-#include "lua5.2/lualib.h"
-}
-#include <LuaBridge.h>
+#include "LuaInclude.h"
 
 #include "Components/CompCollision.h"
 #include "Components/CompParticle.h"
 #include "Components/CompPosition.h"
 #include "Components/CompSprite.h"
 #include "Components/CompLight.h"
-//#include "LuaBridgeVectorWrapper.h"
 
 #include "Resources/RSC_Map.h"
 #include "Resources/RSC_Script.h"
@@ -207,7 +200,8 @@ class LuaInterface {
   bool RecordKeysBegin();
   bool RecordKeysEnd();
 
-  void SetAmbientLight(float r, float g, float b);
+  EntityManager* GetEntityManager() const;
+  ComponentLightManager* GetLightManager() const;
 
   static const std::string LUA_52_INTERFACE_ENV_TABLE;
   static const std::string DEBUG_LOG;
