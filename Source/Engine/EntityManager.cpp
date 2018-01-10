@@ -95,6 +95,7 @@ EID EntityManager::NewEntity(const std::string &entityName) {
 
   MapNameToEID(newEntityID, entityName);
   aliveEntities.insert(newEntityID);
+  activeEntities.insert(newEntityID);
   // Increment number of living entities
 
   return newEntityID;
@@ -145,37 +146,118 @@ void EntityManager::SetParent(EID child, EID parent) {
   }
 }
 
-void EntityManager::ActivateAll() {}
+void EntityManager::ActivateAll() {
+  for (auto i : inactiveEntities) {
+    activeEntities.insert(i);
+    for (auto comp : componentsRegistered) {
+      comp.second->ActivateComponent(i);
+    }
+  }
+  inactiveEntities.clear();
+}
 
-void EntityManager::DeactivateAll() {}
+void EntityManager::DeactivateAll() {
+  for (auto i : activeEntities) {
+    inactiveEntities.insert(i);
+    for (auto comp : componentsRegistered) {
+      comp.second->DeactivateComponent(i);
+    }
+  }
+  activeEntities.clear();
+}
 
-void EntityManager::ActivateAllExcept(std::vector<EID> entities) {}
+void EntityManager::ActivateAllExcept(const std::vector<EID> &entities) {
+  if (entities.empty()) {
+    ActivateAll();
+    return;
+  }
 
-void EntityManager::DeactivateAllExcept(std::vector<EID> entities) {}
+  std::vector<EID> toActivate;
+  for (auto i : inactiveEntities) {
+    bool skip = false;
+    for (auto except : entities) {
+      if (i == except) {
+        skip = true;
+        break;
+      }
+    }
 
-void EntityManager::Activate(std::vector<EID> entities) {
-  for (auto i = entities.begin(); i != entities.end(); i++) {
+    if (!skip) {
+      toActivate.push_back(i);
+    }
+  }
+  Activate(toActivate);
+}
+void EntityManager::DeactivateAllExcept(const std::vector<EID> &entities) {
+  if (entities.empty()) {
+    DeactivateAll();
+    return;
+  }
+
+  std::vector<EID> toDeactivate;
+  for (auto i : activeEntities) {
+    bool skip = false;
+    for (auto except : entities) {
+      if (i == except) {
+        skip = true;
+        break;
+      }
+    }
+
+    if (!skip) {
+      toDeactivate.push_back(i);
+    }
+  }
+  Deactivate(toDeactivate);
+}
+
+void EntityManager::Activate(const std::vector<EID> &entities) {
+  for (auto i : entities) {
+    Activate(i);
+  }
+}
+
+void EntityManager::Deactivate(const std::vector<EID> &entities) {
+  for (auto i : entities) {
+    Deactivate(i);
+  }
+}
+
+void EntityManager::Activate(EID id) {
+  // Check if EID is inactive
+  auto iActive = inactiveEntities.find(id);
+  if (iActive != inactiveEntities.end()) {
     for (auto comp = componentsRegistered.begin();
          comp != componentsRegistered.end(); comp++) {
-      comp->second->ActivateComponent(*i);
+      comp->second->ActivateComponent(id);
+      activeEntities.insert(id);
+      inactiveEntities.erase(id);
+    }
+  }
+}
+void EntityManager::Deactivate(EID id) {
+  // Check if EID is active
+  auto iActive = activeEntities.find(id);
+  if (iActive != activeEntities.end()) {
+    for (auto comp = componentsRegistered.begin();
+         comp != componentsRegistered.end(); comp++) {
+      comp->second->DeactivateComponent(id);
+      inactiveEntities.insert(id);
+      activeEntities.erase(id);
     }
   }
 }
 
-void EntityManager::Deactivate(std::vector<EID> entities) {
-  for (auto i = entities.begin(); i != entities.end(); i++) {
-    for (auto comp = componentsRegistered.begin();
-         comp != componentsRegistered.end(); comp++) {
-      comp->second->DeactivateComponent(*i);
-    }
-  }
-}
 void EntityManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
       .beginNamespace("CPP")  //'CPP' table
       .beginClass<EntityManager>("EntityManager")
-      .addFunction("Activate", &EntityManager::Activate)
-      .addFunction("Deactivate", &EntityManager::Activate)
+      .addFunction("Activate",
+                   (void (EntityManager::*)(const std::vector<EID> &)) &
+                       EntityManager::Activate)
+      .addFunction("Deactivate",
+                   (void (EntityManager::*)(const std::vector<EID> &)) &
+                       EntityManager::Deactivate)
 
       .addFunction("ActivateAll", &EntityManager::ActivateAll)
       .addFunction("DeactivateAll", &EntityManager::DeactivateAll)
@@ -191,5 +273,5 @@ void EntityManager::ExposeLuaInterface(lua_State *state) {
       /// \TODO Be able to create new entities this way
       //.addFunction("New", &EntityManager::NewEntity)
       .endClass()
-  .endNamespace();
+      .endNamespace();
 }

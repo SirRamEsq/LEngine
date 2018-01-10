@@ -107,15 +107,19 @@ class EntityManager {
   /// Deactivates all Entities
   void DeactivateAll();
   /// Deactivates all Entities except the ones specified
-  void DeactivateAllExcept(std::vector<EID> entities);
+  void DeactivateAllExcept(const std::vector<EID>& entities);
   /// Activates all Entities
   void ActivateAll();
   /// Activates all Entities except the ones specified
-  void ActivateAllExcept(std::vector<EID> entities);
+  void ActivateAllExcept(const std::vector<EID>& entities);
   /// Activate specified entities
-  void Activate(std::vector<EID> entities);
+  void Activate(const std::vector<EID>& entities);
   /// Deactivate specified entities
-  void Deactivate(std::vector<EID> entities);
+  void Deactivate(const std::vector<EID>& entities);
+  /// Activate specified entities
+  void Activate(EID entities);
+  /// Deactivate specified entities
+  void Deactivate(EID entities);
 
   static void ExposeLuaInterface(lua_State *state);
 
@@ -134,6 +138,11 @@ class EntityManager {
 
   /// Set of in use EIDS
   std::unordered_set<EID> aliveEntities;
+
+  /// entities that are active
+  std::unordered_set<EID> activeEntities;
+  /// entities that are inactive
+  std::unordered_set<EID> inactiveEntities;
 
   /// container of EIDS that have been deleted and can be reused
   std::vector<EID> reclaimedEIDs;
