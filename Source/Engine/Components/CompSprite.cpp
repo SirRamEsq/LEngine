@@ -331,3 +331,36 @@ void ComponentSpriteManager::SetDependencies(ComponentPositionManager *pos,
   dependencyPosition = pos;
   dependencyRenderManager = rm;
 }
+
+void ComponentSpriteManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginClass<Sprite>("Sprite")
+      .addFunction("SetAnimation", &Sprite::SetAnimation)
+      .addFunction("SetAnimationSpeed", &Sprite::SetAnimationSpeed)
+      .addFunction("AnimationPlayOnce", &Sprite::AnimationPlayOnce)
+      .addFunction("GetAnimationSpeed", &Sprite::GetAnimationSpeed)
+      .addFunction("DefaultAnimationSpeed", &Sprite::DefaultAnimationSpeed)
+      .addFunction("SetImage", &Sprite::SetImageIndex)
+      .addFunction("GetImage", &Sprite::GetImageIndex)
+
+      .addFunction("SetRotation", &Sprite::SetRotation)
+      .addFunction("SetScaling", &Sprite::SetScaling)
+      .addFunction("SetScalingX", &Sprite::SetScalingX)
+      .addFunction("SetScalingY", &Sprite::SetScalingY)
+
+      .addFunction("SetOffset", &Sprite::SetOffset)
+
+      .addFunction("Render", &Sprite::Render)
+      .endClass()
+
+      .beginClass<ComponentSprite>("ComponentSprite")
+      .addFunction("AddSprite", &ComponentSprite::AddSprite)
+      .endClass()
+
+      .beginClass<ComponentSpriteManager>("ComponentSpriteManager")
+      .endClass()
+
+      .endNamespace();
+}

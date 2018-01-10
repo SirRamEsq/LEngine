@@ -308,10 +308,27 @@ Vec3 ComponentLightManager::GetAmbientLight() { return mAmbientLight.color; }
 
 void ComponentLightManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
-      .beginNamespace("CPP")  //'CPP' table
+      .beginNamespace("CPP")
+
       .beginClass<ComponentLightManager>("ComponentLightManager")
       .addFunction("GetAmbient", &ComponentLightManager::GetAmbientLight)
       .addFunction("SetAmbient", &ComponentLightManager::SetAmbientLight)
       .endClass()
+
+      .deriveClass<ComponentLight, BaseComponent>("ComponentLight")
+      .addFunction("CreatePointLight", &ComponentLight::CreatePointLight)
+      .endClass()
+
+      .beginClass<Light>("Light")
+      .addData("color", &Light::color)
+      .addData("pos", &Light::pos)
+      .addData("noise", &Light::noise)
+      .addData("distance", &Light::distance)
+      .addData("render", &Light::render)
+      .endClass()
+
+      .deriveClass<PointLight, Light>("PointLight")
+      .endClass()
+
       .endNamespace();
 }

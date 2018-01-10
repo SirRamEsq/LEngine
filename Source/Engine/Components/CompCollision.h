@@ -2,6 +2,7 @@
 #define L_COMPCOLLISIONBOX
 
 #include "../BaseComponentManager.h"
+#include "../LuaInclude.h"
 #include "CompPosition.h"
 #include "CompScript.h"
 
@@ -136,6 +137,8 @@ class ComponentCollisionManager
 
   CollisionGrid grid;
   ComponentPositionManager *dependencyPosition;
+
+  static void ExposeLuaInterface(lua_State* state);
 
  private:
   void SendCollisionEvent(const ComponentCollision &sender,

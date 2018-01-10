@@ -406,8 +406,8 @@ std::unique_ptr<TiledData> TiledData::LoadResourceFromTMX(
   TMXLoadAttributes(node, attributes);
 
   auto tiledData = std::make_unique<TiledData>(tilesWide, tilesHigh);
-      Vec3 light(1.0f, 1.0f, 1.0f);
-      tiledData->SetAmbientLight(light);
+  Vec3 light(1.0f, 1.0f, 1.0f);
+  tiledData->SetAmbientLight(light);
 
   if ((sizeOfTileWidth != LENGINE_DEF_TILE_W) or
       (sizeOfTileHeight != LENGINE_DEF_TILE_H)) {
@@ -1063,3 +1063,37 @@ void RSC_MapImpl::SetAmbientLight(Vec3 light) {
 }
 
 Vec3 RSC_MapImpl::GetAmbientLight() { return tiledData->GetAmbientLight(); }
+
+void RSC_Map::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")  //'CPP' table
+
+      .beginClass<TiledLayerGeneric>("TiledLayerGeneric")
+      .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)
+      .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
+      .addFunction("GetFlags", &TiledLayerGeneric::GetFlags)
+      .endClass()
+
+      .deriveClass<TiledTileLayer, TiledLayerGeneric>("TiledTileLayer")
+      .addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
+      .addFunction("UsesHMaps", &TiledTileLayer::UsesHMaps)
+      .addFunction("GetTile", &TiledTileLayer::GetTile)
+      .addFunction("SetTile", &TiledTileLayer::SetTile)
+      .addFunction("HasTile", &TiledTileLayer::HasTile)
+      .addFunction("UpdateRenderArea", &TiledTileLayer::UpdateRenderArea)
+      .endClass()
+
+      .beginClass<RSC_Map>("RSC_Map")
+      .addFunction("GetTileLayer", &RSC_Map::GetTileLayer)
+      .addFunction("DeleteLayer", &RSC_Map::DeleteLayer)
+      .addFunction("GetAmbientLight", &RSC_Map::GetAmbientLight)
+      .addFunction("GetSolidTileLayers", &RSC_Map::GetSolidTileLayers)
+      .addFunction("GetProperty", &RSC_Map::GetProperty)
+      .addFunction("GetWidthTiles", &RSC_Map::GetWidthTiles)
+      .addFunction("GetHeightTiles", &RSC_Map::GetHeightTiles)
+      .addFunction("GetWidthPixels", &RSC_Map::GetWidthPixels)
+      .addFunction("GetHeightPixels", &RSC_Map::GetHeightPixels)
+      .endClass()
+
+      .endNamespace();
+}

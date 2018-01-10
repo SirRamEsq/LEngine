@@ -183,3 +183,59 @@ void ImGui::CalculateUV(const RSC_Sprite *sprite, const std::string &animation,
   }
   */
 }
+
+void ImGui::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginNamespace("ImGui")
+      .addFunction("Begin", &ImGui::BeginWrapper)
+      .addFunction("BeginFlags", &ImGui::BeginFlags)
+      .addFunction("End", &ImGui::End)
+
+      .addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
+      .addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
+      .addFunction("GetWindowSize", &ImGui::GetWindowSizeWrapper)
+
+      .addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)
+      .addFunction("SetNextWindowFocus", &ImGui::SetNextWindowFocus)
+      .addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
+      .addFunction("SetNextWindowPosCenter",
+                   &ImGui::SetNextWindowPosCenterWrapper)
+      .addFunction("SetNextWindowSizeConstraints",
+                   &ImGui::SetNextWindowSizeConstraintsWrapper)
+
+      .addFunction("Text", &ImGui::TextWrapper)
+      .addFunction("SliderFloat", &ImGui::SliderFloat)
+      .addFunction("Button", &ImGui::ButtonWrapper)
+
+      .addFunction("Sprite", &ImGui::Sprite)
+      .addFunction("SpriteButton", &ImGui::SpriteButton)
+
+      .addFunction("ProgressBar", &ImGui::ProgressBarWrapper)
+
+      .addFunction("Separator", &ImGui::Separator)
+      .addFunction("SameLine", &ImGui::SameLineWrapper)
+
+      .addFunction("PushStyleColorWindowBG", &ImGui::PushStyleColorWindowBG)
+      .addFunction("PushStyleColorButton", &ImGui::PushStyleColorButton)
+      .addFunction("PushStyleColorButtonHovered",
+                   &ImGui::PushStyleColorButtonHovered)
+      .addFunction("PushStyleColorButtonActive",
+                   &ImGui::PushStyleColorButtonActive)
+      .addFunction("PushStyleColorFrameBG", &ImGui::PushStyleColorFrameBG)
+      .addFunction("PushStyleColorFrameBGActive",
+                   &ImGui::PushStyleColorFrameBGActive)
+      .addFunction("PushStyleColorFrameBGHovered",
+                   &ImGui::PushStyleColorFrameBGHovered)
+      .addFunction("PushStyleColorText", &ImGui::PushStyleColorText)
+      .addFunction("PushStyleColorProgressBarFilled",
+                   &ImGui::PushStyleColorPlotHistogram)
+      .addFunction("PopStyleColor", &ImGui::PopStyleColor)
+
+      .addFunction("PushFont", &ImGui::PushFontWrapper)
+      .addFunction("PopFont", &ImGui::PopFontWrapper)
+      .endNamespace()
+
+      .endNamespace();
+}

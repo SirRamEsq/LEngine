@@ -49,7 +49,7 @@ class Sprite {
   friend ComponentSprite;
 
  public:
-  Sprite(RenderManager* rm, const RSC_Sprite *sprite, MAP_DEPTH depth);
+  Sprite(RenderManager *rm, const RSC_Sprite *sprite, MAP_DEPTH depth);
 
   void SetAnimation(const std::string &animationName);
   void AnimationPlayOnce(const std::string &animationName,
@@ -132,6 +132,8 @@ class ComponentSpriteManager
 
   std::unique_ptr<ComponentSprite> ConstructComponent(EID id,
                                                       ComponentSprite *parent);
+
+  static void ExposeLuaInterface(lua_State *state);
 };
 
 /*

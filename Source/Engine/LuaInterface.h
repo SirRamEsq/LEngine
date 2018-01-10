@@ -6,6 +6,7 @@
 #include "LuaInclude.h"
 
 #include "Components/CompCollision.h"
+#include "Components/CompCamera.h"
 #include "Components/CompParticle.h"
 #include "Components/CompPosition.h"
 #include "Components/CompSprite.h"
@@ -130,8 +131,6 @@ class LuaInterface {
                 luabridge::LuaRef scripts, luabridge::LuaRef propertyTable);
   void EntityDelete(EID entity);
 
-  std::vector<EID> GetEntitiesExcept(luabridge::LuaRef r);
-
   /////////////
   // Rendering//
   /////////////
@@ -202,6 +201,12 @@ class LuaInterface {
 
   EntityManager* GetEntityManager() const;
   ComponentLightManager* GetLightManager() const;
+  ComponentSpriteManager* GetSpriteManager() const;
+  ComponentCameraManager* GetCameraManager() const;
+  ComponentPositionManager* GetPositionManager() const;
+  ComponentParticleManager* GetParticleManager() const;
+  ComponentCollisionManager* GetCollisionManager() const;
+  //ComponentScriptManager* GetScriptManager() const;
 
   static const std::string LUA_52_INTERFACE_ENV_TABLE;
   static const std::string DEBUG_LOG;

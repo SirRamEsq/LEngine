@@ -8,6 +8,7 @@
 #include "../Random.h"
 #include "../RenderManager.h"
 #include "../Resources/RSC_Sprite.h"
+#include "../LuaInclude.h"
 
 #include "CompPosition.h"
 
@@ -205,6 +206,8 @@ class ComponentParticleManager
       EID id, ComponentParticle *parent);
 
   void SetDependencies(RenderManager *rm, ComponentPositionManager *pos);
+
+  static void ExposeLuaInterface(lua_State* state);
 
  private:
   RenderManager *dependencyRenderManager;

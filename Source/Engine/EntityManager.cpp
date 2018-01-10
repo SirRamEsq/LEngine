@@ -250,7 +250,7 @@ void EntityManager::Deactivate(EID id) {
 
 void EntityManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
-      .beginNamespace("CPP")  //'CPP' table
+      .beginNamespace("CPP") 
       .beginClass<EntityManager>("EntityManager")
       .addFunction("Activate",
                    (void (EntityManager::*)(const std::vector<EID> &)) &

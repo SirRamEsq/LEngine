@@ -2,6 +2,7 @@
 #define L_SPRITE
 
 #include "../GenericContainer.h"
+#include "../LuaInclude.h"
 #include "RSC_Texture.h"
 
 #include <rapidxml.hpp>
@@ -122,6 +123,7 @@ class RSC_Sprite {
   int GetTransparentColorBlue() const { return transparentColorBlue; }
 
   static std::unique_ptr<RSC_Sprite> LoadResource(const std::string &fname);
+  static void ExposeLuaInterface(lua_State* state);
 
  protected:
   void DeleteAnimations();

@@ -3,6 +3,7 @@
 
 #include "../BaseComponentManager.h"
 #include "../Coordinates.h"
+#include "../LuaInclude.h"
 #include <set>
 
 // Forward-Declare for MapNode
@@ -131,6 +132,13 @@ class ComponentPositionManager
       EID id, ComponentPosition *parent);
 
   MapNode *const GetRootNode();
+
+  ///Get World position of entity with id
+  Vec2 GetWorld(EID id);
+  ///Get Movement speed of entity with id
+  Vec2 GetMovement(EID id);
+
+  static void ExposeLuaInterface(lua_State *state);
 
  private:
   /**

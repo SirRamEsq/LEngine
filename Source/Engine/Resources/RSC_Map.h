@@ -20,6 +20,8 @@
 #include "tiledMap/LayerObject.h"
 #include "tiledMap/LayerTile.h"
 
+#include "../LuaInclude.h"
+
 // Forward declares
 class RSC_MapImpl;
 class TiledData;
@@ -170,6 +172,8 @@ class RSC_Map {
 
   virtual Vec3 GetAmbientLight() = 0;
   virtual void SetAmbientLight(Vec3 light) = 0;
+
+  static void ExposeLuaInterface(lua_State *state);
 };
 
 class RSC_MapImpl : public RSC_Map {

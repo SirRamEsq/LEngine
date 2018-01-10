@@ -2,6 +2,7 @@
 #define L_ENGINE_IMGUI
 
 #include "../Defines.h"
+#include "../LuaInclude.h"
 #include "../Resources/RSC_Sprite.h"
 #include "imgui.h"
 
@@ -73,8 +74,10 @@ void PopFontWrapper();
 // INTERNAL//
 ////////////
 void CalculateUV(const RSC_Sprite *sprite, const std::string &animation,
-                 int frame, ImTextureID &textureID, Vec2 &size,
-                 Vec2 &startUV, Vec2 &endUV);
+                 int frame, ImTextureID &textureID, Vec2 &size, Vec2 &startUV,
+                 Vec2 &endUV);
+
+void ExposeLuaInterface(lua_State *state);
 };
 
 #endif

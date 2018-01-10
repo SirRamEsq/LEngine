@@ -365,3 +365,33 @@ bool GameSave::DeleteFile() {
   }
   return true;
 }
+
+void GameSave::ExposeLuaInterface(lua_State* state){
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginClass<GameSave>("GameSave")
+      .addConstructor<void (*)(const std::string &)>()
+      .addFunction("WriteToFile", &GameSave::WriteToFile)
+      .addFunction("ReadFromFile", &GameSave::ReadFromFile)
+      .addFunction("DeleteFile", &GameSave::DeleteFile)
+      .addFunction("FileExists", &GameSave::FileExists)
+
+      .addFunction("SetBool", &GameSave::SetBool)
+      .addFunction("SetInt", &GameSave::SetInt)
+      .addFunction("SetDouble", &GameSave::SetDouble)
+      .addFunction("SetString", &GameSave::SetString)
+
+      .addFunction("GetBool", &GameSave::GetBool)
+      .addFunction("GetInt", &GameSave::GetInt)
+      .addFunction("GetDouble", &GameSave::GetDouble)
+      .addFunction("GetString", &GameSave::GetString)
+
+      .addFunction("ExistsBool", &GameSave::ExistsBool)
+      .addFunction("ExistsInt", &GameSave::ExistsInt)
+      .addFunction("ExistsDouble", &GameSave::ExistsDouble)
+      .addFunction("ExistsString", &GameSave::ExistsString)
+      .endClass()
+
+	  .endNamespace();
+}

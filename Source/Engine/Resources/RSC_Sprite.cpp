@@ -471,3 +471,19 @@ std::unique_ptr<RSC_Sprite> RSC_Sprite::LoadResource(const std::string &fname) {
 
   return sprite;
 }
+
+void RSC_Sprite::ExposeLuaInterface(lua_State* state){
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP") 
+
+      .beginClass<RSC_Sprite>("RSC_Sprite")
+      .addFunction("GetOrigin", &RSC_Sprite::GetOrigin)
+      .addFunction("SetOrigin", &RSC_Sprite::SetOrigin)
+      .addFunction("SetColorKey", &RSC_Sprite::SetColorKey)
+      .addFunction("GetName", &RSC_Sprite::GetName)
+      .addFunction("Width", &RSC_Sprite::GetWidth)
+      .addFunction("Height", &RSC_Sprite::GetHeight)
+      .endClass()
+
+	  .endNamespace();
+}

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "LuaInclude.h"
 
 #include "Resources/ResourceLoading.h"
 
@@ -36,6 +37,8 @@ class GameSave {
   std::string GetString(const std::string& name) const;
 
   const std::string mName;
+
+  static void ExposeLuaInterface(lua_State* state);
 
  private:
   void ProcessFile(FileData* data);

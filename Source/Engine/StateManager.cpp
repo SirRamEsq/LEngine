@@ -33,8 +33,17 @@ GameState::GameState(GameStateManager *gsm)
 GameState::~GameState() {}
 
 void GameState::ExposeLuaInterface(lua_State *state) {
+  RSC_Map::ExposeLuaInterface(state);
+  RSC_Sprite::ExposeLuaInterface(state);
   EntityManager::ExposeLuaInterface(state);
   ComponentLightManager::ExposeLuaInterface(state);
+  ComponentPositionManager::ExposeLuaInterface(state);
+  //ComponentCameraManager::ExposeLuaInterface(state);
+  ComponentSpriteManager::ExposeLuaInterface(state);
+  //ComponentInputManager::ExposeLuaInterface(state);
+  ComponentCollisionManager::ExposeLuaInterface(state);
+  ComponentParticleManager::ExposeLuaInterface(state);
+  //ComponentScriptManager::ExposeLuaInterface(state);
 }
 
 void GameState::SetDependencies() {

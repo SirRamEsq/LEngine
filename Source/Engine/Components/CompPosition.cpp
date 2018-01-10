@@ -231,4 +231,64 @@ std::unique_ptr<ComponentPosition> ComponentPositionManager::ConstructComponent(
   return std::move(pos);
 }
 
+Vec2 ComponentPositionManager::GetWorld(EID id) {
+  ComponentPosition *pos = GetComponent(id);
+  if (pos == NULL) {
+    return Vec2(0, 0);
+  }
+  return pos->GetPositionWorld();
+}
+Vec2 ComponentPositionManager::GetMovement(EID id) {
+  ComponentPosition *pos = GetComponent(id);
+  if (pos == NULL) {
+    return Vec2(0, 0);
+  }
+  return pos->GetMovement();
+}
+
 MapNode *const ComponentPositionManager::GetRootNode() { return &mRootNode; }
+void ComponentPositionManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginClass<ComponentPositionManager>("ComponentPositionManager")
+      .addFunction("GetWorld", &ComponentPositionManager::GetWorld)
+      .addFunction("GetMovement", &ComponentPositionManager::GetMovement)
+      .endClass()
+
+      .deriveClass<ComponentPosition, BaseComponent>("ComponentPosition")
+      .addFunction("GetPositionLocal", &ComponentPosition::GetPositionLocal)
+      .addFunction("GetPositionWorld", &ComponentPosition::GetPositionWorld)
+      .addFunction("GetMovement", &ComponentPosition::GetMovement)
+      .addFunction("GetAcceleration", &ComponentPosition::GetAcceleration)
+
+      .addFunction("SetPositionLocal", &ComponentPosition::SetPositionLocal)
+      .addFunction("SetPositionLocalX", &ComponentPosition::SetPositionLocalX)
+      .addFunction("SetPositionLocalY", &ComponentPosition::SetPositionLocalY)
+
+      .addFunction("SetPositionWorld", &ComponentPosition::SetPositionWorld)
+      .addFunction("SetPositionWorldX", &ComponentPosition::SetPositionWorldX)
+      .addFunction("SetPositionWorldY", &ComponentPosition::SetPositionWorldY)
+
+      .addFunction("SetMovement", &ComponentPosition::SetMovement)
+      .addFunction("SetMovementX", &ComponentPosition::SetMovementX)
+      .addFunction("SetMovementY", &ComponentPosition::SetMovementY)
+
+      .addFunction("SetAcceleration", &ComponentPosition::SetAcceleration)
+      .addFunction("SetAccelerationX", &ComponentPosition::SetAccelerationX)
+      .addFunction("SetAccelerationY", &ComponentPosition::SetAccelerationY)
+
+      .addFunction("SetMaxSpeed", &ComponentPosition::SetMaxSpeed)
+
+      .addFunction("IncrementPosition", &ComponentPosition::IncrementMovement)
+      .addFunction("IncrementMovement", &ComponentPosition::IncrementMovement)
+      .addFunction("IncrementAcceleration",
+                   &ComponentPosition::IncrementAcceleration)
+
+      .addFunction("TranslateWorldToLocal",
+                   &ComponentPosition::TranslateWorldToLocal)
+      .addFunction("TranslateLocalToWorld",
+                   &ComponentPosition::TranslateLocalToWorld)
+      .endClass()
+      .endNamespace();
+}

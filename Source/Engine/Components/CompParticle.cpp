@@ -731,3 +731,46 @@ void ComponentParticleManager::SetDependencies(RenderManager *rm,
   dependencyRenderManager = rm;
   dependencyPosition = pos;
 }
+
+void ComponentParticleManager::ExposeLuaInterface(lua_State* state){
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginClass<ComponentParticleManager>("ComponentParticleManager")
+	  .endClass()
+
+      .beginClass<ComponentParticle>("ComponentParticle")
+      .addFunction("AddParticleCreator", &ComponentParticle::AddParticleCreator)
+      .addFunction("DeleteParticleCreators",
+                   &ComponentParticle::DeleteParticleCreators)
+      .endClass()
+
+      .deriveClass<ParticleCreator, RenderableObject>("ParticleCreator")
+      .addFunction("SetVelocity", &ParticleCreator::SetVelocity)
+      .addFunction("SetAcceleration", &ParticleCreator::SetAcceleration)
+      .addFunction("SetPosition", &ParticleCreator::SetPosition)
+      .addFunction("SetParticlesPerFrame",
+                   &ParticleCreator::SetParticlesPerFrame)
+      .addFunction("Start", &ParticleCreator::Start)
+      .addFunction("SetColor", &ParticleCreator::SetColor)
+      .addFunction("SetScalingX", &ParticleCreator::SetScalingX)
+      .addFunction("SetScalingY", &ParticleCreator::SetScalingY)
+      .addFunction("SetVertexShaderCode", &ParticleCreator::SetVertexShaderCode)
+      .addFunction("SetFragmentShaderCode",
+                   &ParticleCreator::SetFragmentShaderCode)
+      .addFunction("SetShape", &ParticleCreator::SetShape)
+      .addFunction("SetEffect", &ParticleCreator::SetEffect)
+
+      .addFunction("SetSprite", &ParticleCreator::SetSprite)
+      .addFunction("SetAnimation", &ParticleCreator::SetAnimation)
+      .addFunction("SetAnimationFrame", &ParticleCreator::SetAnimationFrame)
+      .addFunction("SetRandomUV", &ParticleCreator::SetRandomUV)
+      .addFunction("SetWarpQuads", &ParticleCreator::SetWarpQuads)
+
+      .addFunction("SetUsePoint", &ParticleCreator::SetUsePoint)
+      .addFunction("SetPoint", &ParticleCreator::SetPoint)
+      .addFunction("SetPointIntensity", &ParticleCreator::SetPointIntensity)
+      .endClass()
+
+	  .endNamespace();
+}

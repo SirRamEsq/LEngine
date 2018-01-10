@@ -1080,26 +1080,31 @@ std::vector<TiledLayerGeneric *> LuaInterface::GetLayersWithProperty(
   return std::vector<TiledLayerGeneric *>();
 }
 
-std::vector<EID> LuaInterface::GetEntitiesExcept(luabridge::LuaRef r) {}
-
-template <class T>
-T at(std::vector<T> &vec, int index) {
-  return vec.at(index);
-}
-
 EntityManager *LuaInterface::GetEntityManager() const {
   return &parentState->entityMan;
 }
 ComponentLightManager *LuaInterface::GetLightManager() const {
   return &parentState->comLightMan;
 }
-
+ComponentSpriteManager *LuaInterface::GetSpriteManager() const {
+  return &parentState->comSpriteMan;
+}
+ComponentCameraManager *LuaInterface::GetCameraManager() const {
+  return &parentState->comCameraMan;
+}
+ComponentPositionManager *LuaInterface::GetPositionManager() const {
+  return &parentState->comPosMan;
+}
+ComponentParticleManager *LuaInterface::GetParticleManager() const {
+  return &parentState->comParticleMan;
+}
+ComponentCollisionManager *LuaInterface::GetCollisionManager() const {
+  return &parentState->comCollisionMan;
+}
+//ComponentScriptManager *LuaInterface::GetScriptManager() const {
+  //return &parentState->comScriptMan;
+//}
 void LuaInterface::ExposeCPP() {
-  GameState::ExposeLuaInterface(lState);
-  typedef std::vector<std::string> VectorString;
-  typedef std::vector<TiledLayerGeneric *> VectorLayer;
-  typedef std::vector<EID> VectorEID;
-
   /*
    * if a const pointer is passed to lua
    * it WILL NOT CONTAIN non-const methods
@@ -1108,11 +1113,17 @@ void LuaInterface::ExposeCPP() {
   getGlobalNamespace(lState)  // global namespace to lua
       .beginNamespace("CPP")  //'CPP' table
 
-      //.beginClass<VectorEID>("VectorEID").endClass()
+      .beginClass<LuaInterface>("LuaInterface")
 
-      .beginClass<LuaInterface>("LuaInterface")  // define class object
-      .addProperty("entity", &LuaInterface::GetEntityManager)  // read only
-      .addProperty("light", &LuaInterface::GetLightManager)    // read only
+      // These properties are read only
+      .addProperty("entity", &LuaInterface::GetEntityManager)
+      .addProperty("light", &LuaInterface::GetLightManager)
+      .addProperty("sprite", &LuaInterface::GetLightManager)
+      //.addProperty("script", &LuaInterface::GetScriptManager)
+      .addProperty("particle", &LuaInterface::GetParticleManager)
+      .addProperty("position", &LuaInterface::GetPositionManager)
+      .addProperty("collision", &LuaInterface::GetCollisionManager)
+      //.addProperty("camera", &LuaInterface::GetCameraManager)
 
       .addFunction("RenderObjectDelete", &LuaInterface::RenderObjectDelete)
       .addFunction("RenderObjectLine", &LuaInterface::RenderObjectLine)
@@ -1149,9 +1160,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)
       .addFunction("EntityDelete", &LuaInterface::EntityDelete)
       .addFunction("EntityGetFromName", &LuaInterface::EntityGetFromName)
-      .addFunction("EntityGetPositionWorld",
-                   &LuaInterface::EntityGetPositionWorld)
-      .addFunction("EntityGetMovement", &LuaInterface::EntityGetMovement)
 
       .addFunction("EventLuaObserveEntity",
                    &LuaInterface::EventLuaObserveEntity)
@@ -1191,46 +1199,6 @@ void LuaInterface::ExposeCPP() {
                    &LuaInterface::GetLayersWithProperty)
       .endClass()
 
-      .beginClass<TiledLayerGeneric>("TiledLayerGeneric")
-      .addFunction("SetAlpha", &TiledLayerGeneric::SetAlpha)
-      .addFunction("GetAlpha", &TiledLayerGeneric::GetAlpha)
-      .addFunction("GetFlags", &TiledLayerGeneric::GetFlags)
-      .endClass()
-
-      .deriveClass<TiledTileLayer, TiledLayerGeneric>("TiledTileLayer")
-      .addFunction("GetTileProperty", &TiledTileLayer::GetTileProperty)
-      .addFunction("UsesHMaps", &TiledTileLayer::UsesHMaps)
-      .addFunction("GetTile", &TiledTileLayer::GetTile)
-      .addFunction("SetTile", &TiledTileLayer::SetTile)
-      .addFunction("HasTile", &TiledTileLayer::HasTile)
-      .addFunction("UpdateRenderArea", &TiledTileLayer::UpdateRenderArea)
-      .endClass()
-
-      .beginClass<RSC_Sprite>("RSC_Sprite")
-      .addFunction("GetOrigin", &RSC_Sprite::GetOrigin)
-      .addFunction("SetOrigin", &RSC_Sprite::SetOrigin)
-      .addFunction("SetColorKey", &RSC_Sprite::SetColorKey)
-      .addFunction("GetName", &RSC_Sprite::GetName)
-      .addFunction("Width", &RSC_Sprite::GetWidth)
-      .addFunction("Height", &RSC_Sprite::GetHeight)
-      .endClass()
-
-      .beginClass<TColPacket>("TColPacket")
-      .addConstructor<void (*)(void)>()
-      .addFunction("GetTileX", &TColPacket::GetTileX)
-      .addFunction("GetTileY", &TColPacket::GetTileY)
-      .addFunction("GetBox", &TColPacket::GetBox)
-      .addFunction("GetLayer", &TColPacket::GetLayer)
-      .addFunction("GetHmap", &TColPacket::GetHmap)
-      .endClass()
-
-      .beginClass<EColPacket>("EColPacket")
-      .addConstructor<void (*)(void)>()
-      .addFunction("GetName", &EColPacket::GetName)
-      .addFunction("GetType", &EColPacket::GetType)
-      .addFunction("GetBox", &EColPacket::GetBox)
-      .endClass()
-
       .beginClass<RenderableObject>("RenderableObject")
       .addFunction("GetRotation", &RenderableObject::GetRotation)
       .addFunction("SetRotation", &RenderableObject::SetRotation)
@@ -1247,96 +1215,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetScalingY", &RenderableObject::SetScalingY)
       .endClass()
 
-      .beginClass<Sprite>("Sprite")
-      .addFunction("SetAnimation", &Sprite::SetAnimation)
-      .addFunction("SetAnimationSpeed", &Sprite::SetAnimationSpeed)
-      .addFunction("AnimationPlayOnce", &Sprite::AnimationPlayOnce)
-      .addFunction("GetAnimationSpeed", &Sprite::GetAnimationSpeed)
-      .addFunction("DefaultAnimationSpeed", &Sprite::DefaultAnimationSpeed)
-      .addFunction("SetImage", &Sprite::SetImageIndex)
-      .addFunction("GetImage", &Sprite::GetImageIndex)
-
-      .addFunction("SetRotation", &Sprite::SetRotation)
-      .addFunction("SetScaling", &Sprite::SetScaling)
-      .addFunction("SetScalingX", &Sprite::SetScalingX)
-      .addFunction("SetScalingY", &Sprite::SetScalingY)
-
-      .addFunction("SetOffset", &Sprite::SetOffset)
-
-      .addFunction("Render", &Sprite::Render)
-      .endClass()
-
-      .beginClass<ComponentSprite>("ComponentSprite")
-      .addFunction("AddSprite", &ComponentSprite::AddSprite)
-      .endClass()
-
-      .beginClass<Shape>("Shape")
-      .addData("x", &Shape::x)  // Read-Write
-      .addData("y", &Shape::y)  // Read-Write
-      .endClass()
-
-      .deriveClass<Rect, Shape>("Rect")
-      .addConstructor<void (*)(float, float, float, float)>()
-
-      .addData("w", &Rect::w)  // Read-Write
-      .addData("h", &Rect::h)  // Read-Write
-
-      .addFunction("GetTop", &Rect::GetTop)
-      .addFunction("GetBottom", &Rect::GetBottom)
-      .addFunction("GetLeft", &Rect::GetLeft)
-      .addFunction("GetRight", &Rect::GetRight)
-      .endClass()
-
-      .beginClass<CollisionBox>("CollisionBox")
-      .addFunction("Activate", &CollisionBox::Activate)
-      .addFunction("Deactivate", &CollisionBox::Deactivate)
-      .addFunction("GetID", &CollisionBox::GetID)
-      .addFunction("CheckForEntities", &CollisionBox::CheckForEntities)
-      .addFunction("CheckForTiles", &CollisionBox::CheckForTiles)
-      .addFunction("SetShape", &CollisionBox::SetShape)
-      .addFunction("SetOrder", &CollisionBox::SetOrder)
-      .addFunction("RegisterEveryTileCollision",
-                   &CollisionBox::RegisterEveryTileCollision)
-      .addFunction("RegisterFirstTileCollision",
-                   &CollisionBox::RegisterFirstTileCollision)
-      .addFunction("CheckForLayer", &CollisionBox::CheckForLayerLuaInterface)
-      .addFunction("CheckForLayers", &CollisionBox::CheckForLayersLuaInterface)
-      .endClass()
-
-      .beginClass<ComponentCollision>("ComponentCollision")
-      .addFunction("SetPrimaryCollisionBox",
-                   &ComponentCollision::SetPrimaryCollisionBox)
-      .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
-      .endClass()
-
-      .beginClass<ComponentParticle>("ComponentParticle")
-      .addFunction("AddParticleCreator", &ComponentParticle::AddParticleCreator)
-      .addFunction("DeleteParticleCreators",
-                   &ComponentParticle::DeleteParticleCreators)
-      .endClass()
-
-      .beginClass<ComponentLight>("ComponentLight")
-      .addFunction("CreatePointLight", &ComponentLight::CreatePointLight)
-      .endClass()
-
-      .beginClass<Light>("Light")
-      .addData("color", &Light::color)
-      .addData("pos", &Light::pos)
-      .addData("noise", &Light::noise)
-      .addData("distance", &Light::distance)
-      .addData("render", &Light::render)
-      .endClass()
-
-      .deriveClass<PointLight, Light>("PointLight")
-      .endClass()
-
-      .beginClass<RSC_Heightmap>("RSC_Heightmap")
-      .addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
-      .addFunction("GetHeightMapV", &RSC_Heightmap::GetHeightMapV)
-
-      .addData("angleH", &RSC_Heightmap::angleH)
-      .addData("angleV", &RSC_Heightmap::angleV)
-      .endClass()
 
       .beginClass<Vec2>("Vec2")
       .addConstructor<void (*)(float, float)>()  // Constructor
@@ -1369,71 +1247,9 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetParent", &BaseComponent::SetParentEID)
       .endClass()
 
-      .deriveClass<ComponentPosition, BaseComponent>("ComponentPosition")
-      .addFunction("GetPositionLocal", &ComponentPosition::GetPositionLocal)
-      .addFunction("GetPositionWorld", &ComponentPosition::GetPositionWorld)
-      .addFunction("GetMovement", &ComponentPosition::GetMovement)
-      .addFunction("GetAcceleration", &ComponentPosition::GetAcceleration)
-
-      .addFunction("SetPositionLocal", &ComponentPosition::SetPositionLocal)
-      .addFunction("SetPositionLocalX", &ComponentPosition::SetPositionLocalX)
-      .addFunction("SetPositionLocalY", &ComponentPosition::SetPositionLocalY)
-
-      .addFunction("SetPositionWorld", &ComponentPosition::SetPositionWorld)
-      .addFunction("SetPositionWorldX", &ComponentPosition::SetPositionWorldX)
-      .addFunction("SetPositionWorldY", &ComponentPosition::SetPositionWorldY)
-
-      .addFunction("SetMovement", &ComponentPosition::SetMovement)
-      .addFunction("SetMovementX", &ComponentPosition::SetMovementX)
-      .addFunction("SetMovementY", &ComponentPosition::SetMovementY)
-
-      .addFunction("SetAcceleration", &ComponentPosition::SetAcceleration)
-      .addFunction("SetAccelerationX", &ComponentPosition::SetAccelerationX)
-      .addFunction("SetAccelerationY", &ComponentPosition::SetAccelerationY)
-
-      .addFunction("SetMaxSpeed", &ComponentPosition::SetMaxSpeed)
-
-      .addFunction("IncrementPosition", &ComponentPosition::IncrementMovement)
-      .addFunction("IncrementMovement", &ComponentPosition::IncrementMovement)
-      .addFunction("IncrementAcceleration",
-                   &ComponentPosition::IncrementAcceleration)
-
-      .addFunction("TranslateWorldToLocal",
-                   &ComponentPosition::TranslateWorldToLocal)
-      .addFunction("TranslateLocalToWorld",
-                   &ComponentPosition::TranslateLocalToWorld)
-      .endClass()
-
       .beginClass<ComponentCamera>("ComponentCamera")
       .addFunction("GetViewport", &ComponentCamera::GetViewport)
       .addFunction("SetViewport", &ComponentCamera::SetViewport)
-      .endClass()
-
-      .deriveClass<ParticleCreator, RenderableObject>("ParticleCreator")
-      .addFunction("SetVelocity", &ParticleCreator::SetVelocity)
-      .addFunction("SetAcceleration", &ParticleCreator::SetAcceleration)
-      .addFunction("SetPosition", &ParticleCreator::SetPosition)
-      .addFunction("SetParticlesPerFrame",
-                   &ParticleCreator::SetParticlesPerFrame)
-      .addFunction("Start", &ParticleCreator::Start)
-      .addFunction("SetColor", &ParticleCreator::SetColor)
-      .addFunction("SetScalingX", &ParticleCreator::SetScalingX)
-      .addFunction("SetScalingY", &ParticleCreator::SetScalingY)
-      .addFunction("SetVertexShaderCode", &ParticleCreator::SetVertexShaderCode)
-      .addFunction("SetFragmentShaderCode",
-                   &ParticleCreator::SetFragmentShaderCode)
-      .addFunction("SetShape", &ParticleCreator::SetShape)
-      .addFunction("SetEffect", &ParticleCreator::SetEffect)
-
-      .addFunction("SetSprite", &ParticleCreator::SetSprite)
-      .addFunction("SetAnimation", &ParticleCreator::SetAnimation)
-      .addFunction("SetAnimationFrame", &ParticleCreator::SetAnimationFrame)
-      .addFunction("SetRandomUV", &ParticleCreator::SetRandomUV)
-      .addFunction("SetWarpQuads", &ParticleCreator::SetWarpQuads)
-
-      .addFunction("SetUsePoint", &ParticleCreator::SetUsePoint)
-      .addFunction("SetPoint", &ParticleCreator::SetPoint)
-      .addFunction("SetPointIntensity", &ParticleCreator::SetPointIntensity)
       .endClass()
 
       .deriveClass<RenderLine, RenderableObject>("RenderLine")
@@ -1451,95 +1267,15 @@ void LuaInterface::ExposeCPP() {
       .addFunction("GetY2", &RenderLine::GetY2)
       .endClass()
 
-      .beginClass<RSC_Map>("RSC_Map")
-      .addFunction("GetTileLayer", &RSC_Map::GetTileLayer)
-      .addFunction("DeleteLayer", &RSC_Map::DeleteLayer)
-      .addFunction("GetAmbientLight", &RSC_Map::GetAmbientLight)
-      .addFunction("GetSolidTileLayers", &RSC_Map::GetSolidTileLayers)
-      .addFunction("GetProperty", &RSC_Map::GetProperty)
-      .addFunction("GetWidthTiles", &RSC_Map::GetWidthTiles)
-      .addFunction("GetHeightTiles", &RSC_Map::GetHeightTiles)
-      .addFunction("GetWidthPixels", &RSC_Map::GetWidthPixels)
-      .addFunction("GetHeightPixels", &RSC_Map::GetHeightPixels)
-      .endClass()
-
-      .beginClass<GameSave>("GameSave")
-      .addConstructor<void (*)(const std::string &)>()
-      .addFunction("WriteToFile", &GameSave::WriteToFile)
-      .addFunction("ReadFromFile", &GameSave::ReadFromFile)
-      .addFunction("DeleteFile", &GameSave::DeleteFile)
-      .addFunction("FileExists", &GameSave::FileExists)
-
-      .addFunction("SetBool", &GameSave::SetBool)
-      .addFunction("SetInt", &GameSave::SetInt)
-      .addFunction("SetDouble", &GameSave::SetDouble)
-      .addFunction("SetString", &GameSave::SetString)
-
-      .addFunction("GetBool", &GameSave::GetBool)
-      .addFunction("GetInt", &GameSave::GetInt)
-      .addFunction("GetDouble", &GameSave::GetDouble)
-      .addFunction("GetString", &GameSave::GetString)
-
-      .addFunction("ExistsBool", &GameSave::ExistsBool)
-      .addFunction("ExistsInt", &GameSave::ExistsInt)
-      .addFunction("ExistsDouble", &GameSave::ExistsDouble)
-      .addFunction("ExistsString", &GameSave::ExistsString)
-      .endClass()
-
       .beginClass<GS_Script>("GameState")
       .addFunction("GetStateEID", &GS_Script::GetStateEID)
       .endClass()
 
-      .beginNamespace("ImGui")
-      .addFunction("Begin", &ImGui::BeginWrapper)
-      .addFunction("BeginFlags", &ImGui::BeginFlags)
-      .addFunction("End", &ImGui::End)
-
-      .addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
-      .addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
-      .addFunction("GetWindowSize", &ImGui::GetWindowSizeWrapper)
-
-      .addFunction("SetNextWindowPos", &ImGui::SetNextWindowPosWrapper)
-      .addFunction("SetNextWindowFocus", &ImGui::SetNextWindowFocus)
-      .addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
-      .addFunction("SetNextWindowPosCenter",
-                   &ImGui::SetNextWindowPosCenterWrapper)
-      .addFunction("SetNextWindowSizeConstraints",
-                   &ImGui::SetNextWindowSizeConstraintsWrapper)
-
-      .addFunction("Text", &ImGui::TextWrapper)
-      .addFunction("SliderFloat", &ImGui::SliderFloat)
-      .addFunction("Button", &ImGui::ButtonWrapper)
-
-      .addFunction("Sprite", &ImGui::Sprite)
-      .addFunction("SpriteButton", &ImGui::SpriteButton)
-
-      .addFunction("ProgressBar", &ImGui::ProgressBarWrapper)
-
-      .addFunction("Separator", &ImGui::Separator)
-      .addFunction("SameLine", &ImGui::SameLineWrapper)
-
-      .addFunction("PushStyleColorWindowBG", &ImGui::PushStyleColorWindowBG)
-      .addFunction("PushStyleColorButton", &ImGui::PushStyleColorButton)
-      .addFunction("PushStyleColorButtonHovered",
-                   &ImGui::PushStyleColorButtonHovered)
-      .addFunction("PushStyleColorButtonActive",
-                   &ImGui::PushStyleColorButtonActive)
-      .addFunction("PushStyleColorFrameBG", &ImGui::PushStyleColorFrameBG)
-      .addFunction("PushStyleColorFrameBGActive",
-                   &ImGui::PushStyleColorFrameBGActive)
-      .addFunction("PushStyleColorFrameBGHovered",
-                   &ImGui::PushStyleColorFrameBGHovered)
-      .addFunction("PushStyleColorText", &ImGui::PushStyleColorText)
-      .addFunction("PushStyleColorProgressBarFilled",
-                   &ImGui::PushStyleColorPlotHistogram)
-      .addFunction("PopStyleColor", &ImGui::PopStyleColor)
-
-      .addFunction("PushFont", &ImGui::PushFontWrapper)
-      .addFunction("PopFont", &ImGui::PopFontWrapper)
-      .endNamespace()
-
       .endNamespace();
+
+  ImGui::ExposeLuaInterface(lState);
+  GameState::ExposeLuaInterface(lState);
+  GameSave::ExposeLuaInterface(lState);
 }
 
 void LuaInterface::SetErrorCallbackFunction(ErrorCallback func) {

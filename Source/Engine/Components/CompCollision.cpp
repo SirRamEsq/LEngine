@@ -348,3 +348,72 @@ const TColPacket *TColPacket::ExtraDataDefinition::GetExtraData(
     const Event *event) {
   return static_cast<const TColPacket *>(event->extradata);
 }
+
+void ComponentCollisionManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+
+      .beginClass<TColPacket>("TColPacket")
+      .addConstructor<void (*)(void)>()
+      .addFunction("GetTileX", &TColPacket::GetTileX)
+      .addFunction("GetTileY", &TColPacket::GetTileY)
+      .addFunction("GetBox", &TColPacket::GetBox)
+      .addFunction("GetLayer", &TColPacket::GetLayer)
+      .addFunction("GetHmap", &TColPacket::GetHmap)
+      .endClass()
+
+      .beginClass<EColPacket>("EColPacket")
+      .addConstructor<void (*)(void)>()
+      .addFunction("GetName", &EColPacket::GetName)
+      .addFunction("GetType", &EColPacket::GetType)
+      .addFunction("GetBox", &EColPacket::GetBox)
+      .endClass()
+
+      .beginClass<RSC_Heightmap>("RSC_Heightmap")
+      .addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
+      .addFunction("GetHeightMapV", &RSC_Heightmap::GetHeightMapV)
+      .addData("angleH", &RSC_Heightmap::angleH)
+      .addData("angleV", &RSC_Heightmap::angleV)
+      .endClass()
+
+      .beginClass<Shape>("Shape")
+      .addData("x", &Shape::x)  // Read-Write
+      .addData("y", &Shape::y)  // Read-Write
+      .endClass()
+
+      .deriveClass<Rect, Shape>("Rect")
+      .addConstructor<void (*)(float, float, float, float)>()
+      .addData("w", &Rect::w)  // Read-Write
+      .addData("h", &Rect::h)  // Read-Write
+      .addFunction("GetTop", &Rect::GetTop)
+      .addFunction("GetBottom", &Rect::GetBottom)
+      .addFunction("GetLeft", &Rect::GetLeft)
+      .addFunction("GetRight", &Rect::GetRight)
+      .endClass()
+
+      .beginClass<CollisionBox>("CollisionBox")
+      .addFunction("Activate", &CollisionBox::Activate)
+      .addFunction("Deactivate", &CollisionBox::Deactivate)
+      .addFunction("GetID", &CollisionBox::GetID)
+      .addFunction("CheckForEntities", &CollisionBox::CheckForEntities)
+      .addFunction("CheckForTiles", &CollisionBox::CheckForTiles)
+      .addFunction("SetShape", &CollisionBox::SetShape)
+      .addFunction("SetOrder", &CollisionBox::SetOrder)
+      .addFunction("RegisterEveryTileCollision",
+                   &CollisionBox::RegisterEveryTileCollision)
+      .addFunction("RegisterFirstTileCollision",
+                   &CollisionBox::RegisterFirstTileCollision)
+      .addFunction("CheckForLayer", &CollisionBox::CheckForLayerLuaInterface)
+      .addFunction("CheckForLayers", &CollisionBox::CheckForLayersLuaInterface)
+      .endClass()
+
+      .beginClass<ComponentCollision>("ComponentCollision")
+      .addFunction("SetPrimaryCollisionBox",
+                   &ComponentCollision::SetPrimaryCollisionBox)
+      .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
+      .endClass()
+
+      .beginClass<ComponentCollisionManager>("ComponentCollisionManager")
+      .endClass()
+      .endNamespace();
+}
