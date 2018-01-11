@@ -104,18 +104,19 @@ ComponentLightManager::~ComponentLightManager() {
 }
 
 void ComponentLightManager::Update() {
+  AddNewComponents();
   // Update all entities
-  for (auto i = componentList.begin(); i != componentList.end(); i++) {
+  for (auto i = mComponentList.begin(); i != mComponentList.end(); i++) {
     UpdateComponent(i->second.get());
   }
 
   // Reset all 'updatedThisFrame' bits
-  for (auto i = componentList.begin(); i != componentList.end(); i++) {
+  for (auto i = mComponentList.begin(); i != mComponentList.end(); i++) {
     i->second->updatedThisFrame = false;
   }
 
   std::vector<Light *> lights;
-  for (auto comp = activeComponents.begin(); comp != activeComponents.end();
+  for (auto comp = mActiveComponents.begin(); comp != mActiveComponents.end();
        comp++) {
     auto compLights = comp->second->GetLights();
     for (auto lightIt = compLights->begin(); lightIt != compLights->end();

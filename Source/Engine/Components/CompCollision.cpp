@@ -107,7 +107,7 @@ void ComponentCollisionManager::SendCollisionEvent(
   EColPacket::ExtraDataDefinition extraData(&ePacket);
   Event event(sender.GetEID(), reciever.GetEID(), mes, "ENTITY_COLLISION",
               &extraData);
-  eventDispatcher->DispatchEvent(event);
+  mEventDispatcher->DispatchEvent(event);
 }
 
 void ComponentCollisionManager::UpdateCheckEntityCollision() {
@@ -138,7 +138,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision() {
        bucketIt++) {
     for (auto eidIt1 = bucketIt->second.begin();
          eidIt1 != bucketIt->second.end(); eidIt1++) {
-      comp1 = componentList[*eidIt1].get();
+      comp1 = mComponentList[*eidIt1].get();
 
       for (auto eidIt2 = eidIt1 + 1; eidIt2 != bucketIt->second.end();
            eidIt2++) {
@@ -148,7 +148,7 @@ void ComponentCollisionManager::UpdateCheckEntityCollision() {
         }
         alreadyProcessed.insert(newPair);
 
-        comp2 = componentList[*eidIt2].get();
+        comp2 = mComponentList[*eidIt2].get();
         primaryPass = false;
 
         alreadyRegisteredBox1.clear();
@@ -209,7 +209,7 @@ void ComponentCollisionManager::UpdateCheckTileCollision(RSC_Map *currentMap) {
     return;
   }
 
-  for (auto compIt1 = componentList.begin(); compIt1 != componentList.end();
+  for (auto compIt1 = mComponentList.begin(); compIt1 != mComponentList.end();
        compIt1++) {
     for (auto boxIt1 = compIt1->second->mActiveTileBoxes.begin();
          boxIt1 != compIt1->second->mActiveTileBoxes.end(); boxIt1++) {
@@ -252,7 +252,7 @@ void ComponentCollisionManager::RegisterTileCollision(
     TColPacket *packet, EID id, CollisionBox::Callback callback) {
   TColPacket::ExtraDataDefinition extraData(packet);
   Event event(EID_SYSTEM, id, Event::MSG::COLLISION_TILE, "TILE", &extraData);
-  eventDispatcher->DispatchEvent(event);
+  mEventDispatcher->DispatchEvent(event);
 
   if (callback != NULL) {
     callback(packet);
@@ -260,7 +260,7 @@ void ComponentCollisionManager::RegisterTileCollision(
 }
 
 void ComponentCollisionManager::UpdateBuckets(int widthPixels) {
-  grid.UpdateBuckets(&componentList, widthPixels);
+  grid.UpdateBuckets(&mComponentList, widthPixels);
 }
 
 void CollisionGrid::UpdateBuckets(
@@ -306,7 +306,9 @@ void CollisionGrid::UpdateBuckets(
 }
 
 void ComponentCollisionManager::Update() {
+  AddNewComponents();
   GameStateManager *gs = &K_StateMan;
+  if(gs == NULL){return;}
   GameState *state = gs->GetCurrentState();
   auto stateMap = state->GetCurrentMap();
   if (stateMap == NULL) {

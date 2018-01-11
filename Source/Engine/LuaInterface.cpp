@@ -1215,7 +1215,6 @@ void LuaInterface::ExposeCPP() {
       .addFunction("SetScalingY", &RenderableObject::SetScalingY)
       .endClass()
 
-
       .beginClass<Vec2>("Vec2")
       .addConstructor<void (*)(float, float)>()  // Constructor
       .addData("x", &Vec2::x)

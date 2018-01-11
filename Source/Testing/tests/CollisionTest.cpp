@@ -58,6 +58,8 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
 
   positionManager.AddComponent(entity);
   collisionManager.AddComponent(entity);
+  positionManager.AddNewComponents();
+  collisionManager.AddNewComponents();
 
   auto compCol = collisionManager.GetComponent(entity);
   auto compPos = positionManager.GetComponent(entity);
@@ -218,6 +220,8 @@ TEST_CASE("Entity Collision tests", "[collision]") {
 
     positionManager.AddComponent(entity);
     collisionManager.AddComponent(entity);
+    positionManager.AddNewComponents();
+    collisionManager.AddNewComponents();
     auto compCol = collisionManager.GetComponent(entity);
     auto compPos = positionManager.GetComponent(entity);
 
@@ -266,6 +270,8 @@ TEST_CASE("Entity Collision tests", "[collision]") {
 
       positionManager.AddComponent(entity);
       collisionManager.AddComponent(entity);
+      positionManager.AddNewComponents();
+      collisionManager.AddNewComponents();
       auto compCol = collisionManager.GetComponent(entity);
       auto compPos = positionManager.GetComponent(entity);
 

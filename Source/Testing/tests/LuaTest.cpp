@@ -113,6 +113,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   SECTION("Ensure Lua events can be sent, recieved, and interpeted") {
     EID newEID = 31337;
     scriptMan->AddComponent(newEID);
+	scriptMan->AddNewComponents();
 
     std::string eventDescription = "TEST1";
 

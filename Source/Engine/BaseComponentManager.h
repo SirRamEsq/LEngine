@@ -76,6 +76,7 @@ class BaseComponentManager_Impl : public BaseComponentManager {
   /**
    * Updates all active components once
    * Sets and unsets the component's 'updatedThisFrame' boolean
+   * Also adds new components to the component list
    **/
   virtual void Update();
   /**
@@ -94,7 +95,7 @@ class BaseComponentManager_Impl : public BaseComponentManager {
    * if parent is 0, then parent of the child is set to NULL
    */
   void SetParent(EID child, EID parent);
-
+  void AddNewComponents();
  protected:
   /**
    * Recursive function, updates parents before children
@@ -105,13 +106,248 @@ class BaseComponentManager_Impl : public BaseComponentManager {
   virtual void ProcessEvent(const Event *event);
 
   /// All Components that this Manager owns
-  std::unordered_map<EID, std::unique_ptr<T>> componentList;
+  std::unordered_map<EID, std::unique_ptr<T>> mComponentList;
+  /// Components to add at the start of the next frame
+  std::unordered_map<EID, std::unique_ptr<T>> mNewComponents;
   /// Components that are active and will be updated
-  std::unordered_map<EID, T *> activeComponents;
-  EventDispatcher *eventDispatcher;
+  std::unordered_map<EID, T *> mActiveComponents;
+  EventDispatcher *mEventDispatcher;
 };
 
-// Include definitions
-#include "BaseComponentManager.tpp"
+template <class T>
+BaseComponentManager_Impl<T>::BaseComponentManager_Impl(EventDispatcher *e)
+    : mEventDispatcher(e) {}
+
+template <class T>
+int BaseComponentManager_Impl<T>::GetComponentCount() {
+  auto size1 = mComponentList.size();
+  auto size2 = mNewComponents.size();
+  return size1 + size2;
+}
+
+template <class T>
+int BaseComponentManager_Impl<T>::GetActiveComponentCount() {
+  return mActiveComponents.size();
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::DeleteAllComponents() {
+  mComponentList.clear();
+  mNewComponents.clear();
+  mActiveComponents.clear();
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::DeleteComponent(EID id) {
+  mComponentList.erase(id);
+  mNewComponents.erase(id);
+  mActiveComponents.erase(id);
+}
+
+template <class T>
+bool BaseComponentManager_Impl<T>::HasComponent(EID id) {
+  if (mComponentList.find(id) != mComponentList.end()) {
+    return true;
+  }
+  if (mNewComponents.find(id) != mNewComponents.end()) {
+    return true;
+  }
+  return false;
+}
+
+template <class T>
+bool BaseComponentManager_Impl<T>::IsActive(EID id) {
+  return (mActiveComponents.find(id) != mActiveComponents.end());
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::UpdateComponent(T *child) {
+  // Exit if already updated this frame
+  if (child->updatedThisFrame == true) {
+    return;
+  }
+
+  // Update parent before child
+  auto parent = child->GetParent();
+  if (parent != NULL) {
+    auto parentEID = parent->GetEID();
+    auto parentIterator = mActiveComponents.find(parentEID);
+    if (parentIterator != mActiveComponents.end()) {
+      // Recurse update function with parent
+      UpdateComponent(parentIterator->second);
+    }
+  }
+
+  // Update child
+  child->Update();
+  child->updatedThisFrame = true;
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::Update() {
+  AddNewComponents();
+
+  // Update all entities
+  for (auto i = mActiveComponents.begin(); i != mActiveComponents.end(); i++) {
+    UpdateComponent(i->second);
+  }
+
+  // Reset all 'updatedThisFrame' bits
+  for (auto i = mActiveComponents.begin(); i != mActiveComponents.end(); i++) {
+    i->second->updatedThisFrame = false;
+  }
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::HandleEvent(const Event *event) {
+  EID recieverEID = event->reciever;
+  BaseComponent *comp = GetComponent(recieverEID);
+  if (comp == NULL) {
+    return;
+  }
+
+  ProcessEvent(event);
+
+  comp->HandleEvent(event);
+}
+template <class T>
+void BaseComponentManager_Impl<T>::ProcessEvent(const Event *event) {
+  EID recieverEID = event->reciever;
+  if (recieverEID == EID_ALLOBJS) {
+    return;
+  }
+  BaseComponent *comp = GetComponent(recieverEID);
+  if (comp == NULL) {
+    return;
+  }
+
+  if (event->message == Event::MSG::ENTITY_DELETED) {
+    // if component has a parent, it needs to be changed if the parent was
+    // deleted
+    auto parent = comp->GetParent();
+    if (parent != NULL) {
+      if (parent->GetEID() == event->sender) {
+        // Set parent to NULL
+        SetParent(recieverEID, 0);
+      }
+    }
+  }
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::BroadcastEvent(const Event *event) {
+  ProcessEvent(event);
+  for (auto i = mActiveComponents.begin(); i != mActiveComponents.end(); i++) {
+    if (i->second->GetEID() != event->sender) {
+      i->second->HandleEvent(event);
+    }
+  }
+}
+
+template <class T>
+T *BaseComponentManager_Impl<T>::GetComponent(EID id) {
+  auto i = mComponentList.find(id);
+  if (i != mComponentList.end()) {
+    return i->second.get();
+  }
+
+  i = mNewComponents.find(id);
+  if (i != mNewComponents.end()) {
+    return i->second.get();
+  }
+
+  return NULL;
+}
+
+template <class T>
+const T *BaseComponentManager_Impl<T>::GetConstComponent(EID id) const {
+  auto i = mComponentList.find(id);
+  if (i != mComponentList.end()) {
+    return i->second.get();
+  }
+
+  i = mNewComponents.find(id);
+  if (i != mNewComponents.end()) {
+    return i->second.get();
+  }
+
+  return NULL;
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::AddComponent(std::unique_ptr<T> comp) {
+  if (comp.get() == NULL) {
+    return;
+  }
+  auto id = comp->GetEID();
+
+  // This shouldn't happen
+  ASSERT(mComponentList.find(id) == mComponentList.end());
+  if (mComponentList.find(id) != mComponentList.end()) {
+    return;
+  }
+
+  mNewComponents[id] = std::move(comp);
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::AddNewComponents() {
+  for (auto i = mNewComponents.begin(); i != mNewComponents.end(); i++) {
+    mComponentList[i->first] = std::move(i->second);
+    ActivateComponent(i->first);
+  }
+  mNewComponents.clear();
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::AddComponent(EID id, EID parent) {
+  T *parentPointer = NULL;
+
+  auto i = mComponentList.find(id);
+  if (i != mComponentList.end()) {
+    parentPointer = i->second.get();
+  }
+
+  AddComponent(ConstructComponent(id, parentPointer));
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::SetParent(EID child, EID parent) {
+  if (child == 0) {
+    return;
+  }
+
+  auto childComponent = GetComponent(child);
+  if (childComponent == NULL) {
+    return;
+  }
+  if (parent == 0) {
+    childComponent->SetParent(NULL);
+    return;
+  }
+
+  auto parentComponent = GetComponent(parent);
+  if (parentComponent == NULL) {
+    return;
+  }
+
+  childComponent->SetParent(parentComponent);
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::ActivateComponent(EID id) {
+  auto comp = mComponentList.find(id);
+  if (comp != mComponentList.end()) {
+    mActiveComponents[id] = comp->second.get();
+  }
+}
+
+template <class T>
+void BaseComponentManager_Impl<T>::DeactivateComponent(EID id) {
+  auto comp = mActiveComponents.find(id);
+  if (comp != mActiveComponents.end()) {
+    mActiveComponents.erase(comp);
+  }
+}
 
 #endif

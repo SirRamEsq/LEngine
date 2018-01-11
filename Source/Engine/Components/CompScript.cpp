@@ -268,7 +268,7 @@ ComponentScriptManager::~ComponentScriptManager() {
   to prevent this, all listeners are removed before deletion
   */
 
-  for (auto i = componentList.begin(); i != componentList.end(); i++) {
+  for (auto i = mComponentList.begin(); i != mComponentList.end(); i++) {
     ((ComponentScript *)(i->second.get()))->EventLuaRemoveAllObservers();
   }
 }
@@ -281,7 +281,7 @@ ComponentScriptManager::ComponentScriptManager(lua_State *state,
 std::unique_ptr<ComponentScript> ComponentScriptManager::ConstructComponent(
     EID id, ComponentScript *parent) {
   auto script = std::make_unique<ComponentScript>(
-      id, lState, eventDispatcher, lInterface, dependencyRenderManager, this);
+      id, lState, mEventDispatcher, lInterface, dependencyRenderManager, this);
 
   return std::move(script);
 }
