@@ -23,6 +23,8 @@ class GameState;
 class ComponentPosition;
 class ComponentCollision;
 class ComponentParticle;
+class ComponentScriptManager;
+class ComponentScript;
 class GS_Script;
 
 std::unordered_map<std::string, luabridge::LuaRef> GetKeyValueMap(
@@ -68,8 +70,7 @@ class LuaInterface {
   ~LuaInterface();
 
   bool RunScript(EID id, std::vector<const RSC_Script *> scripts,
-                 MAP_DEPTH depth, EID parent, const std::string &name,
-                 /*optional args*/ const TiledObject *obj,
+                 /*optional args*/ const TiledProperties *tiledProperties,
                  luabridge::LuaRef *initTable);
 
   void ExecuteString(const std::string &code);
@@ -111,12 +112,14 @@ class LuaInterface {
   ComponentParticle *GetParticleComponent(const EID &id);
   ComponentCamera *GetCameraComponent(const EID &id);
   ComponentLight *GetLightComponent(const EID &id);
+  ComponentScript *GetScriptComponent(const EID &id);
 
   bool HasPositionComponent(const EID &id);
   bool HasSpriteComponent(const EID &id);
   bool HasCollisionComponent(const EID &id);
   bool HasParticleComponent(const EID &id);
   bool HasCameraComponent(const EID &id);
+  bool HasScriptComponent(const EID &id);
   bool HasLightComponent(const EID &id);
 
   ////////////
@@ -199,14 +202,14 @@ class LuaInterface {
   bool RecordKeysBegin();
   bool RecordKeysEnd();
 
-  EntityManager* GetEntityManager() const;
-  ComponentLightManager* GetLightManager() const;
-  ComponentSpriteManager* GetSpriteManager() const;
-  ComponentCameraManager* GetCameraManager() const;
-  ComponentPositionManager* GetPositionManager() const;
-  ComponentParticleManager* GetParticleManager() const;
-  ComponentCollisionManager* GetCollisionManager() const;
-  //ComponentScriptManager* GetScriptManager() const;
+  EntityManager *GetEntityManager() const;
+  ComponentLightManager *GetLightManager() const;
+  ComponentSpriteManager *GetSpriteManager() const;
+  ComponentCameraManager *GetCameraManager() const;
+  ComponentPositionManager *GetPositionManager() const;
+  ComponentParticleManager *GetParticleManager() const;
+  ComponentCollisionManager *GetCollisionManager() const;
+  ComponentScriptManager *GetScriptManager() const;
 
   static const std::string LUA_52_INTERFACE_ENV_TABLE;
   static const std::string DEBUG_LOG;

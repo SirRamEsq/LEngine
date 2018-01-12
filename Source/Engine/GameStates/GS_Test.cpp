@@ -85,7 +85,7 @@ void GS_Test::Init(const RSC_Script *ignore) {
   std::vector<const RSC_Script *> scripts;
   scripts.push_back(baseScript);
   scripts.push_back(mStateScript);
-  luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
+  luaInterface.RunScript(eid, scripts, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
   // REQUIRE(entityScript != NULL);
 }

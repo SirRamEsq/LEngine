@@ -79,7 +79,15 @@ void EntityManager::RegisterComponentManager(BaseComponentManager *manager,
   componentsRegistered[order] = manager;
 }
 
+void EntityManager::SetName(EID id, const std::string &name) {}
+
 EID EntityManager::NewEntity(const std::string &entityName) {
+  auto eid = NewEntity();
+  MapNameToEID(eid, entityName);
+  return eid;
+}
+
+EID EntityManager::NewEntity() {
   EID newEntityID = 0;
 
   // First check if there are any reclaimed eids to use
@@ -93,7 +101,6 @@ EID EntityManager::NewEntity(const std::string &entityName) {
     maxInUseEID++;
   }
 
-  MapNameToEID(newEntityID, entityName);
   aliveEntities.insert(newEntityID);
   activeEntities.insert(newEntityID);
   // Increment number of living entities
@@ -250,7 +257,7 @@ void EntityManager::Deactivate(EID id) {
 
 void EntityManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
-      .beginNamespace("CPP") 
+      .beginNamespace("CPP")
       .beginClass<EntityManager>("EntityManager")
       .addFunction("Activate",
                    (void (EntityManager::*)(const std::vector<EID> &)) &
@@ -270,8 +277,8 @@ void EntityManager::ExposeLuaInterface(lua_State *state) {
 
       .addFunction("Delete", &EntityManager::DeleteEntity)
 
-      /// \TODO Be able to create new entities this way
-      //.addFunction("New", &EntityManager::NewEntity)
+      .addFunction("New", (EID(EntityManager::*)()) & EntityManager::NewEntity)
+      .addFunction("MapNameToEID", &EntityManager::MapNameToEID)
       .endClass()
       .endNamespace();
 }

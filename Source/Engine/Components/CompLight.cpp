@@ -293,11 +293,12 @@ void ComponentLightManager::BuildVAO() {
 
 std::unique_ptr<ComponentLight> ComponentLightManager::ConstructComponent(
     EID id, ComponentLight *parent) {
+  auto dependencyPosition = &Kernel::stateMan.GetCurrentState()->comPosMan;
+  if (dependencyPosition->GetComponent(id) == NULL) {
+    dependencyPosition->AddComponent(id);
+  }
   auto light = std::make_unique<ComponentLight>(
-      id,
-      (ComponentPosition *)Kernel::stateMan.GetCurrentState()
-          ->comPosMan.GetComponent(id),
-      this);
+      id, (ComponentPosition *)dependencyPosition->GetComponent(id), this);
 
   return std::move(light);
 }

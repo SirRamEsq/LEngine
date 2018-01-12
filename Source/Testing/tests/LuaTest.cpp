@@ -46,8 +46,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   auto parent = 0;
   std::vector<const RSC_Script *> scripts;
   scripts.push_back(script.get());
-  luaInterface->RunScript(eid, scripts, mapDepth, parent, scriptName, NULL,
-                          NULL);
+  luaInterface->RunScript(eid, scripts, NULL, NULL);
 
   REQUIRE(lastError == "Interface Working");
 
@@ -92,22 +91,17 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
   SECTION("Ensure that the LEngine module is correctly loaded") {
     auto scriptComponent = scriptMan->GetComponent(eid);
 
-    std::string mapDepthString = "10";
-    std::string parentString = "0";
     std::stringstream eidString;
     eidString << eid;
 
-    scriptComponent->RunFunction("PrintDepth");
-    REQUIRE(lastError == mapDepthString);
-
-    scriptComponent->RunFunction("PrintParent");
-    REQUIRE(lastError == parentString);
+    std::stringstream stateEIDString;
+    stateEIDString << EID_RESERVED_STATE_ENTITY;
 
     scriptComponent->RunFunction("PrintEID");
     REQUIRE(lastError == eidString.str());
 
-    scriptComponent->RunFunction("PrintName");
-    REQUIRE(lastError == scriptName);
+    scriptComponent->RunFunction("PrintStateEID");
+    REQUIRE(lastError == stateEIDString.str());
   }
 
   SECTION("Ensure Lua events can be sent, recieved, and interpeted") {
@@ -127,7 +121,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     // process and link up observers
     luaInterface->Update();
 
-    luaInterface->EventLuaSendToObservers(newEID, eventDescription);
+    luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
     std::stringstream ss1;
     ss1 << "EVENT: " << eventDescription;
     REQUIRE(lastError == ss1.str());

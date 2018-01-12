@@ -75,6 +75,9 @@ class Sprite {
 
   float DefaultAnimationSpeed();
 
+  void SetDepth(MAP_DEPTH d);
+  MAP_DEPTH GetDepth() const;
+
  protected:
   AnimationData mAnimation;
   /// Resource this Sprite is based off of
@@ -97,7 +100,7 @@ class ComponentSprite : public BaseComponent {
   void HandleEvent(const Event *event);
 
   /// returns sprite index
-  Sprite *AddSprite(const RSC_Sprite *sprite, MAP_DEPTH depth);
+  Sprite *AddSprite(const RSC_Sprite *sprite);
 
   /**
    * Max size needs to be set to reserve memory in the sprite vector
@@ -108,11 +111,15 @@ class ComponentSprite : public BaseComponent {
    */
   void SetMaxSprites(unsigned int spriteCount);
 
+  void SetDepth(MAP_DEPTH d);
+  MAP_DEPTH GetDepth() const;
+
  protected:
   ComponentPosition *myPos;
   RenderManager *rm;
 
  private:
+  MAP_DEPTH mDefaultDepth;
   /// Maximum number of sprites allowed for this entity
   unsigned int mMaxSprites;
   std::vector<Sprite> mSprites;

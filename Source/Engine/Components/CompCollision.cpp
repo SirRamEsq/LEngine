@@ -91,6 +91,9 @@ ComponentCollisionManager::ComponentCollisionManager(EventDispatcher *e)
 std::unique_ptr<ComponentCollision>
 ComponentCollisionManager::ConstructComponent(EID id,
                                               ComponentCollision *parent) {
+  if (dependencyPosition->GetComponent(id) == NULL) {
+    dependencyPosition->AddComponent(id);
+  }
   auto comp = std::make_unique<ComponentCollision>(
       id, dependencyPosition->GetComponent(id), this);
   return comp;

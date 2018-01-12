@@ -39,6 +39,9 @@ ComponentCameraManager::~ComponentCameraManager() {}
 
 std::unique_ptr<ComponentCamera> ComponentCameraManager::ConstructComponent(
     EID id, ComponentCamera *parent) {
+  if (dependencyPosition->GetComponent(id) == NULL) {
+    dependencyPosition->AddComponent(id);
+  }
   auto cam = std::make_unique<ComponentCamera>(
       id, (ComponentPosition *)dependencyPosition->GetComponent(id),
       dependencyRenderManager, this);

@@ -25,7 +25,7 @@ ComponentScript::ComponentScript(EID id, lua_State *state, EventDispatcher *ed,
 
 ComponentScript::~ComponentScript() {
   // Let all observers know that this entity has been deleted
-  EventLuaSendToObservers(entityDeletedDescription);
+  SendEvent(entityDeletedDescription);
 }
 
 bool ComponentScript::UsesScript(const std::string &scriptName) {
@@ -56,38 +56,22 @@ void ComponentScript::SetScriptPointerOnce(
   scriptPointer = lp;
 }
 
-void ComponentScript::EventLuaBroadcastEvent(const std::string &event) {
+void ComponentScript::BroadcastEvent(const std::string &event) {
   Event eventStructure(GetEID(), EID_ALLOBJS, Event::MSG::LUA_EVENT, event);
   dependencyEventDispatcher->DispatchEvent(eventStructure);
 }
 
-void ComponentScript::EventLuaSendToObservers(const std::string &event) {
+void ComponentScript::SendEvent(const std::string &event) {
   Event e(GetEID(), 0, Event::MSG::LUA_EVENT, event);
-  for (auto it = mEventLuaObservers.begin(); it != mEventLuaObservers.end();
-       it++) {
-    e.reciever = it->first;
-    // Formerly: it->second->HandleEvent(e);
+  for (auto i : mEventLuaObservers) {
+    e.reciever = i;
     dependencyEventDispatcher->DispatchEvent(e);
   }
 }
 
-bool ComponentScript::EventLuaAddObserver(ComponentScript *script) {
-  if (mEventLuaObservers.find(script->GetEID()) == mEventLuaObservers.end()) {
-    mEventLuaObservers[script->GetEID()] = script;
-    return true;
-  }
-  return false;
-}
-bool ComponentScript::EventLuaRemoveObserver(EID id) {
-  if (mEventLuaObservers.find(id) != mEventLuaObservers.end()) {
-    mEventLuaObservers.erase(id);
-    return true;
-  }
-  return false;
-}
-void ComponentScript::EventLuaRemoveAllObservers() {
-  mEventLuaObservers.clear();
-}
+void ComponentScript::AddObserver(EID id) { mEventLuaObservers.insert(id); }
+void ComponentScript::RemoveObserver(EID id) { mEventLuaObservers.erase(id); }
+void ComponentScript::RemoveAllObservers() { mEventLuaObservers.clear(); }
 
 RenderText *ComponentScript::RenderObjectText(int x, int y,
                                               const std::string &text,
@@ -155,7 +139,7 @@ void ComponentScript::ExposeProperties(
 void ComponentScript::HandleEvent(const Event *event) {
   // This event doesn't need the script pointer to be valid
   if (event->message == Event::MSG::ENTITY_DELETED) {
-    EventLuaRemoveObserver(event->sender);
+    RemoveObserver(event->sender);
   }
 
   // The following events need the script pointer to be valid
@@ -183,14 +167,14 @@ void ComponentScript::HandleEvent(const Event *event) {
         func(event->sender, *packet);
       }
     }
-/*	else if (event->message == Event::MSG::COLLISION_TILE) {
-      auto func = GetFunction("OnTileCollision");
-      if (not func.isNil()) {
-        auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
-        func(*packet);
-      }
-    }*/
-	else if (event->message == Event::MSG::LUA_EVENT) {
+    /*	else if (event->message == Event::MSG::COLLISION_TILE) {
+          auto func = GetFunction("OnTileCollision");
+          if (not func.isNil()) {
+            auto packet = TColPacket::ExtraDataDefinition::GetExtraData(event);
+            func(*packet);
+          }
+        }*/
+    else if (event->message == Event::MSG::LUA_EVENT) {
       auto func = GetFunction("OnLuaEvent");
       if (not func.isNil()) {
         func(event->sender, event->description);
@@ -255,6 +239,19 @@ void ComponentScript::RunFunction(const std::string &fname) {
 
 std::string ComponentScript::GetScriptName() const { return scriptName; }
 
+luabridge::LuaRef ComponentScript::GetInitializationTable() {
+  /*
+  if (!scriptPointer.isNil()){
+    auto LEngineTable = scriptPointer["LEngine"];
+    if (LEngineTable.isNil()){
+      return LEngineTable;
+    }
+  }
+  */
+  //luabridge::LuaRef lengineData = scriptPointer["LEngineData"];
+  //return lengineData["InitializationTable"];
+}
+
 //////////////////////////
 // ComponentScriptManager//
 //////////////////////////
@@ -269,7 +266,7 @@ ComponentScriptManager::~ComponentScriptManager() {
   */
 
   for (auto i = mComponentList.begin(); i != mComponentList.end(); i++) {
-    ((ComponentScript *)(i->second.get()))->EventLuaRemoveAllObservers();
+    ((ComponentScript *)(i->second.get()))->RemoveAllObservers();
   }
 }
 
@@ -288,4 +285,35 @@ std::unique_ptr<ComponentScript> ComponentScriptManager::ConstructComponent(
 
 void ComponentScriptManager::SetDependencies(RenderManager *rm) {
   dependencyRenderManager = rm;
+}
+
+void ComponentScriptManager::CreateEntity(EID id,
+                                          std::vector<std::string> scripts,
+                                          luabridge::LuaRef propertyTable) {
+  std::vector<const RSC_Script *> rscScripts;
+  for (auto i : scripts) {
+    auto rsc = K_ScriptMan.GetLoadItem(i);
+    if (rsc != NULL) {
+      rscScripts.push_back(rsc);
+    }
+  }
+  lInterface->RunScript(id, rscScripts, NULL, &propertyTable);
+}
+
+void ComponentScriptManager::ExposeLuaInterface(lua_State *state) {
+  luabridge::getGlobalNamespace(state)
+      .beginNamespace("CPP")
+      .beginClass<ComponentScriptManager>("ComponentScriptManager")
+      .addFunction("CreateEntity", &ComponentScriptManager::CreateEntity)
+      .endClass()
+
+      .beginClass<ComponentScript>("ComponentScript")
+      .addFunction("BroadcastEvent", &ComponentScript::BroadcastEvent)
+      .addFunction("SendEvent", &ComponentScript::SendEvent)
+      .addFunction("AddObserver", &ComponentScript::AddObserver)
+      .addFunction("RemoveObserver", &ComponentScript::RemoveObserver)
+      .addFunction("RemoveAllObservers", &ComponentScript::RemoveAllObservers)
+      .endClass()
+
+      .endNamespace();
 }

@@ -719,6 +719,9 @@ ComponentParticleManager::~ComponentParticleManager() {}
 
 std::unique_ptr<ComponentParticle> ComponentParticleManager::ConstructComponent(
     EID id, ComponentParticle *parent) {
+  if (dependencyPosition->GetComponent(id) == NULL) {
+    dependencyPosition->AddComponent(id);
+  }
   auto par = std::make_unique<ComponentParticle>(
       id, (ComponentPosition *)dependencyPosition->GetComponent(id),
       dependencyRenderManager, this);

@@ -7,6 +7,7 @@
 #include "gui/imgui_LEngine.h"
 #include "GameSave.h"
 #include "math.h"
+#include "Components/CompScript.h"
 
 #include <sstream>
 #include "math.h"
@@ -472,8 +473,7 @@ int LuaInterface::LookupFunction(const RSC_Script *script) {
 
 // Clears stack
 bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
-                             MAP_DEPTH depth, EID parent,
-                             const std::string &name, const TiledObject *obj,
+                             const TiledProperties *tiledProperties,
                              LuaRef *initTable) {
   if (scripts.empty()) {
     std::stringstream ss;
@@ -483,15 +483,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     throw LEngineException(ss.str());
     return false;
   }
-  // check if entity has script component
-  ComponentScript *scriptComponent = parentState->comScriptMan.GetComponent(id);
-  if (scriptComponent == NULL) {
-    std::stringstream ss;
-    ss << "Couldn't run script for entity with EID " << id
-       << " as this entity does not have a script component";
-    LOG_ERROR(ss.str());
-    throw LEngineException(ss.str());
-  }
+
+  auto scriptComponent = GetScriptComponent(id);
 
   // Base Script will be the first one run
   if (baseScript != NULL) {
@@ -570,11 +563,10 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     return false;
   }
 
-  // Set 'name+eid" to the returned table containing the 'Update', 'Init',
-  // etc... functions
+  // Set a name for table containing the 'Update','Init',etc... functions
   // store temporarily in returnedTableName  (will later set to nil)
   std::stringstream returnedTableName;
-  returnedTableName << "_LE_TABLE_" << name << id;
+  returnedTableName << "_LE_TABLE_" << id;
   lua_setglobal(lState, returnedTableName.str().c_str());  // assign and pop
                                                            // value
 
@@ -586,8 +578,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     LuaRef engineRef = getGlobal(lState, "NewLEngine");
     LuaRef engineTableRef = engineRef();
 
-    engineTableRef["Initialize"](id, name, fullyQualifiedScriptName.str(),
-                                 depth, parent, EID_RESERVED_STATE_ENTITY,
+    engineTableRef["Initialize"](id, EID_RESERVED_STATE_ENTITY,
                                  Kernel::IsInDebugMode());
 
     // Assign Instance to generated table
@@ -602,29 +593,29 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   // Assign values from optional args to the script//
   //////////////////////////////////////////////////
 
-  if (obj != NULL) {
+  if (tiledProperties != NULL) {
     LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
     LuaRef lengineData = returnedTable["LEngineData"];
     LuaRef initTable = lengineData["InitializationTable"];
-    for (auto i = obj->properties.bools.begin();
-         i != obj->properties.bools.end(); i++) {
+    for (auto i = tiledProperties->bools.begin();
+         i != tiledProperties->bools.end(); i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->properties.ints.begin(); i != obj->properties.ints.end();
+    for (auto i = tiledProperties->ints.begin(); i != tiledProperties->ints.end();
          i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->properties.floats.begin();
-         i != obj->properties.floats.end(); i++) {
+    for (auto i = tiledProperties->floats.begin();
+         i != tiledProperties->floats.end(); i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = obj->properties.strings.begin();
-         i != obj->properties.strings.end(); i++) {
+    for (auto i = tiledProperties->strings.begin();
+         i != tiledProperties->strings.end(); i++) {
       initTable[i->first] = i->second;
     }
   }
 
-  if (initTable != NULL) {
+  else if (initTable != NULL) {
     if (initTable->isNil() == false) {
       LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
       LuaRef lengineData = returnedTable["LEngineData"];
@@ -778,6 +769,12 @@ ComponentLight *LuaInterface::GetLightComponent(const EID &id) {
   }
   return parentState->comLightMan.GetComponent(id);
 }
+ComponentScript *LuaInterface::GetScriptComponent(const EID &id) {
+  if (parentState->comScriptMan.HasComponent(id) == false) {
+    parentState->comScriptMan.AddComponent(id);
+  }
+  return parentState->comScriptMan.GetComponent(id);
+}
 
 bool LuaInterface::HasPositionComponent(const EID &id) {
   return parentState->comPosMan.HasComponent(id);
@@ -796,6 +793,9 @@ bool LuaInterface::HasCameraComponent(const EID &id) {
 }
 bool LuaInterface::HasLightComponent(const EID &id) {
   return parentState->comLightMan.HasComponent(id);
+}
+bool LuaInterface::HasScriptComponent(const EID &id) {
+  return parentState->comScriptMan.HasComponent(id);
 }
 ////////////
 // Entities//
@@ -884,10 +884,11 @@ void LuaInterface::RenderObjectDelete(EID selfID, RenderableObject *obj) {
 // Events//
 //////////
 void LuaInterface::EventLuaObserveEntity(EID listenerID, EID senderID) {
-  mEntitiesToObserve[listenerID].insert(senderID);
+  // mEntitiesToObserve[listenerID].insert(senderID);
 }
 
 void LuaInterface::ProcessObservers() {
+  /*
   for (auto i = mEntitiesToObserve.begin(); i != mEntitiesToObserve.end();
        i++) {
     for (auto ii = i->second.begin(); ii != i->second.end(); ii++) {
@@ -920,22 +921,25 @@ void LuaInterface::ProcessObservers() {
     }
   }
   mEntitiesToObserve.clear();
+  */
 }
 
-void LuaInterface::Update() { ProcessObservers(); }
+void LuaInterface::Update() {
+/*	ProcessObservers();
+ *	*/}
 
 void LuaInterface::EventLuaBroadcastEvent(EID senderID,
                                           const std::string &event) {
   ComponentScript *script = (parentState->comScriptMan.GetComponent(senderID));
 
-  script->EventLuaBroadcastEvent(event);
+  script->BroadcastEvent(event);
 }
 
 void LuaInterface::EventLuaSendToObservers(EID senderID,
                                            const std::string &event) {
   ComponentScript *script = (parentState->comScriptMan.GetComponent(senderID));
 
-  script->EventLuaSendToObservers(event);
+  script->SendEvent(event);
 }
 
 void LuaInterface::EventLuaSendEvent(EID senderID, EID recieverID,
@@ -1101,9 +1105,9 @@ ComponentParticleManager *LuaInterface::GetParticleManager() const {
 ComponentCollisionManager *LuaInterface::GetCollisionManager() const {
   return &parentState->comCollisionMan;
 }
-//ComponentScriptManager *LuaInterface::GetScriptManager() const {
-  //return &parentState->comScriptMan;
-//}
+ComponentScriptManager *LuaInterface::GetScriptManager() const {
+  return &parentState->comScriptMan;
+}
 void LuaInterface::ExposeCPP() {
   /*
    * if a const pointer is passed to lua
@@ -1119,7 +1123,7 @@ void LuaInterface::ExposeCPP() {
       .addProperty("entity", &LuaInterface::GetEntityManager)
       .addProperty("light", &LuaInterface::GetLightManager)
       .addProperty("sprite", &LuaInterface::GetLightManager)
-      //.addProperty("script", &LuaInterface::GetScriptManager)
+      .addProperty("script", &LuaInterface::GetScriptManager)
       .addProperty("particle", &LuaInterface::GetParticleManager)
       .addProperty("position", &LuaInterface::GetPositionManager)
       .addProperty("collision", &LuaInterface::GetCollisionManager)
@@ -1141,6 +1145,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("LogTrace", &LuaInterface::LogTrace)
 
       .addFunction("GetSpriteComponent", &LuaInterface::GetSpriteComponent)
+      .addFunction("GetScriptComponent", &LuaInterface::GetScriptComponent)
       .addFunction("GetCollisionComponent",
                    &LuaInterface::GetCollisionComponent)
       .addFunction("GetPositionComponent", &LuaInterface::GetPositionComponent)

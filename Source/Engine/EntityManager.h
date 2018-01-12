@@ -42,11 +42,22 @@ class EntityManager {
   EntityManager(GameStateManager *manager);
 
   /**
-           * Creates a New Entity
-           * Can optionally pass in a name to associate with the EID
-           * \return The new Entity ID value
-           */
-  EID NewEntity(const std::string &name = "");
+    * Creates a New Entity
+    * \return The new Entity ID value
+    */
+  EID NewEntity();
+
+  /**
+    * Creates a New Entity
+  * Maps name to returned eid
+    * \return The new Entity ID value
+    */
+  EID NewEntity(const std::string &entityName);
+
+  /**
+   * Will map the passed name to the passed EID
+   */
+  void SetName(EID id, const std::string &name);
   /**
    * Can lookup an eid by a string name, if the entity was given one upon
    * creation
@@ -107,15 +118,15 @@ class EntityManager {
   /// Deactivates all Entities
   void DeactivateAll();
   /// Deactivates all Entities except the ones specified
-  void DeactivateAllExcept(const std::vector<EID>& entities);
+  void DeactivateAllExcept(const std::vector<EID> &entities);
   /// Activates all Entities
   void ActivateAll();
   /// Activates all Entities except the ones specified
-  void ActivateAllExcept(const std::vector<EID>& entities);
+  void ActivateAllExcept(const std::vector<EID> &entities);
   /// Activate specified entities
-  void Activate(const std::vector<EID>& entities);
+  void Activate(const std::vector<EID> &entities);
   /// Deactivate specified entities
-  void Deactivate(const std::vector<EID>& entities);
+  void Deactivate(const std::vector<EID> &entities);
   /// Activate specified entities
   void Activate(EID entities);
   /// Deactivate specified entities

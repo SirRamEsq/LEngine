@@ -251,7 +251,15 @@ void ComponentPositionManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
       .beginNamespace("CPP")
 
-      .beginClass<ComponentPositionManager>("ComponentPositionManager")
+      .beginClass<BaseComponentManager_Impl<ComponentPosition>>(
+          "BASE_COMP_IMPL_POS")
+      .addFunction("SetParent",
+                   &BaseComponentManager_Impl<ComponentPosition>::SetParent)
+      .endClass()
+
+      .deriveClass<ComponentPositionManager,
+                   BaseComponentManager_Impl<ComponentPosition>>(
+          "ComponentPositionManager")
       .addFunction("GetWorld", &ComponentPositionManager::GetWorld)
       .addFunction("GetMovement", &ComponentPositionManager::GetMovement)
       .endClass()

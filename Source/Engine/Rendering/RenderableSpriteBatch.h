@@ -58,6 +58,9 @@ class RenderableSpriteBatch : public RenderableObjectWorld {
     float rotation;
     Vec2 offset;
 
+    void SetDepth(MAP_DEPTH d);
+    MAP_DEPTH GetDepth() const;
+
     RenderableSpriteBatch *spriteBatch;
     RenderManager *manager;
   };

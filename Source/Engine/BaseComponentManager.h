@@ -96,6 +96,7 @@ class BaseComponentManager_Impl : public BaseComponentManager {
    */
   void SetParent(EID child, EID parent);
   void AddNewComponents();
+
  protected:
   /**
    * Recursive function, updates parents before children
@@ -313,6 +314,9 @@ void BaseComponentManager_Impl<T>::AddComponent(EID id, EID parent) {
 
 template <class T>
 void BaseComponentManager_Impl<T>::SetParent(EID child, EID parent) {
+  if (child == parent) {
+    return;
+  }
   if (child == 0) {
     return;
   }

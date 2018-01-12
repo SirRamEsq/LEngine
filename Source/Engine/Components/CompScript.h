@@ -42,7 +42,9 @@ class ComponentScript : public BaseComponent {
   void HandleEvent(const Event *event);
   void Update();
 
-  // interface defined inside script, for other scripts
+  /// This function will grab a table that defines an entity's interface
+  /// An entity's interface is a table named EntiyInterface that contains all
+  /// the funcitonality an entity wants to expose to other entities
   luabridge::LuaRef GetEntityInterface();
 
   void RunFunction(const std::string &fname);
@@ -58,23 +60,22 @@ class ComponentScript : public BaseComponent {
   /**
    * Sends an event to all lua scrips
    */
-  void EventLuaBroadcastEvent(const std::string &event);
+  void BroadcastEvent(const std::string &event);
   /**
    * Sends an event to all observers of this script
    */
-  void EventLuaSendToObservers(const std::string &event);
+  void SendEvent(const std::string &event);
   /**
    * Adds an observer
-   * \returns TRUE if the observer was added and was NOT previously an observer
    */
-  bool EventLuaAddObserver(ComponentScript *script);
+  void AddObserver(EID id);
   /**
    * Removes an observer
    * \returns TRUE if the observer was removed and WAS previously an observer
    */
-  bool EventLuaRemoveObserver(EID id);
+  void RemoveObserver(EID id);
 
-  void EventLuaRemoveAllObservers();
+  void RemoveAllObservers();
 
   ///*DEPRECIATED*
   RenderText *RenderObjectText(int x, int y, const std::string &text,
@@ -96,6 +97,8 @@ class ComponentScript : public BaseComponent {
   bool UsesScript(const RSC_Script *script);
   bool UsesScript(const std::string &scriptName);
 
+  luabridge::LuaRef GetInitializationTable();
+
  protected:
   lua_State *lState;
   LuaInterface *lInterface;
@@ -107,13 +110,12 @@ class ComponentScript : public BaseComponent {
   /// What scripts were used to generate the table pointed to by scriptPointer
   std::vector<const RSC_Script *> mScriptsUsed;
   // List of EIDs that are listening to this EID's events
-  std::map<EID, ComponentScript *> mEventLuaObservers;
+  std::set<EID> mEventLuaObservers;
   // The renderable objects that this script is responsible for deleting
   std::set<RenderableObject *> mRenderableObjects;
   RenderManager *dependencyRenderManager;
 };
 
-struct TiledObject;
 class ComponentScriptManager
     : public BaseComponentManager_Impl<ComponentScript> {
  public:
@@ -124,6 +126,11 @@ class ComponentScriptManager
   std::unique_ptr<ComponentScript> ConstructComponent(EID id,
                                                       ComponentScript *parent);
   void SetDependencies(RenderManager *rm);
+
+  void CreateEntity(EID id,std::vector<std::string> scripts,
+                    luabridge::LuaRef propertyTable);
+
+  static void ExposeLuaInterface(lua_State *state);
 
  private:
   lua_State *lState;

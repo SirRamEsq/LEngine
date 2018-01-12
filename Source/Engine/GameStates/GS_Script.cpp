@@ -32,7 +32,7 @@ void GS_Script::Init(const RSC_Script *stateScript) {
   std::vector<const RSC_Script *> scripts;
   scripts.push_back(baseScript);
   scripts.push_back(stateScript);
-  luaInterface.RunScript(eid, scripts, depth, parent, scriptName, NULL, NULL);
+  luaInterface.RunScript(eid, scripts, NULL, NULL);
   entityScript = comScriptMan.GetComponent(eid);
 }
 
@@ -68,7 +68,7 @@ void GS_Script::HandleEvent(const Event *event) {
 bool GS_Script::Update() {
   if (mNextMap.mMap != NULL) {
     SetCurrentMap(mNextMap);
-	mNextMap.Reset();
+    mNextMap.Reset();
   }
   UpdateComponentManagers();
   return !quit;
@@ -92,8 +92,8 @@ GS_Script *GS_Script::PushState(const std::string &scriptPath) {
 
   gameStateManager->PushState(newState, script);
 
-  //kinda sorta memory leak if all these states are kept around...
-  //pushedStates.push_back(newState);
+  // kinda sorta memory leak if all these states are kept around...
+  // pushedStates.push_back(newState);
 
   return newState.get();
 }

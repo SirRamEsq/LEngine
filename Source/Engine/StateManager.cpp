@@ -38,12 +38,12 @@ void GameState::ExposeLuaInterface(lua_State *state) {
   EntityManager::ExposeLuaInterface(state);
   ComponentLightManager::ExposeLuaInterface(state);
   ComponentPositionManager::ExposeLuaInterface(state);
-  //ComponentCameraManager::ExposeLuaInterface(state);
+  // ComponentCameraManager::ExposeLuaInterface(state);
   ComponentSpriteManager::ExposeLuaInterface(state);
-  //ComponentInputManager::ExposeLuaInterface(state);
+  // ComponentInputManager::ExposeLuaInterface(state);
   ComponentCollisionManager::ExposeLuaInterface(state);
   ComponentParticleManager::ExposeLuaInterface(state);
-  //ComponentScriptManager::ExposeLuaInterface(state);
+  ComponentScriptManager::ExposeLuaInterface(state);
 }
 
 void GameState::SetDependencies() {
@@ -319,6 +319,7 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
                                          // event listeners later
 
   for (auto ii = layers.begin(); ii != layers.end(); ii++) {
+	MAP_DEPTH depth = (*ii)->GetDepth();
     for (auto objectIt = (*ii)->objects.begin();
          objectIt != (*ii)->objects.end(); objectIt++) {
       // New Entity
@@ -332,6 +333,9 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
       comPosMan.AddComponent(ent);
       comPosMan.GetComponent(ent)->SetPositionLocal(
           Vec2(objectIt->second.x, objectIt->second.y));
+
+      comSpriteMan.AddComponent(ent);
+	  comSpriteMan.GetComponent(ent)->SetDepth(depth);
 
       // Add script Component and set to be initialized later during linking
       // stage after all entities have EIDs
@@ -429,10 +433,11 @@ void GameState::SetMapLinkEntities(
           }
         }
 
+		TiledProperties tp(objectIt->second.properties);
+		tp.ints["_PARENT"] = parentEID;
+
         // entities have been created so that parents can be assigned properly
-        luaInterface.RunScript(child, finalScripts, (*ii)->GetDepth(),
-                               parentEID, objectIt->second.name,
-                               &objectIt->second, NULL);
+        luaInterface.RunScript(child, finalScripts, &tp, NULL);
       }
       // Event Linking
       // Can move into scriptManager
@@ -451,18 +456,16 @@ void GameState::SetMapLinkEntities(
           LOG_INFO(ss.str());
           continue;
         }
-        senderScript->EventLuaAddObserver(listenerScript);
+        senderScript->AddObserver(listenerID);
       }
 
       // Parent Linking
       if (parent != 0) {
-        ComponentScript *scriptComp = comScriptMan.GetComponent(child);
-
-        // if entity has a script, it's up to the script to decide how to handle
-        // the parent, else it's assigned to all components
-        if (scriptComp == NULL) {
-          entityMan.SetParent(child, parentEID);
-        }
+        //ComponentScript *scriptComp = comScriptMan.GetComponent(child);
+		//Assign to initialization data
+		//luabridge::LuaRef table = scriptComp->GetInitializationTable();
+		//table["PARENT"] = parentEID;
+		//scriptComp->SetParent(parentEID);
       }
     }
   }
@@ -597,8 +600,7 @@ void GameState::CreateNewEntities() {
     // Add script component and run script
     comScriptMan.AddComponent(packet->mNewEID);
 
-    if (luaInterface.RunScript(packet->mNewEID, scripts, packet->mDepth,
-                               packet->mParent, packet->mEntityName, NULL,
+    if (luaInterface.RunScript(packet->mNewEID, scripts, NULL,
                                &packet->mPropertyTable) == false) {
       LOG_ERROR("Couldn't Create a new Entity");
       continue;

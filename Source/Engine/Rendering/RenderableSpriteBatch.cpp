@@ -64,6 +64,17 @@ RenderableSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Sprite *spr,
 
 RenderableSpriteBatch::Sprite::~Sprite() { spriteBatch->DeleteSprite(this); }
 
+void RenderableSpriteBatch::Sprite::SetDepth(MAP_DEPTH d) {
+  if (depth == d) {
+    return;
+  }
+  depth = d;
+  spriteBatch->DeleteSprite(this);
+  spriteBatch = manager->GetSpriteBatch(texture, textureNormal, depth, 1);
+  spriteBatch->AddSprite(this);
+}
+MAP_DEPTH RenderableSpriteBatch::Sprite::GetDepth() const { return depth; }
+
 /////////////////////
 // RenderableSpriteBatch//
 /////////////////////

@@ -170,6 +170,9 @@ Sprite::Sprite(RenderManager *rm, const RSC_Sprite *sprite, MAP_DEPTH depth)
   CalculateVerticies();
 }
 
+void Sprite::SetDepth(MAP_DEPTH depth) { mRenderableSprite.SetDepth(depth); }
+MAP_DEPTH Sprite::GetDepth() const { return mRenderableSprite.GetDepth(); }
+
 void Sprite::AnimationPlayOnce(const std::string &animationName,
                                luabridge::LuaRef callback) {
   auto callbackLambda = [callback]() { callback(); };
@@ -291,7 +294,7 @@ void ComponentSprite::SetMaxSprites(unsigned int spriteCount) {
   mSprites.reserve(sizeof(Sprite) * spriteCount);
 }
 
-Sprite *ComponentSprite::AddSprite(const RSC_Sprite *sprite, MAP_DEPTH depth) {
+Sprite *ComponentSprite::AddSprite(const RSC_Sprite *sprite) {
   if (mSprites.size() >= mMaxSprites) {
     std::stringstream ss;
     ss << "Will not create sprite, number of sprites is equal to max "
@@ -305,11 +308,14 @@ Sprite *ComponentSprite::AddSprite(const RSC_Sprite *sprite, MAP_DEPTH depth) {
     return NULL;
   }
 
-  mSprites.emplace(mSprites.end(), rm, sprite, depth);
+  mSprites.emplace(mSprites.end(), rm, sprite, mDefaultDepth);
   return &mSprites.back();
 }
 
 void ComponentSprite::HandleEvent(const Event *event) {}
+
+void ComponentSprite::SetDepth(MAP_DEPTH depth) { mDefaultDepth = depth; }
+MAP_DEPTH ComponentSprite::GetDepth() const { return mDefaultDepth; }
 
 //////////////////////////
 // ComponentSpriteManager//
@@ -320,6 +326,9 @@ ComponentSpriteManager::ComponentSpriteManager(EventDispatcher *e)
 
 std::unique_ptr<ComponentSprite> ComponentSpriteManager::ConstructComponent(
     EID id, ComponentSprite *parent) {
+  if (dependencyPosition->GetComponent(id) == NULL) {
+    dependencyPosition->AddComponent(id);
+  }
   auto sprite = std::make_unique<ComponentSprite>(
       id, (ComponentPosition *)dependencyPosition->GetComponent(id),
       dependencyRenderManager, this);
@@ -344,6 +353,8 @@ void ComponentSpriteManager::ExposeLuaInterface(lua_State *state) {
       .addFunction("DefaultAnimationSpeed", &Sprite::DefaultAnimationSpeed)
       .addFunction("SetImage", &Sprite::SetImageIndex)
       .addFunction("GetImage", &Sprite::GetImageIndex)
+      .addFunction("SetDepth", &Sprite::SetDepth)
+      .addFunction("GetDepth", &Sprite::GetDepth)
 
       .addFunction("SetRotation", &Sprite::SetRotation)
       .addFunction("SetScaling", &Sprite::SetScaling)
@@ -357,6 +368,8 @@ void ComponentSpriteManager::ExposeLuaInterface(lua_State *state) {
 
       .beginClass<ComponentSprite>("ComponentSprite")
       .addFunction("AddSprite", &ComponentSprite::AddSprite)
+      .addFunction("SetDepth", &ComponentSprite::SetDepth)
+      .addFunction("GetDepth", &ComponentSprite::GetDepth)
       .endClass()
 
       .beginClass<ComponentSpriteManager>("ComponentSpriteManager")
