@@ -127,8 +127,10 @@ class ComponentScriptManager
                                                       ComponentScript *parent);
   void SetDependencies(RenderManager *rm);
 
-  void CreateEntity(EID id,std::vector<std::string> scripts,
+  void CreateEntity(EID id, std::vector<std::string> scripts,
                     luabridge::LuaRef propertyTable);
+  void CreateEntityPrefab(EID id, std::string prefabName,
+                          luabridge::LuaRef propertyTable);
 
   static void ExposeLuaInterface(lua_State *state);
 

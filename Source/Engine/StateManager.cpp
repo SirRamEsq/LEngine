@@ -319,7 +319,7 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
                                          // event listeners later
 
   for (auto ii = layers.begin(); ii != layers.end(); ii++) {
-	MAP_DEPTH depth = (*ii)->GetDepth();
+    MAP_DEPTH depth = (*ii)->GetDepth();
     for (auto objectIt = (*ii)->objects.begin();
          objectIt != (*ii)->objects.end(); objectIt++) {
       // New Entity
@@ -335,7 +335,7 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
           Vec2(objectIt->second.x, objectIt->second.y));
 
       comSpriteMan.AddComponent(ent);
-	  comSpriteMan.GetComponent(ent)->SetDepth(depth);
+      comSpriteMan.GetComponent(ent)->SetDepth(depth);
 
       // Add script Component and set to be initialized later during linking
       // stage after all entities have EIDs
@@ -419,6 +419,10 @@ void GameState::SetMapLinkEntities(
                  i++) {
               scriptNames.push_back(*i);
             }
+          } else {
+            std::stringstream ss;
+            ss << "Prefab '" << prefabName <<"' is Null";
+            LOG_ERROR(ss.str());
           }
         }
         for (auto i = scripts.begin(); i != scripts.end(); i++) {
@@ -433,8 +437,8 @@ void GameState::SetMapLinkEntities(
           }
         }
 
-		TiledProperties tp(objectIt->second.properties);
-		tp.ints["_PARENT"] = parentEID;
+        TiledProperties tp(objectIt->second.properties);
+        tp.ints["_PARENT"] = parentEID;
 
         // entities have been created so that parents can be assigned properly
         luaInterface.RunScript(child, finalScripts, &tp, NULL);
@@ -461,11 +465,11 @@ void GameState::SetMapLinkEntities(
 
       // Parent Linking
       if (parent != 0) {
-        //ComponentScript *scriptComp = comScriptMan.GetComponent(child);
-		//Assign to initialization data
-		//luabridge::LuaRef table = scriptComp->GetInitializationTable();
-		//table["PARENT"] = parentEID;
-		//scriptComp->SetParent(parentEID);
+        // ComponentScript *scriptComp = comScriptMan.GetComponent(child);
+        // Assign to initialization data
+        // luabridge::LuaRef table = scriptComp->GetInitializationTable();
+        // table["PARENT"] = parentEID;
+        // scriptComp->SetParent(parentEID);
       }
     }
   }

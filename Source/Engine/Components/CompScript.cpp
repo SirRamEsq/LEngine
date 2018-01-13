@@ -3,6 +3,7 @@
 #include "../Kernel.h"
 #include "CompCollision.h"
 #include <sstream>
+#include "../TiledProperties.h"
 
 using namespace luabridge;
 
@@ -248,8 +249,8 @@ luabridge::LuaRef ComponentScript::GetInitializationTable() {
     }
   }
   */
-  //luabridge::LuaRef lengineData = scriptPointer["LEngineData"];
-  //return lengineData["InitializationTable"];
+  // luabridge::LuaRef lengineData = scriptPointer["LEngineData"];
+  // return lengineData["InitializationTable"];
 }
 
 //////////////////////////
@@ -300,11 +301,33 @@ void ComponentScriptManager::CreateEntity(EID id,
   lInterface->RunScript(id, rscScripts, NULL, &propertyTable);
 }
 
+void ComponentScriptManager::CreateEntityPrefab(
+    EID id, std::string prefabName, luabridge::LuaRef propertyTable) {
+  prefabName = tiledProperties::object::PREFAB_PREFIX + prefabName;
+  auto prefab = K_PrefabMan.GetLoadItem(prefabName, prefabName);
+  if (prefab == NULL) {
+    std::stringstream ss;
+    ss << "Prefab named '" << prefabName << "' does not exist";
+    LOG_ERROR(ss.str());
+    return;
+  }
+  std::vector<const RSC_Script *> scripts;
+  for (auto i : prefab->mScripts) {
+    auto script = K_ScriptMan.GetLoadItem(i, i);
+    if (script != NULL) {
+      scripts.push_back(script);
+    }
+  }
+  lInterface->RunScript(id, scripts, &prefab->mProperties, &propertyTable);
+}
+
 void ComponentScriptManager::ExposeLuaInterface(lua_State *state) {
   luabridge::getGlobalNamespace(state)
       .beginNamespace("CPP")
       .beginClass<ComponentScriptManager>("ComponentScriptManager")
       .addFunction("CreateEntity", &ComponentScriptManager::CreateEntity)
+      .addFunction("CreateEntityPrefab",
+                   &ComponentScriptManager::CreateEntityPrefab)
       .endClass()
 
       .beginClass<ComponentScript>("ComponentScript")
