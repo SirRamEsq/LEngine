@@ -118,10 +118,8 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     REQUIRE(lastError == "Observing 31337");
 
     auto luaInterface = state->GetLuaInterface();
-    // process and link up observers
-    luaInterface->Update();
 
-    luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
+    otherScriptComponent->BroadcastEvent(eventDescription);
     std::stringstream ss1;
     ss1 << "EVENT: " << eventDescription;
     REQUIRE(lastError == ss1.str());
@@ -130,7 +128,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     std::string eventDescription2 = "Test2";
     std::stringstream ss2;
     ss2 << "EVENT: " << eventDescription2;
-    luaInterface->EventLuaSendToObservers(newEID, eventDescription2);
+    otherScriptComponent->SendEvent(eventDescription2);
     REQUIRE(lastError == ss2.str());
 
     // Tell newScript that the first was has been deleted, this will cause the
@@ -139,16 +137,12 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
     state->GetEventDispatcher()->DispatchEvent(event);
 
     // scriptComponent should NOT recieve this event
-    luaInterface->EventLuaSendToObservers(newEID, eventDescription);
+    otherScriptComponent->SendEvent(eventDescription);
     REQUIRE(lastError != ss1.str());
 
     // This broadcast should still reach scriptComponent though
-    luaInterface->EventLuaBroadcastEvent(newEID, eventDescription);
+    otherScriptComponent->BroadcastEvent(eventDescription);
     REQUIRE(lastError == ss1.str());
-
-    // This direct event should also still reach scriptComponent
-    luaInterface->EventLuaSendEvent(newEID, eid, eventDescription2);
-    REQUIRE(lastError == ss2.str());
   }
 
   Kernel::Close();

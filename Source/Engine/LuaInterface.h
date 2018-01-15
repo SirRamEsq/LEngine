@@ -30,31 +30,6 @@ class GS_Script;
 std::unordered_map<std::string, luabridge::LuaRef> GetKeyValueMap(
     const luabridge::LuaRef &table);
 
-/// This struct is passed to the GameState to instantiate a new entity from lua
-struct EntityCreationPacket {
-  /**
-   * Called from lua scripts
-   * \param scriptName Name of Script to run for the entity
-   * \param pos Starting position of entity
-   * \param depth Depth of entity
-   * \param parent Entity's parent
-   * \param name Name of entity
-   * \param type Types that an entity uses
-   * \param propertyTable Extra lua properties
-   */
-  EntityCreationPacket(std::vector<std::string> scripts, Vec2 pos,
-                       MAP_DEPTH depth, EID parent, const std::string &name,
-                       luabridge::LuaRef propertyTable);
-
-  EID mParent;
-  EID mNewEID;
-  MAP_DEPTH mDepth;
-  Vec2 mPos;
-  std::vector<std::string> mScriptNames;
-  std::string mEntityName;
-  luabridge::LuaRef mPropertyTable;
-};
-
 // Forwared Declare
 class GS_Test;
 
@@ -125,42 +100,13 @@ class LuaInterface {
   ////////////
   // Entities//
   ////////////
-  std::vector<EID> EntityGetFromName(const std::string &name);
   luabridge::LuaRef EntityGetInterface(const EID &id);
-  Vec2 EntityGetPositionWorld(EID entity);
-  Vec2 EntityGetMovement(EID entity);
-
-  EID EntityNew(std::string name, int x, int y, MAP_DEPTH depth, EID parent,
-                luabridge::LuaRef scripts, luabridge::LuaRef propertyTable);
-  void EntityDelete(EID entity);
 
   /////////////
   // Rendering//
   /////////////
   RenderLine *RenderObjectLine(EID selfID, int x, int y, int xx, int yy);
   void RenderObjectDelete(EID selfID, RenderableObject *obj);
-
-  //////////
-  // Events//
-  //////////
-  /**
-   * Listen to all events from a certain entity
-   * will delay adding the observer till the start of the next frame
-   */
-  void EventLuaObserveEntity(EID listenerID, EID senderID);
-  /**
-   * Broadcast an event to all entities
-   */
-  void EventLuaBroadcastEvent(EID senderID, const std::string &event);
-  /**
-   * Send event to all observers
-   */
-  void EventLuaSendToObservers(EID senderID, const std::string &event);
-  /**
-   * Directly send event to specified EID
-   */
-  void EventLuaSendEvent(EID senderID, EID recieverID,
-                         const std::string &event);
 
   ///////////
   // Handles//
@@ -177,9 +123,6 @@ class LuaInterface {
   /////////
   /// Set parent for all component managers defined in the EntityManager
   void SetParent(EID child, EID parent);
-
-  /// update once per frame
-  void Update();
 
   /// Will push a new GS_Script state onto the stack with a script
   GS_Script *PushState(const std::string &scriptPath);

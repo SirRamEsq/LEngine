@@ -79,9 +79,6 @@ void GameState::DrawPreviousState() {
   gameStateManager->DrawPreviousState(this);
 }
 void GameState::UpdateComponentManagers() {
-  CreateNewEntities();
-  luaInterface.Update();
-
   // Game Logic
   // Should consolidate input man's functionality into script man? doesn't
   // really do much...
@@ -317,7 +314,6 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
     const std::vector<std::unique_ptr<TiledObjectLayer>> &layers) {
   std::map<EID, EID> tiledIDtoEntityID;  // This is for the purpose of linking
                                          // event listeners later
-
   for (auto ii = layers.begin(); ii != layers.end(); ii++) {
     MAP_DEPTH depth = (*ii)->GetDepth();
     for (auto objectIt = (*ii)->objects.begin();
@@ -344,13 +340,6 @@ std::map<EID, EID> GameState::SetMapCreateEntitiesFromLayers(
       if ((!scripts.empty()) or (prefabName != "")) {
         comScriptMan.AddComponent(ent);
       }
-
-      // Set up Light source (if applicable)
-      /*
-      if (objectIt->second.light == true) {
-        comLightMan.AddComponent(ent);
-      }
-      */
     }
   }
 
@@ -400,11 +389,6 @@ void GameState::SetMapLinkEntities(
 
       // Initialize Script
       std::string &scriptsString = objectIt->second.scripts;
-
-      // Map Names to EIDs
-      if (objectIt->second.name != "") {
-        AddNameEIDLookup(objectIt->second.name, child);
-      }
 
       auto prefabName = objectIt->second.prefabName;
       auto scripts = GetScriptsFromString(scriptsString);
@@ -491,16 +475,6 @@ void GameState::SetMapNextFrame(const RSC_Map *m, unsigned int entranceID,
   mNextMap.mCallback = cb;
 }
 
-const std::vector<EID> *GameState::GetEIDFromName(
-    const std::string &name) const {
-  auto i = mNameLookup.find(name);
-  if (i == mNameLookup.end()) {
-    return NULL;
-  }
-
-  return &i->second;
-}
-
 bool GameState::SetCurrentMap(NextMap nextMap) {
   auto m = nextMap.mMap;
   if (m == NULL) {
@@ -511,8 +485,6 @@ bool GameState::SetCurrentMap(NextMap nextMap) {
   std::stringstream ss;
   ss << "Changing Map To: " << m->GetMapName();
   LOG_INFO(ss.str());
-
-  mEntitiesToCreate.clear();
 
   // Unload all layers from last map
   mCurrentMapRenderableLayers.clear();
@@ -540,79 +512,6 @@ bool GameState::SetCurrentMap(NextMap nextMap) {
   nextMap.mCallback(mCurrentMap.get());
 
   return true;
-}
-
-EID GameState::CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p) {
-  // New Entity
-  EID newEID = entityMan.NewEntity();
-  p->mNewEID = newEID;
-
-  std::vector<const RSC_Script *> scripts;
-
-  // Get script Data
-  for (auto i = p->mScriptNames.begin(); i != p->mScriptNames.end(); i++) {
-    std::string scriptName = *i;
-    const RSC_Script *scriptData =
-        K_ScriptMan.GetLoadItem(scriptName, scriptName);
-
-    if (scriptData == NULL) {
-      std::stringstream ss;
-      ss << "LuaInterface::EntityNew; Couldn't Load Script Named: "
-         << scriptName;
-      LOG_ERROR(ss.str());
-      ASSERT(ss.str() == "");
-    }
-
-    scripts.push_back(scriptData);
-  }
-
-  if (scripts.empty()) {
-    return 0;
-  }
-
-  mEntitiesToCreate.push_back(
-      std::pair<std::vector<const RSC_Script *>,
-                std::unique_ptr<EntityCreationPacket>>(scripts, std::move(p)));
-
-  return newEID;
-}
-
-void GameState::AddNameEIDLookup(const std::string &name, EID id) {
-  auto vecIt = mNameLookup.find(name);
-  // Create new vector for this name if one doesn't exist
-  if (vecIt == mNameLookup.end()) {
-    mNameLookup[name] = std::vector<EID>();
-  }
-
-  mNameLookup[name].push_back(id);
-}
-
-void GameState::CreateNewEntities() {
-  if (mEntitiesToCreate.empty() == true) {
-    return;
-  }
-
-  for (auto newEnt = mEntitiesToCreate.begin();
-       newEnt != mEntitiesToCreate.end(); newEnt++) {
-    auto scripts = std::get<0>(*newEnt);
-    auto packet = std::get<1>(*newEnt).get();
-
-    // New Position Component for Entity
-    comPosMan.AddComponent(packet->mNewEID);
-    comPosMan.GetComponent(packet->mNewEID)->SetPositionLocal(packet->mPos);
-
-    // Add script component and run script
-    comScriptMan.AddComponent(packet->mNewEID);
-
-    if (luaInterface.RunScript(packet->mNewEID, scripts, NULL,
-                               &packet->mPropertyTable) == false) {
-      LOG_ERROR("Couldn't Create a new Entity");
-      continue;
-    }
-    AddNameEIDLookup(packet->mEntityName, packet->mNewEID);
-  }
-
-  mEntitiesToCreate.clear();
 }
 
 std::string GameState::GetScriptName(EID id) const {

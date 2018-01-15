@@ -59,10 +59,9 @@ class EntityManager {
    */
   void SetName(EID id, const std::string &name);
   /**
-   * Can lookup an eid by a string name, if the entity was given one upon
-   * creation
+   * Get all entities with the given name
    */
-  EID GetEIDFromName(const std::string &name) const;
+  std::vector<EID> NameLookup(const std::string &name) const;
 
   /**
    * Schedules all components with the given entity to be deleted from their
@@ -145,26 +144,24 @@ class EntityManager {
   EID maxInUseEID;
 
   /// Set of entities to be deleted next frame
-  std::unordered_set<EID> deadEntities;
+  std::unordered_set<EID> mDeadEntities;
 
   /// Set of in use EIDS
-  std::unordered_set<EID> aliveEntities;
+  std::unordered_set<EID> mAliveEntities;
 
   /// entities that are active
-  std::unordered_set<EID> activeEntities;
+  std::unordered_set<EID> mActiveEntities;
   /// entities that are inactive
-  std::unordered_set<EID> inactiveEntities;
+  std::unordered_set<EID> mInActiveEntities;
 
   /// container of EIDS that have been deleted and can be reused
-  std::vector<EID> reclaimedEIDs;
+  std::vector<EID> mReclaimedEIDs;
 
-  /// Map of names to EIDS and an inverse lookup map (this is fine because both
-  /// the names and EIDs are unique
-  std::map<std::string, EID> nameToEID;
-  std::map<EID, std::string> EIDToName;
+  /// One to many relationship, one name can refer to many entities
+  std::map<std::string, std::vector<EID>> mNameToEID;
 
   /// Components sorted by priority in ascending order
-  std::map<int, BaseComponentManager *, std::less<int>> componentsRegistered;
+  std::map<int, BaseComponentManager *, std::less<int>> mComponentsRegistered;
 
   /// Dependency
   GameStateManager *mStateManager;

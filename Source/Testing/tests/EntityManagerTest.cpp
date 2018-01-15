@@ -64,24 +64,31 @@ TEST_CASE("EntityManager Name Lookup", "[EntityManager]") {
   std::string ent2 = "ent2";
   std::string ent3 = "ent3";
   // same name as ent1
-  std::string entWrong = "ent1";
+  std::string entDuplicate = "ent1";
 
   EID eid1 = entityMan.NewEntity(ent1);
   EID eid2 = entityMan.NewEntity(ent2);
   EID eid3 = entityMan.NewEntity(ent3);
-  EID eidWrong = entityMan.NewEntity(entWrong);
+  EID eidDuplicate = entityMan.NewEntity(entDuplicate);
 
   REQUIRE(entityMan.GetEntityCount() == 4);
 
-  auto testValue = entityMan.GetEIDFromName(ent1);
+  auto eidVector = entityMan.NameLookup(ent1);
+  REQUIRE(eidVector.size() == 2);
+  auto testValue = eidVector[0];
   REQUIRE(eid1 == testValue);
-  testValue = entityMan.GetEIDFromName(ent2);
+  testValue = eidVector[1];
+  REQUIRE(eidDuplicate == testValue);
+
+  eidVector = entityMan.NameLookup(ent2);
+  REQUIRE(eidVector.size() == 1);
+  testValue = eidVector[0];
   REQUIRE(eid2 == testValue);
-  testValue = entityMan.GetEIDFromName(ent3);
+
+  eidVector = entityMan.NameLookup(ent3);
+  REQUIRE(eidVector.size() == 1);
+  testValue = eidVector[0];
   REQUIRE(eid3 == testValue);
-  // If a name is already taken, it should not be overwritten
-  testValue = entityMan.GetEIDFromName(entWrong);
-  REQUIRE(eidWrong != testValue);
 }
 
 TEST_CASE("EntityManager set delete all", "[EntityManager][regression]") {

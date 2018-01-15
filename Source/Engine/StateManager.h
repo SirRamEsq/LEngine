@@ -63,8 +63,6 @@ class GameState {
   /// map
   void SetMapNextFrame(const RSC_Map *m, unsigned int entranceID, Callback cb);
 
-  /// Creates a new Entity next frame
-  EID CreateLuaEntity(std::unique_ptr<EntityCreationPacket> p);
   void DeleteMapLayer(TiledLayerGeneric *layer);
 
  protected:
@@ -87,8 +85,6 @@ class GameState {
   virtual void SetDependencies();
   void UpdateComponentManagers();
 
-  /// Get eid from data structure nameLookupEID
-  const std::vector<EID> *GetEIDFromName(const std::string &name) const;
   std::string GetScriptName(EID id) const;
 
   LuaInterface luaInterface;
@@ -118,7 +114,6 @@ class GameState {
 
  private:
   static void ExposeLuaInterface(lua_State *state);
-  void AddNameEIDLookup(const std::string &name, EID id);
   void SetMapHandleRenderableLayers(
       const std::map<MAP_DEPTH, TiledLayerGeneric *> &layers);
   // returns a data structure mapping tiled EIDS to engine EIDS
@@ -138,11 +133,6 @@ class GameState {
       mCurrentMapRenderableLayers;
   /// This is used to lookup eids by entity name
   std::unordered_map<std::string, std::vector<EID>> mNameLookup;
-
-  void CreateNewEntities();
-  std::vector<std::pair<std::vector<const RSC_Script *>,
-                        std::unique_ptr<EntityCreationPacket>>>
-      mEntitiesToCreate;
 };
 
 // Interface

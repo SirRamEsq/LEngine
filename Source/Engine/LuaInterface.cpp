@@ -800,71 +800,8 @@ bool LuaInterface::HasScriptComponent(const EID &id) {
 ////////////
 // Entities//
 ////////////
-std::vector<EID> LuaInterface::EntityGetFromName(const std::string &name) {
-  auto eids = parentState->GetEIDFromName(name);
-  return *eids;
-}
-
 luabridge::LuaRef LuaInterface::EntityGetInterface(const EID &id) {
   return (parentState->comScriptMan.GetComponent(id))->GetEntityInterface();
-}
-
-Vec2 LuaInterface::EntityGetPositionWorld(EID entity) {
-  ComponentPosition *pos = (parentState->comPosMan.GetComponent(entity));
-  if (pos == NULL) {
-    std::stringstream ss;
-    ss << "EntityGetPositionWorld was passed entity id " << entity
-       << " Which does not exist";
-    LOG_ERROR(ss.str());
-    return Vec2(0, 0);
-  }
-  return pos->GetPositionWorld();
-}
-
-Vec2 LuaInterface::EntityGetMovement(EID entity) {
-  return (parentState->comPosMan.GetComponent(entity))->GetMovement();
-}
-
-EID LuaInterface::EntityNew(std::string name, int x, int y, MAP_DEPTH depth,
-                            EID parent, luabridge::LuaRef scripts,
-                            luabridge::LuaRef propertyTable) {
-  std::vector<std::string> scriptNames;
-
-  // if passed type is a simple string
-  if (scripts.type() == LUA_TSTRING) {
-    auto type = scripts.cast<std::string>();
-    scriptNames.push_back(type);
-  }
-
-  // if passed type is a table
-  else if (scripts.type() == LUA_TTABLE) {
-    auto kvPairs = GetKeyValueMap(scripts);
-    for (auto i = kvPairs.begin(); i != kvPairs.end(); i++) {
-      auto tempRef = i->second;
-      if (tempRef.type() == LUA_TSTRING) {
-        auto type = tempRef.cast<std::string>();
-        scriptNames.push_back(type);
-      } else {
-        LOG_WARN(
-            "LuaRef 'scripts' was passed a table containing a value that is "
-            "not "
-            "a string");
-      }
-    }
-  }
-
-  else {
-    LOG_WARN("LuaRef 'scripts' was passed a type not supported");
-  }
-
-  auto packet = std::make_unique<EntityCreationPacket>(
-      scriptNames, Vec2(x, y), depth, parent, name, propertyTable);
-
-  return parentState->CreateLuaEntity(std::move(packet));
-}
-
-void LuaInterface::EntityDelete(EID entity) {
-  parentState->entityMan.DeleteEntity(entity);
 }
 
 /////////////
@@ -880,78 +817,6 @@ void LuaInterface::RenderObjectDelete(EID selfID, RenderableObject *obj) {
   script->RenderObjectDelete(obj);
 }
 
-//////////
-// Events//
-//////////
-void LuaInterface::EventLuaObserveEntity(EID listenerID, EID senderID) {
-  // mEntitiesToObserve[listenerID].insert(senderID);
-}
-
-void LuaInterface::ProcessObservers() {
-  /*
-  for (auto i = mEntitiesToObserve.begin(); i != mEntitiesToObserve.end();
-       i++) {
-    for (auto ii = i->second.begin(); ii != i->second.end(); ii++) {
-      auto senderID = *ii;
-      auto listenerID = i->first;
-
-      // Get the script that the listener wants to hear
-      ComponentScript *senderScript =
-          (parentState->comScriptMan.GetComponent(senderID));
-      ComponentScript *listenerScript =
-          (parentState->comScriptMan.GetComponent(listenerID));
-
-      if (senderScript == NULL) {
-        std::stringstream ss;
-        ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
-           << "with id: " << (senderID);
-        LOG_ERROR(ss.str())
-        continue;
-      }
-      if (listenerScript == NULL) {
-        std::stringstream ss;
-        ss << "Error: In function EventLuaObserveEntity; Cannot find entity "
-           << "with id: " << (listenerID);
-        LOG_ERROR(ss.str())
-        continue;
-      }
-
-      // Add the listener to the sender's list of observers
-      senderScript->EventLuaAddObserver(listenerScript);
-    }
-  }
-  mEntitiesToObserve.clear();
-  */
-}
-
-void LuaInterface::Update() {
-/*	ProcessObservers();
- *	*/}
-
-void LuaInterface::EventLuaBroadcastEvent(EID senderID,
-                                          const std::string &event) {
-  ComponentScript *script = (parentState->comScriptMan.GetComponent(senderID));
-
-  script->BroadcastEvent(event);
-}
-
-void LuaInterface::EventLuaSendToObservers(EID senderID,
-                                           const std::string &event) {
-  ComponentScript *script = (parentState->comScriptMan.GetComponent(senderID));
-
-  script->SendEvent(event);
-}
-
-void LuaInterface::EventLuaSendEvent(EID senderID, EID recieverID,
-                                     const std::string &event) {
-  Event e(senderID, recieverID, Event::MSG::LUA_EVENT, event);
-
-  ComponentScript *script = parentState->comScriptMan.GetComponent(recieverID);
-  if (script == NULL) {
-    return;
-  }
-  script->HandleEvent(&e);
-}
 
 ///////////
 // Handles//
@@ -1161,18 +1026,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("HasCameraComponent", &LuaInterface::HasCameraComponent)
       .addFunction("HasLightComponent", &LuaInterface::HasLightComponent)
 
-      .addFunction("EntityNew", &LuaInterface::EntityNew)
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)
-      .addFunction("EntityDelete", &LuaInterface::EntityDelete)
-      .addFunction("EntityGetFromName", &LuaInterface::EntityGetFromName)
-
-      .addFunction("EventLuaObserveEntity",
-                   &LuaInterface::EventLuaObserveEntity)
-      .addFunction("EventLuaSendEvent", &LuaInterface::EventLuaSendEvent)
-      .addFunction("EventLuaBroadcastEvent",
-                   &LuaInterface::EventLuaBroadcastEvent)
-      .addFunction("EventLuaSendToObservers",
-                   &LuaInterface::EventLuaSendToObservers)
 
       .addFunction("GetMap", &LuaInterface::GetMap)
       .addFunction("SetParent", &LuaInterface::SetParent)
@@ -1284,18 +1138,4 @@ void LuaInterface::ExposeCPP() {
 
 void LuaInterface::SetErrorCallbackFunction(ErrorCallback func) {
   errorCallbackFunction = func;
-}
-
-EntityCreationPacket::EntityCreationPacket(std::vector<std::string> scripts,
-                                           Vec2 pos, MAP_DEPTH depth,
-                                           EID parent, const std::string &name,
-                                           luabridge::LuaRef propertyTable)
-    : mPropertyTable(propertyTable) {
-  mScriptNames = scripts;
-
-  mPos = pos;
-  mDepth = depth;
-  mParent = parent;
-  mEntityName = name;
-  mNewEID = 0;
 }
