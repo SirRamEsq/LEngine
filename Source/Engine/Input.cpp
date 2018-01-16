@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "gui/imgui_LEngine.h"
 #include <algorithm>
 
 const std::string InputManager::defaultKeyMappingIniFileName = "keyini.txt";
@@ -12,6 +13,22 @@ InputManager::InputManager()
       mouseButtonMiddle(0) {
   ReadKeyIniFile();
   eventDispatcher = NULL;
+  ImGuiIO &io = ImGui::GetIO();
+  io.KeyMap[ImGuiKey_Tab] = SDLK_TAB;  // Keyboard mapping. ImGui will use those
+                                       // indices to peek into the io.KeyDown[]
+                                       // array.
+  io.KeyMap[ImGuiKey_LeftArrow] = SDL_SCANCODE_LEFT;
+  io.KeyMap[ImGuiKey_RightArrow] = SDL_SCANCODE_RIGHT;
+  io.KeyMap[ImGuiKey_UpArrow] = SDL_SCANCODE_UP;
+  io.KeyMap[ImGuiKey_DownArrow] = SDL_SCANCODE_DOWN;
+  io.KeyMap[ImGuiKey_PageUp] = SDL_SCANCODE_PAGEUP;
+  io.KeyMap[ImGuiKey_PageDown] = SDL_SCANCODE_PAGEDOWN;
+  io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
+  io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
+  io.KeyMap[ImGuiKey_Delete] = SDLK_DELETE;
+  io.KeyMap[ImGuiKey_Backspace] = SDLK_BACKSPACE;
+  io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
+  io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
 }
 
 void InputManager::ReadKeyIniFile() {
@@ -63,6 +80,9 @@ std::shared_ptr<InputManager::KeyMapping> InputManager::SetEventDispatcher(
 }
 
 void InputManager::HandleInput() {
+  ImGuiIO &io = ImGui::GetIO();
+  bool imWantKeyboard = io.WantCaptureKeyboard;
+
   // Reset mousewheel every frame
   mouseWheel = 0.0f;
   if (remapKey != "") {
@@ -95,10 +115,23 @@ void InputManager::HandleInput() {
     if ((keyup = (event.type == SDL_KEYUP)) or (event.type == SDL_KEYDOWN)) {
       int keyValue = event.key.keysym.sym;
       auto keyi = sdlKeyToInput.find(keyValue);
+      if (imWantKeyboard) {
+        int key = event.key.keysym.sym & ~SDLK_SCANCODE_MASK;
+        io.KeysDown[key] = (event.type == SDL_KEYDOWN);
+        io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+        io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+        io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
+        io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+		continue;
+      }
 
       if (keyi != sdlKeyToInput.end()) {
         if (!keyup) {
-          KeyPress(keyi->second);
+          if (keyValue == SDLK_ESCAPE) {
+            // SDL_StopTextInput();
+          } else {
+            KeyPress(keyi->second);
+          }
         } else {
           KeyRelease(keyi->second);
         }
@@ -107,10 +140,16 @@ void InputManager::HandleInput() {
 
     else if (event.type == SDL_MOUSEWHEEL) {
       mouseWheel = event.wheel.y;
+      io.MouseWheel = mouseWheel;
     }
 
     else if (event.type == SDL_TEXTINPUT) {
-      sdlTextInput = (event.text.text);
+      io.AddInputCharactersUTF8(event.text.text);
+      mTextInput = event.text.text;
+    }
+
+    else if (event.type == SDL_TEXTEDITING) {
+      // io.AddInputCharactersUTF8(event.text.text);
     }
   }
 
@@ -120,6 +159,18 @@ void InputManager::HandleInput() {
   mouseButtonLeft = ((mouseMask & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0);
   mouseButtonRight = ((mouseMask & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0);
   mouseButtonMiddle = ((mouseMask & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0);
+
+  io.MouseDown[0] = GetMouseButtonLeft();
+  io.MouseDown[1] = GetMouseButtonRight();
+  io.MouseDown[2] = GetMouseButtonMiddle();
+
+  io.MousePos = ImVec2(GetMousePosition());
+}
+
+std::string InputManager::GetTextInput() {
+  auto temp = mTextInput;
+  mTextInput.clear();
+  return temp;
 }
 
 void InputManager::SendEvent(Event::MSG message, std::string keyName) {

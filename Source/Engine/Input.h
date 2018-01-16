@@ -9,6 +9,8 @@
 
 #include "IniHandler.h"
 
+#include <functional>
+
 #include <map>
 #include <set>
 #include <string>
@@ -70,6 +72,8 @@ class InputManager {
 
   void RemapKey(const std::string keyName);
 
+  std::string GetTextInput();
+
  private:
   void SendEvent(Event::MSG message, std::string keyName);
   void KeyPress(const std::string &keyName);
@@ -85,14 +89,14 @@ class InputManager {
   bool mouseButtonRight;
   bool mouseButtonMiddle;
 
-  std::string sdlTextInput;
-
   EventDispatcher *eventDispatcher;
   std::shared_ptr<KeyMapping> keyListeners;
   IniHandler keyMappingIni;
 
   // key to be remapped next frame
   std::string remapKey;
+
+  std::string mTextInput;
 
   /**
    * Simulated keypresses and releases are put into this structure

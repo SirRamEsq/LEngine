@@ -32,7 +32,8 @@ GenericContainer<RSC_Prefab> Kernel::rscPrefabMan;
 
 ImGuiState Kernel::guiState;
 
-Kernel::Kernel() {}
+Kernel::Kernel() {
+}
 Kernel::~Kernel() {}
 
 void ImGuiState::Reset() {
@@ -230,6 +231,9 @@ bool Kernel::Update() {
   DEBUG_DebugWindowBegin();
   DEBUG_DisplayLog();
   DEBUG_DebugWindowEnd();
+
+  static bool renderConsole;
+  stateMan.RenderDebugConsole("TITLE", &renderConsole);
 #endif
 
   nextGameTick = SDL_GetTicks() + SKIP_TICKS;
@@ -420,8 +424,7 @@ void Kernel::ImGuiNewFrame(SDL_Window *window) {
   io.DisplaySize = ImVec2((float)w, (float)h);
   io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0,
                                       h > 0 ? ((float)display_h / h) : 0);
-  guiState.projectionMatrix =
-      Matrix4::OrthoGraphicProjectionMatrix(Vec2(w, h));
+  guiState.projectionMatrix = Matrix4::OrthoGraphicProjectionMatrix(Vec2(w, h));
 
   // Setup time step
   Uint32 time = SDL_GetTicks();
@@ -430,17 +433,12 @@ void Kernel::ImGuiNewFrame(SDL_Window *window) {
                                      : (float)(1.0f / 60.0f);
   guiState.time = current_time;
 
-  // Setup inputs
+  /* Setup inputs
   if (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS) {
-    io.MousePos = ImVec2(inputManager.GetMousePosition());
   } else {
     io.MousePos = ImVec2(-1, -1);
   }
-
-  io.MouseDown[0] = inputManager.GetMouseButtonLeft();
-  io.MouseDown[1] = inputManager.GetMouseButtonRight();
-  io.MouseDown[2] = inputManager.GetMouseButtonMiddle();
-  io.MouseWheel = inputManager.GetMouseWheel();
+  */
 
   // Hide OS mouse cursor if ImGui is drawing it
   SDL_ShowCursor(io.MouseDrawCursor ? 0 : 1);

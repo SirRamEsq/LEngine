@@ -202,6 +202,7 @@ void ImGui::ExposeLuaInterface(lua_State *state) {
       .addFunction("SetNextWindowSize", &ImGui::SetNextWindowSizeWrapper)
       .addFunction("SetNextWindowPosCenter",
                    &ImGui::SetNextWindowPosCenterWrapper)
+
       .addFunction("SetNextWindowSizeConstraints",
                    &ImGui::SetNextWindowSizeConstraintsWrapper)
 
@@ -221,18 +222,24 @@ void ImGui::ExposeLuaInterface(lua_State *state) {
       .addFunction("PushStyleColorButton", &ImGui::PushStyleColorButton)
       .addFunction("PushStyleColorButtonHovered",
                    &ImGui::PushStyleColorButtonHovered)
+
       .addFunction("PushStyleColorButtonActive",
                    &ImGui::PushStyleColorButtonActive)
+
       .addFunction("PushStyleColorFrameBG", &ImGui::PushStyleColorFrameBG)
+
       .addFunction("PushStyleColorFrameBGActive",
                    &ImGui::PushStyleColorFrameBGActive)
+
       .addFunction("PushStyleColorFrameBGHovered",
                    &ImGui::PushStyleColorFrameBGHovered)
+
       .addFunction("PushStyleColorText", &ImGui::PushStyleColorText)
+
       .addFunction("PushStyleColorProgressBarFilled",
                    &ImGui::PushStyleColorPlotHistogram)
-      .addFunction("PopStyleColor", &ImGui::PopStyleColor)
 
+      .addFunction("PopStyleColor", &ImGui::PopStyleColor)
       .addFunction("PushFont", &ImGui::PushFontWrapper)
       .addFunction("PopFont", &ImGui::PopFontWrapper)
       .endNamespace()

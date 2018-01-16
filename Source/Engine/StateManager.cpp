@@ -10,7 +10,6 @@ void GameState::NextMap::Reset() {
 
 GameState::GameState(GameStateManager *gsm)
     : gameStateManager(gsm),
-      luaInterface(this),
       eventDispatcher(),
       comPosMan(&eventDispatcher),
       comCameraMan(&eventDispatcher),
@@ -21,7 +20,11 @@ GameState::GameState(GameStateManager *gsm)
       comParticleMan(&eventDispatcher),
       comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher),
       comLightMan(&eventDispatcher),
+      mLuaConsole([this](const std::string &arg) {
+        return luaInterface.ExecuteString(arg);
+      }),
 
+      luaInterface(this),
       entityMan(gsm) {
   mNextMap.Reset();
   mCurrentMap = NULL;
@@ -405,7 +408,7 @@ void GameState::SetMapLinkEntities(
             }
           } else {
             std::stringstream ss;
-            ss << "Prefab '" << prefabName <<"' is Null";
+            ss << "Prefab '" << prefabName << "' is Null";
             LOG_ERROR(ss.str());
           }
         }
@@ -528,4 +531,9 @@ void GameState::DeleteMapLayer(TiledLayerGeneric *layer) {
     mCurrentMapRenderableLayers.erase(layer);
     mCurrentMap->GetTiledData()->DeleteLayer(layer);
   }
+}
+
+void GameStateManager_Impl::RenderDebugConsole(const std::string &title,
+                                               bool *render) {
+  mCurrentState->mLuaConsole.Render(title, render);
 }

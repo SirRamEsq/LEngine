@@ -18,6 +18,8 @@
 #include "LuaInterface.h"
 #include "Resources/RSC_Map.h"
 
+#include "Debug/Console.h"
+
 class LuaInterfaceB;
 class GameStateManager_Impl;
 class TiledLayerGeneric;
@@ -101,6 +103,9 @@ class GameState {
   ComponentLightManager comLightMan;
 
   GameStateManager *gameStateManager;
+
+  // For debugging
+  Console mLuaConsole;
 
   std::shared_ptr<InputManager::KeyMapping> input;
 
@@ -214,6 +219,8 @@ class GameStateManager_Impl : public GameStateManager {
   void DrawPreviousState(GameState *gs);
   void PushNextState();
   void PopTopState();
+
+  void RenderDebugConsole(const std::string &title, bool *render);
 
  private:
   GameState *GetPreviousState(GameState *gs);

@@ -14,6 +14,25 @@
 
 using namespace luabridge;
 
+std::string GetStringFromLuaStack(lua_State *l, int i) {
+  std::stringstream ss;
+  int t = lua_type(l, i);
+  switch (t) {
+    case LUA_TSTRING: /* strings */
+      ss << "string: " << lua_tostring(l, i) << "\n";
+      break;
+    case LUA_TBOOLEAN: /* booleans */
+      ss << "boolean: " << (lua_toboolean(l, i) ? "true" : "false") << "\n";
+      break;
+    case LUA_TNUMBER: /* numbers */
+      ss << "number: " << lua_tonumber(l, i) << "\n";
+      break;
+    default: /* other values */
+      ss << "type is: " << lua_typename(l, t) << "\n";
+      break;
+  }
+  return ss.str();
+}
 void stackdump_g(lua_State *l, const std::string &logFile) {
   std::stringstream ss;
   ss << "\n";
@@ -24,22 +43,8 @@ void stackdump_g(lua_State *l, const std::string &logFile) {
   ss << "total in stack " << top << "\n";
 
   for (i = 1; i <= top; i++) { /* repeat for each level */
-    int t = lua_type(l, i);
-    ss << "---\n"; /* put a separator */
-    switch (t) {
-      case LUA_TSTRING: /* strings */
-        ss << "string: " << lua_tostring(l, i) << "\n";
-        break;
-      case LUA_TBOOLEAN: /* booleans */
-        ss << "boolean: " << (lua_toboolean(l, i) ? "true" : "false") << "\n";
-        break;
-      case LUA_TNUMBER: /* numbers */
-        ss << "number: " << lua_tonumber(l, i) << "\n";
-        break;
-      default: /* other values */
-        ss << "type is: " << lua_typename(l, t) << "\n";
-        break;
-    }
+    ss << "---\n";             /* put a separator */
+    ss << GetStringFromLuaStack(l, i);
   }
   ss << "==========";
   LOG_DEBUG(ss.str());
@@ -305,17 +310,27 @@ LuaInterface::LuaInterface(GameState *state) : parentState(state) {
   }
 }
 
-void LuaInterface::ExecuteString(const std::string &code) {
+std::string LuaInterface::ExecuteString(const std::string &code) {
+  auto stackSize = lua_gettop(lState);
   auto error = luaL_dostring(lState, code.c_str());
   if (error != 0) {
     std::stringstream ss;
     ss << "Lua String could not be run \n"
-       << LUA_52_INTERFACE_ENV_TABLE << "\n"
        << " | Error code is: " << error << " "
        << "   ...Error Message is " << lua_tostring(lState, -1);
-    LOG_ERROR(ss.str());
+    lua_pop(lState, -1);  // pop error message
+
+    throw LEngineException(ss.str());
+  }
+  auto newStackSize = lua_gettop(lState);
+  auto returnedValues = newStackSize - stackSize;
+  std::stringstream returnValue;
+  for (auto i = 0; i < returnedValues; i++) {
+    returnValue << GetStringFromLuaStack(lState, lua_gettop(lState)) << std::endl;
     lua_pop(lState, -1);  // pop error message
   }
+
+  return returnValue.str();
 }
 
 LuaInterface::~LuaInterface() {
@@ -601,8 +616,8 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
          i != tiledProperties->bools.end(); i++) {
       initTable[i->first] = i->second;
     }
-    for (auto i = tiledProperties->ints.begin(); i != tiledProperties->ints.end();
-         i++) {
+    for (auto i = tiledProperties->ints.begin();
+         i != tiledProperties->ints.end(); i++) {
       initTable[i->first] = i->second;
     }
     for (auto i = tiledProperties->floats.begin();
@@ -816,7 +831,6 @@ void LuaInterface::RenderObjectDelete(EID selfID, RenderableObject *obj) {
   ComponentScript *script = (parentState->comScriptMan.GetComponent(selfID));
   script->RenderObjectDelete(obj);
 }
-
 
 ///////////
 // Handles//

@@ -27,6 +27,8 @@ class ComponentScriptManager;
 class ComponentScript;
 class GS_Script;
 
+std::string GetStringFromLuaStack(lua_State *state, int stackIndex);
+
 std::unordered_map<std::string, luabridge::LuaRef> GetKeyValueMap(
     const luabridge::LuaRef &table);
 
@@ -48,7 +50,7 @@ class LuaInterface {
                  /*optional args*/ const TiledProperties *tiledProperties,
                  luabridge::LuaRef *initTable);
 
-  void ExecuteString(const std::string &code);
+  std::string ExecuteString(const std::string &code);
   ///////////
   // General//
   ///////////
