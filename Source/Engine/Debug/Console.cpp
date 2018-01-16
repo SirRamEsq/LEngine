@@ -11,11 +11,15 @@ Console::Console(Console::Callback processor) : mProcessor(processor) {
   for (auto i = 0; i != BUFFER_SIZE; i++) {
     mInputBuffer[i] = '\0';
   }
+  mHistoryUnset = true;
 }
 Console::~Console() {}
 
 void Console::RunCommand(const std::string& command) {
-  mCommandHistory.push_back(command);
+  mCommandHistory.push_front(command);
+  if (mCommandHistory.size() > 255) {
+    mCommandHistory.pop_back();
+  }
   AddLog(command, COLOR_CMD);
 
   ImColor color;
@@ -42,8 +46,6 @@ void Console::Render(const std::string& title, bool* p_open) {
     ImGui::End();
     return;
   }
-  //SDL_StartTextInput();
-
   // As a specific feature guaranteed by the library, after calling Begin()
   // the last Item represent the title bar. So e.g. IsItemHovered() will
   // return true when hovering the title bar.
@@ -149,11 +151,17 @@ void Console::Render(const std::string& title, bool* p_open) {
   ImGui::Separator();
 
   // Command-line
+  auto callback = [](ImGuiTextEditCallbackData* data) {
+    Console* console = (Console*)data->UserData;
+    return console->TextEditCallback(data);
+  };
   if (ImGui::InputText("Input", mInputBuffer, BUFFER_SIZE,
-                       // ImGuiInputTextFlags_CallbackHistory |
-                       // ImGuiInputTextFlags_CallbackCompletion |
-                       ImGuiInputTextFlags_EnterReturnsTrue, NULL, NULL)) {
+                       ImGuiInputTextFlags_CallbackHistory |
+                           // ImGuiInputTextFlags_CallbackCompletion |
+                           ImGuiInputTextFlags_EnterReturnsTrue,
+                       callback, this)) {
     char* input_end = mInputBuffer + strlen(mInputBuffer);
+    mHistoryUnset = true;
     while (input_end > mInputBuffer && input_end[-1] == ' ') {
       input_end--;
     }
@@ -175,5 +183,43 @@ void Console::Render(const std::string& title, bool* p_open) {
 }
 
 int Console::TextEditCallback(ImGuiTextEditCallbackData* data) {
+  switch (data->EventFlag) {
+    case ImGuiInputTextFlags_CallbackHistory:
+      if (mCommandHistory.size() == 0) {
+        return 0;
+      }
+
+      bool changeInput = false;
+
+      if (mHistoryUnset) {
+        mHistoryPos = mCommandHistory.begin();
+        mHistoryUnset = false;
+        changeInput = true;
+      } else {
+        if (data->EventKey == ImGuiKey_UpArrow) {
+          mHistoryPos++;
+          changeInput = true;
+          if (mHistoryPos == mCommandHistory.end()) {
+            mHistoryPos--;
+            changeInput = false;
+          }
+        } else if (data->EventKey == ImGuiKey_DownArrow) {
+          if (mHistoryPos != mCommandHistory.begin()) {
+            mHistoryPos--;
+            changeInput = true;
+          }
+        }
+      }
+
+      // A better implementation would preserve the data on the current input
+      // line
+      // along with cursor position.
+      if (changeInput) {
+        data->CursorPos = data->SelectionStart = data->SelectionEnd =
+            data->BufTextLen = (int)snprintf(data->Buf, (size_t)data->BufSize,
+                                             "%s", mHistoryPos->c_str());
+        data->BufDirty = true;
+      }
+  }
   return 0;
 }

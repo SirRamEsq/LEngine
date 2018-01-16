@@ -6,6 +6,7 @@
 #include "../Exceptions.h"
 
 #include <vector>
+#include <list>
 #include <string>
 #include <functional>
 
@@ -37,7 +38,10 @@ class Console {
   char mInputBuffer[512];
   Callback mProcessor;
   std::vector<Record> mOutput;
-  std::vector<std::string> mCommandHistory;
+
+  std::list<std::string> mCommandHistory;
+  std::list<std::string>::iterator mHistoryPos;
+  bool mHistoryUnset;
 
   static ImColor COLOR_CMD;
   static ImColor COLOR_ERROR;
