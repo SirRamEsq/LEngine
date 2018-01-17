@@ -1,5 +1,6 @@
 #include "Console.h"
 #include "SDL2/SDL.h"
+#include "../Kernel.h"
 
 Console::Record::Record(const std::string& t, ImColor c) : text(t), color(c) {}
 
@@ -12,6 +13,8 @@ Console::Console(Console::Callback processor) : mProcessor(processor) {
     mInputBuffer[i] = '\0';
   }
   mHistoryUnset = true;
+  auto sprName = Kernel::SYSTEM_SPRITE_NAME;
+  mSystemSprite = K_SpriteMan.GetLoadItem(sprName, sprName);
 }
 Console::~Console() {}
 
@@ -37,7 +40,7 @@ void Console::RunCommand(const std::string& command) {
 void Console::ClearOutput() { mOutput.clear(); }
 
 void Console::AddLog(const std::string& txt, Vec4 color) {
-	AddLog(txt, ImColor(color.x, color.y, color.z, color.w));
+  AddLog(txt, ImColor(color.x, color.y, color.z, color.w));
 }
 void Console::AddLog(const std::string& txt, ImColor color) {
   mOutput.push_back(Record(txt, color));
@@ -65,15 +68,21 @@ void Console::Render(const std::string& title, bool* p_open) {
   ImGui::TextWrapped(
       "Enter 'HELP' for help, press TAB to use text completion.");
 
-  if (ImGui::SmallButton("Add Dummy Text")) {
-    AddLog("%d some text", COLOR_CMD);
-    AddLog("some more text", COLOR_CMD);
-    AddLog("display very important message here!", COLOR_CMD);
-  }
+  ImGui::PushStyleColorButton(Vec4(0, 0, 0, 0));
+  ImGui::PushStyleColorButtonHovered(Vec4(0.75, 0.75, 1, 1));
+
+  ImGui::PushID(1001);
+  bool continuePressed = ImGui::SpriteButton(mSystemSprite, "Play", 0);
+  ImGui::PopID();
+
   ImGui::SameLine();
-  if (ImGui::SmallButton("Add Dummy Error")) {
-    AddLog("[error] something went wrong", COLOR_ERROR);
-  }
+
+  ImGui::PushID(1002);
+  bool breakPressed = ImGui::SpriteButton(mSystemSprite, "Stop", 0);
+  ImGui::PopID();
+
+  ImGui::PopStyleColor(2);
+
   ImGui::SameLine();
   if (ImGui::SmallButton("Clear")) {
     ClearOutput();
@@ -108,30 +117,6 @@ void Console::Render(const std::string& title, bool* p_open) {
     ImGui::EndPopup();
   }
 
-  // Display every line as a separate entry so we can change their color or
-  // add custom widgets. If you only want raw text you can use
-  // ImGui::TextUnformatted(log.begin(), log.end());
-  // NB- if you have thousands of entries this approach may be too inefficient
-  // and may require user-side clipping to only process visible items.
-  // You can seek and display only the lines that are visible using the
-  // ImGuiListClipper helper, if your elements are evenly spaced and you have
-  // cheap random access to the elements.
-  // To use the clipper we could replace the 'for (int i = 0; i < mOutput.Size;
-  // i++)' loop with:
-  //     ImGuiListClipper clipper(mOutput.Size);
-  //     while (clipper.Step())
-  //         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-  // However take note that you can not use this code as is if a filter is
-  // active because it breaks the 'cheap random-access' property. We would
-  // need random-access on the post-filtered list.
-  // A typical application wanting coarse clipping and filtering may want to
-  // pre-compute an array of indices that passed the filtering test,
-  // recomputing this array when user changes the filter,
-  // and appending newly elements as they are inserted. This is left as a task
-  // to the user until we can manage to improve this example code!
-  // If your items are of variable size you may want to implement code similar
-  // to what ImGuiListClipper does. Or split your data into fixed height items
-  // to allow random-seeking into your list.
   ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,
                       ImVec2(4, 1));  // Tighten spacing
   if (copy_to_clipboard) {
@@ -183,6 +168,13 @@ void Console::Render(const std::string& title, bool* p_open) {
   }
 
   ImGui::End();
+
+  if (continuePressed) {
+    Kernel::DebugResumeExecution();
+  }
+  if (breakPressed) {
+    Kernel::DebugPauseExecution();
+  }
 }
 
 int Console::TextEditCallback(ImGuiTextEditCallbackData* data) {

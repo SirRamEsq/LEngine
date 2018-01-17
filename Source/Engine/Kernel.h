@@ -90,7 +90,9 @@ class Kernel {
 
   static void ImGuiCreateFontsTexture();
   static void ImGuiInvalidateFontTexture();
+
   static void DebugPauseExecution();
+  static void DebugResumeExecution();
 
   /**
    * Drills down into the Scriptmanager of the current state
@@ -99,6 +101,8 @@ class Kernel {
    * but works
    */
   static std::string GetNameFromEID(EID id);
+
+  static const std::string SYSTEM_SPRITE_NAME;
 
  private:
   static bool debugMode;

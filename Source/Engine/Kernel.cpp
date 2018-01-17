@@ -32,6 +32,8 @@ GenericContainer<RSC_Prefab> Kernel::rscPrefabMan;
 
 ImGuiState Kernel::guiState;
 
+const std::string Kernel::SYSTEM_SPRITE_NAME = "System/Icons.xml";
+
 Kernel::Kernel() {}
 Kernel::~Kernel() {}
 
@@ -221,6 +223,7 @@ void Kernel::DEBUG_DisplayLog() {
 }
 
 void Kernel::DebugPauseExecution() { debugPause = true; }
+void Kernel::DebugResumeExecution() { debugPause = false; }
 
 bool Kernel::Update() {
   inputManager.HandleInput();

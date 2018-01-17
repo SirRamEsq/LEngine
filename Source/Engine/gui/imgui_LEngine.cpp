@@ -78,7 +78,7 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
 
   return ImGui::ImageButton(textureID, size, startUV, endUV, 0,
-                            ImColor(255, 255, 255, 125));
+                            ImColor(255, 255, 255, 0));
 }
 
 void ImGui::ProgressBarWrapper(float fraction, const Vec2 &screenSize) {

@@ -47,6 +47,8 @@ class Console {
   static ImColor COLOR_CMD;
   static ImColor COLOR_ERROR;
   static ImColor COLOR_OUTPUT;
+
+  const RSC_Sprite* mSystemSprite;
 };
 
 #endif
