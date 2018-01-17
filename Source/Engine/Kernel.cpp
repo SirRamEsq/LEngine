@@ -32,8 +32,7 @@ GenericContainer<RSC_Prefab> Kernel::rscPrefabMan;
 
 ImGuiState Kernel::guiState;
 
-Kernel::Kernel() {
-}
+Kernel::Kernel() {}
 Kernel::~Kernel() {}
 
 void ImGuiState::Reset() {
@@ -220,6 +219,8 @@ void Kernel::DEBUG_DisplayLog() {
     }
   }
 }
+
+void Kernel::DebugPauseExecution() { debugPause = true; }
 
 bool Kernel::Update() {
   inputManager.HandleInput();

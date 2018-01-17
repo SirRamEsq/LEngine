@@ -31,9 +31,10 @@ class Console {
   void Render(const std::string& title, bool* p_open);
   void ClearOutput();
 
+  void AddLog(const std::string& txt, ImColor color);
+  void AddLog(const std::string& txt, Vec4 color);
  private:
   const int BUFFER_SIZE = 512;
-  void AddLog(const std::string& txt, ImColor color);
   int TextEditCallback(ImGuiTextEditCallbackData* data);
   char mInputBuffer[512];
   Callback mProcessor;

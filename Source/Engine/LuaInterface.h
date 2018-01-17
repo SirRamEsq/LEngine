@@ -80,6 +80,9 @@ class LuaInterface {
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       RSC_Map *m, const std::string &name, luabridge::LuaRef value);
 
+  ///Implements a break-point in dbug mode
+  void LUA_BREAK();
+
   //////////////
   // Components//
   //////////////

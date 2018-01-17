@@ -36,6 +36,9 @@ void Console::RunCommand(const std::string& command) {
 
 void Console::ClearOutput() { mOutput.clear(); }
 
+void Console::AddLog(const std::string& txt, Vec4 color) {
+	AddLog(txt, ImColor(color.x, color.y, color.z, color.w));
+}
 void Console::AddLog(const std::string& txt, ImColor color) {
   mOutput.push_back(Record(txt, color));
 }
@@ -211,9 +214,6 @@ int Console::TextEditCallback(ImGuiTextEditCallbackData* data) {
         }
       }
 
-      // A better implementation would preserve the data on the current input
-      // line
-      // along with cursor position.
       if (changeInput) {
         data->CursorPos = data->SelectionStart = data->SelectionEnd =
             data->BufTextLen = (int)snprintf(data->Buf, (size_t)data->BufSize,

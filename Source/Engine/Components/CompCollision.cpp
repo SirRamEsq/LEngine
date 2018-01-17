@@ -263,11 +263,11 @@ void ComponentCollisionManager::RegisterTileCollision(
 }
 
 void ComponentCollisionManager::UpdateBuckets(int widthPixels) {
-  grid.UpdateBuckets(&mComponentList, widthPixels);
+  grid.UpdateBuckets(&mActiveComponents, widthPixels);
 }
 
 void CollisionGrid::UpdateBuckets(
-    const std::unordered_map<EID, std::unique_ptr<ComponentCollision>> *comps,
+    const std::unordered_map<EID, ComponentCollision *> *comps,
     int mapWidthPixels) {
   std::set<int> hashes;
   CollisionBox *primaryBox;
@@ -311,7 +311,9 @@ void CollisionGrid::UpdateBuckets(
 void ComponentCollisionManager::Update() {
   AddNewComponents();
   GameStateManager *gs = &K_StateMan;
-  if(gs == NULL){return;}
+  if (gs == NULL) {
+    return;
+  }
   GameState *state = gs->GetCurrentState();
   auto stateMap = state->GetCurrentMap();
   if (stateMap == NULL) {

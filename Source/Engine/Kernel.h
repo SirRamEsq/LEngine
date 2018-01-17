@@ -90,6 +90,7 @@ class Kernel {
 
   static void ImGuiCreateFontsTexture();
   static void ImGuiInvalidateFontTexture();
+  static void DebugPauseExecution();
 
   /**
    * Drills down into the Scriptmanager of the current state

@@ -119,9 +119,8 @@ struct CollisionGrid {
   // Hash value to eid vector
   std::map<int, std::vector<EID>> buckets;
 
-  void UpdateBuckets(
-      const std::unordered_map<EID, std::unique_ptr<ComponentCollision>> *comps,
-      int mapWidthPixels);
+  void UpdateBuckets(const std::unordered_map<EID, ComponentCollision *> *comps,
+                     int mapWidthPixels);
 };
 class ComponentCollisionManager
     : public BaseComponentManager_Impl<ComponentCollision> {
@@ -138,7 +137,7 @@ class ComponentCollisionManager
   CollisionGrid grid;
   ComponentPositionManager *dependencyPosition;
 
-  static void ExposeLuaInterface(lua_State* state);
+  static void ExposeLuaInterface(lua_State *state);
 
  private:
   void SendCollisionEvent(const ComponentCollision &sender,

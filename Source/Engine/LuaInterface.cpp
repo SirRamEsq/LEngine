@@ -326,7 +326,8 @@ std::string LuaInterface::ExecuteString(const std::string &code) {
   auto returnedValues = newStackSize - stackSize;
   std::stringstream returnValue;
   for (auto i = 0; i < returnedValues; i++) {
-    returnValue << GetStringFromLuaStack(lState, lua_gettop(lState)) << std::endl;
+    returnValue << GetStringFromLuaStack(lState, lua_gettop(lState))
+                << std::endl;
     lua_pop(lState, -1);  // pop error message
   }
 
@@ -987,6 +988,26 @@ ComponentCollisionManager *LuaInterface::GetCollisionManager() const {
 ComponentScriptManager *LuaInterface::GetScriptManager() const {
   return &parentState->comScriptMan;
 }
+
+void LuaInterface::LUA_BREAK() {
+#ifdef DEBUG_MODE
+  lua_Debug ar;
+  auto L = GetState();
+  lua_getstack(L, 1, &ar);
+  lua_getinfo(L, "nSl", &ar);
+  int line = ar.currentline;
+  std::stringstream src;
+  src << line << "\n" << ar.short_src;
+  std::stringstream name;
+  name << ar.name << " | " << ar.namewhat;
+
+  Vec4 srcColor(200,200,255,255);
+  parentState->mLuaConsole.AddLog(src.str(), srcColor);
+
+  Kernel::DebugPauseExecution();
+#endif
+}
+
 void LuaInterface::ExposeCPP() {
   /*
    * if a const pointer is passed to lua
@@ -1015,6 +1036,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("PlaySound", &LuaInterface::PlaySound)
 
       .addFunction("LoadSpriteResource", &LuaInterface::LoadSpriteResource)
+      .addFunction("BREAK", &LuaInterface::LUA_BREAK)
 
       .addFunction("LogFatal", &LuaInterface::LogFatal)
       .addFunction("LogError", &LuaInterface::LogError)
