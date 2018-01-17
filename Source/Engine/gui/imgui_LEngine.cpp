@@ -77,8 +77,12 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
 
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
 
-  return ImGui::ImageButton(textureID, size, startUV, endUV, 0,
+  //Image Button uses the texture ID to identify different buttons
+  //If you want to use the same texture for multiple images,
+  //Need to push/ pop the ID
+  auto returnValue = ImGui::ImageButton(textureID, size, startUV, endUV, 0,
                             ImColor(255, 255, 255, 0));
+  return returnValue;
 }
 
 void ImGui::ProgressBarWrapper(float fraction, const Vec2 &screenSize) {

@@ -120,6 +120,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     " loader = function(a1, a2) return module end \n"
     " return loader\n"
     "end \n"
+
     // remove default package loaders
     // package.loaders is lua 5.1
     // package.searchers is lua 5.2
@@ -135,6 +136,10 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "L_ENGINE_ENV._ENV = {}\n"
     "L_ENGINE_ENV.utilityPath = utilityPath\n"
     "L_ENGINE_ENV.CPP = CPP\n"
+	"_DEBUG = {} \n"
+	"_DEBUG.StateScript = function() \n"
+	"	return CPP.interface:EntityGetInterface(5) \n"
+	"end \n"
 
     // run InitLEngine script using the restricted environment
     "f1 = require(\"Utility/LEngineInit.lua\") \n"

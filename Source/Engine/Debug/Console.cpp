@@ -52,18 +52,6 @@ void Console::Render(const std::string& title, bool* p_open) {
     ImGui::End();
     return;
   }
-  // As a specific feature guaranteed by the library, after calling Begin()
-  // the last Item represent the title bar. So e.g. IsItemHovered() will
-  // return true when hovering the title bar.
-  // Here we create a context menu only available from the title bar.
-  /*
-  if (ImGui::BeginPopupContextItem()) {
-    if (ImGui::MenuItem("Close")) {
-      *p_open = false;
-    }
-    ImGui::EndPopup();
-  }
-  */
 
   ImGui::TextWrapped(
       "Enter 'HELP' for help, press TAB to use text completion.");
