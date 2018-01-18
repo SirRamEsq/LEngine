@@ -15,8 +15,6 @@ int Kernel::gameLoops;
 unsigned int Kernel::nextGameTick;
 int Kernel::returnValue;
 bool Kernel::debugMode;
-bool Kernel::debugNextFrame;
-bool Kernel::debugPause;
 bool Kernel::mAlreadyBreak = false;
 bool Kernel::mContinue = false;
 std::vector<bool> Kernel::debugLogFlags;
@@ -39,8 +37,6 @@ const std::string Kernel::SYSTEM_SPRITE_NAME = "System/Icons.xml";
 Kernel::Kernel() {}
 Kernel::~Kernel() {}
 
-void Kernel::DebugPauseExecution() { debugPause = true; }
-void Kernel::DebugResumeExecution() { debugPause = false; }
 void Kernel::DebugBreakPoint() {
   if (mAlreadyBreak) {
     return;
@@ -165,7 +161,6 @@ void Kernel::Inst(int argc, char *argv[]) {
         });
     log->SetEntryFilter(fp);
   }
-  debugPause = false;
   SDLMan = SDLInit::Inst();
   SDLMan->InitSDL();
   /// \TODO remove this, have InitSDL intialize everything
@@ -207,14 +202,6 @@ bool Kernel::IsInDebugMode() { return debugMode; }
 
 void Kernel::DEBUG_DebugWindowBegin() {
   ImGui::Begin("DEBUG");
-  debugNextFrame = false;
-  if (ImGui::Button("Pause")) {
-    debugPause = not debugPause;
-  }
-  ImGui::SameLine();
-  if (ImGui::Button("NextFrame")) {
-    debugNextFrame = true;
-  }
 }
 
 void Kernel::DEBUG_DebugWindowEnd() { ImGui::End(); }
@@ -278,13 +265,7 @@ void Kernel::PostFrameUpdate() {
 bool Kernel::Update() {
   PreFrameUpdate();
 
-#ifdef DEBUG_MODE
-  if ((not debugPause) or (debugNextFrame)) {
-    returnValue = stateMan.Update();
-  }
-#else
   returnValue = stateMan.Update();
-#endif
 
   // Audio subsystem can be put on a different thread
   // although with sdlMixer, it already is on a different thread

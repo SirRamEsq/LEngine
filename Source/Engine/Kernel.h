@@ -91,10 +91,6 @@ class Kernel {
   static void ImGuiCreateFontsTexture();
   static void ImGuiInvalidateFontTexture();
 
-  /// Will stop at the beginning of the next frame
-  static void DebugPauseExecution();
-  /// Will continue at the beginning of the next frame
-  static void DebugResumeExecution();
   /// Will immediately halt execution until DebugContinue is called
   static void DebugBreakPoint();
   /// Continues Execution from a breakpoint
@@ -114,8 +110,6 @@ class Kernel {
 
  private:
   static bool debugMode;
-  static bool debugPause;
-  static bool debugNextFrame;
 
   Kernel();
   ~Kernel();
