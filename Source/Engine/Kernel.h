@@ -91,8 +91,16 @@ class Kernel {
   static void ImGuiCreateFontsTexture();
   static void ImGuiInvalidateFontTexture();
 
+  /// Will stop at the beginning of the next frame
   static void DebugPauseExecution();
+  /// Will continue at the beginning of the next frame
   static void DebugResumeExecution();
+  /// Will immediately halt execution until DebugContinue is called
+  static void DebugBreakPoint();
+  /// Continues Execution from a breakpoint
+  static void DebugContinue();
+  static bool mAlreadyBreak;
+  static bool mContinue;
 
   /**
    * Drills down into the Scriptmanager of the current state
@@ -111,6 +119,11 @@ class Kernel {
 
   Kernel();
   ~Kernel();
+
+  /// Updates what needs to be updated before the start of the frame
+  static void PreFrameUpdate();
+  /// Updates what needs to be updated after the end of the frame
+  static void PostFrameUpdate();
 
   /// Is called at the start of every new frame for the sake of imgGui
   static void ImGuiNewFrame(SDL_Window *window);

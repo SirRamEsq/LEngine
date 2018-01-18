@@ -4,8 +4,7 @@
 TEST_CASE("Can Load and Bind Texture", "[resources][texture]") {
   Kernel::Inst();
 
-  auto itemCount = Kernel::rscTexMan.GetSize();
-  REQUIRE(itemCount == 0);
+  auto initialCount = Kernel::rscTexMan.GetSize();
 
   std::string texName = "testImage.png";
   int expectedW = 72;
@@ -26,8 +25,8 @@ TEST_CASE("Can Load and Bind Texture", "[resources][texture]") {
   auto id = resource->GetOpenGLID();
   REQUIRE(id != 0);
 
-  itemCount = Kernel::rscTexMan.GetSize();
-  REQUIRE(itemCount == 1);
+  auto itemCount = Kernel::rscTexMan.GetSize();
+  REQUIRE(itemCount == initialCount + 1);
 
   Kernel::Close();
 

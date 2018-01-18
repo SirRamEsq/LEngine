@@ -17,6 +17,8 @@ int Kernel::returnValue;
 bool Kernel::debugMode;
 bool Kernel::debugNextFrame;
 bool Kernel::debugPause;
+bool Kernel::mAlreadyBreak = false;
+bool Kernel::mContinue = false;
 std::vector<bool> Kernel::debugLogFlags;
 
 GenericContainer<RSC_Sprite> Kernel::rscSpriteMan;
@@ -36,6 +38,25 @@ const std::string Kernel::SYSTEM_SPRITE_NAME = "System/Icons.xml";
 
 Kernel::Kernel() {}
 Kernel::~Kernel() {}
+
+void Kernel::DebugPauseExecution() { debugPause = true; }
+void Kernel::DebugResumeExecution() { debugPause = false; }
+void Kernel::DebugBreakPoint() {
+  if (mAlreadyBreak) {
+    return;
+  }
+  mContinue = false;
+  mAlreadyBreak = true;
+
+  while (!mContinue) {
+    PreFrameUpdate();
+    PostFrameUpdate();
+  }
+  mContinue = false;
+  mAlreadyBreak = false;
+  PreFrameUpdate();
+}
+void Kernel::DebugContinue() { mContinue = true; }
 
 void ImGuiState::Reset() {
   time = 0.0f;
@@ -222,12 +243,8 @@ void Kernel::DEBUG_DisplayLog() {
   }
 }
 
-void Kernel::DebugPauseExecution() { debugPause = true; }
-void Kernel::DebugResumeExecution() { debugPause = false; }
-
-bool Kernel::Update() {
+void Kernel::PreFrameUpdate() {
   inputManager.HandleInput();
-
   Resolution::UpdateResolution(SDLMan->mMainWindow);
   ImGuiNewFrame(SDLMan->mMainWindow);
 
@@ -239,8 +256,27 @@ bool Kernel::Update() {
   static bool renderConsole;
   stateMan.RenderDebugConsole("TITLE", &renderConsole);
 #endif
-
   nextGameTick = SDL_GetTicks() + SKIP_TICKS;
+}
+void Kernel::PostFrameUpdate() {
+// Rendering
+#ifdef DEBUG_MODE
+  stateMan.Draw();
+  glFinish();
+#else
+  // If we're behind, skip drawing
+  // Don't skip if the max amount of frame skip has been passed
+  if ((SDL_GetTicks() < nextGameTick) or (gameLoops > MAX_FRAMESKIP)) {
+    stateMan.Draw();
+    glFinish();
+  }
+#endif
+  SDL_GL_SwapWindow(SDLMan->GetWindow());
+  gameLoops++;
+}
+
+bool Kernel::Update() {
+  PreFrameUpdate();
 
 #ifdef DEBUG_MODE
   if ((not debugPause) or (debugNextFrame)) {
@@ -254,21 +290,7 @@ bool Kernel::Update() {
   // although with sdlMixer, it already is on a different thread
   audioSubsystem.ProcessEvents();
 
-// Rendering
-#ifdef DEBUG_MODE
-  stateMan.Draw();
-  glFinish();
-#else
-  // If we're behind, skip drawing
-  // Don't skip if the max amount of frame skip has been passed
-  if ((SDL_GetTicks() < nextGameTick) or (gameLoops > MAX_FRAMESKIP)) {
-    stateMan.Draw();
-    glFinish();
-  }
-#endif
-
-  SDL_GL_SwapWindow(SDLMan->GetWindow());
-  gameLoops++;
+  PostFrameUpdate();
 
   return returnValue;
 }

@@ -158,10 +158,10 @@ void Console::Render(const std::string& title, bool* p_open) {
   ImGui::End();
 
   if (continuePressed) {
-    Kernel::DebugResumeExecution();
+    Kernel::DebugContinue();
   }
   if (breakPressed) {
-    Kernel::DebugPauseExecution();
+    Kernel::DebugBreakPoint();
   }
 }
 
