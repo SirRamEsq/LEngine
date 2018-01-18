@@ -17,6 +17,7 @@ int Kernel::returnValue;
 bool Kernel::debugMode;
 bool Kernel::mAlreadyBreak = false;
 bool Kernel::mContinue = false;
+bool Kernel::mNext = false;
 std::vector<bool> Kernel::debugLogFlags;
 
 GenericContainer<RSC_Sprite> Kernel::rscSpriteMan;
@@ -46,6 +47,9 @@ void Kernel::DebugBreakPoint() {
 
   while (!mContinue) {
     PreFrameUpdate();
+    if (mNext) {
+      FrameUpdate();
+    }
     PostFrameUpdate();
   }
   mContinue = false;
@@ -53,6 +57,11 @@ void Kernel::DebugBreakPoint() {
   PreFrameUpdate();
 }
 void Kernel::DebugContinue() { mContinue = true; }
+void Kernel::DebugNext() {
+  if (mAlreadyBreak) {
+    mNext = true;
+  }
+}
 
 void ImGuiState::Reset() {
   time = 0.0f;
@@ -200,9 +209,7 @@ void Kernel::Inst(int argc, char *argv[]) {
 
 bool Kernel::IsInDebugMode() { return debugMode; }
 
-void Kernel::DEBUG_DebugWindowBegin() {
-  ImGui::Begin("DEBUG");
-}
+void Kernel::DEBUG_DebugWindowBegin() { ImGui::Begin("DEBUG"); }
 
 void Kernel::DEBUG_DebugWindowEnd() { ImGui::End(); }
 
@@ -262,15 +269,15 @@ void Kernel::PostFrameUpdate() {
   gameLoops++;
 }
 
+bool Kernel::FrameUpdate() {
+  returnValue = stateMan.Update();
+  audioSubsystem.ProcessEvents();
+  return returnValue;
+}
+
 bool Kernel::Update() {
   PreFrameUpdate();
-
-  returnValue = stateMan.Update();
-
-  // Audio subsystem can be put on a different thread
-  // although with sdlMixer, it already is on a different thread
-  audioSubsystem.ProcessEvents();
-
+  auto returnValue = FrameUpdate();
   PostFrameUpdate();
 
   return returnValue;

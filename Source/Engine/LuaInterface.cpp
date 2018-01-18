@@ -134,12 +134,19 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     "L_ENGINE_ENV[k]=v\n"
     "end\n"
     "L_ENGINE_ENV._ENV = {}\n"
-    "L_ENGINE_ENV.utilityPath = utilityPath\n"
     "L_ENGINE_ENV.CPP = CPP\n"
-	"_DEBUG = {} \n"
-	"_DEBUG.StateScript = function() \n"
-	"	return CPP.interface:EntityGetInterface(5) \n"
-	"end \n"
+    "L_ENGINE_ENV.print = function(str)\n"
+    "    CPP.interface:PrintToConsole(str)\n"
+    "end\n"
+    "_DEBUG = {} \n"
+    "_DEBUG.StateScript = function() \n"
+    "	return CPP.interface:EntityGet(5) \n"
+    "end \n"
+    "_DEBUG.Entity = function(id) \n"
+    "	return CPP.interface:EntityGet(id) \n"
+    "end \n"
+    //"function _LINE_HOOK(str, ln) CPP.interface:DebugTraceLine(str,ln) end\n"
+    //"debug.sethook(_LINE_HOOK,\"l\")\n"
 
     // run InitLEngine script using the restricted environment
     "f1 = require(\"Utility/LEngineInit.lua\") \n"
@@ -194,6 +201,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     // Can set metatables, but not get
     "setmetatable = setmetatable,\n"
     "unpack = unpack,\n"
+    "print = function() return end, \n"
 
     "coroutine = {	\n"
     "create = coroutine.create, resume = coroutine.resume,\n"
@@ -994,23 +1002,63 @@ ComponentScriptManager *LuaInterface::GetScriptManager() const {
   return &parentState->comScriptMan;
 }
 
-void LuaInterface::LUA_BREAK() {
+void LuaInterface::LUA_BREAK(EID id) {
 #ifdef DEBUG_MODE
+  lua_Debug info;
+  int level = 0;
+  std::stringstream stackTrace;
+  while (lua_getstack(lState, level, &info)) {
+    lua_getinfo(lState, "nSl", &info);
+    stackTrace << " [" << level << "]" << info.short_src << " "
+               << info.currentline << " "
+               << (info.name ? info.name : "") << ""
+               << "\n";
+    level++;
+  }
   lua_Debug ar;
   auto L = GetState();
   lua_getstack(L, 1, &ar);
   lua_getinfo(L, "nSl", &ar);
   int line = ar.currentline;
-  std::stringstream src;
-  src << line << "\n" << ar.short_src;
-  std::stringstream name;
-  name << ar.name << " | " << ar.namewhat;
+  std::stringstream status;
+  status << "Entity " << id << " table can be accessed at _DEBUG.entity";
 
-  Vec4 srcColor(200,200,255,255);
-  parentState->mLuaConsole.AddLog(src.str(), srcColor);
+  Vec4 srcColor(0.5, 0.5, 1, 1);
+  parentState->mLuaConsole.AddLog(stackTrace.str(), srcColor);
+  parentState->mLuaConsole.AddLog(status.str(), srcColor);
+  LuaRef debug = getGlobal(lState, "_DEBUG");
+  debug["entity"] = GetEntityTable(id);
 
-  Kernel::DebugPauseExecution();
+  Kernel::DebugBreakPoint();
+
+  // set to nil
+  debug["entity"] = LuaRef(lState);
 #endif
+}
+
+LuaRef LuaInterface::GetEntityTable(EID id) {
+  auto script = GetScriptComponent(id);
+  return script->GetScriptPointer();
+}
+
+void LuaInterface::PrintToConsole(const std::string &str) {
+  Vec4 color(0.8, 0.8, 0.5, 1);
+  parentState->mLuaConsole.AddLog(str, color);
+}
+void LuaInterface::DebugTraceLine(const std::string &line, int lineNumber) {
+  lua_Debug info;
+  int level = 0;
+  std::stringstream stackTrace;
+  while (lua_getstack(lState, level, &info)) {
+    lua_getinfo(lState, "nSl", &info);
+    stackTrace << " [" << level << "]" << info.short_src << " "
+               << info.currentline << " "
+               << (info.name ? info.name : "<unknown>") << " " << info.what
+               << "\n";
+    level++;
+  }
+  Vec4 color(0.5, 0.5, 1, 1);
+  parentState->mLuaConsole.AddLog(stackTrace.str(), color);
 }
 
 void LuaInterface::ExposeCPP() {
@@ -1050,6 +1098,9 @@ void LuaInterface::ExposeCPP() {
       .addFunction("LogDebug", &LuaInterface::LogDebug)
       .addFunction("LogTrace", &LuaInterface::LogTrace)
 
+      .addFunction("PrintToConsole", &LuaInterface::PrintToConsole)
+      .addFunction("DebugTraceLine", &LuaInterface::DebugTraceLine)
+
       .addFunction("GetSpriteComponent", &LuaInterface::GetSpriteComponent)
       .addFunction("GetScriptComponent", &LuaInterface::GetScriptComponent)
       .addFunction("GetCollisionComponent",
@@ -1068,6 +1119,7 @@ void LuaInterface::ExposeCPP() {
       .addFunction("HasLightComponent", &LuaInterface::HasLightComponent)
 
       .addFunction("EntityGetInterface", &LuaInterface::EntityGetInterface)
+      .addFunction("EntityGet", &LuaInterface::GetEntityTable)
 
       .addFunction("GetMap", &LuaInterface::GetMap)
       .addFunction("SetParent", &LuaInterface::SetParent)

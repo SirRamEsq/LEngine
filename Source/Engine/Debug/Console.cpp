@@ -15,6 +15,7 @@ Console::Console(Console::Callback processor) : mProcessor(processor) {
   mHistoryUnset = true;
   auto sprName = Kernel::SYSTEM_SPRITE_NAME;
   mSystemSprite = K_SpriteMan.GetLoadItem(sprName, sprName);
+  mScrollToBottom = false;
 }
 Console::~Console() {}
 
@@ -78,7 +79,7 @@ void Console::Render(const std::string& title, bool* p_open) {
   ImGui::SameLine();
   bool copy_to_clipboard = ImGui::SmallButton("Copy");
   ImGui::SameLine();
-  bool ScrollToBottom = ImGui::SmallButton("Scroll to bottom");
+  mScrollToBottom = mScrollToBottom or ImGui::SmallButton("Scroll to bottom");
   // static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t =
   // ImGui::GetTime(); AddLog("Spam %f", t); }
 
@@ -90,14 +91,14 @@ void Console::Render(const std::string& title, bool* p_open) {
   ImGui::PopStyleVar();
   ImGui::Separator();
 
-  const float footer_height_to_reserve =
-      ImGui::GetStyle().ItemSpacing.y +
-      // ImGui::GetFrameHeightWithSpacing();  // 1 separator, 1 input text
-      ImGui::BeginChild(
-          "ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false,
-          ImGuiWindowFlags_HorizontalScrollbar);  // Leave room for 1 separator
-                                                  // +
-                                                  // 1 InputText
+  const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + 20;
+  // ImGui::GetFrameHeightWithSpacing();  // 1 separator, 1 input text
+
+  ImGui::BeginChild(
+      "ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false,
+      ImGuiWindowFlags_HorizontalScrollbar);  // Leave room for 1 separator
+                                              // +
+                                              // 1 InputText
   if (ImGui::BeginPopupContextWindow()) {
     if (ImGui::Selectable("Clear")) {
       ClearOutput();
@@ -118,10 +119,10 @@ void Console::Render(const std::string& title, bool* p_open) {
   if (copy_to_clipboard) {
     ImGui::LogFinish();
   }
-  if (ScrollToBottom) {
+  if (mScrollToBottom) {
     ImGui::SetScrollHere();
+	mScrollToBottom = false;
   }
-  ScrollToBottom = false;
   ImGui::PopStyleVar();
   ImGui::EndChild();
   ImGui::Separator();
@@ -146,6 +147,7 @@ void Console::Render(const std::string& title, bool* p_open) {
       RunCommand(std::string(mInputBuffer));
     }
     strcpy(mInputBuffer, "");
+    mScrollToBottom = true;
   }
 
   // Demonstrate keeping auto focus on the input box

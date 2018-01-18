@@ -80,8 +80,8 @@ class LuaInterface {
   std::vector<TiledLayerGeneric *> GetLayersWithProperty(
       RSC_Map *m, const std::string &name, luabridge::LuaRef value);
 
-  ///Implements a break-point in dbug mode
-  void LUA_BREAK();
+  /// Implements a break-point in dbug mode
+  void LUA_BREAK(EID id);
 
   //////////////
   // Components//
@@ -174,10 +174,15 @@ class LuaInterface {
   std::map<std::string, int> mLoadedModules;
 
  private:
+  void PrintToConsole(const std::string& str);
+  void DebugTraceLine(const std::string& file, int line);
   /// Will Get the loaded lua function associated with the passed lua script
   int LookupFunction(const RSC_Script *script);
   /// Will process mEntitiesToObserve
   void ProcessObservers();
+
+  // Will return a reference to the table representing the entity
+  luabridge::LuaRef GetEntityTable(EID id);
 
   ErrorCallback errorCallbackFunction;
   /// All entities derive from this

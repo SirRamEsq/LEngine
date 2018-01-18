@@ -43,6 +43,7 @@ class Console {
   std::list<std::string> mCommandHistory;
   std::list<std::string>::iterator mHistoryPos;
   bool mHistoryUnset;
+  bool mScrollToBottom;
 
   static ImColor COLOR_CMD;
   static ImColor COLOR_ERROR;

@@ -95,8 +95,12 @@ class Kernel {
   static void DebugBreakPoint();
   /// Continues Execution from a breakpoint
   static void DebugContinue();
+  /// calls a callback that defines what the next instruction should be
+  static void DebugNext();
+
   static bool mAlreadyBreak;
   static bool mContinue;
+  static bool mNext;
 
   /**
    * Drills down into the Scriptmanager of the current state
@@ -116,6 +120,7 @@ class Kernel {
 
   /// Updates what needs to be updated before the start of the frame
   static void PreFrameUpdate();
+  static bool FrameUpdate();
   /// Updates what needs to be updated after the end of the frame
   static void PostFrameUpdate();
 

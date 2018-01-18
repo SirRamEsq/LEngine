@@ -20,11 +20,11 @@ GameState::GameState(GameStateManager *gsm)
       comParticleMan(&eventDispatcher),
       comScriptMan(luaInterface.GetState(), &luaInterface, &eventDispatcher),
       comLightMan(&eventDispatcher),
+      luaInterface(this),
       mLuaConsole([this](const std::string &arg) {
         return luaInterface.ExecuteString(arg);
       }),
 
-      luaInterface(this),
       entityMan(gsm) {
   mNextMap.Reset();
   mCurrentMap = NULL;
