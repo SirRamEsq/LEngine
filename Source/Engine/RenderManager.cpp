@@ -99,14 +99,13 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   Matrix4 S = Matrix4::IdentityMatrix();
   S = S.Scale(Vec3(1, 1, 1));
 
-  // Matrix4 viewMat = T * R * S;
-  Matrix4 viewMat = S * R * T;
+  mView = S * R * T;
 
   // Will render texture upside down
-  Matrix4 projectionMat = Matrix4::OrthoGraphicProjectionMatrix(
+  mProjection = Matrix4::OrthoGraphicProjectionMatrix(
       // Vec2(view.w, view.h), nearClippingPlane, farClippingPlane);
       Vec2(view.w, view.h), nearClippingPlane, farClippingPlane);
-  auto projectionMatInverse = projectionMat.Inverse();
+  auto projectionMatInverse = mProjection.Inverse();
 
   float viewport[4];
   viewport[0] = view.x;
@@ -118,11 +117,11 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
 
   int offset = 0;
   int dataSize = (sizeof(float) * 16);
-  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &viewMat.m);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &mView.m);
 
   offset += dataSize;
   dataSize = (sizeof(float) * 16);
-  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &projectionMat.m);
+  glBufferSubData(GL_UNIFORM_BUFFER, offset, dataSize, &mProjection.m);
 
   offset += dataSize;
   dataSize = (sizeof(float) * 16);
@@ -135,9 +134,9 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
   Vec4 testVector(-1, -1, 90, 1);
   Vec4 testVector2(-1, -1, -10, 1);
   auto test1 = projectionMatInverse * testVector;
-  auto test2 = viewMat.Inverse() * test1;
-  auto test3 = projectionMat * testVector;
-  auto test4 = projectionMat * testVector2;
+  auto test2 = mView.Inverse() * test1;
+  auto test3 = mProjection * testVector;
+  auto test4 = mProjection * testVector2;
 
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
@@ -169,7 +168,9 @@ void RenderCamera::Bind(const GLuint &GlobalCameraUBO) {
 }
 
 void RenderCamera::RenderFrameBufferTextureFinal(
-    ComponentLightManager *lightMan, RSC_GLProgram *program) {
+    ComponentLightManager *lightMan, RSC_GLProgram *program,
+    ImDrawData *drawData) {
+  RenderFrameBufferTextureFinalGui(drawData);
   lightMan->Render(frameBufferTextureDiffuse->GetOpenGLID(), mDepthTextureID,
                    frameBufferTextureFinal->GetOpenGLID(), view.w, view.h,
                    program);
@@ -230,10 +231,18 @@ void RenderCamera::RenderFrameBufferTextureFinalGui(ImDrawData *drawData) {
   if (drawData == NULL) {
     return;
   }
+  // glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+  // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+  // frameBufferTextureFinal->GetOpenGLID(), 0);
   // Avoid rendering when minimized, Do not scale coordinates
-  ImGuiState *guiState = &Kernel::guiState;
+
   ImGuiIO &io = ImGui::GetIO();
   drawData->ScaleClipRects(io.DisplayFramebufferScale);
+  ImGuiState *guiState = &Kernel::guiState;
+  //ImVec2 scale((float)io.DisplaySize.x / (float)view.w,
+               //(float)io.DisplaySize.y / (float)view.h);
+  // drawData->ScaleClipRects(ImVec2((float)view.w / (float)io.DisplaySize.x,
+  //(float)view.h / (float)io.DisplaySize.y));
 
   // Backup GL state
   GLint last_active_texture;
@@ -279,13 +288,13 @@ void RenderCamera::RenderFrameBufferTextureFinalGui(ImDrawData *drawData) {
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_SCISSOR_TEST);
 
-  // Setup viewport, projection matrix
-  glViewport(view.x, view.y, view.w, view.h);
+  // Setup viewport, projection matrix (ALREADY SET)
+  // glViewport(0,0, view.w, view.h);
 
   guiState->shaderHandle->Bind();
   glUniform1i(guiState->attribLocationTex, 0);
   glUniformMatrix4fv(guiState->attribLocationProjMtx, 1, GL_FALSE,
-                     guiState->projectionMatrix.m);
+                     (mProjection * mView).m);
   glBindVertexArray(guiState->vaoHandle);
 
   for (int n = 0; n < drawData->CmdListsCount; n++) {
@@ -308,9 +317,10 @@ void RenderCamera::RenderFrameBufferTextureFinalGui(ImDrawData *drawData) {
         pcmd->UserCallback(cmd_list, pcmd);
       } else {
         glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
-        glScissor((int)pcmd->ClipRect.x, (int)(view.h - pcmd->ClipRect.w),
-                  (int)(pcmd->ClipRect.z - pcmd->ClipRect.x),
-                  (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+		//NO CLIP RECT *should fix*
+        //glScissor((int)pcmd->ClipRect.x, (int)(view.h - pcmd->ClipRect.w),
+                  //(int)(pcmd->ClipRect.z - pcmd->ClipRect.x),
+                  //(int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
         glDrawElements(
             GL_TRIANGLES, (GLsizei)pcmd->ElemCount,
             sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT,
@@ -474,8 +484,7 @@ void RenderManager::Render() {
       //(*camera)->RenderFrameBufferTextureDiffuse();
       (*camera)->RenderFrameBufferTextureFinal(
           &Kernel::stateMan.GetCurrentState()->comLightMan,
-          &defaultProgramLight);
-      (*camera)->RenderFrameBufferTextureFinalGui(drawData);
+          &defaultProgramLight, drawData);
     }
   }
 

@@ -250,6 +250,8 @@ void Kernel::PreFrameUpdate() {
   auto currentContext = ImGui::GetCurrentContext();
   ImGui::SetCurrentContext(mWorldContext);
   ImGuiNewFrame(SDLMan->mMainWindow);
+  ImGui::SetWindowPosWrapper("TEST",Vec2(10,10));
+
   ImGui::SetCurrentContext(mScreenContext);
   ImGuiNewFrame(SDLMan->mMainWindow);
 

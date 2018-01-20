@@ -4,6 +4,7 @@
 #include "Defines.h"
 #include "SDLInit.h"
 #include "Vector.h"
+#include "Matrix.h"
 #include <list>
 #include <map>
 #include <memory>
@@ -55,7 +56,7 @@ class RenderCamera {
   void SetScreenSpace(Rect screen);
 
   void RenderFrameBufferTextureFinal(ComponentLightManager *lightMan,
-                                     RSC_GLProgram *program);
+                                     RSC_GLProgram *program, ImDrawData* drawData);
   void RenderFrameBufferTextureDiffuse();
   void RenderFrameBufferTextureFinalGui(ImDrawData *drawData);
 
@@ -74,6 +75,8 @@ class RenderCamera {
   void RenderFrameBufferTexture(const RSC_Texture *tex);
   float rotation;
   float scale;
+  Matrix4 mProjection;
+  Matrix4 mView;
 
   MAP_DEPTH nearClippingPlane;
   MAP_DEPTH farClippingPlane;
