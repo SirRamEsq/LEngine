@@ -207,6 +207,8 @@ void ImGui::ExposeLuaInterface(lua_State *state) {
       .addFunction("BeginFlags", &ImGui::BeginFlags)
       .addFunction("End", &ImGui::End)
 
+      .addFunction("SetContext", &ImGui::SetContext)
+
       .addFunction("SetWindowPos", &ImGui::SetWindowPosWrapper)
       .addFunction("SetWindowSize", &ImGui::SetWindowSizeWrapper)
       .addFunction("GetWindowSize", &ImGui::GetWindowSizeWrapper)
