@@ -20,6 +20,9 @@ bool Kernel::mContinue = false;
 bool Kernel::mNext = false;
 std::vector<bool> Kernel::debugLogFlags;
 
+ImGuiContext *Kernel::mScreenContext = NULL;
+ImGuiContext *Kernel::mWorldContext = NULL;
+
 GenericContainer<RSC_Sprite> Kernel::rscSpriteMan;
 GenericContainer<RSC_Texture> Kernel::rscTexMan;
 GenericContainer<RSC_Sound> Kernel::rscSoundMan;
@@ -178,6 +181,10 @@ void Kernel::Inst(int argc, char *argv[]) {
   Resolution::UpdateResolution(SDLMan->mMainWindow);
   Resolution::SetVirtualResolution(Vec2(480, 320));
 
+  mScreenContext = ImGui::GetCurrentContext();
+  mWorldContext = ImGui::CreateContext();
+
+
   rscTexMan.SetLoadFunction(&RSC_Texture::LoadResource);
   rscSpriteMan.SetLoadFunction(&RSC_Sprite::LoadResource);
   rscMusicMan.SetLoadFunction(&RSC_Music::LoadResource);
@@ -240,7 +247,13 @@ void Kernel::DEBUG_DisplayLog() {
 void Kernel::PreFrameUpdate() {
   inputManager.HandleInput();
   Resolution::UpdateResolution(SDLMan->mMainWindow);
+  auto currentContext = ImGui::GetCurrentContext();
+  ImGui::SetCurrentContext(mWorldContext);
   ImGuiNewFrame(SDLMan->mMainWindow);
+  ImGui::SetCurrentContext(mScreenContext);
+  ImGuiNewFrame(SDLMan->mMainWindow);
+
+  ImGui::SetCurrentContext(currentContext);
 
 #ifdef DEBUG_MODE
   DEBUG_DebugWindowBegin();

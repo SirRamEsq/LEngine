@@ -77,11 +77,11 @@ bool ImGui::SpriteButton(const RSC_Sprite *sprite, const std::string &animation,
 
   CalculateUV(sprite, animation, frame, textureID, size, startUV, endUV);
 
-  //Image Button uses the texture ID to identify different buttons
-  //If you want to use the same texture for multiple images,
-  //Need to push/ pop the ID
+  // Image Button uses the texture ID to identify different buttons
+  // If you want to use the same texture for multiple images,
+  // Need to push/ pop the ID
   auto returnValue = ImGui::ImageButton(textureID, size, startUV, endUV, 0,
-                            ImColor(255, 255, 255, 0));
+                                        ImColor(255, 255, 255, 0));
   return returnValue;
 }
 
@@ -186,6 +186,16 @@ void ImGui::CalculateUV(const RSC_Sprite *sprite, const std::string &animation,
           K_Log.Write(ss.str(), Log::SEVERITY::ERROR, Log::typeDefault);
   }
   */
+}
+void ImGui::SetContext(int c) {
+  switch (c) {
+    case 0:
+      ImGui::SetCurrentContext(Kernel::mScreenContext);
+      break;
+    case 1:
+      ImGui::SetCurrentContext(Kernel::mWorldContext);
+      break;
+  }
 }
 
 void ImGui::ExposeLuaInterface(lua_State *state) {

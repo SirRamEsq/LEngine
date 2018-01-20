@@ -226,6 +226,132 @@ void RenderCamera::RenderFrameBufferTexture(const RSC_Texture *tex) {
   */
 }
 
+void RenderCamera::RenderFrameBufferTextureFinalGui(ImDrawData *drawData) {
+  if (drawData == NULL) {
+    return;
+  }
+  // Avoid rendering when minimized, Do not scale coordinates
+  ImGuiState *guiState = &Kernel::guiState;
+  ImGuiIO &io = ImGui::GetIO();
+  drawData->ScaleClipRects(io.DisplayFramebufferScale);
+
+  // Backup GL state
+  GLint last_active_texture;
+  glGetIntegerv(GL_ACTIVE_TEXTURE, &last_active_texture);
+  glActiveTexture(GL_TEXTURE0);
+  GLint last_program;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+  GLint last_texture;
+  glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+  GLint last_array_buffer;
+  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
+  GLint last_element_array_buffer;
+  glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
+  GLint last_vertex_array;
+  glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+  GLint last_blend_src_rgb;
+  glGetIntegerv(GL_BLEND_SRC_RGB, &last_blend_src_rgb);
+  GLint last_blend_dst_rgb;
+  glGetIntegerv(GL_BLEND_DST_RGB, &last_blend_dst_rgb);
+  GLint last_blend_src_alpha;
+  glGetIntegerv(GL_BLEND_SRC_ALPHA, &last_blend_src_alpha);
+  GLint last_blend_dst_alpha;
+  glGetIntegerv(GL_BLEND_DST_ALPHA, &last_blend_dst_alpha);
+  GLint last_blend_equation_rgb;
+  glGetIntegerv(GL_BLEND_EQUATION_RGB, &last_blend_equation_rgb);
+  GLint last_blend_equation_alpha;
+  glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &last_blend_equation_alpha);
+  GLint last_viewport[4];
+  glGetIntegerv(GL_VIEWPORT, last_viewport);
+  GLint last_scissor_box[4];
+  glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
+  GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+  GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+  GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+  GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+
+  // Setup render state: alpha-blending enabled, no face culling, no depth
+  // testing, scissor enabled
+  glEnable(GL_BLEND);
+  glBlendEquation(GL_FUNC_ADD);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_SCISSOR_TEST);
+
+  // Setup viewport, projection matrix
+  glViewport(view.x, view.y, view.w, view.h);
+
+  guiState->shaderHandle->Bind();
+  glUniform1i(guiState->attribLocationTex, 0);
+  glUniformMatrix4fv(guiState->attribLocationProjMtx, 1, GL_FALSE,
+                     guiState->projectionMatrix.m);
+  glBindVertexArray(guiState->vaoHandle);
+
+  for (int n = 0; n < drawData->CmdListsCount; n++) {
+    const ImDrawList *cmd_list = drawData->CmdLists[n];
+    const ImDrawIdx *idx_buffer_offset = 0;
+
+    glBindBuffer(GL_ARRAY_BUFFER, guiState->vboHandle);
+    glBufferData(GL_ARRAY_BUFFER,
+                 (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert),
+                 (const GLvoid *)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, guiState->elementsHandle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx),
+                 (const GLvoid *)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+
+    for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+      const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+      if (pcmd->UserCallback) {
+        pcmd->UserCallback(cmd_list, pcmd);
+      } else {
+        glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+        glScissor((int)pcmd->ClipRect.x, (int)(view.h - pcmd->ClipRect.w),
+                  (int)(pcmd->ClipRect.z - pcmd->ClipRect.x),
+                  (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+        glDrawElements(
+            GL_TRIANGLES, (GLsizei)pcmd->ElemCount,
+            sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT,
+            idx_buffer_offset);
+      }
+      idx_buffer_offset += pcmd->ElemCount;
+    }
+  }
+
+  // Restore modified GL state
+  glUseProgram(last_program);
+  glBindTexture(GL_TEXTURE_2D, last_texture);
+  glActiveTexture(last_active_texture);
+  glBindVertexArray(last_vertex_array);
+  glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
+  glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
+  glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb,
+                      last_blend_src_alpha, last_blend_dst_alpha);
+  if (last_enable_blend)
+    glEnable(GL_BLEND);
+  else
+    glDisable(GL_BLEND);
+  if (last_enable_cull_face)
+    glEnable(GL_CULL_FACE);
+  else
+    glDisable(GL_CULL_FACE);
+  if (last_enable_depth_test)
+    glEnable(GL_DEPTH_TEST);
+  else
+    glDisable(GL_DEPTH_TEST);
+  if (last_enable_scissor_test)
+    glEnable(GL_SCISSOR_TEST);
+  else
+    glDisable(GL_SCISSOR_TEST);
+  glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2],
+             (GLsizei)last_viewport[3]);
+  glScissor(last_scissor_box[0], last_scissor_box[1],
+            (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
+}
+
 /////////////////
 // RenderManager//
 /////////////////
@@ -284,9 +410,7 @@ void RenderManager::ProcessDrawCall(RenderableObject *obj,
 #endif
 }
 
-unsigned int RenderManager::GetTimeElapsed(){
-	return timeElapsed;
-}
+unsigned int RenderManager::GetTimeElapsed() { return timeElapsed; }
 
 void RenderManager::Render() {
   auto resolution = Resolution::GetResolution();
@@ -320,6 +444,10 @@ void RenderManager::Render() {
   std::sort(worldTransparent.begin(), worldTransparent.end(),
             &OrderBackToFront);
 
+  // world context
+  ImGui::SetContext(1);
+  ImGui::Render();
+  auto drawData = ImGui::GetDrawData();
   if (!(mCameras).empty()) {
     for (auto camera = mCameras.begin(); camera != mCameras.end(); camera++) {
       (*camera)->Bind(GlobalCameraUBO);
@@ -347,6 +475,7 @@ void RenderManager::Render() {
       (*camera)->RenderFrameBufferTextureFinal(
           &Kernel::stateMan.GetCurrentState()->comLightMan,
           &defaultProgramLight);
+      (*camera)->RenderFrameBufferTextureFinalGui(drawData);
     }
   }
 
@@ -361,7 +490,8 @@ void RenderManager::Render() {
       (*i)->Render();
     }
   }
-
+  // screen
+  ImGui::SetContext(0);
   ImGui::Render();
   ImGuiRender(ImGui::GetDrawData());
 }
@@ -380,10 +510,9 @@ void RenderManager::AssignCameraUBO(RSC_GLProgram *program) {
   }
 }
 
-RenderableSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
-                                                 const RSC_Texture *texNormal,
-                                                 const MAP_DEPTH &depth,
-                                                 const int &numSprites) {
+RenderableSpriteBatch *RenderManager::GetSpriteBatch(
+    const RSC_Texture *tex, const RSC_Texture *texNormal,
+    const MAP_DEPTH &depth, const int &numSprites) {
   auto textureMapIt = spriteBatchMap.find(depth);
   // If there isn't a map for this depth value,
   // create it and assign texturemapit to it
@@ -421,8 +550,9 @@ RenderableSpriteBatch *RenderManager::GetSpriteBatch(const RSC_Texture *tex,
   // batch to it
   if (batch == NULL) {
     // Max size 256
-    spriteBatchVectorIt->second.push_back(std::unique_ptr<RenderableSpriteBatch>(
-        new RenderableSpriteBatch(this, tex, texNormal, 256)));
+    spriteBatchVectorIt->second.push_back(
+        std::unique_ptr<RenderableSpriteBatch>(
+            new RenderableSpriteBatch(this, tex, texNormal, 256)));
     batch = (spriteBatchVectorIt->second.back()).get();
     batch->SetDepth(depth);
   }

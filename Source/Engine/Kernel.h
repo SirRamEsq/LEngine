@@ -112,6 +112,9 @@ class Kernel {
 
   static const std::string SYSTEM_SPRITE_NAME;
 
+  static ImGuiContext* mScreenContext;
+  static ImGuiContext* mWorldContext;
+
  private:
   static bool debugMode;
 

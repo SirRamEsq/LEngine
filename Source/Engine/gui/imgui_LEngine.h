@@ -53,6 +53,8 @@ void ProgressBarWrapper(float fraction, const Vec2 &screenSize);
 /// Display the next widget on the same line as the previous widget
 void SameLineWrapper();
 
+void SetContext(int c);
+
 ////////////////////
 // Parameter Stacks//
 ////////////////////
