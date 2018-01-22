@@ -1010,8 +1010,7 @@ void LuaInterface::LUA_BREAK(EID id) {
   while (lua_getstack(lState, level, &info)) {
     lua_getinfo(lState, "nSl", &info);
     stackTrace << " [" << level << "]" << info.short_src << " "
-               << info.currentline << " "
-               << (info.name ? info.name : "") << ""
+               << info.currentline << " " << (info.name ? info.name : "") << ""
                << "\n";
     level++;
   }
@@ -1044,6 +1043,8 @@ LuaRef LuaInterface::GetEntityTable(EID id) {
 void LuaInterface::PrintToConsole(const std::string &str) {
   Vec4 color(0.8, 0.8, 0.5, 1);
   parentState->mLuaConsole.AddLog(str, color);
+
+  std::cout << str << std::endl;
 }
 void LuaInterface::DebugTraceLine(const std::string &line, int lineNumber) {
   lua_Debug info;

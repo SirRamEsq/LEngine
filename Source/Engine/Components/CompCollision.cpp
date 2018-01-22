@@ -366,7 +366,7 @@ void ComponentCollisionManager::ExposeLuaInterface(lua_State *state) {
       .addFunction("GetTileY", &TColPacket::GetTileY)
       .addFunction("GetBox", &TColPacket::GetBox)
       .addFunction("GetLayer", &TColPacket::GetLayer)
-      .addFunction("GetHmap", &TColPacket::GetHmap)
+      .addFunction("GetHMap", &TColPacket::GetHmap)
       .endClass()
 
       .beginClass<EColPacket>("EColPacket")
@@ -377,8 +377,8 @@ void ComponentCollisionManager::ExposeLuaInterface(lua_State *state) {
       .endClass()
 
       .beginClass<RSC_Heightmap>("RSC_Heightmap")
-      .addFunction("GetHeightMapH", &RSC_Heightmap::GetHeightMapH)
-      .addFunction("GetHeightMapV", &RSC_Heightmap::GetHeightMapV)
+      .addFunction("GetHeightH", &RSC_Heightmap::GetHeightMapH)
+      .addFunction("GetHeightV", &RSC_Heightmap::GetHeightMapV)
       .addData("angleH", &RSC_Heightmap::angleH)
       .addData("angleV", &RSC_Heightmap::angleV)
       .endClass()
