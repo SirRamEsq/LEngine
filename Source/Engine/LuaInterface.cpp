@@ -622,33 +622,48 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   // Assign values from optional args to the script//
   //////////////////////////////////////////////////
 
+  LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
+  LuaRef lengineData = returnedTable["LEngineData"];
+  LuaRef newInitTable = lengineData["InitializationTable"];
   if (tiledProperties != NULL) {
-    LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
-    LuaRef lengineData = returnedTable["LEngineData"];
-    LuaRef initTable = lengineData["InitializationTable"];
     for (auto i = tiledProperties->bools.begin();
          i != tiledProperties->bools.end(); i++) {
-      initTable[i->first] = i->second;
+      newInitTable[i->first] = i->second;
     }
     for (auto i = tiledProperties->ints.begin();
          i != tiledProperties->ints.end(); i++) {
-      initTable[i->first] = i->second;
+      newInitTable[i->first] = i->second;
     }
     for (auto i = tiledProperties->floats.begin();
          i != tiledProperties->floats.end(); i++) {
-      initTable[i->first] = i->second;
+      newInitTable[i->first] = i->second;
     }
     for (auto i = tiledProperties->strings.begin();
          i != tiledProperties->strings.end(); i++) {
-      initTable[i->first] = i->second;
+      newInitTable[i->first] = i->second;
     }
   }
 
-  else if (initTable != NULL) {
-    if (initTable->isNil() == false) {
-      LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
-      LuaRef lengineData = returnedTable["LEngineData"];
-      lengineData["InitializationTable"] = (*initTable);
+  if (initTable != NULL) {
+    if (!initTable->isNil()) {
+      if (!initTable->isTable()) {
+        LOG_ERROR("Passed LuaRef is not a table");
+      } else {
+        initTable->push(lState);  // push table
+
+        // push nil, so lua_next removes it from stack and puts
+        // (k, v) on stack
+        lua_pushnil(lState);
+
+        while (lua_next(lState, -2) != 0) {  // -2, because we have table at -1
+          auto key = LuaRef::fromStack(lState, -2);
+          auto value = LuaRef::fromStack(lState, -1);
+          newInitTable[key] = value;
+          lua_pop(lState, 1);  // remove value, keep key for lua_next
+        }
+
+        lua_pop(lState, 1);  // pop table
+      }
     }
   }
 
@@ -656,7 +671,6 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
   // Create new script component and assign reference to the new table to the
   // component//
   //////////////////////////////////////////////////////////////////////////////////////
-  LuaRef returnedTable = getGlobal(lState, returnedTableName.str().c_str());
 
   // Initialize Component which has already been created
   scriptComponent->SetScriptPointerOnce(returnedTable, &scripts);
