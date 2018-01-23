@@ -84,6 +84,7 @@ class CollisionBox {
   bool mActive;
 
   /// Identifies the order in which this box is processed
+  /// Higher orders are processed first
   int mOrder;
 
   /// Identifies this box
