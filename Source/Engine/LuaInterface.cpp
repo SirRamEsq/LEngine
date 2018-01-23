@@ -644,6 +644,7 @@ bool LuaInterface::RunScript(EID id, std::vector<const RSC_Script *> scripts,
     }
   }
 
+  // LuaRef Properties will overwrite tiledProperties
   if (initTable != NULL) {
     if (!initTable->isNil()) {
       if (!initTable->isTable()) {
