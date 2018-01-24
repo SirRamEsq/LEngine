@@ -61,6 +61,13 @@ class RenderableSpriteBatch : public RenderableObjectWorld {
     void SetDepth(MAP_DEPTH d);
     MAP_DEPTH GetDepth() const;
 
+	void SetColor(Vec4 c);
+	Vec4 GetColor() const;
+
+	void SetAlpha(float a);
+	float GetAlpha() const;
+
+
     RenderableSpriteBatch *spriteBatch;
     RenderManager *manager;
   };

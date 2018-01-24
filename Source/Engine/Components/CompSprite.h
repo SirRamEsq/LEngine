@@ -69,6 +69,11 @@ class Sprite {
   void SetScalingX(float scalingX);
   void SetScalingY(float scalingY);
 
+  void SetAlpha(float a);
+  float GetAlpha() const;
+  void SetColor(Vec4 c);
+  Vec4 GetColor() const;
+
   void SetOffset(float x, float y);
 
   void CalculateVerticies();

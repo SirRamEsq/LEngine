@@ -64,6 +64,13 @@ RenderableSpriteBatch::Sprite::Sprite(RenderManager *rm, const RSC_Sprite *spr,
 
 RenderableSpriteBatch::Sprite::~Sprite() { spriteBatch->DeleteSprite(this); }
 
+void RenderableSpriteBatch::Sprite::SetColor(Vec4 c) { data.color = c; }
+Vec4 RenderableSpriteBatch::Sprite::GetColor() const { return data.color; }
+float RenderableSpriteBatch::Sprite::GetAlpha() const { return data.color.w; }
+void RenderableSpriteBatch::Sprite::SetAlpha(float a) { data.color.w = a; }
+
+void SetAlpha(float a);
+float GetAlpha();
 void RenderableSpriteBatch::Sprite::SetDepth(MAP_DEPTH d) {
   if (depth == d) {
     return;

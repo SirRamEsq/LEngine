@@ -179,6 +179,10 @@ void Sprite::AnimationPlayOnce(const std::string &animationName,
   mAnimation.SetAnimationPlayOnce(animationName, callbackLambda);
 }
 
+void Sprite::SetAlpha(float a) { mRenderableSprite.SetAlpha(a); }
+float Sprite::GetAlpha() const { return mRenderableSprite.GetAlpha(); }
+void Sprite::SetColor(Vec4 c) { mRenderableSprite.SetColor(c); }
+Vec4 Sprite::GetColor() const { return mRenderableSprite.GetColor(); }
 void Sprite::CalculateVerticies() {
   LOrigin origin = mSpriteRSC->GetOrigin();
   float spriteWidth = mSpriteRSC->GetWidth();
@@ -355,6 +359,10 @@ void ComponentSpriteManager::ExposeLuaInterface(lua_State *state) {
       .addFunction("GetImage", &Sprite::GetImageIndex)
       .addFunction("SetDepth", &Sprite::SetDepth)
       .addFunction("GetDepth", &Sprite::GetDepth)
+      .addFunction("SetAlpha", &Sprite::SetAlpha)
+      .addFunction("GetAlpha", &Sprite::GetAlpha)
+      .addFunction("SetColor", &Sprite::SetColor)
+      .addFunction("GetColor", &Sprite::GetColor)
 
       .addFunction("SetRotation", &Sprite::SetRotation)
       .addFunction("SetScaling", &Sprite::SetScaling)
