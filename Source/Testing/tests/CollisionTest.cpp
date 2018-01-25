@@ -26,6 +26,11 @@ void CallbackFunction(const Event *event) {
   }
 }
 
+CollisionBox *gCollisionBox;
+void CallbackFunctionDeactivate(const Event *event) {
+  gCollisionBox->Deactivate();
+}
+
 TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
   GameStateManager_Mock dummyManager(NULL);
   callbackValue = 0;
@@ -98,10 +103,12 @@ TEST_CASE("Tile Collision tests with mock map", "[collision][rsc_map]") {
     cbox->Activate();
     cbox->Activate();
     cbox->Activate();
+	cbox->ToggleActivation();
     collisionManager.UpdateCheckTileCollision(&testMap);
     REQUIRE(1 == callbackValue);
 
     cbox->Deactivate();
+	cbox->ToggleActivation();
     collisionManager.UpdateCheckTileCollision(&testMap);
     REQUIRE(1 == callbackValue);
   }
@@ -247,12 +254,33 @@ TEST_CASE("Entity Collision tests", "[collision]") {
     auto compPos = positionManager.GetComponent(EID_MIN);
     Vec2 pos(16, 8);
     compPos->SetPositionLocal(pos);
+    auto compCol = collisionManager.GetComponent(entity);
 
     collisionManager.UpdateBuckets(testMap.GetWidthPixels());
     collisionManager.UpdateCheckEntityCollision();
 
     // 2 collisions, both colliding entities will register 1 collision
     REQUIRE(2 == callbackValueEntity);
+  }
+
+  SECTION("Deactivate mid-frame test") {
+    collisionManager.UpdateBuckets(testMap.GetWidthPixels());
+    collisionManager.UpdateCheckEntityCollision();
+    auto compPos = positionManager.GetComponent(EID_MIN);
+    Vec2 pos(16, 8);
+    compPos->SetPositionLocal(pos);
+
+    auto compCol = collisionManager.GetComponent(EID_MIN);
+    compCol->SetEventCallbackFunction(CallbackFunctionDeactivate);
+	Rect box(0,0,32,32);
+    auto cbox = compCol->AddCollisionBox(&box);
+    cbox->CheckForEntities();
+	gCollisionBox = cbox;
+    collisionManager.UpdateBuckets(testMap.GetWidthPixels());
+
+	//callback will deactivate a cbox while iterating through the cbox list
+	//this should not crash
+    collisionManager.UpdateCheckEntityCollision();
   }
 
   /**

@@ -20,7 +20,7 @@ CollisionBox::CollisionBox(int id, int order, const Shape *shape,
   mReturnOnlyFirstTileCollision = true;
   mCheckTiles = false;
   mCheckEntities = false;
-  Activate();
+  Activate_Impl();
   SetShape(shape);
 }
 
@@ -85,10 +85,11 @@ CollisionResponse CollisionBox::Collides(const CollisionBox *box) {
 void CollisionBox::ToggleActivation() {
   if (mChangeStatus) {
     if (mActive) {
-      Activate_Impl();
-    } else {
       Deactivate_Impl();
+    } else {
+      Activate_Impl();
     }
+    mChangeStatus = false;
   }
 }
 
