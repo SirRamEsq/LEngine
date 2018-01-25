@@ -82,7 +82,17 @@ CollisionResponse CollisionBox::Collides(const CollisionBox *box) {
   return result;
 }
 
-void CollisionBox::Activate() {
+void CollisionBox::ToggleActivation() {
+  if (mChangeStatus) {
+    if (mActive) {
+      Activate_Impl();
+    } else {
+      Deactivate_Impl();
+    }
+  }
+}
+
+void CollisionBox::Activate_Impl() {
   if (mActive) {
     return;
   }
@@ -95,13 +105,29 @@ void CollisionBox::Activate() {
   }
 }
 
-void CollisionBox::Deactivate() {
+void CollisionBox::Deactivate_Impl() {
   mActive = false;
   if (mCheckTiles) {
     RemoveSelfFromVector(mActiveTileBoxes);
   }
   if (mCheckEntities) {
     RemoveSelfFromVector(mActiveEntityBoxes);
+  }
+}
+
+void CollisionBox::Activate() {
+  if (mActive) {
+    mChangeStatus = false;
+  } else {
+    mChangeStatus = true;
+  }
+}
+
+void CollisionBox::Deactivate() {
+  if (mActive) {
+    mChangeStatus = true;
+  } else {
+    mChangeStatus = false;
   }
 }
 
@@ -191,7 +217,7 @@ void CollisionBox::AddSelfToVector(CB_Vector *vec) {
   for (auto i = vec->begin(); i != vec->end(); i++) {
     CollisionBox *box = (*i);
     if (box == this) {
-	  return;
+      return;
     }
   }
   vec->push_back(this);
@@ -205,7 +231,7 @@ void CollisionBox::RemoveSelfFromVector(CB_Vector *vec) {
     CollisionBox *box = (*i);
     if (box == this) {
       vec->erase(i);
-	  return;
+      return;
     }
   }
 }

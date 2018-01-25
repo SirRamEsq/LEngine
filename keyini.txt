@@ -3,6 +3,7 @@ a = left;
 d = right;
 e = cheat;
 n = activate;
+c = attack;
 f = use;
 s = down;
 w = up;

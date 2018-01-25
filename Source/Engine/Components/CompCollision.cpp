@@ -23,7 +23,12 @@ ComponentCollision::ComponentCollision(EID id, ComponentPosition *pos,
 
 ComponentCollision::~ComponentCollision() { myPos = NULL; }
 
-void ComponentCollision::Update() {}
+void ComponentCollision::Update() {
+  for (auto i = mBoxes.begin(); i != mBoxes.end(); i++) {
+    // will toggle activation state if needed
+    i->second.ToggleActivation();
+  }
+}
 
 void ComponentCollisionManager::SetDependencies(ComponentPositionManager *pos) {
   dependencyPosition = pos;
@@ -79,6 +84,17 @@ CollisionBox *ComponentCollision::GetPrimary() {
   }
 
   return NULL;
+}
+
+void ComponentCollision::DeactivateAll() {
+  for (auto i = mBoxes.begin(); i != mBoxes.end(); i++) {
+    i->second.Deactivate();
+  }
+}
+void ComponentCollision::ActivateAll() {
+  for (auto i = mBoxes.begin(); i != mBoxes.end(); i++) {
+    i->second.Activate();
+  }
 }
 
 ///////////////////////////////
@@ -310,6 +326,17 @@ void CollisionGrid::UpdateBuckets(
 
 void ComponentCollisionManager::Update() {
   AddNewComponents();
+
+  // Update all entities
+  for (auto i = mActiveComponents.begin(); i != mActiveComponents.end(); i++) {
+    UpdateComponent(i->second);
+  }
+
+  // Reset all 'updatedThisFrame' bits
+  for (auto i = mActiveComponents.begin(); i != mActiveComponents.end(); i++) {
+    i->second->updatedThisFrame = false;
+  }
+
   GameStateManager *gs = &K_StateMan;
   if (gs == NULL) {
     return;
@@ -418,6 +445,8 @@ void ComponentCollisionManager::ExposeLuaInterface(lua_State *state) {
       .addFunction("SetPrimaryCollisionBox",
                    &ComponentCollision::SetPrimaryCollisionBox)
       .addFunction("AddCollisionBox", &ComponentCollision::AddCollisionBox)
+      .addFunction("DeactivateAll", &ComponentCollision::DeactivateAll)
+      .addFunction("ActivateAll", &ComponentCollision::ActivateAll)
       .endClass()
 
       .beginClass<ComponentCollisionManager>("ComponentCollisionManager")

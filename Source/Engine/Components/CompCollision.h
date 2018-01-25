@@ -81,6 +81,9 @@ class ComponentCollision : public BaseComponent {
                      ComponentCollisionManager *manager);
   ~ComponentCollision();
 
+  void DeactivateAll();
+  void ActivateAll();
+
   void Update();
 
   /// Will create a collision box from a shape and return its id

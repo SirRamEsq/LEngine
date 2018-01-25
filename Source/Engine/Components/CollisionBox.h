@@ -72,16 +72,26 @@ class CollisionBox {
   CB_Vector *mActiveTileBoxes;
   CB_Vector *mActiveEntityBoxes;
 
+  /// Changes Active to inactive and vise-versa if mChangeStatus is true
+  /// Should only be called when ActiveBoxes vectors are NOT being iterated
+  /// through
+  void ToggleActivation();
+
  protected:
   typedef std::pair<TiledTileLayer *, Callback> LayerCallbacks;
   std::vector<LayerCallbacks> mLayersToCheck;
   bool mPrimary;
 
  private:
+  void Activate_Impl();
+  void Deactivate_Impl();
   void AddSelfToVector(CB_Vector *vec);
   void RemoveSelfFromVector(CB_Vector *vec);
   /// Identifies whether this box is currently active
   bool mActive;
+
+  /// Whether the Activation status needs toggled next frame
+  bool mChangeStatus;
 
   /// Identifies the order in which this box is processed
   /// Higher orders are processed first
