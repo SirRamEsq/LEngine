@@ -1,5 +1,4 @@
 #include "CommandLineArgs.h"
-#include "GameStates/GameRunning.h"
 #include "Kernel.h"
 
 int main(int argc, char *argv[]) {

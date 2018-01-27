@@ -74,14 +74,6 @@ void ComponentScript::AddObserver(EID id) { mEventLuaObservers.insert(id); }
 void ComponentScript::RemoveObserver(EID id) { mEventLuaObservers.erase(id); }
 void ComponentScript::RemoveAllObservers() { mEventLuaObservers.clear(); }
 
-RenderText *ComponentScript::RenderObjectText(int x, int y,
-                                              const std::string &text,
-                                              bool abss) {
-  RenderText *rt = new RenderText(dependencyRenderManager, x, y, text, abss);
-  mRenderableObjects.insert(rt);
-  return rt;
-}
-
 RenderLine *ComponentScript::RenderObjectLine(int x, int y, int xx, int yy) {
   RenderLine *rl = new RenderLine(dependencyRenderManager, x, y, xx, yy);
   mRenderableObjects.insert(rl);

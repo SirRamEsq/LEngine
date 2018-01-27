@@ -78,9 +78,6 @@ class ComponentScript : public BaseComponent {
   void RemoveAllObservers();
 
   ///*DEPRECIATED*
-  RenderText *RenderObjectText(int x, int y, const std::string &text,
-                               bool abss = true);
-  ///*DEPRECIATED*
   RenderLine *RenderObjectLine(int x, int y, int xx, int yy);
   ///*DEPRECIATED*
   void RenderObjectDelete(RenderableObject *obj);

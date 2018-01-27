@@ -5,7 +5,6 @@ Do one of the following:
 (1) Install each dependency individually
 	sudo apt-get install libsdl2-dev
 	sudo apt-get install libsdl2-image-dev
-	sudo apt-get install libsdl2-ttf-dev
 	sudo apt-get install libsdl2-mixer-dev
 
 	sudo apt-get install libglew-dev
@@ -20,7 +19,7 @@ Do one of the following:
 - OR -
 
 (2) Use one great big command;
-	sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev lua5.2
+	sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libglew-dev freeglut3-dev libphysfs-dev libsoil-dev libfreetype6-dev liblua5.2-dev lua5.2
 
 
 NOTES:

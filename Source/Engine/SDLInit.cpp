@@ -6,7 +6,6 @@ SDLInit *SDLInit::pointertoself = NULL;
 SDLInit::SDLInit() {}
 SDL_Window *SDLInit::mMainWindow = NULL;
 SDL_GLContext SDLInit::mMainContextGL;
-TTF_Font *defaultFont = NULL;
 
 SDLInit *SDLInit::Inst() {
   pointertoself = new SDLInit();
@@ -16,11 +15,6 @@ SDLInit *SDLInit::Inst() {
 SDL_Window *SDLInit::GetWindow() { return mMainWindow; }
 
 void SDLInit::CloseSDL() {
-  if (defaultFont != NULL) {
-    TTF_CloseFont(defaultFont);
-    defaultFont = NULL;
-  }
-  TTF_Quit();
   Mix_CloseAudio();
   Mix_Quit();
   SDL_Quit();
@@ -112,7 +106,7 @@ bool SDLInit::InitOpenGL() {
 }
 
 void SDLInit::InitSDL() {
-  if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+  if (SDL_Init(SDL_INIT_JOYSTICK) == -1) {
     LOG_FATAL("Didn't init SDL properly");
     return;
   }
@@ -149,25 +143,6 @@ void SDLInit::InitSDL() {
     LOG_FATAL(ss.str());
   }
 
-  if (TTF_Init() == -1) {
-    LOG_FATAL("SDL_TTF_INIT: Couldn't init SDL_TTF!");
-  }
-  // defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/fourside.ttf",
-  // 12 );
-  defaultFont =
-      TTF_OpenFont("Data/Resources/Fonts/ebFonts/lumine_hall.ttf", 60);
-  // defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/apple_kid.ttf",
-  // 32 );
-  // defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/twoson.ttf",
-  // 16 );
-  // defaultFont = TTF_OpenFont( "Data/Resources/Fonts/ebFonts/gasfont.ttf",
-  // 32 );
-  // defaultFont = TTF_OpenFont( "Data/Resources/Fonts/XXRaytid.ttf", 28 );
-  if (defaultFont == NULL) {
-    LOG_FATAL("Couldn't load ttf");
-  }
-
-  // why is this glew here? what does it do?
   GLenum err = glewInit();
   if (GLEW_OK != err) {
     std::stringstream ss;
@@ -180,6 +155,6 @@ void SDLInit::InitSDL() {
   }
 
   SDL_GL_SetSwapInterval(1);
-  // DO SOMETHING ABOUT UNICODE
+  //Needed?
   // SDL_EnableUNICODE(1);
 }

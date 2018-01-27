@@ -13,8 +13,6 @@
 #include "SDL2/SDL_mixer.h"
 #include "SDL2/SDL_ttf.h"
 
-extern TTF_Font *defaultFont;
-
 class SDLInit {
  public:
   static SDLInit *Inst();

@@ -5,56 +5,6 @@
 #include "RenderableObject.h"
 
 class RSC_Texture;
-class RenderText : public RenderableObjectScreen {
- public:
-  RenderText(RenderManager *rm, int xv, int yv, std::string t,
-             bool abso = true);
-  ~RenderText();
-
-  void SetColorI(int r, int g, int b) {
-    color.r = r;
-    color.g = g;
-    color.b = b;
-    del = true;
-  }
-  void SetColor(SDL_Color c) {
-    color = c;
-    del = true;
-  }
-
-  SDL_Color GetColor() { return color; }
-
-  void ChangeText(std::string newText) {
-    del = true;
-    text = newText;
-  }
-  void ChangePosition(int xx, int yy) {
-    SetX(xx);
-    SetY(yy);
-  }
-  void SetX(int xx) { x = xx; }
-  void SetY(int yy) { y = yy; }
-  void SetW(int ww) { w = ww; }
-  void SetH(int hh) { h = hh; }
-
-  int GetX() { return x; }
-  int GetY() { return y; }
-  int GetW() { return w; }
-  int GetH() { return h; }
-
-  void Render(const RenderCamera *camera, const RSC_GLProgram *program);
-
-  void DeleteTexture();
-
- private:
-  std::string text;
-  int x, y, w, h;
-  bool absolute, del;
-  SDL_Color color;
-  RSC_Texture *mTexture;
-  GLuint VBOID;
-  GLuint IBOID;
-};
 
 class RenderLine : public RenderableObjectScreen {
  public:

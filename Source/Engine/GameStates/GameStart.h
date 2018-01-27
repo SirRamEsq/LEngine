@@ -6,8 +6,6 @@
 #include "../Resources/RSC_Texture.h"
 #include "../StateManager.h"
 
-#include "GamePause.h"
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 

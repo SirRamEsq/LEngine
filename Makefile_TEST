@@ -17,7 +17,7 @@ OBJEXT		:= o
 #Flags, Libraries and Includes
 #dont define 'DEBUG_MODE'
 CFLAGS		:= -Wall -g -DGLEW_STATIC -std=c++14 -Wno-reorder
-LIB			:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW 
+LIB			:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW 
 INC			:= $(INCDIR) -I/usr/local/include
 INCDEP		:= $(INCDIR)
 
