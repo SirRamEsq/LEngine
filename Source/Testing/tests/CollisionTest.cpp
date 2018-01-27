@@ -281,6 +281,7 @@ TEST_CASE("Entity Collision tests", "[collision]") {
 	//callback will deactivate a cbox while iterating through the cbox list
 	//this should not crash
     collisionManager.UpdateCheckEntityCollision();
+	gCollisionBox = NULL;
   }
 
   /**

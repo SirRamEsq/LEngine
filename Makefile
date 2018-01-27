@@ -21,7 +21,7 @@ CFLAGS_LINK	:= -pg
 #without efence debug
 LIB		:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW 
 #with efence debug
-#LIB			:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lfreetype -lefence
+#LIB			:= -lSOIL -llua5.2 -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lphysfs -lGL -lGLU -lglut -lGLEW -lefence
 
 INC			:= $(INCDIR) -I/usr/local/include
 INCDEP		:= $(INCDIR)
