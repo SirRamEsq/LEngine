@@ -1,6 +1,6 @@
 #include "GS_Test.h"
 //#include "../../Testing/catch.hpp"
-#include "../Kernel.h"
+#include "../Engine/Kernel.h"
 
 std::string StringRepresentationOfRef(const luabridge::LuaRef &r1) {
   std::stringstream ss;

@@ -1,11 +1,11 @@
 #ifndef L_SCRIPT_SCRIPT
 #define L_SCRIPT_SCRIPT
 
-#include "../EntityManager.h"
-#include "../Resources/RSC_Sprite.h"
-#include "../Resources/RSC_Texture.h"
-#include "../StateManager.h"
-#include "GS_Script.h"
+#include "../../Engine/EntityManager.h"
+#include "../../Engine/Resources/RSC_Sprite.h"
+#include "../../Engine/Resources/RSC_Texture.h"
+#include "../../Engine/StateManager.h"
+#include "../Engine/GameStates/GS_Script.h"
 
 std::string StringRepresentationOfRef(const luabridge::LuaRef &r1);
 

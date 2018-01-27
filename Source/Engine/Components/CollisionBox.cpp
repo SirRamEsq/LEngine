@@ -20,6 +20,8 @@ CollisionBox::CollisionBox(int id, int order, const Shape *shape,
   mReturnOnlyFirstTileCollision = true;
   mCheckTiles = false;
   mCheckEntities = false;
+  mChangeStatus = false;
+  mActive = false;
   Activate_Impl();
   SetShape(shape);
 }

@@ -2,7 +2,7 @@
 #include "../../Engine/Defines.h"
 #include "../../Engine/Kernel.h"
 #include "../../Engine/LuaInterface.h"
-#include "../../Engine/GameStates/GS_Test.h"
+#include "../GS_Test.h"
 
 #include "../catch.hpp"
 #include "../mocks/GameStateMock.h"
