@@ -1,9 +1,0 @@
-==
-Simplicity
-==
-
-Enemies are like UNIX applicaitons, they should do one thing
-Predictable as can be with few/no exceptions
-Challenge comes from multiple enemies at once with differing patterns
-	in different environments
-think megaman/crash/doom
