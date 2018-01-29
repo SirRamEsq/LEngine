@@ -184,7 +184,7 @@ void InputManager::HandleInput() {
         break;
 
       case SDL_QUIT:
-        printf("Recieved interrupt, exiting\n");
+		throw InterruptException();
         break;
 
       default:

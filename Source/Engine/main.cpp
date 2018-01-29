@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
     }
   } catch (ExitException e) {
     std::cout << e.what();
+  } catch (InterruptException){
+	std::cout << "Interrupt Occured, quitting..." << std::endl;
   }
   Kernel::Close();
 

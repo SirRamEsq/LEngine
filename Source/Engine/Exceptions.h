@@ -33,4 +33,10 @@ class ExitException : public std::exception {
   virtual const char *what() const throw() { return "Exit"; }
 };
 
+class InterruptException : public std::exception {
+ public:
+  InterruptException() {}
+  const char *what() const throw() { return "Interrupt"; }
+};
+
 #endif  // L_ENGINE_EXCEPTIONS
