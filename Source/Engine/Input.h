@@ -10,6 +10,7 @@
 #include "IniHandler.h"
 
 #include <functional>
+#include "GameController.h"
 
 #include <map>
 #include <set>
@@ -75,6 +76,7 @@ class InputManager {
   std::string GetTextInput();
 
  private:
+  void InitGameControllers();
   void SendEvent(Event::MSG message, std::string keyName);
   void KeyPress(const std::string &keyName);
   void KeyRelease(const std::string &keyName);
@@ -105,6 +107,8 @@ class InputManager {
   std::vector<std::pair<bool, std::string>> simulatedInput;
   const bool SIM_KEYUP = false;
   const bool SIM_KEYDOWN = true;
+
+  std::map<int, GameController> mGameControllers;
 };
 
 #endif

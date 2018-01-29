@@ -29,6 +29,8 @@ InputManager::InputManager()
   io.KeyMap[ImGuiKey_Backspace] = SDLK_BACKSPACE;
   io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
   io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
+
+  InitGameControllers();
 }
 
 void InputManager::ReadKeyIniFile() {
@@ -110,46 +112,83 @@ void InputManager::HandleInput() {
 
   std::string keyStr;
   bool keyup;
+  int keyValue = 0;
 
   while (SDL_PollEvent(&event)) {
-    if ((keyup = (event.type == SDL_KEYUP)) or (event.type == SDL_KEYDOWN)) {
-      int keyValue = event.key.keysym.sym;
-      auto keyi = sdlKeyToInput.find(keyValue);
-      if (imWantKeyboard) {
-        int key = event.key.keysym.sym & ~SDLK_SCANCODE_MASK;
-        io.KeysDown[key] = (event.type == SDL_KEYDOWN);
-        io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-        io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-        io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-        io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
-		continue;
-      }
-
-      if (keyi != sdlKeyToInput.end()) {
-        if (!keyup) {
-          if (keyValue == SDLK_ESCAPE) {
-            // SDL_StopTextInput();
-          } else {
-            KeyPress(keyi->second);
-          }
-        } else {
-          KeyRelease(keyi->second);
+    keyup = false;
+    switch (event.type) {
+      case SDL_KEYUP:
+        keyup = true;
+      case SDL_KEYDOWN:
+        keyValue = event.key.keysym.sym;
+        if (imWantKeyboard) {
+          int key = event.key.keysym.sym & ~SDLK_SCANCODE_MASK;
+          io.KeysDown[key] = (event.type == SDL_KEYDOWN);
+          io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+          io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+          io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
+          io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+          break;
         }
-      }
-    }
 
-    else if (event.type == SDL_MOUSEWHEEL) {
-      mouseWheel = event.wheel.y;
-      io.MouseWheel = mouseWheel;
-    }
+        else {
+          auto keyi = sdlKeyToInput.find(keyValue);
+          if (keyi != sdlKeyToInput.end()) {
+            if (!keyup) {
+              if (keyValue == SDLK_ESCAPE) {
+                // SDL_StopTextInput();
+              } else {
+                KeyPress(keyi->second);
+              }
+            } else {
+              KeyRelease(keyi->second);
+            }
+          }
+        }
+        break;
 
-    else if (event.type == SDL_TEXTINPUT) {
-      io.AddInputCharactersUTF8(event.text.text);
-      mTextInput = event.text.text;
-    }
+      case SDL_MOUSEWHEEL:
+        mouseWheel = event.wheel.y;
+        io.MouseWheel = mouseWheel;
+        break;
 
-    else if (event.type == SDL_TEXTEDITING) {
-      // io.AddInputCharactersUTF8(event.text.text);
+      case SDL_TEXTINPUT:
+        io.AddInputCharactersUTF8(event.text.text);
+        mTextInput = event.text.text;
+        break;
+
+      case SDL_TEXTEDITING:
+        // io.AddInputCharactersUTF8(event.text.text);
+        break;
+
+      case SDL_JOYAXISMOTION:
+        break;
+
+      case SDL_JOYBUTTONDOWN:
+      case SDL_JOYBUTTONUP:
+        break;
+
+      case SDL_JOYHATMOTION:
+        break;
+
+      case SDL_JOYBALLMOTION:
+        break;
+
+      case SDL_CONTROLLERDEVICEADDED:
+        break;
+
+      case SDL_CONTROLLERDEVICEREMOVED:
+        break;
+
+      case SDL_CONTROLLERDEVICEREMAPPED:
+        break;
+
+      case SDL_QUIT:
+        printf("Recieved interrupt, exiting\n");
+        break;
+
+      default:
+		break;
     }
   }
 
@@ -254,3 +293,23 @@ bool InputManager::GetMouseButtonMiddle() { return mouseButtonMiddle; }
 float InputManager::GetMouseWheel() { return mouseWheel; }
 
 void InputManager::RemapKey(const std::string keyName) { remapKey = keyName; }
+
+void InputManager::InitGameControllers() {
+  auto joysticks = SDL_NumJoysticks();
+  if (joysticks == 0) {
+    return;
+  }
+
+  for (auto i = 0; i < joysticks; i++) {
+    // Load joystick
+    SDL_GameController *gameController = SDL_GameControllerOpen(i);
+    if (gameController == NULL) {
+      std::stringstream ss;
+      ss << "Cannot open joystick " << i;
+      LOG_ERROR(ss.str());
+    } else {
+      std::string gameControllerName(SDL_GameControllerName(gameController));
+      mGameControllers.emplace(i, GameController(gameController));
+    }
+  }
+}
