@@ -39,6 +39,8 @@ void GameStartState::HandleEvent(const Event *event) {
 }
 
 bool GameStartState::Update() {
+  countdown += countdownIncrement;
+
   auto resolution = Resolution::GetResolution();
   resolution.x = resolution.x / 3;
   resolution.y = resolution.y / 2;
@@ -79,7 +81,6 @@ bool GameStartState::Update() {
   if (countdown < 0) {
     return false;
   }
-  countdown += countdownIncrement;
 
   UpdateComponentManagers();
 
