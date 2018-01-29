@@ -9,7 +9,7 @@ separator += separator + "="
 
 
 def main():
-    chdir(cwd + "/Data/Resources/Scripts/Testing")
+    chdir(cwd + "/Data/Resources/Scripts/System/Testing")
     newDir = getcwd()
     files = [f for f in listdir(newDir) if isfile(join(newDir, f))]
     print(separator)

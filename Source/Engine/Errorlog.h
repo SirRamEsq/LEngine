@@ -81,6 +81,8 @@ class Log {
   /// Closes currently opened file
   void CloseFileHandle();
 
+  static void LogDirectoryExists();
+
  protected:
   /// All entries written to this log
   mutable std::vector<Entry> entries;

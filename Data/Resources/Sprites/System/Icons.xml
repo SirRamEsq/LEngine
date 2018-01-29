@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sprite origin="center" width="16" height="16" transparentColor="ff00ff" textureName="System/Icons.png">
+	<animation name="Play" speed="1.0">
+		<image x="16" y="0" w="16" h="16"/>
+	</animation>
+
+	<animation name="Stop" speed="1.0">
+		<image x="0" y="0" w="16" h="16"/>
+	</animation>
+</sprite>

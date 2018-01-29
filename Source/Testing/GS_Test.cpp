@@ -227,7 +227,7 @@ bool GS_Test::REQUIRE_THROW(luabridge::LuaRef callback) {
     Pass("Callback successfully threw a LuaException");
     return true;
   }
-  Error("Callback Did not throw a LuaException");
+  Error("Callback Did not throw an expected LuaException");
   return false;
 }
 
@@ -240,7 +240,9 @@ bool GS_Test::REQUIRE_NO_THROW(luabridge::LuaRef callback) {
       return false;
     }
   } catch (const luabridge::LuaException &e) {
-    Error("Callback threw a LuaException");
+    std::stringstream ss;
+    ss << "Callback threw an unexpected LuaException\n" << e.what();
+    Error(ss.str());
     return false;
   }
   Pass("Callback Did not throw a LuaException");

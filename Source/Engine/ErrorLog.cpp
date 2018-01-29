@@ -30,6 +30,16 @@ const std::string Log::typeDefault = "DEFAULT";
 const std::string Log::fileExtension = ".txt";
 Log Log::staticLog = Log();
 
+void Log::LogDirectoryExists() {
+  auto result = PHYSFS_isDirectory(logPath.c_str());
+  if (result == 0) {
+    auto errorCode = PHYSFS_mkdir(logPath.c_str());
+    if (errorCode == 0) {
+      throw LEngineException("Cannot create 'Data/Logs' Dir");
+    }
+  }
+}
+
 Log::Log() {
   entryFilter = NULL;
   mMinimumWriteSeverity = DEBUG;
@@ -124,7 +134,7 @@ void LOG_CPP(std::string message, Log::SEVERITY severity, int line,
               << "    [C++ | " << file << " | " << line << "]" << std::endl
               << "    \"" << message << "\"";
   Log::staticLog.Write(fullMessage.str(), severity);
-  if(severity == Log::SEVERITY::FATAL){
-	  std::cout << fullMessage.str() << std::endl;
+  if (severity == Log::SEVERITY::FATAL) {
+    std::cout << fullMessage.str() << std::endl;
   }
 }

@@ -25,7 +25,7 @@ then
 	#Before the '--' are arguments for catch
 	#After the '--' are arguments for program
 	#See 'https://github.com/catchorg/Catch2/issues/386'
-	./bin/LEngine_TEST -- --luaTestDir "Data/Resources/Scripts/Testing/Integration"
+	./bin/LEngine_TEST -- --luaTestDir "Data/Resources/Scripts/System/Testing/Integration"
 fi
 
 if [[ ($RUN == 0) || ($RUN == 2) ]]

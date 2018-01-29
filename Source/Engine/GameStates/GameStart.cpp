@@ -11,7 +11,11 @@ float countdownMax = 100;
 float countdownIncrement = 2.5;
 std::string countdownMessage = "~----- Starting Up! -----~";
 
-GameStartState::GameStartState(GameStateManager *gsm) : GameState(gsm) {}
+std::string FIRST_STATE_PATH("States/startupState.lua");
+
+GameStartState::GameStartState(GameStateManager *gsm) : GameState(gsm) {
+  mCannotStart = false;
+}
 
 GameStartState::~GameStartState() {}
 
@@ -36,25 +40,46 @@ void GameStartState::HandleEvent(const Event *event) {
 
 bool GameStartState::Update() {
   auto resolution = Resolution::GetResolution();
-  resolution.x -= 100;
-  resolution.y -= 50;
-  ImGui::SetNextWindowPos(resolution);
-  ImGui::BeginFlags("STARTUPWINDOW",
-                    ImGuiWindowFlags_NoTitleBar + ImGuiWindowFlags_NoResize);
-  ImGui::TextWrapper(countdownMessage);
-  ImGui::ProgressBar(countdown / countdownMax, Vec2(-1.0f, 0.0f));
+  resolution.x = resolution.x / 3;
+  resolution.y = resolution.y / 2;
+  if (mCannotStart) {
+    ImGui::SetNextWindowPos(resolution);
+    ImGui::BeginFlags(
+        "STARTUPWINDOW",
+        ImGuiWindowFlags_NoScrollbar + ImGuiWindowFlags_NoTitleBar +
+            ImGuiWindowFlags_AlwaysAutoResize + ImGuiWindowFlags_NoResize);
+    ImGui::TextWrapper("Cannot Start");
+    ImGui::TextWrapper("No script exists at path");
+    std::stringstream fullPath;
+    fullPath << "Data/Resources/" << FIRST_STATE_PATH;
+    ImGui::TextWrapper(fullPath.str());
 
-  ImGui::End();
+    ImGui::End();
+  } else {
+    ImGui::SetNextWindowPos(resolution);
+    ImGui::BeginFlags("STARTUPWINDOW",
+                      ImGuiWindowFlags_NoTitleBar + ImGuiWindowFlags_NoResize);
+    ImGui::TextWrapper(countdownMessage);
+    ImGui::ProgressBar(countdown / countdownMax, Vec2(-1.0f, 0.0f));
+
+    ImGui::End();
+    if (countdown > countdownMax) {
+      std::string scriptPath = FIRST_STATE_PATH;
+      const RSC_Script *script =
+          K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
+      if (script != NULL) {
+        gameStateManager->PushState(
+            std::make_shared<GS_Script>(gameStateManager), script);
+      } else {
+        mCannotStart = true;
+      }
+    }
+  }
+
   if (countdown < 0) {
     return false;
   }
   countdown += countdownIncrement;
-  if (countdown > countdownMax) {
-    std::string scriptPath = "States/startupState.lua";
-    const RSC_Script *script = K_ScriptMan.GetLoadItem(scriptPath, scriptPath);
-    gameStateManager->PushState(std::make_shared<GS_Script>(gameStateManager),
-                                script);
-  }
 
   UpdateComponentManagers();
 

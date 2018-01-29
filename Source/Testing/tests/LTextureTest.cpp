@@ -6,7 +6,7 @@ TEST_CASE("Can Load and Bind Texture", "[resources][texture]") {
 
   auto initialCount = Kernel::rscTexMan.GetSize();
 
-  std::string texName = "testImage.png";
+  std::string texName = "System/testImage.png";
   int expectedW = 72;
   int expectedH = 72;
   auto resource = Kernel::rscTexMan.GetLoadItem(texName, texName);

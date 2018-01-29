@@ -38,7 +38,7 @@ TEST_CASE("Lua Interface can be instantiated", "[lua][lua_interface]") {
 
   auto luaInterface = state->GetLuaInterface();
   luaInterface->SetErrorCallbackFunction(luaErrorCallback);
-  auto scriptName = "Testing/cppLuaInterfaceTest.lua";
+  auto scriptName = "System/Testing/cppLuaInterfaceTest.lua";
   auto script = RSC_Script::LoadResource(scriptName);
   REQUIRE(script.get() != NULL);
 
@@ -175,7 +175,7 @@ void CheckLuaAssertions(std::vector<Assertion> assertions) {
 
 TEST_CASE("Test Lua Test Harness (yes really)", "[lua]") {
   Kernel::Inst();
-  std::string dir = "Resources/Scripts/Testing/cppTestHarnessTest.lua";
+  std::string dir = "Resources/Scripts/System/Testing/cppTestHarnessTest.lua";
 
   REQUIRE(PHYSFS_getLastError() == NULL);
 

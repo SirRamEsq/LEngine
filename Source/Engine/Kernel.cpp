@@ -136,6 +136,8 @@ void Kernel::Inst(int argc, char *argv[]) {
   PHYSFS_addToSearchPath(searchPath.c_str(), 0);
   PHYSFS_setWriteDir("Data/");
 
+  Log::LogDirectoryExists();
+
 #ifndef DEBUG_MODE
   log->WriteToFile("Log", Log::SEVERITY::WARN);
   debugMode = false;

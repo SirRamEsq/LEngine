@@ -149,7 +149,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
     //"debug.sethook(_LINE_HOOK,\"l\")\n"
 
     // run InitLEngine script using the restricted environment
-    "f1 = require(\"Utility/LEngineInit.lua\") \n"
+    "f1 = require(\"System/LEngineInit.lua\") \n"
     "NewLEngine = f1\n";
 
 // Standard table has cherry picked functionality
@@ -244,7 +244,7 @@ const std::string LuaInterface::LUA_52_INTERFACE_ENV_TABLE =
 
     "select=select, \n"
     "}\n"
-    "f1 = require(\"Utility/LEngineInit.lua\") \n"
+    "f1 = require(\"System/LEngineInit.lua\") \n"
     "NewLEngine = f1\n";
 
 #endif

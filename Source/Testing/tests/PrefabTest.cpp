@@ -6,7 +6,7 @@
 TEST_CASE("Can Load Prefab from XML", "[resources][prefab]") {
   InitTestPhysfs();
   // GenericContainer<RSC_Prefab> prefabs;
-  auto prefab1 = RSC_Prefab::LoadResource("cppTestPrefab.xml");
+  auto prefab1 = RSC_Prefab::LoadResource("System/cppTestPrefab.xml");
 
   // Ensure data structures have correct number of elements loaded
   REQUIRE(prefab1.get() != NULL);

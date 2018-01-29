@@ -25,6 +25,8 @@ class GameStartState : public GameState {
   bool Update();
   void Draw();
 
+ private:
+  bool mCannotStart;
 };
 
 #endif
